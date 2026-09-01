@@ -1,4 +1,4 @@
-export { CellTrigger } from "./cell-trigger";
+export { Cell } from "./cell";
 export { CopyButton } from "./copy-button";
 export {
   DefaultIcon,
@@ -16,4 +16,3 @@ export {
   TextInputPopover,
   TextInputPopoverContent,
 } from "./text-input-popover";
-export { TableCell } from "./table-cell";

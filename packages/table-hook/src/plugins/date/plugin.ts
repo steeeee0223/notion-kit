@@ -66,7 +66,10 @@ export const extractLastEditedTime: DateExtractor<null> = (_data, row) => ({
   includeTime: true,
 });
 
-function dateCapabilities<Data>(extract: DateExtractor<Data>) {
+function dateCapabilities<Data>(
+  extract: DateExtractor<Data>,
+  isEmpty: (data: Data) => boolean,
+) {
   const grouping =
     (
       function_: (
@@ -277,15 +280,13 @@ function dateCapabilities<Data>(extract: DateExtractor<Data>) {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" as const },
-          matches: (data: Data | undefined, row: Row) =>
-            extract(data, row).start === undefined,
+          matches: (data: Data) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" as const },
-          matches: (data: Data | undefined, row: Row) =>
-            extract(data, row).start !== undefined,
+          matches: (data: Data) => !isEmpty(data),
         },
         {
           id: "relative-to-today",
@@ -414,6 +415,7 @@ export function date(config: DatePluginConfig): DatePlugin {
   const id = "date";
   const name = "Date";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isEmpty = (data: DateData) => data.start === undefined;
   return {
     id,
     meta: {
@@ -429,6 +431,7 @@ export function date(config: DatePluginConfig): DatePlugin {
     },
     fromValue: () => ({}),
     toValue: (data) => data.start ?? null,
+    isEmpty,
     toTextValue: (data) =>
       toDateString(data, { dateFormat: "full", timeFormat: "24-hour", tz }),
     toGroupValue: (data) => {
@@ -442,8 +445,8 @@ export function date(config: DatePluginConfig): DatePlugin {
       if (b.start === undefined) return -1;
       return compareNumbers(a.start, b.start);
     }),
-    ...dateCapabilities(extractDateValue),
-    counting: withDateCalculations(genericCounting, extractDateValue),
+    ...dateCapabilities(extractDateValue, isEmpty),
+    counting: withDateCalculations(genericCounting(isEmpty), extractDateValue),
     renderCellValue: config.renderCellValue,
     renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,
@@ -457,6 +460,7 @@ export function createdTime(
   const id = "created-time";
   const name = "Created time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isEmpty = () => false;
   return {
     id,
     disableBulkEdit: true,
@@ -473,6 +477,7 @@ export function createdTime(
     },
     fromValue: () => null,
     toValue: (_, row) => row.createdAt,
+    isEmpty,
     toTextValue: (_, row) =>
       toDateString(
         { start: row.createdAt, includeTime: true },
@@ -480,8 +485,12 @@ export function createdTime(
       ),
     toGroupValue: (_, row) => trimTs(row.createdAt, "date"),
     compare: (rowA, rowB) => compareNumbers(rowA.createdAt, rowB.createdAt),
-    ...dateCapabilities(extractCreatedTime),
-    counting: withDateCalculations(genericCounting, extractCreatedTime, true),
+    ...dateCapabilities(extractCreatedTime, isEmpty),
+    counting: withDateCalculations(
+      genericCounting(isEmpty),
+      extractCreatedTime,
+      true,
+    ),
     renderCellValue: ({ row, data: _data, ...props }) =>
       config.renderCellValue({
         data: { start: row.createdAt, includeTime: true },
@@ -499,6 +508,7 @@ export function lastEditedTime(
   const id = "last-edited-time";
   const name = "Last edited time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isEmpty = () => false;
   return {
     id,
     disableBulkEdit: true,
@@ -515,6 +525,7 @@ export function lastEditedTime(
     },
     fromValue: () => null,
     toValue: (_, row) => row.lastEditedAt,
+    isEmpty,
     toTextValue: (_, row) =>
       toDateString(
         { start: row.lastEditedAt, includeTime: true },
@@ -523,9 +534,9 @@ export function lastEditedTime(
     toGroupValue: (_, row) => trimTs(row.lastEditedAt, "date"),
     compare: (rowA, rowB) =>
       compareNumbers(rowA.lastEditedAt, rowB.lastEditedAt),
-    ...dateCapabilities(extractLastEditedTime),
+    ...dateCapabilities(extractLastEditedTime, isEmpty),
     counting: withDateCalculations(
-      genericCounting,
+      genericCounting(isEmpty),
       extractLastEditedTime,
       true,
     ),

@@ -244,6 +244,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       const info = table.getGroupedColumnInfo();
       if (!info) return [];
 
+      const plugin = table.getColumnPlugin(info.id);
       const groupingMethod = table.getSelectedGroupingMethod(info.id);
       const context = createRuntimePluginMethodContext(
         table,
@@ -254,8 +255,13 @@ export const ExtendedGroupingFeature: TableFeature = {
       const entries = new Map<string, GroupingEntry>();
 
       rows.forEach((row) => {
-        const original: unknown = row.properties[info.id]?.value;
-        const value = groupingMethod.function(original, row, info.id, context);
+        const property = row.properties[info.id];
+        const original = (
+          property ? property.value : plugin.default.data
+        ) as never;
+        const value = plugin.isEmpty(original)
+          ? null
+          : groupingMethod.function(original, row, info.id, context);
         const id = createGroupId(info.id, value);
         if (!entries.has(id)) {
           entries.set(id, {

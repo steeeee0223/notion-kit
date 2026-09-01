@@ -31,7 +31,7 @@ export function DialogView({ children }: React.PropsWithChildren) {
             <DialogContent
               hideClose
               id={visibleRowId ?? undefined}
-              className="m-auto flex h-[calc(100%-144px)] max-w-[calc(100%-144px)] flex-col overflow-hidden rounded-xl p-0"
+              className="m-auto flex size-[calc(100%-144px)] flex-col overflow-hidden rounded-xl p-0"
             >
               {visibleRowId && (
                 <>

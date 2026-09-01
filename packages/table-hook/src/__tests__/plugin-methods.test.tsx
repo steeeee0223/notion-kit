@@ -40,6 +40,7 @@ const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
   },
   fromValue: (value) => value?.toString() ?? "",
   toValue: (data) => data,
+  isEmpty: (data) => data.trim() === "",
   toTextValue: (data) => data,
   sorting: {
     defaultMethod: "reverse-alpha",
@@ -154,6 +155,7 @@ describe("cell plugin registered methods", () => {
       },
       fromValue: (value) => ({ score: Number(value) }),
       toValue: (value) => value.score,
+      isEmpty: () => false,
       toTextValue: (value) => value.score.toString(),
       sorting: {
         methods: [
@@ -278,6 +280,7 @@ describe("cell plugin registered methods", () => {
     const values: unknown[] = [];
     const plugin = {
       ...reverseTextPlugin,
+      isEmpty: (value: unknown) => value === "",
       sorting: {
         defaultMethod: "numeric",
         methods: [
@@ -314,11 +317,11 @@ describe("cell plugin registered methods", () => {
     expect(method?.function).toEqual(expect.any(Function));
     expect(
       method?.function(rowWithMissingCell, rowWithTwo, "col1"),
-    ).toBeLessThan(0);
+    ).toBeGreaterThan(0);
     expect(method?.function(rowWithTwo, rowWithTen, "col1")).toBeLessThan(0);
     expect(method?.function(rowWithTen, rowWithTwo, "col1")).toBeGreaterThan(0);
-    expect(contexts).toEqual([1, 1, 1, 1, 1, 1]);
-    expect(values[0]).toBeNull();
+    expect(contexts).toEqual([1, 1, 1, 1, 1]);
+    expect(values[0]).toBe(2);
   });
 
   it("marks only value-comparator sorting methods as automatically group-sortable", () => {

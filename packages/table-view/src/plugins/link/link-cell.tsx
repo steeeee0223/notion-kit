@@ -5,53 +5,25 @@ import type {
   CellValueProps,
 } from "@notion-kit/table-hook/plugins";
 
-import { CellTrigger, CopyButton, TextInputPopoverContent } from "@/common";
+import { TextInputPopoverContent } from "@/common";
 
 interface LinkCellValueProps extends CellValueProps<string> {
   type: "email" | "phone" | "url";
 }
 
-export function LinkCellValue({
-  type,
-  data,
-  wrapped,
-  disabled,
-  layout,
-  tooltip,
-  onClick,
-}: LinkCellValueProps) {
-  if (layout !== "table" && layout !== "row-view" && !data) return null;
+export function LinkCellValue({ type, data, wrapped }: LinkCellValueProps) {
+  if (!data) return null;
   return (
-    <CellTrigger
-      className="group/link-cell"
-      wrapped={wrapped}
-      aria-disabled={disabled}
-      layout={layout}
-      widthType="link"
-      tooltip={tooltip}
-      onClick={onClick}
-    >
-      {(layout === "table" || layout === "row-view") && (
-        <CopyButton
-          className="hidden group-hover/link-cell:flex"
-          value={data}
-        />
-      )}
-      <div className={cn("leading-normal", wrappedClassName(wrapped))}>
-        {data ? (
-          <a
-            href={getHref(type, data)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
-          >
-            {data}
-          </a>
-        ) : layout === "row-view" ? (
-          <span className="text-muted">Empty</span>
-        ) : null}
-      </div>
-    </CellTrigger>
+    <div className={cn("leading-normal", wrappedClassName(wrapped))}>
+      <a
+        href={getHref(type, data)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline animate-bg-in cursor-pointer text-inherit underline decoration-muted underline-offset-2 select-none"
+      >
+        {data}
+      </a>
+    </div>
   );
 }
 

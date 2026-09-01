@@ -40,6 +40,7 @@ const methodPlugin = {
   default: { name: "Method text", icon: null, config: undefined, data: "" },
   fromValue: (value) => value?.toString() ?? "",
   toValue: (data) => data,
+  isEmpty: (data) => data.trim() === "",
   toTextValue: (data) => data,
   sorting: {
     defaultMethod: "text",

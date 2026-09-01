@@ -51,7 +51,10 @@ function optionValues(operand: unknown, multiple: boolean) {
     : undefined;
 }
 
-function selectFiltering(multiple = false) {
+function selectFiltering<Data extends string | string[] | null>(
+  isEmpty: (data: Data) => boolean,
+  multiple = false,
+) {
   const values = (data: string | string[] | null | undefined) =>
     Array.isArray(data) ? data : typeof data === "string" ? [data] : [];
   const membershipOperator = (id: string, name: string, invert: boolean) => ({
@@ -89,15 +92,13 @@ function selectFiltering(multiple = false) {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" as const },
-          matches: (data: string | string[] | null | undefined) =>
-            values(data).length === 0,
+          matches: (data: Data) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" as const },
-          matches: (data: string | string[] | null | undefined) =>
-            values(data).length > 0,
+          matches: (data: Data) => !isEmpty(data),
         },
       ],
     },
@@ -155,6 +156,7 @@ function fromValue(
 
 export function select(config: SelectPluginConfig): SelectPlugin {
   const renderCellEditor = config.renderCellEditor;
+  const isEmpty = (data: string | null) => data === null;
   return {
     id: "select",
     meta: {
@@ -173,6 +175,7 @@ export function select(config: SelectPluginConfig): SelectPlugin {
       return options.at(0) ?? null;
     },
     toValue: (data) => data,
+    isEmpty,
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
     compare: createCompareFn<SelectPlugin>((a, b) => {
@@ -206,8 +209,8 @@ export function select(config: SelectPluginConfig): SelectPlugin {
         },
       ],
     },
-    counting: genericCounting,
-    ...selectFiltering(),
+    counting: genericCounting(isEmpty),
+    ...selectFiltering(isEmpty),
     renderCellValue: ({ data, ...props }) =>
       config.renderCellValue({
         data: data ? [data] : [],
@@ -243,6 +246,7 @@ export function multiSelect(
   config: MultiSelectPluginConfig,
 ): MultiSelectPlugin {
   const renderCellEditor = config.renderCellEditor;
+  const isEmpty = (data: string[]) => data.length === 0;
   return {
     id: "multi-select",
     meta: {
@@ -259,6 +263,7 @@ export function multiSelect(
     fromValue: (value, config) => fromValue(value, config, "multi-select"),
     toValue: (data) => data.join(","),
     toGroupValue: (data) => data[0] ?? null,
+    isEmpty,
     toTextValue: (data) => data.join(","),
     compare: createCompareFn<MultiSelectPlugin>((a, b) => {
       if (a.length === 0 && b.length === 0) return 0;
@@ -292,8 +297,8 @@ export function multiSelect(
       ],
     },
     transferConfig: toSelectConfig,
-    counting: genericCounting,
-    ...selectFiltering(true),
+    counting: genericCounting(isEmpty),
+    ...selectFiltering(isEmpty, true),
     renderCellValue: (props) =>
       config.renderCellValue({ multi: true, ...props }),
     renderCellEditor: renderCellEditor

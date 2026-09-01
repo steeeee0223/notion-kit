@@ -1,159 +1,127 @@
-import React from "react";
+import React, { createContext, use, useMemo, type ReactNode } from "react";
 
-import { cn, cva, type VariantProps } from "@notion-kit/cn";
-import type { LayoutType } from "@notion-kit/table-hook";
-import {
-  buttonVariants,
-  TooltipDescription,
-  TooltipPreset,
-} from "@notion-kit/ui/primitives";
+import { cn } from "@notion-kit/cn";
+import { buttonVariants } from "@notion-kit/ui/primitives";
 
-const cellVariant = cva("relative px-2 aria-disabled:pointer-events-none", {
-  variants: {
-    layout: {
-      table: "block min-h-9 w-full overflow-clip py-[7.5px] text-sm/normal",
-      list: "min-h-[30px] flex-none overflow-hidden rounded-md",
-      board: "min-h-7 w-fit flex-none overflow-hidden rounded-md px-1",
-      "row-view": "min-h-[34px] w-full overflow-hidden rounded-sm p-1.5",
-      /**
-       * @todo not implemented
-       */
-      calendar: "",
-      timeline: "",
-      gallery: "",
-      chart: "",
-    },
-    wrapped: {
-      true: "whitespace-normal",
-    },
-    widthType: {
-      checkbox: "min-w-fit",
-      date: "max-w-[max(150px,16%)] min-w-25",
-      number: "max-w-[max(150px,16%)] min-w-25",
-      text: "max-w-[max(200px,16%)] min-w-5",
-      select: "max-w-[max(200px,16%)] min-w-5",
-      link: "max-w-[max(150px,16%)] min-w-5",
-    },
-  },
-  defaultVariants: {
-    layout: "table",
-    widthType: null,
-  },
+type CellTriggerProps = Omit<
+  React.ComponentProps<"div">,
+  "aria-disabled" | "aria-label" | "role"
+> & {
+  disabled?: boolean;
+};
+
+interface CellTriggerScopeValue {
+  ariaLabel?: string;
+  className?: string;
+  stopPropagation: boolean;
+}
+
+const CellTriggerScopeContext = createContext<CellTriggerScopeValue>({
+  stopPropagation: true,
 });
-type CellVariant = VariantProps<typeof cellVariant>;
 
-interface CellTriggerProps extends React.ComponentProps<"div"> {
-  wrapped?: boolean;
-  layout?: LayoutType | "row-view";
-  widthType?: CellVariant["widthType"];
-  tooltip?: {
-    title: string;
-    description?: string;
-  };
+interface CellTriggerScopeProps {
+  ariaLabel?: string;
+  children: ReactNode;
+  className?: string;
   stopPropagation?: boolean;
 }
 
-export function CellTrigger({
+export function CellTriggerScope({
+  ariaLabel,
+  children,
   className,
-  wrapped,
-  layout = "table",
-  widthType,
-  tooltip,
   stopPropagation = true,
-  tabIndex,
-  "aria-disabled": ariaDisabled,
+}: CellTriggerScopeProps) {
+  const value = useMemo(
+    () => ({ ariaLabel, className, stopPropagation }),
+    [ariaLabel, className, stopPropagation],
+  );
+
+  return (
+    <CellTriggerScopeContext value={value}>{children}</CellTriggerScopeContext>
+  );
+}
+
+export function CellTrigger({
+  children,
+  className,
+  disabled,
   onClick,
   onKeyDown,
   onKeyUp,
   onMouseDown,
   onPointerDown,
+  ref,
+  tabIndex,
   ...props
 }: CellTriggerProps) {
-  const disabled = ariaDisabled === true || ariaDisabled === "true";
+  const scope = use(CellTriggerScopeContext);
 
   return (
-    <TooltipPreset
-      side={layout === "board" ? "left" : "top"}
-      {...(tooltip
-        ? {
-            description: tooltip.description ? (
-              <>
-                <TooltipDescription text={tooltip.title} />
-                <TooltipDescription
-                  type="secondary"
-                  text={tooltip.description}
-                />
-              </>
-            ) : (
-              tooltip.title
-            ),
-          }
-        : {
-            description: "",
-            disabled: true,
-          })}
+    <div
+      {...props}
+      ref={ref}
+      role="button"
+      tabIndex={disabled ? -1 : (tabIndex ?? 0)}
+      aria-disabled={disabled}
+      aria-label={scope.ariaLabel}
+      className={cn(
+        buttonVariants({ variant: "cell" }),
+        scope.className,
+        className,
+      )}
+      onClick={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        if (scope.stopPropagation) event.stopPropagation();
+        onClick?.(event);
+      }}
+      onKeyDown={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        if (scope.stopPropagation) event.stopPropagation();
+        onKeyDown?.(event);
+        if (
+          (event.key === "Enter" || event.key === " ") &&
+          !event.defaultPrevented
+        ) {
+          event.preventDefault();
+          event.currentTarget.click();
+        }
+      }}
+      onKeyUp={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onKeyUp?.(event);
+      }}
+      onMouseDown={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onMouseDown?.(event);
+      }}
+      onPointerDown={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onPointerDown?.(event);
+      }}
     >
-      <div
-        tabIndex={disabled ? -1 : (tabIndex ?? 0)}
-        role="button"
-        aria-disabled={ariaDisabled}
-        className={cn(
-          buttonVariants({ variant: "cell" }),
-          cellVariant({
-            layout,
-            wrapped,
-            widthType: layout === "list" ? widthType : null,
-          }),
-          className,
-        )}
-        {...props}
-        onClick={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          if (stopPropagation) e.stopPropagation();
-          onClick?.(e);
-        }}
-        onKeyDown={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          if (stopPropagation) e.stopPropagation();
-          onKeyDown?.(e);
-          if ((e.key === "Enter" || e.key === " ") && !e.defaultPrevented) {
-            e.preventDefault();
-            e.currentTarget.click();
-          }
-        }}
-        onKeyUp={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          onKeyUp?.(e);
-        }}
-        onMouseDown={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          onMouseDown?.(e);
-        }}
-        onPointerDown={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          onPointerDown?.(e);
-        }}
-      />
-    </TooltipPreset>
+      {children}
+    </div>
   );
 }

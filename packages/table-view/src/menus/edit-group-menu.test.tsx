@@ -300,7 +300,7 @@ describe("EditGroupMenu", () => {
         screen
           .getAllByRole("group", { name: /^Group / })
           .map((group) => group.getAttribute("aria-label")),
-      ).toEqual(["Group col1:Task 3", "Group col1:Task 1", "Group col1:"]),
+      ).toEqual(["Group col1:Task 3", "Group col1:Task 1", "Group col1:null"]),
     );
     expect(sortGroups).toHaveTextContent("Z → A");
 
@@ -391,6 +391,7 @@ describe("EditGroupMenu", () => {
       fromValue: (value) => String(value ?? ""),
       toValue: (value) => value,
       toTextValue: (value) => value,
+      isEmpty: (value) => value.trim() === "",
       sorting: {
         defaultMethod: "locale",
         methods: [

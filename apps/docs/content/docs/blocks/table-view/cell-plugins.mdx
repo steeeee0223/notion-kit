@@ -9,14 +9,20 @@ property-level configuration.
 
 ## Plugin definition
 
-| Field         | Description                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------ |
-| `id`          | Unique property type identifier.                                                           |
-| `meta`        | Name, description, and icon displayed in the property-type menu.                           |
-| `default`     | Default name, icon, configuration, width, and data for newly created properties and cells. |
-| `fromValue`   | Converts a comparable value into the plugin's cell data.                                   |
-| `toValue`     | Converts cell data into a string, number, boolean, or `null` value for sorting.            |
-| `toTextValue` | Converts cell data into text for compact display or export.                                |
+| Field         | Description                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------- |
+| `id`          | Unique property type identifier.                                                                         |
+| `meta`        | Name, description, and icon displayed in the property-type menu.                                         |
+| `default`     | Default name, icon, configuration, width, and data for newly created properties and cells.               |
+| `fromValue`   | Converts a comparable value into the plugin's cell data.                                                 |
+| `toValue`     | Converts cell data into a string, number, boolean, or `null` value for sorting.                          |
+| `isEmpty`     | Returns whether cell data is empty for UI surfaces, filters, counts, sorting, and grouping.              |
+| `toTextValue` | Converts cell data into text for copy and other text consumers. It is not used as an emptiness fallback. |
+
+When a row has no cell for a property, table-hook passes `plugin.default.data`
+to `isEmpty`. Each plugin therefore owns one empty-data definition; surfaces
+and table behaviors do not infer emptiness from the plugin ID or converted
+text.
 
 ## Optional capabilities
 
@@ -32,12 +38,12 @@ property-level configuration.
 
 ## Rendering
 
-| Field                 | Description                                                                                                                                                                                                                                           |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `renderCellValue`     | **Required.** Renders the cell's read-only value. It receives `CellValueProps`, including the value, property configuration, row, layout, and disabled state.                                                                                         |
-| `renderCellEditor`    | Renders the editing UI and returns either an inline or popover editor. It receives `CellEditorProps`, including `onChange`, `onCancel`, and a `scope` for a single cell or selected rows. Plugins with this capability are eligible for bulk editing. |
-| `renderConfigMenu`    | Renders the property configuration UI.                                                                                                                                                                                                                |
-| `renderGroupingValue` | Renders a group label.                                                                                                                                                                                                                                |
+| Field                 | Description                                                                                                                                                                                                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `renderCellValue`     | **Required.** Returns layout-neutral value content. It receives `CellValueProps` with the property ID, row, value, property configuration, wrapping hint, and disabled state. The table layout supplies the trigger, tooltip, width, classes, and activation behavior. |
+| `renderCellEditor`    | Renders the editing UI and returns either an inline or popover editor. It receives `CellEditorProps`, including `onChange`, `onCancel`, and a `scope` for a single cell or selected rows. Plugins with this capability are eligible for bulk editing.                  |
+| `renderConfigMenu`    | Renders the property configuration UI.                                                                                                                                                                                                                                 |
+| `renderGroupingValue` | Renders a group label.                                                                                                                                                                                                                                                 |
 
 ## Types
 

@@ -52,6 +52,7 @@ function plugin(
     meta: { name: id, desc: "", icon: null },
     fromValue: () => "",
     toValue: (value: string) => value,
+    isEmpty: (value: string) => value.trim() === "",
     toTextValue: (value: string) => value,
     filtering: {
       operators: [

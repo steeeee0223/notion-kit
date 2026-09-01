@@ -8,66 +8,60 @@ import { Database, mockData, mockProps } from "./database";
 
 const meta = {
   title: "collections/Table View",
+  parameters: {
+    layout: "fullscreen",
+  },
+  decorators: (Story) => (
+    <div className="py-24">
+      <Story />
+    </div>
+  ),
 } satisfies Meta;
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
 export const DatabaseView: Story = {
-  decorators: [
-    () => (
-      <div className="p-24">
-        <Database />
-      </div>
-    ),
-  ],
+  render: () => (
+    <div className="px-24">
+      <Database />
+    </div>
+  ),
 };
 
 export const Controlled: Story = {
-  decorators: [
-    () => {
-      const [data, setData] = useState<Row<DefaultPlugins>[]>(mockData);
-      const [properties, setProperties] =
-        useState<ColumnDefs<DefaultPlugins>>(mockProps);
+  render: () => {
+    const [data, setData] = useState<Row<DefaultPlugins>[]>(mockData);
+    const [properties, setProperties] =
+      useState<ColumnDefs<DefaultPlugins>>(mockProps);
 
-      return (
-        <div className="p-24">
-          <TableView
-            properties={properties}
-            data={data}
-            onDataChange={({ next }) => setData(next)}
-            onPropertiesChange={({ next }) => setProperties(next)}
-          />
-        </div>
-      );
-    },
-  ],
+    return (
+      <TableView
+        properties={properties}
+        data={data}
+        onDataChange={({ next }) => setData(next)}
+        onPropertiesChange={({ next }) => setProperties(next)}
+      />
+    );
+  },
 };
 
 export const ListView: Story = {
-  decorators: [
-    () => (
-      <div className="px-60 py-24">
-        <TableView
-          defaultView={{ layout: "list" }}
-          defaultProperties={mockProps}
-          defaultData={mockData}
-        />
-      </div>
-    ),
-  ],
+  render: () => (
+    <TableView
+      defaultView={{ layout: "list" }}
+      defaultProperties={mockProps}
+      defaultData={mockData}
+    />
+  ),
 };
 
 export const BoardView: Story = {
-  decorators: [
-    () => (
-      <div className="px-60 py-24">
-        <TableView
-          defaultView={{ layout: "board" }}
-          defaultProperties={mockProps}
-          defaultData={mockData}
-        />
-      </div>
-    ),
-  ],
+  render: () => (
+    <TableView
+      defaultView={{ layout: "board" }}
+      defaultProperties={mockProps}
+      defaultData={mockData}
+    />
+  ),
 };

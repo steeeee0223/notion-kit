@@ -8,8 +8,9 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, TableCell } from "@/common";
+import { Cell, DefaultIcon } from "@/common";
 import { PropMenu } from "@/menus";
+import { getCellPresentation } from "@/plugins/utils";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewPropsProps {
@@ -30,6 +31,10 @@ export function ViewProps({ rowId }: ViewPropsProps) {
 
           // Skip title property
           if (info.type === "title") return null;
+          const presentation = getCellPresentation({
+            pluginId: cell.column.getPlugin().id,
+            surface: "row-view",
+          });
           return (
             <div
               key={`${colId}:${locked}`}
@@ -94,14 +99,16 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                 role="cell"
                 data-block-id={rowId}
                 inert={locked ? true : undefined}
-                className="flex h-full min-w-0 flex-[1_1_auto] flex-wrap"
+                className={presentation.frameClassName}
               >
-                <TableCell
-                  view="row-view"
-                  row={row}
-                  column={cell.column}
+                <Cell.Root
+                  cell={cell}
                   table={table}
-                />
+                  surface="row-view"
+                  presentation={presentation}
+                >
+                  <Cell.Content />
+                </Cell.Root>
               </div>
             </div>
           );

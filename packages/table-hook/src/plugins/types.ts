@@ -1,7 +1,6 @@
 import type React from "react";
 import type { OnChangeFn } from "@tanstack/react-table";
 
-import type { LayoutType } from "@/features/menu";
 import type { _TableInstance } from "@/features/types";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type {
@@ -10,6 +9,10 @@ import type {
   SortingMethodDescriptor,
 } from "@/methods";
 
+export type CellEditorScope<Data> =
+  | { kind: "cell"; row: Row }
+  | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
+
 export interface CellValueProps<Data, Config = undefined> {
   propId: string;
   row: Row;
@@ -17,12 +20,6 @@ export interface CellValueProps<Data, Config = undefined> {
   config: Config;
   wrapped?: boolean;
   disabled?: boolean;
-  layout?: LayoutType | "row-view";
-  tooltip?: {
-    title: string;
-    description?: string;
-  };
-  onClick?: () => void;
 }
 
 export interface CellEditorProps<Data, Config = undefined> {
@@ -31,17 +28,10 @@ export interface CellEditorProps<Data, Config = undefined> {
   config: Config;
   wrapped?: boolean;
   disabled?: boolean;
-  layout?: LayoutType | "row-view";
-  tooltip?: {
-    title: string;
-    description?: string;
-  };
   onChange: OnChangeFn<Data>;
   onCancel?: () => void;
   onConfigChange?: OnChangeFn<Config>;
-  scope:
-    | { kind: "cell"; row: Row }
-    | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
+  scope: CellEditorScope<Data>;
 }
 
 export interface CellEditorPopoverOptions {
@@ -103,7 +93,7 @@ export interface FilterOperatorDescriptor<Data = unknown, Config = unknown> {
   name: string;
   operand: FilterOperandMetadata;
   matches: (
-    data: Data | undefined,
+    data: Data,
     row: Row,
     config: Config,
     operand: FilterValue | undefined,
@@ -186,6 +176,8 @@ export interface CellPlugin<
    * If not provided, `toValue` will be used instead.
    */
   toGroupValue?: (data: Data, row: Row) => ComparableValue;
+  /** Return whether cell data represents an empty value. */
+  isEmpty: (data: Data) => boolean;
   toTextValue: (data: Data, row: Row) => string;
   sorting?: {
     defaultMethod?: string;

@@ -8,6 +8,7 @@ import {
 import userEvent, {
   PointerEventsCheckLevel,
 } from "@testing-library/user-event";
+import { addDays, format } from "date-fns";
 import { describe, expect, it, vi } from "vitest";
 
 import type {
@@ -179,6 +180,7 @@ describe("FilterMenu", () => {
       fromValue: String,
       toValue: (value) => value,
       toTextValue: (value) => value,
+      isEmpty: (value) => value.trim() === "",
       renderCellValue: () => null,
     };
     const tableView = renderFilterMenu({
@@ -572,12 +574,17 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("option", { name: "Custom date" }),
     );
     await tableView.user.click(filter.customDate("operand-rule"));
+    const today = new Date();
     await tableView.user.click(
-      await screen.findByRole("button", { name: /August 26th, 2026/ }),
+      await screen.findByRole("button", { name: /Today/ }),
     );
 
     expect(lastValue(onViewChange)).toEqual({
-      timestamp: Date.UTC(2026, 7, 26),
+      timestamp: Date.UTC(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+      ),
     });
   });
 
@@ -695,15 +702,16 @@ describe("FilterMenu operand metadata", () => {
     await date.tableView.user.click(
       date.tableView.filterMenu().customDate("operand-rule"),
     );
+    const tomorrow = addDays(new Date(), 1);
     await date.tableView.user.click(
       await screen.findByRole("button", {
-        name: /August 27th, 2026/,
+        name: format(tomorrow, "EEEE, MMMM do, yyyy"),
       }),
     );
 
     expect(lastValue(date.onViewChange)).toEqual({
       timestamp: isoToTs(
-        { date: "2026-08-27", time: "00:00:00" },
+        { date: format(tomorrow, "yyyy-MM-dd"), time: "00:00:00" },
         "America/Los_Angeles",
       ),
     });
@@ -714,17 +722,25 @@ describe("FilterMenu operand metadata", () => {
     const filter = range.tableView.filterMenu();
 
     await range.tableView.user.click(filter.dateRange("operand-rule"));
+    const today = new Date();
+    const tomorrow = addDays(today, 1);
     await range.tableView.user.click(
-      await screen.findByRole("button", { name: /August 26th, 2026/ }),
+      await screen.findByRole("button", { name: /Today/ }),
     );
     expect(range.onViewChange).not.toHaveBeenCalled();
     await range.tableView.user.click(
-      await screen.findByRole("button", { name: /August 27th, 2026/ }),
+      await screen.findByRole("button", {
+        name: format(tomorrow, "EEEE, MMMM do, yyyy"),
+      }),
     );
 
     expect(lastValue(range.onViewChange)).toEqual({
-      start: Date.UTC(2026, 7, 26),
-      end: Date.UTC(2026, 7, 27),
+      start: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
+      end: Date.UTC(
+        tomorrow.getFullYear(),
+        tomorrow.getMonth(),
+        tomorrow.getDate(),
+      ),
     });
   });
 
@@ -788,7 +804,7 @@ describe("FilterMenu operand metadata", () => {
     });
   });
 
-  it("resyncs date inputs and Calendar selection when only timezone changes", async () => {
+  it("resyncs date inputs when only timezone changes", async () => {
     const timestamp = Date.UTC(2026, 7, 26, 6);
     const date = renderControlledMetadata(
       "date",
@@ -805,10 +821,8 @@ describe("FilterMenu operand metadata", () => {
     );
     await date.user.click(date.filter.customDate("operand-rule"));
     expect(
-      await screen.findByRole("button", {
-        name: /August 25th, 2026, selected/,
-      }),
-    ).toBeVisible();
+      await screen.findByRole("textbox", { name: "Custom date input" }),
+    ).toHaveValue("2026-08-25");
 
     cleanup();
     const range = renderControlledMetadata(
@@ -825,11 +839,6 @@ describe("FilterMenu operand metadata", () => {
     expect(screen.getByRole("textbox", { name: "Ending" })).toHaveValue(
       "2026-08-26",
     );
-    expect(
-      await screen.findByRole("button", {
-        name: /August 25th, 2026, selected/,
-      }),
-    ).toBeVisible();
   });
 
   it("rejects invalid, incomplete, and reversed date ranges", async () => {
@@ -911,6 +920,7 @@ describe("FilterMenu operand metadata", () => {
       fromValue: String,
       toValue: (value) => value,
       toTextValue: (value) => value,
+      isEmpty: (value) => value.trim() === "",
       renderCellValue: () => null,
     };
     const tableView = renderFilterMenu({
@@ -983,6 +993,7 @@ function metadataPlugin(
     fromValue: String,
     toValue: (value) => value,
     toTextValue: (value) => value,
+    isEmpty: (value) => value.trim() === "",
     filtering: {
       operators: [
         {

@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
-export async function findMenuByHeading(name: string) {
+async function findMenuRootByHeading(name: string) {
   return waitFor(() => {
     const root = screen
       .getAllByRole("menu")
@@ -12,7 +12,7 @@ export async function findMenuByHeading(name: string) {
   });
 }
 
-export async function findMenuByItem(name: string | RegExp) {
+async function findMenuRootByItem(name: string | RegExp) {
   return waitFor(() => {
     const root = screen
       .getAllByRole("menu")
@@ -24,6 +24,14 @@ export async function findMenuByItem(name: string | RegExp) {
 }
 
 export class MenuSurfaceObject {
+  static async findByHeading(user: UserEvent, name: string) {
+    return new MenuSurfaceObject(user, await findMenuRootByHeading(name));
+  }
+
+  static async findByItem(user: UserEvent, name: string | RegExp) {
+    return new MenuSurfaceObject(user, await findMenuRootByItem(name));
+  }
+
   constructor(
     protected readonly user: UserEvent,
     readonly root: HTMLElement,

@@ -81,6 +81,7 @@ describe("table-view plugin wrappers", () => {
       fromValue: (value) => value?.toString() ?? "",
       toValue: (data) => data,
       toTextValue: (data) => data,
+      isEmpty: (data) => data.trim() === "",
       renderCellValue: () => null,
     };
 

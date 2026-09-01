@@ -72,12 +72,12 @@ test("Grouping_CompleteThenBoard_PreservesGroupMembershipAcrossLayouts", async (
   await selectGrouping.choose("Complete");
   await page.keyboard.press("Escape");
   await table.expandGroup("complete:true");
-  await table.expandGroup("complete:false");
+  await table.expandGroup("complete:null");
 
   await expectVerticalOrder([
     table.group("complete:true"),
     table.row("Alpha"),
-    table.group("complete:false"),
+    table.group("complete:null"),
     table.row("Empty"),
     table.row("Omega"),
   ]);
@@ -87,7 +87,7 @@ test("Grouping_CompleteThenBoard_PreservesGroupMembershipAcrossLayouts", async (
   await layout.button("Board").click();
 
   const checked = table.group("complete:true");
-  const unchecked = table.group("complete:false");
+  const unchecked = table.group("complete:null");
   await expect(checked.getByText("Alpha", { exact: true })).toBeVisible();
   await expect(checked.getByText("Empty", { exact: true })).toHaveCount(0);
   await expect(unchecked.getByText("Empty", { exact: true })).toBeVisible();

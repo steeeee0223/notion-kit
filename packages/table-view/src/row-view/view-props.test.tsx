@@ -65,6 +65,7 @@ const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
   fromValue: (value) => value?.toString() ?? "",
   toValue: (data) => data,
   toTextValue: (data) => data,
+  isEmpty: (data) => data.trim() === "",
   renderCellValue: () => null,
   renderCellEditor: ({ onChange, onConfigChange }) => ({
     presentation: "inline",

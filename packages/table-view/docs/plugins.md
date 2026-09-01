@@ -16,14 +16,26 @@ headless factory. The wrapper supplies the current icon and React callbacks:
 - the default and property icons used by the existing property UI.
 
 `renderCellValue` is required. `renderCellEditor` is deliberately optional;
-there is no legacy `renderCell` fallback. The shared `CellEditorHost` renders a
-value first and invokes the editor capability with the normal-cell scope when
-the user starts editing. A value-only plugin therefore stays readable without
-accidentally becoming editable.
+there is no legacy `renderCell` fallback. `defaultColumn.cell` and direct
+row-view and timeline consumers compose `Cell.Root` with a surface frame.
+`Cell.Content` resolves data, configuration, lock state, and mutations.
+It delegates empty-state decisions to `plugin.isEmpty` and copy text directly
+to `plugin.toTextValue`; table-view does not infer either semantic from a
+built-in plugin ID.
+Ordinary registered value callbacks return semantic content; ordinary popover
+editor composition places that content inside the layout-owned trigger, while
+inline editor results use the inline presentation path. `Cell.Tooltip` mounts
+only around list and board compact frames. Registered plugin renderer callbacks
+never render `Cell.Trigger` or choose presentation classes or compact widths. A
+value-only plugin therefore stays readable without accidentally becoming editable.
 
 The wrapper must not reimplement conversion, sorting, grouping, counting,
 method IDs, or compatibility fallbacks. It may adapt component props and wire
 UI-only callbacks before invoking the headless descriptor.
+
+Every valid select or multi-select option renders its own `TooltipPreset` on
+every cell surface. List and board cells retain the outer property tooltip, so
+an option tooltip may be nested inside that property tooltip.
 
 Bulk edit discovers the same optional `renderCellEditor`; a plugin is eligible
 only when it supplies that capability and does not set `disableBulkEdit`.
@@ -43,11 +55,23 @@ the editor does not receive an arbitrary selected row as its starting value.
 
 | Area                                                                       | Responsibility                                                                                                                              |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/plugins/<type>/`                                                      | Cell renderers, editors, config menus, picker controls, grouping-value components, and configured wrappers.                                 |
+| `src/common/cell.tsx`                                                      | Owns compound cell composition.                                                                                                             |
+| `src/plugins/<type>/`                                                      | Ordinary registered renderer callbacks own semantic value/editor content plus configuration menus and grouping labels.                      |
 | `src/menus/`                                                               | Render plugin-provided method and grouping options; persist the selected view action. Generic menus must not branch on built-in plugin IDs. |
 | `src/table-footer/`                                                        | Render the resolved calculation result supplied by table-hook.                                                                              |
 | `src/table-body/`, `src/table-header/`                                     | Render rows, groups, headers, resize, and drag interaction surfaces.                                                                        |
 | `src/list-view/`, `src/board-view/`, `src/timeline-view/`, `src/row-view/` | Layout-specific rendering and interaction behavior.                                                                                         |
+
+`TitleTableSlot` and `TitleCompactSlot` are composition support colocated with
+the title implementation. `Cell.Content` invokes them to preserve title quick
+actions and triggers; they are not the registered plugin value/editor callback
+contract.
+
+The title plugin-ID checks in cell composition remain an accepted special case.
+The remaining checkbox direct-toggle, copy-visibility, and presentation
+plugin-ID checks are deferred design debt: a separate design should move those
+UI decisions into cell value rendering. This change does not add renderer props
+or presentation metadata to bridge them.
 
 ## Extension rule
 
