@@ -92,10 +92,10 @@ export const tagPlugin: TagPlugin = {
 };
 ```
 
-`renderCellEditor` receives a `scope`. It is `{ kind: "cell" }` for a single
-cell and `{ kind: "bulk" }` when the bulk-edit bar invokes the same editor for
-selected rows. The example does not need to branch on the scope, so it supports
-both paths automatically.
+`renderCellEditor` receives a `scope`. It is `{ kind: "cell", row }` for a
+single cell and `{ kind: "bulk", rowIds, selectedValues }` when the bulk-edit
+bar invokes the same editor for selected rows. The example does not need to
+branch on the scope, so it supports both paths automatically.
 
 ### Register the plugin
 

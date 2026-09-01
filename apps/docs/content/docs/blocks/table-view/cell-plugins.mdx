@@ -32,12 +32,12 @@ property-level configuration.
 
 ## Rendering
 
-| Field                 | Description                                                                                                                                                                                                                                           |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `renderCellValue`     | **Required.** Renders the cell's read-only value. It receives `CellValueProps`, including the value, property configuration, row, layout, and disabled state.                                                                                         |
-| `renderCellEditor`    | Renders the editing UI and returns either an inline or popover editor. It receives `CellEditorProps`, including `onChange`, `onCancel`, and a `scope` for a single cell or selected rows. Plugins with this capability are eligible for bulk editing. |
-| `renderConfigMenu`    | Renders the property configuration UI.                                                                                                                                                                                                                |
-| `renderGroupingValue` | Renders a group label.                                                                                                                                                                                                                                |
+| Field                 | Description                                                                                                                                                                                                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `renderCellValue`     | **Required.** Returns layout-neutral value content. It receives `CellValueProps` with the property ID, row, value, property configuration, wrapping hint, and disabled state. The table layout supplies the trigger, tooltip, width, classes, and activation behavior. |
+| `renderCellEditor`    | Renders the editing UI and returns either an inline or popover editor. It receives `CellEditorProps`, including `onChange`, `onCancel`, and a `scope` for a single cell or selected rows. Plugins with this capability are eligible for bulk editing.                  |
+| `renderConfigMenu`    | Renders the property configuration UI.                                                                                                                                                                                                                                 |
+| `renderGroupingValue` | Renders a group label.                                                                                                                                                                                                                                                 |
 
 ## Types
 

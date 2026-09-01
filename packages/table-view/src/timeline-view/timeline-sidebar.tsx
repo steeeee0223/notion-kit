@@ -10,7 +10,8 @@ import {
   TimelineSidebar as TimelineSidebarPrimitive,
 } from "@notion-kit/ui/timeline";
 
-import { RowActionGroup, TableCell } from "@/common";
+import { Cell, RowActionGroup } from "@/common";
+import { getCellPresentation } from "@/plugins/utils";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -117,11 +118,19 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         </div>
       );
     }
-    const { colId: titleColumnId, cell } = row.getTitleCell();
-    const titleColumn = table.getColumn(titleColumnId);
-    if (!titleColumn) return null;
+    const { colId: titleColumnId, cell: titleDataCell } = row.getTitleCell();
+    const titleCell = row
+      .getAllCells()
+      .find((candidate) => candidate.column.id === titleColumnId);
+    if (!titleCell) return null;
 
-    const title = String(cell.value || "New page");
+    const title = String(titleDataCell.value || "New page");
+    const wrapped = titleCell.column.getInfo().wrapped;
+    const presentation = getCellPresentation({
+      pluginId: titleCell.column.getPlugin().id,
+      surface: "timeline",
+      wrapped,
+    });
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
@@ -131,12 +140,15 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         aria-label={title}
         onClick={() => table.openRow(row.id)}
       >
-        <TableCell
-          row={row}
-          column={titleColumn}
+        <Cell.Root
+          cell={titleCell}
           table={table}
-          view="timeline"
-        />
+          surface="timeline"
+          presentation={presentation}
+          wrapped={wrapped}
+        >
+          <Cell.Content />
+        </Cell.Root>
       </Button>
     );
 

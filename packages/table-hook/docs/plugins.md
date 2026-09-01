@@ -89,11 +89,17 @@ const customPlugin: CellPlugin<"custom", string, undefined> = {
 
 ### Cell value and editing capabilities
 
-Every plugin must provide `renderCellValue`, a read-only renderer for the
-current value. A plugin can additionally provide `renderCellEditor`, which
-returns either an inline control or a popover editor. The table view composes
-these capabilities for both ordinary cells and bulk editing; renderers do not
-need to inspect a built-in plugin ID.
+Every plugin must provide `renderCellValue`, which returns layout-neutral value
+content. It receives `CellValueProps` with the property ID, row, data, config,
+wrapping hint, and disabled state. `CellValueProps` does not expose layout,
+tooltip, presentation class, or an activation callback.
+
+A plugin can additionally provide `renderCellEditor`, which returns either an
+inline control or a popover editor. `CellEditorScope<Data>` distinguishes a
+normal cell (`{ kind: "cell"; row }`) from bulk editing
+(`{ kind: "bulk"; rowIds; selectedValues }`). The table view composes these
+capabilities for both ordinary cells and bulk editing; renderers do not need to
+inspect a built-in plugin ID.
 
 `renderCell` is not a supported compatibility entry point. A value-only plugin
 is visible but has no editing affordance. An editor-capable plugin is editable

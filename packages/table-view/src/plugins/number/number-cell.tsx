@@ -9,50 +9,23 @@ import {
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
-import { CellTrigger, CopyButton, TextInputPopoverContent } from "@/common";
+import { TextInputPopoverContent } from "@/common";
 
 export function NumberCellValue({
   data,
   config,
   wrapped,
-  disabled,
-  layout,
-  tooltip,
-  onClick,
 }: CellValueProps<string | null, NumberConfig>) {
-  const value = data ?? "";
-
-  if (layout !== "table" && layout !== "row-view" && data === null) return null;
+  if (data === null) return null;
   return (
-    <CellTrigger
-      className={cn("group/number-cell", layout === "table" && "h-9")}
-      wrapped={wrapped}
-      aria-disabled={disabled}
-      layout={layout}
-      widthType="number"
-      tooltip={tooltip}
-      onClick={onClick}
-    >
-      {layout === "table" && (
-        <CopyButton
-          className="hidden justify-start group-hover/number-cell:flex"
-          value={value}
-        />
+    <div
+      className={cn(
+        "flex justify-end gap-x-2 gap-y-1.5",
+        wrapped ? "flex-wrap" : "flex-nowrap",
       )}
-      <div
-        className={cn(
-          "flex justify-end gap-x-2 gap-y-1.5",
-          wrapped ? "flex-wrap" : "flex-nowrap",
-        )}
-      >
-        <NumberDisplay
-          view={layout}
-          value={data}
-          config={config}
-          wrapped={wrapped}
-        />
-      </div>
-    </CellTrigger>
+    >
+      <NumberDisplay value={data} config={config} wrapped={wrapped} />
+    </div>
   );
 }
 
@@ -80,18 +53,13 @@ export function NumberCellEditor({
 }
 
 interface NumberDisplayProps {
-  view: CellValueProps<string | null, NumberConfig>["layout"];
   value: string | null;
   config: NumberConfig;
   wrapped?: boolean;
 }
 
-function NumberDisplay({ view, value, config, wrapped }: NumberDisplayProps) {
+function NumberDisplay({ value, config, wrapped }: NumberDisplayProps) {
   const [displayedValue, cappedValue] = getNumberValue(value ?? "", config);
-
-  if (view === "row-view" && !displayedValue) {
-    return <span className="text-muted">Empty</span>;
-  }
 
   switch (config.showAs) {
     case "bar":

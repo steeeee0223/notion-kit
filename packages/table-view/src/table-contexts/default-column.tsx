@@ -1,7 +1,7 @@
 import type { TableInstance } from "@notion-kit/table-hook";
 
-import { TableCell } from "@/common/table-cell";
-import { TableRowCell } from "@/table-body/table-row-cell";
+import { Cell } from "@/common";
+import { getCellPresentation } from "@/plugins/utils";
 import { TableFooterCell } from "@/table-footer/table-footer-cell";
 import { TableHeaderCell } from "@/table-header/table-header-cell";
 
@@ -16,15 +16,42 @@ export const defaultColumn: NonNullable<
     if (layout !== "table") return null;
     return <TableHeaderCell table={table} {...props} />;
   },
-  cell: ({ table, ...props }) => {
+  cell: ({ table, cell }) => {
     const { layout } = table.getTableGlobalState();
-    switch (layout) {
-      case "list":
-      case "board":
-        return <TableCell view={layout} table={table} {...props} />;
-      default:
-        return <TableRowCell table={table} {...props} />;
+    if (layout !== "table" && layout !== "list" && layout !== "board") {
+      return null;
     }
+    if (!cell.row.original.properties[cell.column.id]) return null;
+
+    const info = cell.column.getInfo();
+    const wrapped = layout === "table" ? info.wrapped : undefined;
+    const presentation = getCellPresentation({
+      pluginId: cell.column.getPlugin().id,
+      surface: layout,
+      wrapped,
+    });
+
+    return (
+      <Cell.Root
+        cell={cell}
+        table={table}
+        surface={layout}
+        presentation={presentation}
+        wrapped={wrapped}
+      >
+        {layout === "table" ? (
+          <Cell.TableFrame>
+            <Cell.Content />
+          </Cell.TableFrame>
+        ) : (
+          <Cell.Tooltip>
+            <Cell.CompactFrame>
+              <Cell.Content />
+            </Cell.CompactFrame>
+          </Cell.Tooltip>
+        )}
+      </Cell.Root>
+    );
   },
   footer: ({ column, table }) => {
     const { layout } = table.getTableGlobalState();
