@@ -24,6 +24,7 @@ function createTextPlugin(
     default: { name: id, icon: null, data: "", config: undefined },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (value) => value,
+    isEmpty: (value) => value.trim() === "",
     toTextValue,
     filtering: {
       operators: [
@@ -33,7 +34,7 @@ function createTextPlugin(
           operand: { kind: "text" },
           matches: (value, _row, _config, operand) =>
             typeof operand === "string" &&
-            (value ?? "").toLowerCase().includes(operand.toLowerCase()),
+            value.toLowerCase().includes(operand.toLowerCase()),
         },
       ],
     },
@@ -50,6 +51,7 @@ function createNumberPlugin(
     default: { name: "Score", icon: null, data: 0, config: undefined },
     fromValue: (value) => Number(value),
     toValue: (value) => value,
+    isEmpty: () => false,
     toTextValue: (value) => String(value),
     filtering: {
       operators: [
@@ -59,7 +61,7 @@ function createNumberPlugin(
           operand: { kind: "number" },
           matches: (value, _row, _config, operand, context) => {
             receivedContexts?.push(context);
-            return typeof operand === "number" && (value ?? 0) > operand;
+            return typeof operand === "number" && value > operand;
           },
         },
       ],
@@ -77,6 +79,7 @@ function createRelativeClockPlugin(
     default: { name: "Score", icon: null, data: 0, config: undefined },
     fromValue: (value) => Number(value),
     toValue: (value) => value,
+    isEmpty: () => false,
     toTextValue: (value) => String(value),
     filtering: {
       operators: [

@@ -69,6 +69,7 @@ const groupingMethodPlugin: CellPlugin<"grouping-method", string, undefined> = {
   },
   fromValue: (value) => value?.toString() ?? "",
   toValue: (value) => value,
+  isEmpty: (value) => value.trim() === "",
   toTextValue: (value) => value,
   sorting: {
     defaultMethod: "numeric",
@@ -145,6 +146,7 @@ const weekContextPlugin: CellPlugin<"week-context", number, undefined> = {
   },
   fromValue: (value) => Number(value),
   toValue: (value) => value,
+  isEmpty: () => false,
   toTextValue: (value) => value.toString(),
   sorting: {
     defaultMethod: "numeric",

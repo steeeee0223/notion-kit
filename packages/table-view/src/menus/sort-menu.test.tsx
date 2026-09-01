@@ -150,6 +150,7 @@ describe("SortMenu", () => {
       fromValue: (value) => String(value ?? ""),
       toValue: (value) => value,
       toTextValue: (value) => value,
+      isEmpty: (value) => value.trim() === "",
       compare: () => 0,
       renderCellValue: ({ data }) => <span>{data}</span>,
     };
@@ -208,6 +209,7 @@ describe("SortMenu", () => {
       fromValue: (value) => String(value ?? ""),
       toValue: (value) => value,
       toTextValue: (value) => value,
+      isEmpty: (value) => value.trim() === "",
       sorting: {
         defaultMethod: "alphabetical",
         methods: [

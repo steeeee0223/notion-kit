@@ -12,6 +12,7 @@ export type CheckboxPluginConfig = PluginFactoryConfig<CheckboxPlugin>;
 export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
   const compareCheckedFirst = (a: unknown, b: unknown) =>
     -compareBooleans(Boolean(a), Boolean(b));
+  const isEmpty = (data: boolean) => data === false;
 
   return {
     id: "checkbox",
@@ -28,6 +29,7 @@ export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
     },
     fromValue: () => false,
     toValue: (data) => data,
+    isEmpty,
     toTextValue: (data) => (data ? "✅" : ""),
     compare: createCompareFn(compareCheckedFirst),
     sorting: {
@@ -48,7 +50,7 @@ export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
       defaultMethod: "value",
       methods: [{ id: "value", name: "Value", function: groupByValue }],
     },
-    counting: checkboxCounting,
+    counting: checkboxCounting(isEmpty),
     filtering: {
       operators: [
         {

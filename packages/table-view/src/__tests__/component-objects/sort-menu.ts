@@ -1,11 +1,12 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
-import { findMenuByItem, MenuSurfaceObject } from "./menu-surface";
+import { MenuSurfaceObject } from "./menu-surface";
 
 export class SortMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new SortMenuObject(user, await findMenuByItem("Add sort"));
+    const menu = await MenuSurfaceObject.findByItem(user, "Add sort");
+    return new SortMenuObject(user, menu.root);
   }
 
   addSortItem() {

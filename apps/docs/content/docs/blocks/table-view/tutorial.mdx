@@ -80,6 +80,7 @@ export const tagPlugin: TagPlugin = {
           .filter(Boolean)
       : [],
   toValue: (data) => data.join(", "),
+  isEmpty: (data) => data.length === 0,
   toTextValue: (data) => data.join(", "),
   compare: createCompareFn<TagPlugin>((a, b) =>
     a.join(", ").localeCompare(b.join(", ")),

@@ -215,13 +215,8 @@ function evaluateValidatedTableFilter(
     );
     if (!plugin || !operator) return false;
     const cell = row.properties[node.propertyId];
-    return operator.matches(
-      cell?.value,
-      row,
-      property.config,
-      node.value,
-      context,
-    );
+    const data: unknown = cell ? cell.value : plugin.default.data;
+    return operator.matches(data, row, property.config, node.value, context);
   };
 
   return evaluate(state);

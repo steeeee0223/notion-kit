@@ -64,8 +64,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
     const value = Number(data);
     return Number.isFinite(value) ? value : null;
   };
-  const isEmptyData = (data: string | null | undefined) =>
-    data === null || data === undefined || data.trim() === "";
+  const isEmpty = (data: string | null) => parseData(data) === null;
   const comparisonOperator = (
     id: string,
     name: string,
@@ -112,6 +111,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
       return res.success ? res.data : null;
     },
     toValue: (data) => (data ? Number(data) : null),
+    isEmpty,
     toTextValue: (data) => data ?? "",
     compare: createCompareFn<NumberPlugin>((a, b) => {
       if (a === null && b === null) return 0;
@@ -150,7 +150,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
           groupByNumberInterval(data, interval),
       })),
     },
-    counting: withNumberCalculations(genericCounting),
+    counting: withNumberCalculations(genericCounting(isEmpty)),
     filtering: {
       operators: [
         comparisonOperator(
@@ -187,13 +187,13 @@ export function number(config: NumberPluginConfig): NumberPlugin {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" },
-          matches: (data) => isEmptyData(data),
+          matches: (data) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" },
-          matches: (data) => !isEmptyData(data) && parseData(data) !== null,
+          matches: (data) => !isEmpty(data),
         },
       ],
     },

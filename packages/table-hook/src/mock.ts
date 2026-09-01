@@ -1,27 +1,18 @@
 import type { TableViewState } from "@/features/menu";
 import type { ColumnInfo, Row } from "@/lib/types";
 import {
-  countAll,
-  countChecked,
-  countEmpty,
-  countNonEmpty,
-  countUnchecked,
-  countUnique,
-  countValues,
   groupByTextValue,
   groupByValue,
-  percentageChecked,
-  percentageEmpty,
-  percentageNonEmpty,
-  percentageUnchecked,
   sortByCheckbox,
   sortByNumber,
   sortByText,
 } from "@/methods";
 import {
+  checkboxCounting,
   createdTime,
   date,
   email,
+  genericCounting,
   lastEditedTime,
   multiSelect,
   phone,
@@ -32,29 +23,8 @@ import {
 const renderCellValue = () => null;
 const pluginConfig = { icon: null, renderCellValue };
 
-const genericCounting = [
-  {
-    group: "Count",
-    functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
-  },
-  {
-    group: "Percentage",
-    functions: [percentageEmpty, percentageNonEmpty],
-  },
-];
-
-const checkboxCounting = [
-  {
-    group: "Count",
-    functions: [countAll, countChecked, countUnchecked],
-  },
-  {
-    group: "Percentage",
-    functions: [percentageChecked, percentageUnchecked],
-  },
-];
-
 export function createMockPlugins() {
+  const isEmptyString = (data: string) => data.trim() === "";
   const titlePlugin: CellPlugin<"title", string, { showIcon: boolean }> = {
     id: "title",
     meta: { name: "Title", desc: "Title", icon: null },
@@ -66,8 +36,9 @@ export function createMockPlugins() {
     },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
+    isEmpty: isEmptyString,
     toTextValue: (data) => data,
-    counting: genericCounting,
+    counting: genericCounting(isEmptyString),
     renderCellValue,
   };
 
@@ -77,16 +48,18 @@ export function createMockPlugins() {
     default: { name: "Text", icon: null, data: "", config: undefined },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
+    isEmpty: isEmptyString,
     toTextValue: (data) => data,
     sorting: { defaultMethod: sortByText.id, methods: [sortByText] },
     grouping: {
       defaultMethod: groupByTextValue.id,
       methods: [groupByTextValue],
     },
-    counting: genericCounting,
+    counting: genericCounting(isEmptyString),
     renderCellValue,
   };
 
+  const isEmptyNumber = (data: number | null) => data === null;
   const numberPlugin: CellPlugin<"number", number | null, undefined> = {
     id: "number",
     meta: { name: "Number", desc: "Number", icon: null },
@@ -96,32 +69,36 @@ export function createMockPlugins() {
       return Number.isFinite(next) ? next : null;
     },
     toValue: (data) => data,
+    isEmpty: isEmptyNumber,
     toTextValue: (data) => data?.toString() ?? "",
     sorting: { defaultMethod: sortByNumber.id, methods: [sortByNumber] },
     grouping: {
       defaultMethod: groupByValue.id,
       methods: [groupByValue],
     },
-    counting: genericCounting,
+    counting: genericCounting(isEmptyNumber),
     renderCellValue,
   };
 
+  const isEmptyCheckbox = (data: boolean) => data === false;
   const checkboxPlugin: CellPlugin<"checkbox", boolean, undefined> = {
     id: "checkbox",
     meta: { name: "Checkbox", desc: "Checkbox", icon: null },
     default: { name: "Checkbox", icon: null, data: false, config: undefined },
     fromValue: (value) => Boolean(value),
     toValue: (data) => data,
+    isEmpty: isEmptyCheckbox,
     toTextValue: (data) => (data ? "true" : ""),
     sorting: { defaultMethod: sortByCheckbox.id, methods: [sortByCheckbox] },
     grouping: {
       defaultMethod: groupByValue.id,
       methods: [groupByValue],
     },
-    counting: checkboxCounting,
+    counting: checkboxCounting(isEmptyCheckbox),
     renderCellValue,
   };
 
+  const isEmptySelect = (data: { name: string } | null) => data === null;
   const selectPlugin: CellPlugin<"select", { name: string } | null, undefined> =
     {
       id: "select",
@@ -130,6 +107,7 @@ export function createMockPlugins() {
       fromValue: (value) =>
         value === null ? null : { name: value.toString() },
       toValue: (data) => data?.name ?? null,
+      isEmpty: isEmptySelect,
       toTextValue: (data) => data?.name ?? "",
       sorting: {
         defaultMethod: sortByText.id,
@@ -163,7 +141,7 @@ export function createMockPlugins() {
           },
         ],
       },
-      counting: genericCounting,
+      counting: genericCounting(isEmptySelect),
       renderCellValue,
     };
 

@@ -18,6 +18,7 @@ function createLinkPlugin<T extends "email" | "phone" | "url">(
   type: T,
   config: PluginFactoryConfig<CellPlugin<T, string, undefined>>,
 ): CellPlugin<T, string, undefined> {
+  const isEmpty = (data: string) => data.trim() === "";
   return {
     id: type,
     meta: { name: "", icon: config.icon, desc: "" },
@@ -29,10 +30,11 @@ function createLinkPlugin<T extends "email" | "phone" | "url">(
     },
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
-    ...textFilteringCapabilities(),
-    counting: genericCounting,
+    ...textFilteringCapabilities(isEmpty),
+    counting: genericCounting(isEmpty),
     fromValue: (value) => (typeof value === "string" ? value : ""),
     toValue: (data) => data,
+    isEmpty,
     toTextValue: (data) => data,
     renderCellValue: config.renderCellValue,
     renderCellEditor: config.renderCellEditor,

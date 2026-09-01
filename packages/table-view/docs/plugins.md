@@ -19,6 +19,9 @@ headless factory. The wrapper supplies the current icon and React callbacks:
 there is no legacy `renderCell` fallback. `defaultColumn.cell` and direct
 row-view and timeline consumers compose `Cell.Root` with a surface frame.
 `Cell.Content` resolves data, configuration, lock state, and mutations.
+It delegates empty-state decisions to `plugin.isEmpty` and copy text directly
+to `plugin.toTextValue`; table-view does not infer either semantic from a
+built-in plugin ID.
 Ordinary registered value callbacks return semantic content; ordinary popover
 editor composition places that content inside the layout-owned trigger, while
 inline editor results use the inline presentation path. `Cell.Tooltip` mounts
@@ -29,6 +32,10 @@ value-only plugin therefore stays readable without accidentally becoming editabl
 The wrapper must not reimplement conversion, sorting, grouping, counting,
 method IDs, or compatibility fallbacks. It may adapt component props and wire
 UI-only callbacks before invoking the headless descriptor.
+
+Every valid select or multi-select option renders its own `TooltipPreset` on
+every cell surface. List and board cells retain the outer property tooltip, so
+an option tooltip may be nested inside that property tooltip.
 
 Bulk edit discovers the same optional `renderCellEditor`; a plugin is eligible
 only when it supplies that capability and does not set `disableBulkEdit`.
@@ -59,6 +66,12 @@ the editor does not receive an arbitrary selected row as its starting value.
 the title implementation. `Cell.Content` invokes them to preserve title quick
 actions and triggers; they are not the registered plugin value/editor callback
 contract.
+
+The title plugin-ID checks in cell composition remain an accepted special case.
+The remaining checkbox direct-toggle, copy-visibility, and presentation
+plugin-ID checks are deferred design debt: a separate design should move those
+UI decisions into cell value rendering. This change does not add renderer props
+or presentation metadata to bridge them.
 
 ## Extension rule
 

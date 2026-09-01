@@ -1,5 +1,3 @@
-import { createContext, use, type ReactNode } from "react";
-
 import { cn } from "@notion-kit/cn";
 import type {
   CellEditorProps,
@@ -22,31 +20,11 @@ interface SelectCellEditorProps
   multi?: boolean;
 }
 
-const SelectOptionTooltipContext = createContext(false);
-
-interface SelectOptionTooltipScopeProps {
-  children: ReactNode;
-  enabled: boolean;
-}
-
-export function SelectOptionTooltipScope({
-  children,
-  enabled,
-}: SelectOptionTooltipScopeProps) {
-  return (
-    <SelectOptionTooltipContext value={enabled}>
-      {children}
-    </SelectOptionTooltipContext>
-  );
-}
-
 export function SelectCellValue({
   config,
   data: options,
   wrapped,
 }: SelectCellValueProps) {
-  const optionTooltipsEnabled = use(SelectOptionTooltipContext);
-
   if (options.length === 0) return null;
   return (
     <div className="flex items-center justify-between">
@@ -62,7 +40,6 @@ export function SelectCellValue({
           return (
             <TooltipPreset
               key={option.id}
-              disabled={!optionTooltipsEnabled}
               description={
                 option.description ? (
                   <>

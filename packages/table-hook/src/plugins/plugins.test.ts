@@ -147,7 +147,6 @@ describe("Text-like filter operators", () => {
       expect(matches(plugin, "starts-with", "Alpha Beta", "ALP")).toBe(true);
       expect(matches(plugin, "ends-with", "Alpha Beta", "BETA")).toBe(true);
       expect(matches(plugin, "is-empty", "")).toBe(true);
-      expect(matches(plugin, "is-empty", undefined)).toBe(true);
       expect(matches(plugin, "is-not-empty", "x")).toBe(true);
       expect(matches(plugin, "equals", "Alpha", 1)).toBe(false);
     },
@@ -860,11 +859,20 @@ describe("Scalar plugin value contracts", () => {
   });
 
   it("ScalarPlugins_ToValueAndText_PreserveCanonicalMeaning", () => {
-    expect(title().toValue("Task", baseRow)).toBe("Task");
-    expect(text().toTextValue("notes", baseRow)).toBe("notes");
-    expect(number().toTextValue(null, baseRow)).toBe("");
-    expect(checkbox().toTextValue(true, baseRow)).toBe("✅");
-    expect(checkbox().toTextValue(false, baseRow)).toBe("");
+    const titlePlugin = title();
+    const textPlugin = text();
+    const numberPlugin = number();
+    const checkboxPlugin = checkbox();
+
+    expect(titlePlugin.toValue("Task", baseRow)).toBe("Task");
+    expect(textPlugin.toTextValue("notes", baseRow)).toBe("notes");
+    expect(textPlugin.isEmpty("   ")).toBe(true);
+    expect(numberPlugin.toTextValue(null, baseRow)).toBe("");
+    expect(numberPlugin.isEmpty("abc")).toBe(true);
+    expect(numberPlugin.isEmpty("0")).toBe(false);
+    expect(checkboxPlugin.toTextValue(true, baseRow)).toBe("✅");
+    expect(checkboxPlugin.toTextValue(false, baseRow)).toBe("");
+    expect(checkboxPlugin.isEmpty(false)).toBe(true);
     expect(email().toValue("a@example.com", baseRow)).toBe("a@example.com");
   });
 });
@@ -890,7 +898,7 @@ describe("Plugin sorting boundaries", () => {
     },
   );
 
-  it("orders checkbox rows in the direction named by its sorting labels", () => {
+  it("keeps unchecked empty rows last in both directions", () => {
     const plugin = checkbox();
     const method = plugin.sorting!.methods[0]!;
     if (!("ascendingLabel" in method)) throw new Error("Expected value method");
@@ -922,7 +930,7 @@ describe("Plugin sorting boundaries", () => {
     act(() => result.current.table.setSorting([{ id: "value", desc: true }]));
     expect(
       result.current.table.getSortedRowModel().rows.map(({ id }) => id),
-    ).toEqual(["unchecked", "checked"]);
+    ).toEqual(["checked", "unchecked"]);
   });
 
   it("keeps empty dates last in ascending and descending table execution", () => {

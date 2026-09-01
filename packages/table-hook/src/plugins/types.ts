@@ -93,7 +93,7 @@ export interface FilterOperatorDescriptor<Data = unknown, Config = unknown> {
   name: string;
   operand: FilterOperandMetadata;
   matches: (
-    data: Data | undefined,
+    data: Data,
     row: Row,
     config: Config,
     operand: FilterValue | undefined,
@@ -176,6 +176,8 @@ export interface CellPlugin<
    * If not provided, `toValue` will be used instead.
    */
   toGroupValue?: (data: Data, row: Row) => ComparableValue;
+  /** Return whether cell data represents an empty value. */
+  isEmpty: (data: Data) => boolean;
   toTextValue: (data: Data, row: Row) => string;
   sorting?: {
     defaultMethod?: string;

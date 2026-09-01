@@ -73,11 +73,8 @@ function createTextLikePopoverPlugin(
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     toTextValue: (data) => data,
-    renderCellValue: ({ data, onClick }) => (
-      <button type="button" onClick={onClick}>
-        {data}
-      </button>
-    ),
+    isEmpty: (data) => data.trim() === "",
+    renderCellValue: ({ data }) => data,
     renderCellEditor: ({ onChange }) => ({
       presentation: "popover",
       content: (
@@ -363,11 +360,8 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     toTextValue: (data) => data,
-    renderCellValue: ({ data, onClick }) => (
-      <button type="button" onClick={onClick}>
-        {data}
-      </button>
-    ),
+    isEmpty: (data) => data.trim() === "",
+    renderCellValue: ({ data }) => data,
     renderCellEditor: ({ onConfigChange }) => ({
       presentation: "popover",
       content: (

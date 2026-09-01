@@ -10,8 +10,9 @@ the executable contract audit is indexed in
 Plugin factories in `@notion-kit/table-hook/plugins` own data semantics and
 capability descriptors. `@notion-kit/table-view` supplies only icons and React
 renderers through configured wrappers. If a change affects conversion,
-comparison, grouping, counting, sorting, method resolution, or persisted method
-IDs, update this document and the relevant [headless audit page](./testing/README.md).
+empty-value classification, comparison, grouping, counting, sorting, method
+resolution, or persisted method IDs, update this document and the relevant
+[headless audit page](./testing/README.md).
 
 ### Calculating, sorting and grouping
 
@@ -57,6 +58,7 @@ This branch includes the complete path for each matrix option:
 - `sorting.methods` and `sorting.defaultMethod`
 - `grouping.methods` and `grouping.defaultMethod`
 - `counting`, grouped for menu presentation
+- required `isEmpty`, which owns the plugin's empty-data semantics
 
 It also provides resolver fallbacks:
 
@@ -83,9 +85,16 @@ const tableViewTitle = createTableViewTitle();
 
 const customPlugin: CellPlugin<"custom", string, undefined> = {
   // Developers may still implement the structural contract directly.
+  isEmpty: (data) => data.trim() === "",
+  toTextValue: (data) => data,
   // ...
 };
 ```
+
+`isEmpty` is the single semantic boundary for empty UI states, empty filters
+and counts, and empty sorting/grouping handling. Missing cells are normalized
+to `plugin.default.data` before this callback runs. `toTextValue` converts data
+for copy and other text consumers; it is not an empty-value fallback.
 
 ### Cell value and editing capabilities
 

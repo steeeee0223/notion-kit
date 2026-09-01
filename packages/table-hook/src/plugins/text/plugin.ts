@@ -11,6 +11,7 @@ export type TextPlugin = CellPlugin<"text", string, undefined>;
 export type TextPluginConfig = PluginFactoryConfig<TextPlugin>;
 
 export function text(config: TextPluginConfig): TextPlugin {
+  const isEmpty = (data: string) => data.trim() === "";
   return {
     id: "text",
     meta: {
@@ -26,11 +27,12 @@ export function text(config: TextPluginConfig): TextPlugin {
     },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
+    isEmpty,
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
-    ...textFilteringCapabilities(),
-    counting: genericCounting,
+    ...textFilteringCapabilities(isEmpty),
+    counting: genericCounting(isEmpty),
     renderCellValue: config.renderCellValue,
     renderCellEditor: config.renderCellEditor,
     renderConfigMenu: config.renderConfigMenu,

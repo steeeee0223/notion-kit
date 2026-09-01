@@ -10,7 +10,6 @@ import { mockData, mockProperties, renderTableHook } from "@/__tests__/mock";
 import { CountMethod } from "@/features";
 import type { Row } from "@/lib/types";
 import { getCalculationRows } from "@/lib/utils";
-import { resolveCountingMethod } from "@/methods";
 
 describe("useTableView - Counting Feature", () => {
   describe("Column Counting State", () => {
@@ -385,11 +384,6 @@ describe("useTableView - Counting Feature", () => {
       ).toBe(scopedRows);
       expect(getPreGroupedRowModel).toHaveBeenCalledOnce();
       expect(getCoreRowModel).not.toHaveBeenCalled();
-      const aggregationFn = resolveCountingMethod(
-        table.getColumnPlugin("col1"),
-        CountMethod.ALL,
-      )?.aggregationFn;
-      expect(aggregationFn).toBe("countAll");
     });
   });
 });

@@ -37,6 +37,7 @@ export interface TitlePluginConfig
 
 export function title(config: TitlePluginConfig): TitlePlugin {
   const renderCellEditor = config.renderCellEditor;
+  const isEmpty = (data: string) => data.trim() === "";
   return {
     id: "title",
     disableBulkEdit: true,
@@ -49,11 +50,12 @@ export function title(config: TitlePluginConfig): TitlePlugin {
     },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
+    isEmpty,
     toTextValue: (data) => data,
     compare: createCompareFn(compareStrings),
     ...textMethodCapabilities<string>(),
-    ...textFilteringCapabilities<TitleConfig>(),
-    counting: genericCounting,
+    ...textFilteringCapabilities<TitleConfig>(isEmpty),
+    counting: genericCounting(isEmpty),
     renderCellValue: ({ row, config: pluginConfig, ...props }) =>
       config.renderCellValue({
         icon: pluginConfig.showIcon ? row.icon : undefined,

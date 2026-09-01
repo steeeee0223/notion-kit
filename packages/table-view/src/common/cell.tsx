@@ -22,11 +22,8 @@ import {
   type Row,
 } from "@notion-kit/table-hook";
 import {
-  toDateString,
   type CellEditorProps,
   type CellValueProps,
-  type DateConfig,
-  type DateData,
   type TitleConfig,
 } from "@notion-kit/table-hook/plugins";
 import { IconBlock } from "@notion-kit/ui/icon-block";
@@ -41,7 +38,6 @@ import {
 
 import { CellTrigger, CellTriggerScope } from "@/common/cell-trigger";
 import { CopyButton } from "@/common/copy-button";
-import { SelectOptionTooltipScope } from "@/plugins/select/select-cell";
 import { TitleCompactSlot, TitleTableSlot } from "@/plugins/title/title-cell";
 import type { CellPresentation, CellSurface } from "@/plugins/utils";
 
@@ -239,18 +235,15 @@ function Content() {
   });
 
   if (result?.presentation === "inline") return result.content;
-  if (isCompactEmpty(surface, plugin.id, cellData)) return null;
+  const isEmpty = plugin.isEmpty(cellData);
+  if ((surface === "list" || surface === "board") && isEmpty) return null;
 
-  const isEmpty = surface === "row-view" && isRowViewEmpty(plugin.id, cellData);
-  const content = isEmpty ? (
-    <RowViewEmptyContent presentation={presentation} wrapped={wrapped} />
-  ) : isSelectPlugin(plugin.id) ? (
-    <SelectOptionTooltipScope enabled={surface === "table"}>
-      {value}
-    </SelectOptionTooltipScope>
-  ) : (
-    value
-  );
+  const content =
+    surface === "row-view" && isEmpty ? (
+      <RowViewEmptyContent presentation={presentation} wrapped={wrapped} />
+    ) : (
+      value
+    );
   const showCopy = shouldRenderCopy(surface, plugin.id);
   const trigger = (
     <CellTrigger
@@ -265,13 +258,7 @@ function Content() {
       {showCopy && (
         <CopyButton
           className={presentation.copyHoverClassName}
-          value={getCopyValue({
-            cellConfig,
-            cellData,
-            pluginId: plugin.id,
-            row: row.original,
-            toTextValue: plugin.toTextValue,
-          })}
+          value={plugin.toTextValue(cellData, row.original)}
         />
       )}
       {content}
@@ -413,51 +400,6 @@ function RowViewEmptyContent({
   }
 }
 
-function isCompactEmpty(surface: CellSurface, pluginId: string, data: unknown) {
-  if (surface !== "list" && surface !== "board") return false;
-
-  switch (pluginId) {
-    case "text":
-    case "email":
-    case "phone":
-    case "url":
-      return !data;
-    case "number":
-    case "select":
-      return data === null;
-    case "multi-select":
-      return Array.isArray(data) && data.length === 0;
-    case "date":
-      return (data as DateData).start === undefined;
-    default:
-      return false;
-  }
-}
-
-function isRowViewEmpty(pluginId: string, data: unknown) {
-  switch (pluginId) {
-    case "text":
-    case "email":
-    case "phone":
-    case "url":
-      return !data;
-    case "number":
-      return data === null || !data || isNaN(Number(data));
-    case "select":
-      return data === null;
-    case "multi-select":
-      return Array.isArray(data) && data.length === 0;
-    case "date":
-      return (data as DateData).start === undefined;
-    default:
-      return false;
-  }
-}
-
-function isSelectPlugin(pluginId: string) {
-  return pluginId === "select" || pluginId === "multi-select";
-}
-
 function shouldRenderCopy(surface: CellSurface, pluginId: string) {
   switch (pluginId) {
     case "text":
@@ -472,37 +414,6 @@ function shouldRenderCopy(surface: CellSurface, pluginId: string) {
       return surface === "table";
     default:
       return false;
-  }
-}
-
-interface GetCopyValueOptions {
-  cellConfig: unknown;
-  cellData: unknown;
-  pluginId: string;
-  row: Row;
-  toTextValue: (data: unknown, row: Row) => string;
-}
-
-function getCopyValue({
-  cellConfig,
-  cellData,
-  pluginId,
-  row,
-  toTextValue,
-}: GetCopyValueOptions) {
-  const config = cellConfig as DateConfig;
-  switch (pluginId) {
-    case "date":
-      return toDateString(cellData as DateData, config);
-    case "created-time":
-      return toDateString({ start: row.createdAt, includeTime: true }, config);
-    case "last-edited-time":
-      return toDateString(
-        { start: row.lastEditedAt, includeTime: true },
-        config,
-      );
-    default:
-      return toTextValue(cellData, row);
   }
 }
 
