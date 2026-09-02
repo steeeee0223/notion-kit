@@ -1,5 +1,6 @@
-import type { CellValueProps } from "@notion-kit/table-hook/plugins";
 import { Checkbox } from "@notion-kit/ui/primitives";
+
+import type { CellValueProps } from "@/plugins/renderers";
 
 export function CheckboxCellValue({ data }: CellValueProps<boolean>) {
   return (

@@ -1,10 +1,8 @@
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import {
-  toDateString,
-  type CellValueProps,
-  type DatePlugin,
-} from "@notion-kit/table-hook/plugins";
+import { toDateString, type DatePlugin } from "@notion-kit/table-hook/plugins";
+
+import type { CellValueProps } from "@/plugins/renderers";
 
 export function DatePickerCellValue({
   wrapped,

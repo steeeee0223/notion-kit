@@ -4,13 +4,13 @@ import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
 import {
   formatNumber,
-  type CellValueProps,
   type NumberConfig,
 } from "@notion-kit/table-hook/plugins";
 import { MeterBar, MeterRing, TooltipPreset } from "@notion-kit/ui/primitives";
 import { COLOR } from "@notion-kit/utils";
 
 import { TextInputPopoverContent } from "@/common";
+import type { CellValueProps } from "@/plugins/renderers";
 
 export function NumberCellValue({
   data,

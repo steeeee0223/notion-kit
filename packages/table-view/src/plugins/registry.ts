@@ -1,10 +1,14 @@
 import type React from "react";
 
-import type { CellInstance, ColumnInstance } from "@notion-kit/table-hook";
+import type {
+  CellInstance,
+  ColumnInstance,
+  TableInstance,
+} from "@notion-kit/table-hook";
 import type {
   CellPlugin,
+  ComparableValue,
   InferKey,
-  GroupingValueProps as LegacyGroupingValueProps,
 } from "@notion-kit/table-hook/plugins";
 
 export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
@@ -21,7 +25,11 @@ export interface ConfigMenuProps {
   column: ColumnInstance;
 }
 
-export type GroupingValueProps = LegacyGroupingValueProps;
+export interface GroupingValueProps {
+  className?: string;
+  value: ComparableValue;
+  table: TableInstance;
+}
 
 export interface TableUiPlugin<TPlugin extends CellPlugin = CellPlugin> {
   id: InferKey<TPlugin>;

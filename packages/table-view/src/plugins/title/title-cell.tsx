@@ -22,14 +22,6 @@ import { TextInputPopover } from "@/common/text-input-popover";
 import type { CellRendererProps } from "@/plugins/renderers";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TitleCellValueProps extends CellRendererProps<string, TitleConfig> {
-  icon?: IconData;
-}
-
-export function TitleCellValue({ data }: TitleCellValueProps) {
-  return data;
-}
-
 export interface TitleCellSlotProps {
   value: ReactNode;
   props: CellRendererProps<string, TitleConfig>;

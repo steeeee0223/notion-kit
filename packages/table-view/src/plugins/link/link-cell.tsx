@@ -1,10 +1,7 @@
-import type { OnChangeFn } from "@tanstack/react-table";
-
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type { CellValueProps } from "@notion-kit/table-hook/plugins";
 
-import { TextInputPopoverContent } from "@/common";
+import type { CellValueProps } from "@/plugins/renderers";
 
 interface LinkCellValueProps extends CellValueProps<string> {
   type: "email" | "phone" | "url";
@@ -23,29 +20,6 @@ export function LinkCellValue({ type, data, wrapped }: LinkCellValueProps) {
         {data}
       </a>
     </div>
-  );
-}
-
-interface LinkCellEditorProps {
-  data: string;
-  onChange: OnChangeFn<string>;
-  onCancel?: () => void;
-  commitOnUnchanged?: boolean;
-}
-
-export function LinkCellEditor({
-  data,
-  onChange,
-  onCancel,
-  commitOnUnchanged,
-}: LinkCellEditorProps) {
-  return (
-    <TextInputPopoverContent
-      value={data}
-      onUpdate={onChange}
-      onCancel={onCancel}
-      commitOnUnchanged={commitOnUnchanged}
-    />
   );
 }
 

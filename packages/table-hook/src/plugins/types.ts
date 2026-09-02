@@ -8,46 +8,6 @@ import type {
 export type CompareFn<T> = (a: T, b: T) => number;
 export type ComparableValue = string | number | boolean | null;
 
-/** @internal Transitional data passed from table-view cell hosts. */
-export interface CellValueProps<Data, Config = undefined> {
-  propId: string;
-  row: Row;
-  data: Data;
-  config: Config;
-  wrapped?: boolean;
-  disabled?: boolean;
-}
-
-/** @internal Transitional data passed from table-view cell hosts. */
-export interface CellEditorProps<Data, Config = undefined> {
-  propId: string;
-  data: Data;
-  config: Config;
-  wrapped?: boolean;
-  disabled?: boolean;
-  onChange: OnChangeFn<Data>;
-  onCancel?: () => void;
-  onConfigChange?: OnChangeFn<Config>;
-  scope:
-    | { kind: "cell"; row: Row }
-    | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
-}
-
-/** @internal Transitional data passed to table-view configuration menus. */
-export interface ConfigMenuProps<Config = unknown> {
-  propId: string;
-  config: Config;
-  onChange: OnChangeFn<Config>;
-  onOpenChange?: (open: boolean) => void;
-}
-
-/** @internal Transitional data passed to table-view grouping labels. */
-export interface GroupingValueProps {
-  className?: string;
-  value: ComparableValue;
-  table: _TableInstance;
-}
-
 export type FilterValue =
   | null
   | boolean
@@ -164,6 +124,3 @@ export type InferPlugin<TPlugins extends CellPlugin[]> = CellPlugin<
   InferData<TPlugins[number]>,
   InferConfig<TPlugins[number]>
 >;
-import type { OnChangeFn } from "@tanstack/react-table";
-
-import type { _TableInstance } from "@/features/types";

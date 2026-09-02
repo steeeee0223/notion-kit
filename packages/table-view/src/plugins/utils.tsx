@@ -1,8 +1,7 @@
 import { cva } from "@notion-kit/cn";
-import {
-  getDefaultGroupingValue,
-  type GroupingValueProps,
-} from "@notion-kit/table-hook/plugins";
+import { getDefaultGroupingValue } from "@notion-kit/table-hook/plugins";
+
+import type { GroupingValueProps } from "./registry";
 
 export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
 

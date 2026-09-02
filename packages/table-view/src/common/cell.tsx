@@ -106,11 +106,8 @@ function Tooltip({ children }: { children: ReactElement }) {
 
   return (
     <TooltipPreset
-      // Both conditions independently disable the tooltip; `??` is not equivalent.
-
       disabled={
-        table.getTableGlobalState().locked === true ||
-        uiPlugin.disablePropertyTooltip
+        table.getTableGlobalState().locked || uiPlugin.disablePropertyTooltip
       }
       side={surface === "board" ? "left" : "top"}
       description={
@@ -134,9 +131,10 @@ function Content() {
   const { plugins } = useTableViewCtx();
   const { column, row } = cell;
   const data = row.original.properties[column.id];
-  const plugin = column.getPlugin();
-  const uiPlugin = plugins.getUiPlugin(plugin.id);
   if (!data) return null;
+
+  const plugin = cell.getPlugin();
+  const uiPlugin = plugins.getUiPlugin(plugin.id);
   return uiPlugin.renderCell({ cell });
 }
 

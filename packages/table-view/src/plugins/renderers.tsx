@@ -33,6 +33,16 @@ export interface CellRendererProps<Data, Config = undefined> {
   onConfigChange?: OnChangeFn<Config>;
 }
 
+export type CellValueProps<Data, Config = undefined> = Pick<
+  CellRendererProps<Data, Config>,
+  "config" | "data" | "disabled" | "propId" | "row" | "wrapped"
+>;
+
+export type CellEditorProps<Data, Config = undefined> = Pick<
+  CellRendererProps<Data, Config>,
+  "config" | "data" | "onChange" | "onConfigChange"
+>;
+
 export interface BulkEditorRendererProps<Data, Config = undefined> {
   propId: string;
   data: Data;
@@ -175,6 +185,6 @@ function ResolvedConfigMenuRenderer<TPlugin extends CellPlugin>({
   return renderer({
     propId: column.id,
     config: info.config,
-    onChange: column.updateConfig,
+    onChange: (updater) => column.updateConfig(updater),
   });
 }

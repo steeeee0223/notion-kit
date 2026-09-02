@@ -1,6 +1,5 @@
 import {
   calendarDateToTs,
-  type CellEditorProps,
   type DateConfig,
   type DateData,
 } from "@notion-kit/table-hook/plugins";
@@ -13,6 +12,8 @@ import {
   Separator,
 } from "@notion-kit/ui/primitives";
 import { TimezoneMenu } from "@notion-kit/ui/timezone-menu";
+
+import type { CellEditorProps } from "@/plugins/renderers";
 
 import { DateFormatMenu, TimeFormatMenu } from "../common";
 import { DateRangeInput } from "./date-range-input";

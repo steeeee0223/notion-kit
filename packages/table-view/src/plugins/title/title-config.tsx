@@ -1,10 +1,7 @@
 import { useId } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import type {
-  ConfigMenuProps,
-  TitleConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { TitleConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuItem,
   Label,
@@ -12,10 +9,12 @@ import {
   Switch,
 } from "@notion-kit/ui/primitives";
 
+import type { ConfigMenuRendererProps } from "@/plugins/renderers";
+
 export function TitleConfig({
   config,
   onChange,
-}: ConfigMenuProps<TitleConfig>) {
+}: ConfigMenuRendererProps<TitleConfig>) {
   const id = useId();
 
   return (

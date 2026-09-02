@@ -4,7 +4,7 @@ import {
   type UrlPlugin,
 } from "@notion-kit/table-hook/plugins";
 
-import { CellRenderer, DefaultIcon } from "@/common";
+import { CellRenderer, DefaultIcon, TextInputPopoverContent } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
 import type { TableUiPlugin } from "../registry";
@@ -20,7 +20,7 @@ import {
   getCompactWidthClass,
   getCopyClasses,
 } from "../utils";
-import { LinkCellEditor, LinkCellValue } from "./link-cell";
+import { LinkCellValue } from "./link-cell";
 
 export function email(): TableUiPlugin<EmailPlugin> {
   const renderCell = (props: CellRendererProps<string>) =>
@@ -83,7 +83,11 @@ function LinkBulkEditor(props: BulkEditorRendererProps<string>) {
   return (
     <BulkEditorPopover {...props} initialData={props.data}>
       {(data, onChange) => (
-        <LinkCellEditor data={data} onChange={onChange} commitOnUnchanged />
+        <TextInputPopoverContent
+          value={data}
+          onUpdate={onChange}
+          commitOnUnchanged
+        />
       )}
     </BulkEditorPopover>
   );
@@ -120,9 +124,9 @@ function renderLinkCell(
           "max-h-[773px] min-h-[38px] w-60 overflow-visible backdrop-filter-none",
       }}
       renderEditor={(close) => (
-        <LinkCellEditor
-          data={props.data}
-          onChange={(updater) => {
+        <TextInputPopoverContent
+          value={props.data}
+          onUpdate={(updater) => {
             props.onChange(updater);
             close();
           }}

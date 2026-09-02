@@ -1,13 +1,11 @@
 import type { OnChangeFn } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import type {
-  CellValueProps,
-  SelectConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "@/common/option-tag";
+import type { CellValueProps } from "@/plugins/renderers";
 
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";

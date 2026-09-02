@@ -26,6 +26,7 @@ export function BulkEditorPopover<Data>({
   label,
   onChange,
 }: BulkEditorPopoverProps<Data>) {
+  // An internal draft state
   const [data, setData] = useState(initialData);
   const update: OnChangeFn<Data> = (updater) => {
     const next = functionalUpdate(updater, data);

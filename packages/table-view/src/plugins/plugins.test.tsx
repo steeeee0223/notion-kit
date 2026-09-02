@@ -1,10 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type {
-  CellPlugin,
-  GroupingValueProps,
-} from "@notion-kit/table-hook/plugins";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { createTestUiPlugin, extendDefaultPlugins } from "@/__tests__/mock";
 
@@ -14,6 +11,7 @@ import {
   DEFAULT_UI_PLUGINS,
   DefaultGroupingValue,
 } from ".";
+import type { GroupingValueProps } from "./registry";
 
 describe("table-view plugin wrappers", () => {
   it("preserves the configured default plugin order", () => {
