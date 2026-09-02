@@ -9,7 +9,7 @@ description: A composable, editable data table with multiple layouts.
 
 - Controlled or uncontrolled resources for rows, properties, and view state
 - Create, edit, duplicate, reorder, hide, and resize properties and rows
-- Sort, group, calculate, and bulk-edit selected rows
+- Search rows, build nested AND/OR filters, sort, group, calculate, and bulk-edit selected rows
 - Table, List, Board, and Timeline layouts
 - Open rows in a center dialog, side pane, or full page
 - Built-in plugins for title, text, number, checkbox, select, multi-select, links, and dates
@@ -126,3 +126,4 @@ bulk editing.
 | `openedRowId`   | The currently opened row, or `null`.                                                                                                |
 | `timeline`      | Optional Timeline configuration containing `range` and `datePropertyId`.                                                            |
 | `pluginMethods` | Persisted sorting, grouping, and group-sort choices for plugins.                                                                    |
+| `filters`       | Persisted advanced filter tree (`TableFilterState`); use `null` to clear all filters.                                               |

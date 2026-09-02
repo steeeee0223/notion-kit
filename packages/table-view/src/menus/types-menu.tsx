@@ -18,6 +18,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
+import type { TableUiPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TypesMenuProps {
@@ -101,7 +102,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
       )}
       <table.Subscribe selector={(state) => state.cellPlugins}>
         {(plugins) => (
-          <Autocomplete
+          <Autocomplete<TableUiPlugin>
             items={Object.values(plugins).map((plugin) =>
               registry.getUiPlugin(plugin.id),
             )}
@@ -125,7 +126,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
                 <AutocompleteGroup>
                   <AutocompleteLabel title="Type" />
                   <AutocompleteCollection>
-                    {(plugin) => (
+                    {(plugin: TableUiPlugin) => (
                       <TooltipPreset
                         key={plugin.id}
                         side="left"

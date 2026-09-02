@@ -15,10 +15,7 @@ import {
 import type { Row } from "@/lib/types";
 import type { CountingMethod, CountingMethodGroup } from "@/methods";
 
-import type {
-  ComparableValue,
-  FilterEvaluationContext,
-} from "../types";
+import type { ComparableValue, FilterEvaluationContext } from "../types";
 import { createCompareFn, genericCounting } from "../utils";
 import type {
   CreatedTimePlugin,
@@ -396,7 +393,6 @@ export function withDateCalculations<Data>(
 
 export function date(): DatePlugin {
   const id = "date";
-  const name = "Date";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isEmpty = (data: DateData) => data.start === undefined;
   return {
@@ -428,7 +424,6 @@ export function date(): DatePlugin {
 
 export function createdTime(): CreatedTimePlugin {
   const id = "created-time";
-  const name = "Created time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isEmpty = () => false;
   return {
@@ -458,7 +453,6 @@ export function createdTime(): CreatedTimePlugin {
 
 export function lastEditedTime(): LastEditedTimePlugin {
   const id = "last-edited-time";
-  const name = "Last edited time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isEmpty = () => false;
   return {

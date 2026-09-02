@@ -25,10 +25,10 @@ import { defaultColumn } from "./default-column";
 import { MenuCoordinatorProvider } from "./menu-coordinator-provider";
 import { TableViewContent } from "./table-view-content";
 
-type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = {
+interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: ReturnType<typeof useTableView<TPlugins>>["table"];
   plugins: TablePluginRegistry<TPlugins>;
-};
+}
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
 

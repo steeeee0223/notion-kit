@@ -5,10 +5,7 @@ import { getRandomColor } from "@notion-kit/utils";
 import { compareEmptyLastStrings, getFirstOption, groupByValue } from "@/fns";
 import type { Cell, ColumnInfo, Row } from "@/lib/types";
 
-import type {
-  CellPlugin,
-  ComparableValue,
-} from "../types";
+import type { CellPlugin, ComparableValue } from "../types";
 import { compareStrings, createCompareFn, genericCounting } from "../utils";
 import type { MultiSelectPlugin, SelectConfig, SelectPlugin } from "./types";
 

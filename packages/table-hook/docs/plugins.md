@@ -8,8 +8,8 @@ the executable contract audit is indexed in
 ## Ownership
 
 Plugin factories in `@notion-kit/table-hook/plugins` own data semantics and
-capability descriptors. `@notion-kit/table-view` supplies only icons and React
-renderers through configured wrappers. If a change affects conversion,
+capability descriptors. `@notion-kit/table-view` supplies matching UI adapters
+with icons and React renderers. If a change affects conversion,
 empty-value classification, comparison, grouping, counting, sorting, method
 resolution, or persisted method IDs, update this document and the relevant
 [headless audit page](./testing/README.md).
@@ -71,26 +71,26 @@ plugins at its public boundary. A custom property therefore has one data
 plugin and one UI adapter with the same ID:
 
 ```tsx
-import { createTitle } from "@notion-kit/table-hook/plugins";
+import {
+  title as createTitle,
+  type CellPlugin,
+} from "@notion-kit/table-hook/plugins";
 import type { TableUiPlugin } from "@notion-kit/table-view";
 
-const customTitle = createTitle();
+const customTitle: CellPlugin = createTitle();
 const customTitleUi: TableUiPlugin<typeof customTitle> = {
-  id: "title",
+  id: customTitle.id,
   meta: { name: "Title", desc: "", icon: <CustomTitleIcon /> },
   default: { name: "Name", icon: <CustomTitleIcon /> },
   renderCell: ({ cell }) => <CustomTitleValue cell={cell} />,
   renderBulkEditor: ({ column }) => <CustomTitleEditor column={column} />,
   renderGroupingValue: () => null,
 };
-
-const customPlugin: CellPlugin<"custom", string, undefined> = {
-  // Developers may still implement the structural contract directly.
-  isEmpty: (data) => data.trim() === "",
-  toTextValue: (data) => data,
-  // ...
-};
 ```
+
+The data plugin and UI adapter are registered as one pair; their IDs must
+match. Custom data plugins may implement the `CellPlugin` contract directly,
+but must still be paired with a `TableUiPlugin`.
 
 `isEmpty` is the single semantic boundary for empty UI states, empty filters
 and counts, and empty sorting/grouping handling. Missing cells are normalized

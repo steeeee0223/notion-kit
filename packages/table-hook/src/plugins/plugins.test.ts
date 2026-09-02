@@ -473,14 +473,12 @@ describe("data plugin factories", () => {
   it.each([title(), text(), number(), checkbox(), select(), multiSelect()])(
     "TestDataPluginFactory_BuiltInPlugin_ExposesNoUiContractFor$Id",
     (plugin) => {
-      expect(plugin).toMatchObject({
-        id: expect.any(String),
-        default: expect.any(Object),
-        fromValue: expect.any(Function),
-        toValue: expect.any(Function),
-        toTextValue: expect.any(Function),
-        isEmpty: expect.any(Function),
-      });
+      expect(plugin.id).toBeTypeOf("string");
+      expect(plugin.default).toBeTypeOf("object");
+      expect(plugin.fromValue).toBeTypeOf("function");
+      expect(plugin.toValue).toBeTypeOf("function");
+      expect(plugin.toTextValue).toBeTypeOf("function");
+      expect(plugin.isEmpty).toBeTypeOf("function");
       expect(plugin).not.toHaveProperty("meta");
       expect(plugin).not.toHaveProperty("renderCellValue");
       expect(plugin).not.toHaveProperty("renderCellEditor");

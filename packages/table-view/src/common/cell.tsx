@@ -107,7 +107,8 @@ function Tooltip({ children }: { children: ReactElement }) {
   return (
     <TooltipPreset
       disabled={
-        table.getTableGlobalState().locked || uiPlugin.disablePropertyTooltip
+        table.getTableGlobalState().locked === true ||
+        uiPlugin.disablePropertyTooltip === true
       }
       side={surface === "board" ? "left" : "top"}
       description={

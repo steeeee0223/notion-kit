@@ -10,15 +10,18 @@ ID.
 
 ## Data plugin definition
 
-| Field                                          | Description                                                    |
-| ---------------------------------------------- | -------------------------------------------------------------- |
-| `id`                                           | Unique property type identifier.                               |
-| `default`                                      | Default cell data and property configuration.                  |
-| `fromValue`                                    | Converts a comparable value into cell data.                    |
-| `toValue`                                      | Converts cell data for sorting and grouping.                   |
-| `isEmpty`                                      | Defines empty data for filters, counts, sorting, and grouping. |
-| `toTextValue`                                  | Converts cell data to copyable text.                           |
-| `sorting`, `grouping`, `counting`, `filtering` | Optional pure data capabilities discovered by table menus.     |
+| Field                                          | Description                                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `id`                                           | Unique property type identifier.                                                                 |
+| `default`                                      | Default cell data and property configuration.                                                    |
+| `fromValue`                                    | Converts a comparable value into cell data.                                                      |
+| `toValue`                                      | Converts cell data for sorting and grouping.                                                     |
+| `toGroupValue`                                 | Optionally converts cell data to a grouping value; falls back to `toValue`.                      |
+| `isEmpty`                                      | Defines empty data for filters, counts, sorting, and grouping.                                   |
+| `toTextValue`                                  | Converts cell data to copyable text.                                                             |
+| `sorting`, `grouping`, `counting`, `filtering` | Optional pure data capabilities discovered by table menus.                                       |
+| `compare`                                      | Legacy row comparator used as a sorting fallback when no registered sorting method resolves.     |
+| `transferConfig`                               | Optionally derives configuration when a property changes to this type, using its existing rows.   |
 
 Data plugins do not render React, carry icons, or decide cell presentation.
 

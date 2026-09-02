@@ -1,6 +1,4 @@
-import type {
-  CellPlugin,
-} from "@/plugins";
+import type { CellPlugin } from "@/plugins";
 import {
   compareStrings,
   createCompareFn,

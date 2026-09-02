@@ -2,11 +2,7 @@ export { checkbox } from "./checkbox";
 export type { CheckboxPlugin } from "./checkbox";
 export * from "./date";
 export { email, phone, url } from "./link";
-export type {
-  EmailPlugin,
-  PhonePlugin,
-  UrlPlugin,
-} from "./link";
+export type { EmailPlugin, PhonePlugin, UrlPlugin } from "./link";
 export * from "./number";
 export * from "./select";
 export { text } from "./text";
