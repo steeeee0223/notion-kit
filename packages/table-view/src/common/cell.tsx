@@ -70,6 +70,8 @@ function TableFrame({ children }: { children: ReactNode }) {
   const { column, row } = cell;
   const width = column.getWidth();
 
+  console.log("TableFrame", cell.getIsFocused());
+
   return (
     <div
       id="notion-table-view-cell"
@@ -99,6 +101,8 @@ function TableFrame({ children }: { children: ReactNode }) {
       <div className="flex h-full overflow-x-clip" style={{ width }}>
         {children}
       </div>
+      {/* Cell focused */}
+      <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" />
     </div>
   );
 }
@@ -423,5 +427,4 @@ export const Cell = {
   CompactFrame,
   Tooltip,
   Content,
-  Trigger: CellTrigger,
 };
