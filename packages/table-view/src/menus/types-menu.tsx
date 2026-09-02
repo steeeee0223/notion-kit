@@ -45,16 +45,26 @@ interface TypesMenuProps {
 }
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
-  const { table } = useTableViewCtx();
+  const { table, plugins: registry } = useTableViewCtx();
   const propType = propId ? table.getColumnInfo(propId).type : null;
   const [search, setSearch] = useState("");
 
-  const select = (type: PluginType<CellPlugin[]>, name: string) => {
+  const select = (
+    type: PluginType<CellPlugin[]>,
+    name: string,
+    width?: number,
+  ) => {
     let colId = propId;
     if (colId === undefined) {
       colId = v4();
       const uniqueName = table.generateUniqueColumnName(name);
-      table.addColumnInfo({ id: colId, type, name: uniqueName, at });
+      table.addColumnInfo({
+        id: colId,
+        type,
+        name: uniqueName,
+        width: width?.toString(),
+        at,
+      });
     } else {
       table.setColumnType(colId, type);
     }
@@ -92,7 +102,9 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
       <table.Subscribe selector={(state) => state.cellPlugins}>
         {(plugins) => (
           <Autocomplete
-            items={Object.values(plugins)}
+            items={Object.values(plugins).map((plugin) =>
+              registry.getUiPlugin(plugin.id),
+            )}
             itemToStringValue={(plugin) => plugin.default.name}
             value={search}
             onValueChange={setSearch}
@@ -113,7 +125,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
                 <AutocompleteGroup>
                   <AutocompleteLabel title="Type" />
                   <AutocompleteCollection>
-                    {(plugin: CellPlugin) => (
+                    {(plugin) => (
                       <TooltipPreset
                         key={plugin.id}
                         side="left"
@@ -126,7 +138,13 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
                           disabled={plugin.id === "title"}
                           icon={plugin.meta.icon}
                           label={plugin.meta.name}
-                          onClick={() => select(plugin.id, plugin.meta.name)}
+                          onClick={() =>
+                            select(
+                              plugin.id,
+                              plugin.default.name,
+                              plugin.default.width,
+                            )
+                          }
                         >
                           {propType === plugin.id && <MenuItemCheck />}
                         </AutocompleteItem>

@@ -28,10 +28,11 @@ interface EditPropMenuProps {
  * 6. ✅ Delete property
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
+  const uiPlugin = plugins.getUiPlugin(plugin.id);
 
   // 1. Type selection
   const openTypesMenu = () =>
@@ -91,7 +92,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                 <div className="flex truncate">
                   <DefaultIcon type={info.type} className="fill-current" />
                   <div className="inline-block min-h-1 min-w-1" />
-                  <span>{plugin.meta.name}</span>
+                  <span>{uiPlugin.meta.name}</span>
                 </div>
               </MenuItemSelect>
             </DropdownMenuItem>

@@ -34,7 +34,7 @@ function BulkEditPopoverContent<Data>({
 }
 
 export function BulkEditBar({ disabled }: { disabled?: boolean }) {
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
   const handle = useMemo(() => Popover.createHandle<BulkPopoverPayload>(), []);
 
   return (
@@ -52,8 +52,10 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
         const columnIds = table
           .getVisibleLeafColumns()
           .filter((column) => {
-            const plugin = table.getColumnPlugin(column.id);
-            return plugin.renderCellEditor && !plugin.disableBulkEdit;
+            return Boolean(
+              plugins.getUiPlugin(table.getColumnPlugin(column.id).id)
+                .renderCellEditor,
+            );
           })
           .map((column) => column.id);
         return (
@@ -103,12 +105,13 @@ function BulkEditColumn({
   disabled,
   handle,
 }: BulkEditColumnProps) {
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
   const column = table.getColumn(columnId);
   if (!column) return null;
 
   const info = column.getInfo();
   const plugin = column.getPlugin();
+  const uiPlugin = plugins.getUiPlugin(plugin.id);
   const selectedValues = rowIds.flatMap((rowId) => {
     const cell = table.getRow(rowId).original.properties[columnId] as
       | { value: unknown }
@@ -116,7 +119,7 @@ function BulkEditColumn({
     return cell ? [cell.value] : [];
   });
   const renderEditor = (data: unknown, onChange: OnChangeFn<unknown>) =>
-    plugin.renderCellEditor?.({
+    uiPlugin.renderCellEditor?.({
       propId: columnId,
       data,
       config: info.config,
@@ -150,7 +153,7 @@ function BulkEditColumn({
           {info.icon ? (
             <IconBlock icon={info.icon} className="size-4 p-0" />
           ) : (
-            plugin.default.icon
+            uiPlugin.default.icon
           )}
         </Button>
       </TooltipPreset>
@@ -184,7 +187,7 @@ function BulkEditColumn({
             {info.icon ? (
               <IconBlock icon={info.icon} className="size-4 p-0" />
             ) : (
-              plugin.default.icon
+              uiPlugin.default.icon
             )}
           </Button>
         }

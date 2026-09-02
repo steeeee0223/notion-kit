@@ -6,7 +6,7 @@ import {
   createFilterRule,
   TableViewMenuPage,
 } from "@notion-kit/table-hook";
-import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
+import type { ConfigMenuProps } from "@/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -57,10 +57,11 @@ interface PropMenuProps {
  */
 export function PropMenu({ propId, view }: PropMenuProps) {
   const { filterMenu } = useMenuCoordinator();
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
+  const uiPlugin = plugins.getUiPlugin(plugin.id);
 
   // 3. Sorting
   const defaultSortingMethod = getDefaultSortingMethod(plugin);
@@ -110,7 +111,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {flexRender<ConfigMenuProps>(plugin.renderConfigMenu, {
+        {flexRender<ConfigMenuProps>(uiPlugin.renderConfigMenu, {
           propId,
           config: info.config ?? plugin.default.config,
           onChange: (updater) =>

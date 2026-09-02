@@ -1,7 +1,3 @@
-import type React from "react";
-import type { OnChangeFn } from "@tanstack/react-table";
-
-import type { _TableInstance } from "@/features/types";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type {
   CountingMethodGroup,
@@ -9,10 +5,10 @@ import type {
   SortingMethodDescriptor,
 } from "@/methods";
 
-export type CellEditorScope<Data> =
-  | { kind: "cell"; row: Row }
-  | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
+export type CompareFn<T> = (a: T, b: T) => number;
+export type ComparableValue = string | number | boolean | null;
 
+/** @internal Transitional data passed from table-view cell hosts. */
 export interface CellValueProps<Data, Config = undefined> {
   propId: string;
   row: Row;
@@ -22,6 +18,7 @@ export interface CellValueProps<Data, Config = undefined> {
   disabled?: boolean;
 }
 
+/** @internal Transitional data passed from table-view cell hosts. */
 export interface CellEditorProps<Data, Config = undefined> {
   propId: string;
   data: Data;
@@ -31,30 +28,12 @@ export interface CellEditorProps<Data, Config = undefined> {
   onChange: OnChangeFn<Data>;
   onCancel?: () => void;
   onConfigChange?: OnChangeFn<Config>;
-  scope: CellEditorScope<Data>;
+  scope:
+    | { kind: "cell"; row: Row }
+    | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
 }
 
-export interface CellEditorPopoverOptions {
-  className?: string;
-  align?: "start" | "center" | "end";
-  alignOffset?: number;
-  side?: "top" | "right" | "bottom" | "left";
-  sideOffset?: number | ((triggerRect: { height: number }) => number);
-}
-
-export type CellEditorResult =
-  | {
-      presentation: "inline";
-      content: React.ReactNode;
-      closeOnChange?: boolean;
-    }
-  | {
-      presentation: "popover";
-      content: React.ReactNode;
-      popover?: CellEditorPopoverOptions;
-      closeOnChange?: boolean;
-    };
-
+/** @internal Transitional data passed to table-view configuration menus. */
 export interface ConfigMenuProps<Config = unknown> {
   propId: string;
   config: Config;
@@ -62,8 +41,12 @@ export interface ConfigMenuProps<Config = unknown> {
   onOpenChange?: (open: boolean) => void;
 }
 
-export type CompareFn<T> = (a: T, b: T) => number;
-export type ComparableValue = string | number | boolean | null;
+/** @internal Transitional data passed to table-view grouping labels. */
+export interface GroupingValueProps {
+  className?: string;
+  value: ComparableValue;
+  table: _TableInstance;
+}
 
 export type FilterValue =
   | null
@@ -101,12 +84,6 @@ export interface FilterOperatorDescriptor<Data = unknown, Config = unknown> {
   ) => boolean;
 }
 
-export interface GroupingValueProps {
-  className?: string;
-  value: ComparableValue;
-  table: _TableInstance;
-}
-
 export interface TableDataAtom<TPlugins extends CellPlugin[] = CellPlugin[]> {
   properties: Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
   data: Row<TPlugins>[];
@@ -120,44 +97,11 @@ export interface CellPlugin<
   Config = any,
 > {
   id: Key;
-  /**
-   * @prop Prevent this property type from appearing in bulk edit controls.
-   */
-  disableBulkEdit?: boolean;
-  /**
-   * @prop Metadata about the plugin. Displayed in <TypesMenu />.
-   */
-  meta: {
-    /**
-     * @prop Name of the plugin.
-     */
-    name: string;
-    /**
-     * @prop Description of the plugin.
-     */
-    desc: string;
-    /**
-     * @prop Icon representing the plugin in the UI.
-     */
-    icon: React.ReactNode;
-  };
   default: {
-    /**
-     * @prop Default property name when a new property is created.
-     */
-    name: string;
-    /**
-     * @prop Default property icon when a new property is created.
-     */
-    icon: React.ReactNode;
     /**
      * @prop Default property config when creating a new property.
      */
     config: Config;
-    /**
-     * @prop Default width when a new property is created.
-     */
-    width?: number;
     /**
      * @prop Default cell data when a new cell is created.
      */
@@ -195,10 +139,6 @@ export interface CellPlugin<
   };
   compare?: (rowA: Row, rowB: Row, colId: string) => number;
   transferConfig?: (column: ColumnInfo, data: Row[]) => Config;
-  renderCellValue: (props: CellValueProps<Data, Config>) => React.ReactNode;
-  renderCellEditor?: (props: CellEditorProps<Data, Config>) => CellEditorResult;
-  renderConfigMenu?: (props: ConfigMenuProps<Config>) => React.ReactNode;
-  renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
 }
 
 export type UnknownCellPlugin = CellPlugin<string, unknown, unknown>;
@@ -224,23 +164,6 @@ export type InferPlugin<TPlugins extends CellPlugin[]> = CellPlugin<
   InferData<TPlugins[number]>,
   InferConfig<TPlugins[number]>
 >;
+import type { OnChangeFn } from "@tanstack/react-table";
 
-export type InferCellValueProps<TPlugin> = CellValueProps<
-  InferData<TPlugin>,
-  InferConfig<TPlugin>
->;
-
-export type InferCellEditorProps<TPlugin> = CellEditorProps<
-  InferData<TPlugin>,
-  InferConfig<TPlugin>
->;
-
-/** UI configuration injected when constructing a built-in plugin. */
-export interface PluginFactoryConfig<TPlugin extends CellPlugin> {
-  icon: React.ReactNode;
-  defaultIcon?: React.ReactNode;
-  renderCellValue: TPlugin["renderCellValue"];
-  renderCellEditor?: TPlugin["renderCellEditor"];
-  renderConfigMenu?: TPlugin["renderConfigMenu"];
-  renderGroupingValue?: TPlugin["renderGroupingValue"];
-}
+import type { _TableInstance } from "@/features/types";

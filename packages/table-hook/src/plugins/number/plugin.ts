@@ -11,13 +11,10 @@ import {
   groupByNumberInterval,
 } from "@/fns";
 import type { CountingMethod, CountingMethodGroup } from "@/methods";
-import type { PluginFactoryConfig } from "@/plugins";
 
 import { createCompareFn, genericCounting } from "../utils";
 import { formatNumber } from "./format";
 import type { NumberPlugin } from "./types";
-
-export type NumberPluginConfig = PluginFactoryConfig<NumberPlugin>;
 
 const numberSchema = z.pipe(
   z.custom((value) => !isNaN(Number(value))),
@@ -58,7 +55,7 @@ export function withNumberCalculations(groups: CountingMethodGroup[] = []) {
   return [...groups, { group: "Calculate", functions: numberCalculations }];
 }
 
-export function number(config: NumberPluginConfig): NumberPlugin {
+export function number(): NumberPlugin {
   const parseData = (data: string | null | undefined) => {
     if (typeof data !== "string" || data.trim() === "") return null;
     const value = Number(data);
@@ -90,14 +87,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
   });
   return {
     id: "number",
-    meta: {
-      name: "Number",
-      icon: config.icon,
-      desc: "Accepts numbers. These can also be formatted as currency or progress bars. Useful for tracking counts, prices and completion.",
-    },
     default: {
-      name: "Number",
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: {
         format: "number",
@@ -197,9 +187,5 @@ export function number(config: NumberPluginConfig): NumberPlugin {
         },
       ],
     },
-    renderCellValue: config.renderCellValue,
-    renderCellEditor: config.renderCellEditor,
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }

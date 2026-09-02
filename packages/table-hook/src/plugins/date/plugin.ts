@@ -16,10 +16,8 @@ import type { Row } from "@/lib/types";
 import type { CountingMethod, CountingMethodGroup } from "@/methods";
 
 import type {
-  CellValueProps,
   ComparableValue,
   FilterEvaluationContext,
-  PluginFactoryConfig,
 } from "../types";
 import { createCompareFn, genericCounting } from "../utils";
 import type {
@@ -37,21 +35,6 @@ import {
   toDateString,
   type RelativeDateOperand,
 } from "./utils";
-
-export type DatePluginConfig = PluginFactoryConfig<DatePlugin>;
-
-interface DerivedTimePluginConfig {
-  icon: React.ReactNode;
-  defaultIcon?: React.ReactNode;
-  renderCellValue: (
-    props: CellValueProps<DateData, DateConfig>,
-  ) => React.ReactNode;
-  renderConfigMenu?: DatePlugin["renderConfigMenu"];
-  renderGroupingValue?: DatePlugin["renderGroupingValue"];
-}
-
-export type CreatedTimePluginConfig = DerivedTimePluginConfig;
-export type LastEditedTimePluginConfig = DerivedTimePluginConfig;
 
 type DateValue = DateData;
 type DateExtractor<Data> = (data: Data | undefined, row: Row) => DateValue;
@@ -411,21 +394,14 @@ export function withDateCalculations<Data>(
   ];
 }
 
-export function date(config: DatePluginConfig): DatePlugin {
+export function date(): DatePlugin {
   const id = "date";
   const name = "Date";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isEmpty = (data: DateData) => data.start === undefined;
   return {
     id,
-    meta: {
-      name,
-      icon: config.icon,
-      desc: "Accepts a date or a date range (time optional). Useful for deadlines, especially with calendar and timeline views.",
-    },
     default: {
-      name,
-      icon: config.defaultIcon ?? config.icon,
       data: {},
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
@@ -447,31 +423,17 @@ export function date(config: DatePluginConfig): DatePlugin {
     }),
     ...dateCapabilities(extractDateValue, isEmpty),
     counting: withDateCalculations(genericCounting(isEmpty), extractDateValue),
-    renderCellValue: config.renderCellValue,
-    renderCellEditor: config.renderCellEditor,
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }
 
-export function createdTime(
-  config: CreatedTimePluginConfig,
-): CreatedTimePlugin {
+export function createdTime(): CreatedTimePlugin {
   const id = "created-time";
   const name = "Created time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isEmpty = () => false;
   return {
     id,
-    disableBulkEdit: true,
-    meta: {
-      name,
-      icon: config.icon,
-      desc: "Records the timestamp of an item's creation. Auto-generated and not editable.",
-    },
     default: {
-      name,
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
@@ -491,35 +453,17 @@ export function createdTime(
       extractCreatedTime,
       true,
     ),
-    renderCellValue: ({ row, data: _data, ...props }) =>
-      config.renderCellValue({
-        data: { start: row.createdAt, includeTime: true },
-        row,
-        ...props,
-      }),
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }
 
-export function lastEditedTime(
-  config: LastEditedTimePluginConfig,
-): LastEditedTimePlugin {
+export function lastEditedTime(): LastEditedTimePlugin {
   const id = "last-edited-time";
   const name = "Last edited time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isEmpty = () => false;
   return {
     id,
-    disableBulkEdit: true,
-    meta: {
-      name,
-      icon: config.icon,
-      desc: "Records the timestamp of an item's last edit. Auto-updated and not editable.",
-    },
     default: {
-      name,
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
@@ -540,13 +484,5 @@ export function lastEditedTime(
       extractLastEditedTime,
       true,
     ),
-    renderCellValue: ({ row, data: _data, ...props }) =>
-      config.renderCellValue({
-        data: { start: row.lastEditedAt, includeTime: true },
-        row,
-        ...props,
-      }),
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }

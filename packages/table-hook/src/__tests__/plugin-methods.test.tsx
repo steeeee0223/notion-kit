@@ -27,14 +27,7 @@ import { useTableView } from "@/table-contexts/use-table-view";
 
 const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
   id: "reverse-text",
-  meta: {
-    name: "Reverse Text",
-    desc: "Reverse Text",
-    icon: null,
-  },
   default: {
-    name: "Reverse Text",
-    icon: null,
     config: undefined,
     data: "",
   },
@@ -93,7 +86,6 @@ const reverseTextPlugin: CellPlugin<"reverse-text", string, undefined> = {
     },
   ],
   compare: () => 0,
-  renderCellValue: () => null,
 };
 
 const properties: ColumnInfo[] = [
@@ -146,10 +138,7 @@ describe("cell plugin registered methods", () => {
 
     const plugin: CellPlugin<"typed", TypedData, TypedConfig> = {
       id: "typed",
-      meta: { name: "Typed", desc: "Typed", icon: null },
       default: {
-        name: "Typed",
-        icon: null,
         data: { score: 0 },
         config: { multiplier: 1 },
       },
@@ -186,7 +175,6 @@ describe("cell plugin registered methods", () => {
           },
         ],
       },
-      renderCellValue: () => null,
     };
 
     expect(plugin.sorting?.methods[0]?.id).toBe("score");

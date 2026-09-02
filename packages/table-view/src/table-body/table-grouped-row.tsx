@@ -12,7 +12,7 @@ interface TableGroupedRowProps {
 }
 
 export function TableGroupedRow({ row }: TableGroupedRowProps) {
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
   const isMobile = useIsMobile();
   const groupId = row.groupingColumnId;
   if (!groupId) {
@@ -21,6 +21,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
   }
 
   const { layout, locked } = table.getTableGlobalState();
+  const uiPlugin = plugins.getUiPlugin(groupId);
   const groupSelectionState = row.getGroupSelectionState();
   const showSelection = (layout === "table" || layout === "list") && !locked;
 
@@ -74,7 +75,10 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
           </Button>
           {/* Grouped value */}
           <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
-            {row.renderGroupingValue({})}
+            {uiPlugin.renderGroupingValue({
+              table: table as never,
+              value: table.getGroupingValue(row.id),
+            })}
           </div>
           {/* Count */}
           {row.getShouldShowGroupAggregates() && (

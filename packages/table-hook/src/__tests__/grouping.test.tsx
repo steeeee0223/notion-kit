@@ -60,10 +60,7 @@ const mockData: Row[] = [
 
 const groupingMethodPlugin: CellPlugin<"grouping-method", string, undefined> = {
   id: "grouping-method",
-  meta: { name: "Grouping method", desc: "Grouping method", icon: null },
   default: {
-    name: "Grouping method",
-    icon: null,
     config: undefined,
     data: "",
   },
@@ -101,7 +98,6 @@ const groupingMethodPlugin: CellPlugin<"grouping-method", string, undefined> = {
       },
     ],
   },
-  renderCellValue: () => null,
 };
 
 const groupingMethodProperties: ColumnInfo[] = [
@@ -137,10 +133,7 @@ const groupingMethodData: Row[] = [
 
 const weekContextPlugin: CellPlugin<"week-context", number, undefined> = {
   id: "week-context",
-  meta: { name: "Week context", desc: "Week context", icon: null },
   default: {
-    name: "Week context",
-    icon: null,
     config: undefined,
     data: 0,
   },
@@ -174,7 +167,6 @@ const weekContextPlugin: CellPlugin<"week-context", number, undefined> = {
       },
     ],
   },
-  renderCellValue: () => null,
 };
 
 const weekContextProperties: ColumnInfo[] = [
@@ -1504,48 +1496,21 @@ describe("useTableView - Extended Grouping", () => {
       });
     });
 
-    it("renders custom and fallback grouping values and handles a stale renderer", () => {
-      const plugin: typeof groupingMethodPlugin = {
-        ...groupingMethodPlugin,
-        renderGroupingValue: ({ value }) => <span>Custom {String(value)}</span>,
-      };
+    it("exposes raw grouping values without a renderer contract", () => {
       const { result } = renderHook(() =>
         useTableView({
           defaultData: groupingMethodData,
           defaultProperties: groupingMethodProperties,
-          plugins: arrayToEntity([plugin]),
+          plugins: arrayToEntity([groupingMethodPlugin]),
         }),
       );
-      const custom = result.current.table;
-      act(() => custom.setGrouping(["method"]));
-      const customId = custom.atoms.groupingState.get().groupOrder[0]!;
-      const CustomRenderer = custom.getGroupingValueRenderer(customId);
-      const customView = render(CustomRenderer({ className: "group-label" }));
-      expect(customView.container).toHaveTextContent("Custom a");
-      const groupedRow = custom.getGroupedRowModel().rows[0]!;
-      expect(
-        render(groupedRow.renderGroupingValue({})).container,
-      ).toHaveTextContent("Custom a");
-
-      const { table } = renderTableHook({
-        data: mockData,
-        properties: mockProperties,
-      });
-      act(() => table.setGrouping(["col2"]));
+      const table = result.current.table;
+      act(() => table.setGrouping(["method"]));
       const groupId = table.atoms.groupingState.get().groupOrder[0]!;
-      const Renderer = table.getGroupingValueRenderer(groupId);
-      const view = render(Renderer({}));
-      expect(view.container.textContent).not.toBe("");
+      expect(table.getGroupingValue(groupId)).toBe("a");
 
-      const error = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => undefined);
       act(() => table.setGrouping([]));
-      expect(render(Renderer({})).container).toBeEmptyDOMElement();
-      expect(error).toHaveBeenCalledWith(
-        `No grouping column id found for the grouped row ${groupId}`,
-      );
-      error.mockRestore();
+      expect(table.getGroupingValue(groupId)).toBeNull();
     });
   });
 });

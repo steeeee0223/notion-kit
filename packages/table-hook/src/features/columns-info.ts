@@ -72,6 +72,7 @@ export interface ColumnsInfoTableApi {
     id: string;
     name: string;
     type: string;
+    width?: string;
     operationId?: string;
     getInitialValue?: (row: Row) => unknown;
     at?: {
@@ -459,7 +460,7 @@ export const ColumnsInfoFeature: TableFeature = {
       const actionId = payload.operationId ?? v4();
       const cellPlugins = instance.atoms.cellPlugins.get();
       const columnsInfo = instance.atoms.columnsInfo.get();
-      const { id, name, type, at, getInitialValue } = payload;
+      const { id, name, type, width, at, getInitialValue } = payload;
       if (columnsInfo[id]) {
         throw new Error(`[TableView] Column already exists: "${id}"`);
       }
@@ -469,7 +470,7 @@ export const ColumnsInfoFeature: TableFeature = {
       }
       const idsUpdater = createIdsUpdater(id, at);
       instance._addColumnInfo(
-        { id, name, type, config: plugin.default.config },
+        { id, name, type, width, config: plugin.default.config },
         idsUpdater,
         {
           id: actionId,
@@ -477,7 +478,7 @@ export const ColumnsInfoFeature: TableFeature = {
           payload: {
             propertyId: id,
             nextPosition: -1,
-            property: { id, name, type, config: plugin.default.config },
+            property: { id, name, type, width, config: plugin.default.config },
           },
         },
       );

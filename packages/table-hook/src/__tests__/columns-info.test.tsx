@@ -32,10 +32,7 @@ interface DateData {
 
 const datePlugin: CellPlugin<"date", DateData, undefined> = {
   id: "date",
-  meta: { name: "Date", desc: "Date", icon: null },
   default: {
-    name: "Date",
-    icon: null,
     data: { start: 0, end: 0, endDate: false },
     config: undefined,
   },
@@ -47,7 +44,6 @@ const datePlugin: CellPlugin<"date", DateData, undefined> = {
   toValue: (data) => data.start,
   isEmpty: () => false,
   toTextValue: (data) => String(data.start),
-  renderCellValue: () => null,
 };
 
 const pluginsWithDate = {

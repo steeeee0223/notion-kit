@@ -23,7 +23,6 @@ import {
 } from "@notion-kit/table-hook";
 import {
   type CellEditorProps,
-  type CellValueProps,
   type TitleConfig,
 } from "@notion-kit/table-hook/plugins";
 import { IconBlock } from "@notion-kit/ui/icon-block";
@@ -39,7 +38,9 @@ import {
 import { CellTrigger, CellTriggerScope } from "@/common/cell-trigger";
 import { CopyButton } from "@/common/copy-button";
 import { TitleCompactSlot, TitleTableSlot } from "@/plugins/title/title-cell";
+import type { CellUiProps } from "@/plugins/registry";
 import type { CellPresentation, CellSurface } from "@/plugins/utils";
+import { useTableViewCtx } from "@/table-contexts";
 
 interface CellContextValue {
   cell: CellInstance;
@@ -163,10 +164,12 @@ function Tooltip({ children }: { children: ReactElement }) {
 
 function Content() {
   const { cell, table, surface, presentation, wrapped } = useCellContext();
+  const { plugins } = useTableViewCtx();
   const { column, row } = cell;
   const data = row.original.properties[column.id];
   const info = column.getInfo();
   const plugin = column.getPlugin();
+  const uiPlugin = plugins.getUiPlugin(plugin.id);
   const { locked } = table.getTableGlobalState();
   const [open, setOpen] = useState(false);
   const { ref, rect } = useRect<HTMLElement>();
@@ -174,22 +177,14 @@ function Content() {
   if (!data) return null;
   const cellData: unknown = data.value;
   const cellConfig: unknown = info.config;
-  const valueProps: CellValueProps<unknown, unknown> = {
+  const valueProps: CellUiProps<unknown, unknown> = {
     propId: column.id,
     row: row.original,
     data: cellData,
     config: cellConfig,
     wrapped,
     disabled: locked,
-  };
-  const value = flexRender(plugin.renderCellValue, valueProps);
-  const editorProps: CellEditorProps<unknown, unknown> = {
-    propId: column.id,
-    data: cellData,
-    config: cellConfig,
-    wrapped,
-    disabled: locked,
-    scope: { kind: "cell", row: row.original },
+    surface,
     onChange: (updater: Updater<unknown>) => {
       if (table.getTableGlobalState().locked) return;
       column.updateCell(row.id, updater, row.parentId);
@@ -198,6 +193,17 @@ function Content() {
       if (table.getTableGlobalState().locked) return;
       column.updateConfig(updater);
     },
+  };
+  const value = flexRender(uiPlugin.renderCellValue, valueProps);
+  const editorProps: CellEditorProps<unknown, unknown> = {
+    propId: column.id,
+    data: cellData,
+    config: cellConfig,
+    wrapped,
+    disabled: locked,
+    scope: { kind: "cell", row: row.original },
+    onChange: valueProps.onChange,
+    onConfigChange: valueProps.onConfigChange,
   };
 
   if (plugin.id === "title") {
@@ -214,7 +220,7 @@ function Content() {
   }
 
   if (plugin.id === "checkbox") {
-    const result = plugin.renderCellEditor?.(editorProps);
+    const result = uiPlugin.renderCellEditor?.(editorProps);
     return (
       <CellTrigger
         className={cn(
@@ -229,7 +235,7 @@ function Content() {
     );
   }
 
-  const result = plugin.renderCellEditor?.({
+  const result = uiPlugin.renderCellEditor?.({
     ...editorProps,
     onChange: (updater) => {
       editorProps.onChange(functionalUpdate(updater, editorProps.data));

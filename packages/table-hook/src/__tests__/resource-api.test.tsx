@@ -36,8 +36,7 @@ function getLastResourceChange<TResource, TAction>(mock: MockWithLastCall) {
 
 const methodPlugin = {
   id: "method-text",
-  meta: { name: "Method text", desc: "Method text", icon: null },
-  default: { name: "Method text", icon: null, config: undefined, data: "" },
+  default: { config: undefined, data: "" },
   fromValue: (value) => value?.toString() ?? "",
   toValue: (data) => data,
   isEmpty: (data) => data.trim() === "",
@@ -57,7 +56,6 @@ const methodPlugin = {
     ],
   },
   compare: () => 0,
-  renderCellValue: () => null,
 } satisfies CellPlugin<"method-text", string, undefined>;
 
 const methodPlugins = arrayToEntity([methodPlugin]);

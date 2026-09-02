@@ -20,8 +20,7 @@ function createTextPlugin(
 ): CellPlugin<string, string, undefined> {
   return {
     id,
-    meta: { name: id, desc: id, icon: null },
-    default: { name: id, icon: null, data: "", config: undefined },
+    default: { data: "", config: undefined },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (value) => value,
     isEmpty: (value) => value.trim() === "",
@@ -38,7 +37,6 @@ function createTextPlugin(
         },
       ],
     },
-    renderCellValue: () => null,
   };
 }
 
@@ -47,8 +45,7 @@ function createNumberPlugin(
 ): CellPlugin<string, number, undefined> {
   return {
     id: "score",
-    meta: { name: "Score", desc: "Score", icon: null },
-    default: { name: "Score", icon: null, data: 0, config: undefined },
+    default: { data: 0, config: undefined },
     fromValue: (value) => Number(value),
     toValue: (value) => value,
     isEmpty: () => false,
@@ -66,7 +63,6 @@ function createNumberPlugin(
         },
       ],
     },
-    renderCellValue: () => null,
   };
 }
 
@@ -75,8 +71,7 @@ function createRelativeClockPlugin(
 ): CellPlugin<string, number, undefined> {
   return {
     id: "score",
-    meta: { name: "Score", desc: "Score", icon: null },
-    default: { name: "Score", icon: null, data: 0, config: undefined },
+    default: { data: 0, config: undefined },
     fromValue: (value) => Number(value),
     toValue: (value) => value,
     isEmpty: () => false,
@@ -94,7 +89,6 @@ function createRelativeClockPlugin(
         },
       ],
     },
-    renderCellValue: () => null,
   };
 }
 

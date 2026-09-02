@@ -1,16 +1,22 @@
-import { number as createNumber } from "@notion-kit/table-hook/plugins";
+import type { NumberPlugin } from "@notion-kit/table-hook/plugins";
 
 import { DefaultIcon } from "@/common";
 
 import { NumberCellEditor, NumberCellValue } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";
 import { NumberGroupingValue } from "./number-grouping-value";
+import type { TableUiPlugin } from "../registry";
 
-export function number() {
-  return createNumber({
-    icon: <DefaultIcon type="number" className="fill-menu-icon" />,
-    defaultIcon: <DefaultIcon type="number" />,
-    renderCellValue: (props) => <NumberCellValue {...props} />,
+export function number(): TableUiPlugin<NumberPlugin> {
+  const renderCell = (props: Parameters<TableUiPlugin<NumberPlugin>["renderCell"]>[0]) => (
+    <NumberCellValue {...props} />
+  );
+  return {
+    id: "number",
+    meta: { name: "Number", desc: "Accepts numbers. These can also be formatted as currency or progress bars. Useful for tracking counts, prices and completion.", icon: <DefaultIcon type="number" className="fill-menu-icon" /> },
+    default: { name: "Number", icon: <DefaultIcon type="number" /> },
+    renderCell,
+    renderCellValue: renderCell,
     renderCellEditor: (props) => ({
       presentation: "popover",
       content: <NumberCellEditor {...props} />,
@@ -24,5 +30,5 @@ export function number() {
     }),
     renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
     renderGroupingValue: (props) => <NumberGroupingValue {...props} />,
-  });
+  };
 }

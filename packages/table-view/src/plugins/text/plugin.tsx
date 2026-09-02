@@ -1,15 +1,21 @@
-import { text as createText } from "@notion-kit/table-hook/plugins";
+import type { TextPlugin } from "@notion-kit/table-hook/plugins";
 
 import { DefaultIcon } from "@/common";
 
 import { DefaultGroupingValue } from "../utils";
+import type { TableUiPlugin } from "../registry";
 import { TextCellEditor, TextCellValue } from "./text-cell";
 
-export function text() {
-  return createText({
-    icon: <DefaultIcon type="text" className="fill-menu-icon" />,
-    defaultIcon: <DefaultIcon type="text" />,
-    renderCellValue: (props) => <TextCellValue {...props} />,
+export function text(): TableUiPlugin<TextPlugin> {
+  const renderCell = (props: Parameters<TableUiPlugin<TextPlugin>["renderCell"]>[0]) => (
+    <TextCellValue {...props} />
+  );
+  return {
+    id: "text",
+    meta: { name: "Text", desc: "Add text that can be formatted. Great for summaries, notes, or descriptions.", icon: <DefaultIcon type="text" className="fill-menu-icon" /> },
+    default: { name: "Text", icon: <DefaultIcon type="text" /> },
+    renderCell,
+    renderCellValue: renderCell,
     renderCellEditor: (props) => ({
       presentation: "popover",
       content: <TextCellEditor {...props} />,
@@ -22,5 +28,5 @@ export function text() {
       },
     }),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
-  });
+  };
 }

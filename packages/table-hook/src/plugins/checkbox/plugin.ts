@@ -1,5 +1,5 @@
 import { groupByValue } from "@/fns";
-import type { CellPlugin, PluginFactoryConfig } from "@/plugins";
+import type { CellPlugin } from "@/plugins";
 import {
   checkboxCounting,
   compareBooleans,
@@ -7,23 +7,14 @@ import {
 } from "@/plugins/utils";
 
 export type CheckboxPlugin = CellPlugin<"checkbox", boolean, undefined>;
-export type CheckboxPluginConfig = PluginFactoryConfig<CheckboxPlugin>;
-
-export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
+export function checkbox(): CheckboxPlugin {
   const compareCheckedFirst = (a: unknown, b: unknown) =>
     -compareBooleans(Boolean(a), Boolean(b));
   const isEmpty = (data: boolean) => data === false;
 
   return {
     id: "checkbox",
-    meta: {
-      name: "Checkbox",
-      icon: config.icon,
-      desc: "Use a checkbox to indicate whether a condition is true or false. Useful for lightweight task tracking.",
-    },
     default: {
-      name: "Checkbox",
-      icon: config.defaultIcon ?? config.icon,
       data: false,
       config: undefined,
     },
@@ -67,9 +58,5 @@ export function checkbox(config: CheckboxPluginConfig): CheckboxPlugin {
         },
       ],
     },
-    renderCellValue: config.renderCellValue,
-    renderCellEditor: config.renderCellEditor,
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }
