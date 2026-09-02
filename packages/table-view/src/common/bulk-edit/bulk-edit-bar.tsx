@@ -1,7 +1,4 @@
-import { functionalUpdate } from "@tanstack/react-table";
-
-import { IconBlock } from "@notion-kit/ui/icon-block";
-
+import { BulkEditorScope } from "@/plugins/renderers";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { BulkActionMenu } from "./bulk-action-menu";
@@ -42,7 +39,6 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
               <BulkEditColumn
                 key={columnId}
                 columnId={columnId}
-                rowIds={rowIds}
                 disabled={disabled}
               />
             ))}
@@ -56,45 +52,19 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
 
 interface BulkEditColumnProps {
   columnId: string;
-  rowIds: string[];
   disabled?: boolean;
 }
 
-function BulkEditColumn({ columnId, rowIds, disabled }: BulkEditColumnProps) {
+function BulkEditColumn({ columnId, disabled }: BulkEditColumnProps) {
   const { table, plugins } = useTableViewCtx();
   const column = table.getColumn(columnId);
   if (!column) return null;
 
-  const info = column.getInfo();
   const plugin = column.getPlugin();
   const uiPlugin = plugins.getUiPlugin(plugin.id);
-  const selectedValues = rowIds.flatMap((rowId) => {
-    const cell = table.getRow(rowId).original.properties[columnId] as
-      | { value: unknown }
-      | undefined;
-    return cell ? [cell.value] : [];
-  });
   return (
-    uiPlugin.renderBulkEditor?.({
-      propId: columnId,
-      data: plugin.default.data,
-      config: info.config,
-      disabled,
-      icon: info.icon ? (
-        <IconBlock icon={info.icon} className="size-4 p-0" />
-      ) : (
-        uiPlugin.default.icon
-      ),
-      label: info.name,
-      onChange: (updater) =>
-        table.updateCells(
-          rowIds,
-          columnId,
-          functionalUpdate(updater, plugin.default.data),
-        ),
-      onConfigChange: (updater) => column.updateConfig(updater),
-      rowIds,
-      selectedValues,
-    }) ?? null
+    <BulkEditorScope disabled={disabled}>
+      {uiPlugin.renderBulkEditor?.({ column }) ?? null}
+    </BulkEditorScope>
   );
 }

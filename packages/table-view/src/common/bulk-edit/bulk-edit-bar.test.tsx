@@ -17,6 +17,10 @@ import {
   mockResizeObserver,
 } from "@/__tests__/mock";
 import type { TableUiPlugin } from "@/plugins";
+import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+} from "@/plugins/renderers";
 import { TableViewWrapper, useTableViewCtx } from "@/table-contexts";
 
 import { BulkEditBar } from "./bulk-edit-bar";
@@ -86,21 +90,23 @@ function createTextLikePopoverPlugin(
     id,
     meta: { name, desc: "", icon: null },
     default: { name, icon: null },
-    renderCell: ({ textValue }) => textValue,
-    renderBulkEditor: ({ data, disabled, icon, label, onChange }) => (
-      <BulkEditorPopover
-        disabled={disabled}
-        icon={icon}
-        initialData={data}
-        label={label}
-        onChange={onChange}
-      >
-        {() => (
-          <button type="button" onClick={() => onCommit(onChange)}>
-            Commit {name}
-          </button>
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(({ textValue }) => textValue),
+    renderBulkEditor: createBulkEditorRenderer<typeof data>(
+      ({ data, disabled, icon, label, onChange }) => (
+        <BulkEditorPopover
+          disabled={disabled}
+          icon={icon}
+          initialData={data}
+          label={label}
+          onChange={onChange}
+        >
+          {() => (
+            <button type="button" onClick={() => onCommit(onChange)}>
+              Commit {name}
+            </button>
+          )}
+        </BulkEditorPopover>
+      ),
     ),
     renderGroupingValue: () => null,
   };
@@ -392,26 +398,30 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
     id: "configurable",
     meta: { name: "Configurable", desc: "", icon: null },
     default: { name: "Configurable", icon: null },
-    renderCell: ({ textValue }) => textValue,
-    renderBulkEditor: ({ data, disabled, icon, label, onConfigChange }) => (
-      <BulkEditorPopover
-        disabled={disabled}
-        icon={icon}
-        initialData={data}
-        label={label}
-        onChange={() => undefined}
-      >
-        {() => (
-          <button
-            type="button"
-            onClick={() =>
-              onConfigChange?.((config) => ({ mode: `${config.mode}!` }))
-            }
-          >
-            Change config
-          </button>
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(({ textValue }) => textValue),
+    renderBulkEditor: createBulkEditorRenderer<typeof configurable>(
+      ({ data, disabled, icon, label, onConfigChange }) => (
+        <BulkEditorPopover
+          disabled={disabled}
+          icon={icon}
+          initialData={data}
+          label={label}
+          onChange={() => undefined}
+        >
+          {() => (
+            <button
+              type="button"
+              onClick={() =>
+                onConfigChange?.((config: { mode: string }) => ({
+                  mode: `${config.mode}!`,
+                }))
+              }
+            >
+              Change config
+            </button>
+          )}
+        </BulkEditorPopover>
+      ),
     ),
     renderGroupingValue: () => null,
   };

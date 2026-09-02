@@ -1,9 +1,20 @@
-import type { NumberPlugin } from "@notion-kit/table-hook/plugins";
+import type {
+  NumberConfig,
+  NumberPlugin,
+} from "@notion-kit/table-hook/plugins";
 
 import { CellRenderer, DefaultIcon } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
 import type { TableUiPlugin } from "../registry";
+import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+  createConfigMenuRenderer,
+  type BulkEditorRendererProps,
+  type CellRendererProps,
+  type ConfigMenuRendererProps,
+} from "../renderers";
 import {
   getCellTriggerClass,
   getCompactWidthClass,
@@ -15,7 +26,7 @@ import { NumberGroupingValue } from "./number-grouping-value";
 
 export function number(): TableUiPlugin<NumberPlugin> {
   const renderCell = (
-    props: Parameters<TableUiPlugin<NumberPlugin>["renderCell"]>[0],
+    props: CellRendererProps<string | null, NumberConfig>,
   ) => {
     const copy = getCopyClasses("number");
     return (
@@ -75,15 +86,25 @@ export function number(): TableUiPlugin<NumberPlugin> {
       icon: <DefaultIcon type="number" className="fill-menu-icon" />,
     },
     default: { name: "Number", icon: <DefaultIcon type="number" /> },
-    renderCell,
-    renderBulkEditor: (props) => (
-      <BulkEditorPopover {...props} initialData={props.data}>
-        {(data, onChange) => (
-          <NumberCellEditor data={data} onChange={onChange} commitOnUnchanged />
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<NumberPlugin>(
+      (props: BulkEditorRendererProps<string | null, NumberConfig>) => (
+        <BulkEditorPopover {...props} initialData={props.data}>
+          {(data, onChange) => (
+            <NumberCellEditor
+              data={data}
+              onChange={onChange}
+              commitOnUnchanged
+            />
+          )}
+        </BulkEditorPopover>
+      ),
     ),
-    renderConfigMenu: (props) => <NumberConfigMenu {...props} />,
+    renderConfigMenu: createConfigMenuRenderer<NumberPlugin>(
+      (props: ConfigMenuRendererProps<NumberConfig>) => (
+        <NumberConfigMenu {...props} />
+      ),
+    ),
     renderGroupingValue: (props) => <NumberGroupingValue {...props} />,
   };
 }

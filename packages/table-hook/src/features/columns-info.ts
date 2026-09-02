@@ -13,6 +13,7 @@ import { getDefaultCell, getUniqueName, type Entity } from "@/lib/utils";
 import type {
   CellPlugin,
   InferConfig,
+  InferData,
   InferPlugin,
   UnknownCellPlugin,
 } from "@/plugins";
@@ -99,6 +100,16 @@ export interface ColumnInfoColumnApi {
   handleResizeEnd: () => void;
   updateConfig: <TPlugin extends CellPlugin>(
     updater: Updater<InferConfig<TPlugin>>,
+  ) => void;
+}
+
+export interface ColumnInfoCellApi {
+  getInfo: () => ColumnInfo<UnknownCellPlugin>;
+  getPlugin: () => UnknownCellPlugin;
+  getData: <TPlugin extends CellPlugin>() => InferData<TPlugin>;
+  getTextValue: () => string;
+  update: <TPlugin extends CellPlugin>(
+    updater: Updater<InferData<TPlugin>>,
   ) => void;
 }
 
@@ -702,6 +713,7 @@ export const ColumnsInfoFeature: TableFeature = {
       this: { id: string },
       updater: Updater<unknown>,
     ) {
+      if (instance.getTableGlobalState().locked) return;
       instance._setColumnInfo(
         this.id,
         (v) => ({
@@ -713,6 +725,50 @@ export const ColumnsInfoFeature: TableFeature = {
           type: "properties.update",
           payload: { propertyId: this.id, previous: {}, next: {} },
         },
+      );
+    };
+  },
+  assignCellPrototype: (prototype, table) => {
+    const instance = table as unknown as _TableInstance;
+
+    prototype.getInfo = function (this: { column: { id: string } }) {
+      return instance.getColumnInfo(this.column.id);
+    };
+    prototype.getPlugin = function (this: { column: { id: string } }) {
+      return instance.getColumnPlugin(this.column.id);
+    };
+    prototype.getData = function <TPlugin extends CellPlugin>(this: {
+      column: { id: string };
+      row: { id: string; original: Row };
+    }) {
+      return instance.getCell<TPlugin>(this.column.id, this.row.id).value;
+    };
+    prototype.getTextValue = function (this: {
+      column: { id: string };
+      row: { id: string; original: Row };
+    }) {
+      const plugin = instance.getColumnPlugin(this.column.id);
+      return plugin.toTextValue(
+        instance.getCell(this.column.id, this.row.id).value,
+        this.row.original,
+      );
+    };
+    prototype.update = function <TPlugin extends CellPlugin>(
+      this: {
+        column: { id: string };
+        row: { id: string; parentId?: string };
+      },
+      updater: Updater<InferData<TPlugin>>,
+    ) {
+      if (instance.getTableGlobalState().locked) return;
+      instance.updateCell<TPlugin>(
+        this.row.id,
+        this.column.id,
+        (previous) => ({
+          ...previous,
+          value: functionalUpdate(updater, previous.value),
+        }),
+        this.row.parentId,
       );
     };
   },

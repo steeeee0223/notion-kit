@@ -5,7 +5,6 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
-import { type Updater } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -19,7 +18,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import type { CellSurface, CellUiProps } from "@/plugins/registry";
+import type { CellSurface } from "@/plugins/registry";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface CellContextValue {
@@ -39,7 +38,7 @@ function Root({ children, ...value }: CellRootProps) {
   return <CellContext value={value}>{children}</CellContext>;
 }
 
-function useCellContext() {
+export function useCellContext() {
   const context = use(CellContext);
   if (!context) throw new Error("Cell compound components require Cell.Root");
   return context;
@@ -108,9 +107,10 @@ function Tooltip({ children }: { children: ReactElement }) {
   return (
     <TooltipPreset
       // Both conditions independently disable the tooltip; `??` is not equivalent.
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
       disabled={
-        table.getTableGlobalState().locked || uiPlugin.disablePropertyTooltip
+        table.getTableGlobalState().locked === true ||
+        uiPlugin.disablePropertyTooltip
       }
       side={surface === "board" ? "left" : "top"}
       description={
@@ -130,37 +130,14 @@ function Tooltip({ children }: { children: ReactElement }) {
 }
 
 function Content() {
-  const { cell, table, surface, wrapped } = useCellContext();
+  const { cell } = useCellContext();
   const { plugins } = useTableViewCtx();
   const { column, row } = cell;
   const data = row.original.properties[column.id];
-  const info = column.getInfo();
   const plugin = column.getPlugin();
   const uiPlugin = plugins.getUiPlugin(plugin.id);
-  const { locked } = table.getTableGlobalState();
   if (!data) return null;
-  const cellData: unknown = data.value;
-  const cellConfig: unknown = info.config;
-  const valueProps: CellUiProps<unknown, unknown> = {
-    propId: column.id,
-    row: row.original,
-    data: cellData,
-    config: cellConfig,
-    property: info,
-    wrapped,
-    disabled: locked,
-    surface,
-    textValue: plugin.toTextValue(cellData, row.original),
-    onChange: (updater: Updater<unknown>) => {
-      if (table.getTableGlobalState().locked) return;
-      column.updateCell(row.id, updater, row.parentId);
-    },
-    onConfigChange: (updater: Updater<unknown>) => {
-      if (table.getTableGlobalState().locked) return;
-      column.updateConfig(updater);
-    },
-  };
-  return uiPlugin.renderCell(valueProps);
+  return uiPlugin.renderCell({ cell });
 }
 
 export const Cell = {

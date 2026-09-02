@@ -1,4 +1,4 @@
-import { flexRender, functionalUpdate } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -6,7 +6,6 @@ import {
   createFilterRule,
   TableViewMenuPage,
 } from "@notion-kit/table-hook";
-import type { ConfigMenuProps } from "@/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -61,6 +60,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
+  const column = table.getColumn(propId);
+  if (!column) return null;
   const uiPlugin = plugins.getUiPlugin(plugin.id);
 
   // 3. Sorting
@@ -111,14 +112,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {flexRender<ConfigMenuProps>(uiPlugin.renderConfigMenu, {
-          propId,
-          config: info.config ?? plugin.default.config,
-          onChange: (updater) =>
-            table._setColumnInfo(propId, (prev) => ({
-              ...prev,
-              config: functionalUpdate(updater, prev.config),
-            })),
+        {flexRender(uiPlugin.renderConfigMenu, {
+          column,
         })}
         {info.type !== "title" && (
           <DropdownMenuSub>

@@ -14,7 +14,11 @@ edits the property.
 ```tsx
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { createCompareFn } from "@notion-kit/table-hook/plugins";
-import type { CellUiProps, TableUiPlugin } from "@notion-kit/table-view";
+import type {
+  BulkEditorProps,
+  CellProps,
+  TableUiPlugin,
+} from "@notion-kit/table-view";
 
 type TagData = string[];
 type TagConfig = { options: string[] };
@@ -22,17 +26,13 @@ type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
 
 const TagIcon = <span aria-hidden>🏷️</span>;
 
-function TagValue({ data }: Pick<CellUiProps<TagData, TagConfig>, "data">) {
-  return <span>{data.join(", ") || "—"}</span>;
-}
+function TagCell({ cell }: CellProps) {
+  const data = cell.getData<TagPlugin>();
+  const config = cell.getInfo().config as TagConfig;
 
-function TagEditor({
-  data,
-  config,
-  onChange,
-}: Pick<CellUiProps<TagData, TagConfig>, "data" | "config" | "onChange">) {
   return (
     <div>
+      <span>{data.join(", ") || "—"}</span>
       {config.options.map((tag) => {
         const selected = data.includes(tag);
 
@@ -42,7 +42,7 @@ function TagEditor({
             type="button"
             aria-pressed={selected}
             onClick={() =>
-              onChange(
+              cell.update<TagPlugin>(
                 selected
                   ? data.filter((value) => value !== tag)
                   : [...data, tag],
@@ -54,6 +54,19 @@ function TagEditor({
         );
       })}
     </div>
+  );
+}
+
+function ClearTags({ column }: BulkEditorProps) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        column.updateCells<TagPlugin>(column.getSelectedRowIds(), [])
+      }
+    >
+      Clear selected tags
+    </button>
   );
 }
 
@@ -86,16 +99,17 @@ export const tagPluginUi: TableUiPlugin<typeof tagPlugin> = {
     icon: TagIcon,
   },
   default: { name: "Tags", icon: TagIcon },
-  renderCell: (props) => <TagValue {...props} />,
-  renderBulkEditor: (props) => <TagEditor {...props} />,
+  renderCell: (props) => <TagCell {...props} />,
+  renderBulkEditor: (props) => <ClearTags {...props} />,
   renderGroupingValue: () => null,
 };
 ```
 
-`renderCell` receives the current surface, property metadata, data,
-configuration, text value, disabled state, and mutation callbacks.
-`renderBulkEditor` is optional; including it makes the property available in
-the bulk-edit bar and supplies selected row IDs and values.
+`renderCell` receives only a TanStack cell instance. Its `getData()`,
+`getInfo()`, `getTextValue()`, and `update()` APIs provide the value and
+mutation behavior required by the renderer. `renderBulkEditor` is optional;
+including it makes the property available in the bulk-edit bar. Its column
+instance exposes `getSelectedRowIds()` and `updateCells()` for bulk changes.
 
 ### Register the plugin
 

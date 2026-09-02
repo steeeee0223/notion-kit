@@ -1,57 +1,25 @@
 import type React from "react";
-import type { OnChangeFn } from "@tanstack/react-table";
 
-import type { Row } from "@notion-kit/table-hook";
+import type { CellInstance, ColumnInstance } from "@notion-kit/table-hook";
 import type {
   CellPlugin,
-  ComparableValue,
-  InferConfig,
-  InferData,
   InferKey,
   GroupingValueProps as LegacyGroupingValueProps,
 } from "@notion-kit/table-hook/plugins";
-import type { IconData } from "@notion-kit/ui/icon-block";
 
 export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
 
-export type CellUiProps<Data, Config = undefined> = {
-  propId: string;
-  row: Row;
-  data: Data;
-  config: Config;
-  property: {
-    description?: string;
-    icon?: IconData | null;
-    name: string;
-  };
-  surface: CellSurface;
-  textValue: string;
-  wrapped?: boolean;
-  disabled?: boolean;
-  onChange: OnChangeFn<Data>;
-  onCancel?: () => void;
-  onConfigChange?: OnChangeFn<Config>;
-};
+export interface CellProps {
+  cell: CellInstance;
+}
 
-export type BulkEditorProps<Data, Config = undefined> = {
-  propId: string;
-  data: Data;
-  config: Config;
-  disabled?: boolean;
-  onChange: OnChangeFn<Data>;
-  onConfigChange?: OnChangeFn<Config>;
-  rowIds: string[];
-  selectedValues: Data[];
-  label: string;
-  icon: React.ReactNode;
-};
+export interface BulkEditorProps {
+  column: ColumnInstance;
+}
 
-export type ConfigMenuProps<Config = unknown> = {
-  propId: string;
-  config: Config;
-  onChange: OnChangeFn<Config>;
-  onOpenChange?: (open: boolean) => void;
-};
+export interface ConfigMenuProps {
+  column: ColumnInstance;
+}
 
 export type GroupingValueProps = LegacyGroupingValueProps;
 
@@ -68,15 +36,9 @@ export interface TableUiPlugin<TPlugin extends CellPlugin = CellPlugin> {
     width?: number;
   };
   disablePropertyTooltip?: boolean;
-  renderCell: (
-    props: CellUiProps<InferData<TPlugin>, InferConfig<TPlugin>>,
-  ) => React.ReactNode;
-  renderBulkEditor?: (
-    props: BulkEditorProps<InferData<TPlugin>, InferConfig<TPlugin>>,
-  ) => React.ReactNode;
-  renderConfigMenu?: (
-    props: ConfigMenuProps<InferConfig<TPlugin>>,
-  ) => React.ReactNode;
+  renderCell: (props: CellProps) => React.ReactNode;
+  renderBulkEditor?: (props: BulkEditorProps) => React.ReactNode;
+  renderConfigMenu?: (props: ConfigMenuProps) => React.ReactNode;
   renderGroupingValue: (props: GroupingValueProps) => React.ReactNode;
 }
 

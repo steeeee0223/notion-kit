@@ -2,6 +2,7 @@ import { functionalUpdate } from "@tanstack/react-table";
 
 import {
   type MultiSelectPlugin,
+  type SelectConfig,
   type SelectPlugin,
 } from "@notion-kit/table-hook/plugins";
 
@@ -9,6 +10,14 @@ import { CellRenderer, DefaultIcon } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
 import type { TableUiPlugin } from "../registry";
+import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+  createConfigMenuRenderer,
+  type BulkEditorRendererProps,
+  type CellRendererProps,
+  type ConfigMenuRendererProps,
+} from "../renderers";
 import { getCellTriggerClass, getCompactWidthClass } from "../utils";
 import { SelectCellEditor, SelectCellValue } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
@@ -19,7 +28,7 @@ export function select(): TableUiPlugin<SelectPlugin> {
     data,
     onChange,
     ...props
-  }: Parameters<TableUiPlugin<SelectPlugin>["renderCell"]>[0]) => (
+  }: CellRendererProps<string | null, SelectConfig>) => (
     <CellRenderer
       compactClassName={getCompactWidthClass("select")}
       disabled={props.disabled}
@@ -78,27 +87,34 @@ export function select(): TableUiPlugin<SelectPlugin> {
       icon: <DefaultIcon type="select" className="fill-menu-icon" />,
     },
     default: { name: "Select", icon: <DefaultIcon type="select" /> },
-    renderCell,
-    renderBulkEditor: (props) => (
-      <BulkEditorPopover {...props} initialData={props.data}>
-        {(data, onChange) => (
-          <SelectCellEditor
-            data={data ? [data] : []}
-            config={props.config}
-            propId={props.propId}
-            onConfigChange={props.onConfigChange}
-            onChange={(updater) =>
-              onChange(
-                (previous) =>
-                  functionalUpdate(updater, previous ? [previous] : []).at(0) ??
-                  null,
-              )
-            }
-          />
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<SelectPlugin>(
+      (props: BulkEditorRendererProps<string | null, SelectConfig>) => (
+        <BulkEditorPopover {...props} initialData={props.data}>
+          {(data, onChange) => (
+            <SelectCellEditor
+              data={data ? [data] : []}
+              config={props.config}
+              propId={props.propId}
+              onConfigChange={props.onConfigChange}
+              onChange={(updater) =>
+                onChange(
+                  (previous) =>
+                    functionalUpdate(updater, previous ? [previous] : []).at(
+                      0,
+                    ) ?? null,
+                )
+              }
+            />
+          )}
+        </BulkEditorPopover>
+      ),
     ),
-    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderConfigMenu: createConfigMenuRenderer<SelectPlugin>(
+      (props: ConfigMenuRendererProps<SelectConfig>) => (
+        <SelectConfigMenu {...props} />
+      ),
+    ),
     renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
   };
 }
@@ -107,7 +123,7 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
   const renderCell = ({
     onChange,
     ...props
-  }: Parameters<TableUiPlugin<MultiSelectPlugin>["renderCell"]>[0]) => (
+  }: CellRendererProps<string[], SelectConfig>) => (
     <CellRenderer
       compactClassName={getCompactWidthClass("select")}
       disabled={props.disabled}
@@ -165,22 +181,28 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
       name: "Multi-Select",
       icon: <DefaultIcon type="multi-select" />,
     },
-    renderCell,
-    renderBulkEditor: (props) => (
-      <BulkEditorPopover {...props} initialData={props.data}>
-        {(data, onChange) => (
-          <SelectCellEditor
-            multi
-            data={data}
-            config={props.config}
-            propId={props.propId}
-            onConfigChange={props.onConfigChange}
-            onChange={onChange}
-          />
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<MultiSelectPlugin>(
+      (props: BulkEditorRendererProps<string[], SelectConfig>) => (
+        <BulkEditorPopover {...props} initialData={props.data}>
+          {(data, onChange) => (
+            <SelectCellEditor
+              multi
+              data={data}
+              config={props.config}
+              propId={props.propId}
+              onConfigChange={props.onConfigChange}
+              onChange={onChange}
+            />
+          )}
+        </BulkEditorPopover>
+      ),
     ),
-    renderConfigMenu: (props) => <SelectConfigMenu {...props} />,
+    renderConfigMenu: createConfigMenuRenderer<MultiSelectPlugin>(
+      (props: ConfigMenuRendererProps<SelectConfig>) => (
+        <SelectConfigMenu {...props} />
+      ),
+    ),
     renderGroupingValue: (props) => <SelectGroupingValue {...props} />,
   };
 }

@@ -2,6 +2,7 @@ import type React from "react";
 
 import {
   type CreatedTimePlugin,
+  type DateConfig,
   type DateData,
   type DatePlugin,
   type LastEditedTimePlugin,
@@ -10,7 +11,13 @@ import {
 import { CellRenderer, DefaultIcon } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
-import type { TableUiPlugin } from "../registry";
+import type { ConfigMenuProps, TableUiPlugin } from "../registry";
+import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+  type BulkEditorRendererProps,
+  type CellRendererProps,
+} from "../renderers";
 import {
   getCellTriggerClass,
   getCompactWidthClass,
@@ -20,14 +27,27 @@ import { DateCell, DatePickerCellValue, DateTimePicker } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
 import { DateGroupingValue } from "./date-grouping-value";
 
-const dateRenderers = {
-  renderConfigMenu: DateConfigMenu,
-  renderGroupingValue: DateGroupingValue,
-};
+function DateConfigRenderer({ column }: ConfigMenuProps) {
+  const info = column.getInfo();
+  return (
+    <DateConfigMenu
+      propId={column.id}
+      config={info.config as DateConfig}
+      onChange={(updater) => column.updateConfig<DatePlugin>(updater)}
+    />
+  );
+}
+
+function dateRenderers() {
+  return {
+    renderConfigMenu: DateConfigRenderer,
+    renderGroupingValue: DateGroupingValue,
+  };
+}
 
 export function date(): TableUiPlugin<DatePlugin> {
   const renderCell = (
-    props: Parameters<TableUiPlugin<DatePlugin>["renderCell"]>[0],
+    props: CellRendererProps<DateData, DatePlugin["default"]["config"]>,
   ) =>
     renderDateCell(
       props,
@@ -50,20 +70,27 @@ export function date(): TableUiPlugin<DatePlugin> {
       icon: <DefaultIcon type="date" className="fill-menu-icon" />,
     },
     default: { name: "Date", icon: <DefaultIcon type="date" /> },
-    renderCell,
-    renderBulkEditor: (props) => (
-      <BulkEditorPopover {...props} initialData={props.data}>
-        {(data, onChange) => (
-          <DateTimePicker
-            data={data}
-            config={props.config}
-            onChange={onChange}
-            onConfigChange={props.onConfigChange}
-          />
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<DatePlugin>(
+      (
+        props: BulkEditorRendererProps<
+          DateData,
+          DatePlugin["default"]["config"]
+        >,
+      ) => (
+        <BulkEditorPopover {...props} initialData={props.data}>
+          {(data, onChange) => (
+            <DateTimePicker
+              data={data}
+              config={props.config}
+              onChange={onChange}
+              onConfigChange={props.onConfigChange}
+            />
+          )}
+        </BulkEditorPopover>
+      ),
     ),
-    ...dateRenderers,
+    ...dateRenderers(),
   };
 }
 
@@ -72,7 +99,7 @@ export function createdTime(): TableUiPlugin<CreatedTimePlugin> {
     row,
     data: _data,
     ...props
-  }: Parameters<TableUiPlugin<CreatedTimePlugin>["renderCell"]>[0]) =>
+  }: CellRendererProps<unknown, CreatedTimePlugin["default"]["config"]>) =>
     renderDateCell(
       { ...props, data: { start: row.createdAt, includeTime: true } },
       <DateCell
@@ -93,8 +120,8 @@ export function createdTime(): TableUiPlugin<CreatedTimePlugin> {
       name: "Created time",
       icon: <DefaultIcon type="created-time" />,
     },
-    renderCell,
-    ...dateRenderers,
+    renderCell: createCellRenderer(renderCell),
+    ...dateRenderers(),
   };
 }
 
@@ -103,7 +130,7 @@ export function lastEditedTime(): TableUiPlugin<LastEditedTimePlugin> {
     row,
     data: _data,
     ...props
-  }: Parameters<TableUiPlugin<LastEditedTimePlugin>["renderCell"]>[0]) =>
+  }: CellRendererProps<unknown, LastEditedTimePlugin["default"]["config"]>) =>
     renderDateCell(
       { ...props, data: { start: row.lastEditedAt, includeTime: true } },
       <DateCell
@@ -124,8 +151,8 @@ export function lastEditedTime(): TableUiPlugin<LastEditedTimePlugin> {
       name: "Last edited time",
       icon: <DefaultIcon type="last-edited-time" />,
     },
-    renderCell,
-    ...dateRenderers,
+    renderCell: createCellRenderer(renderCell),
+    ...dateRenderers(),
   };
 }
 

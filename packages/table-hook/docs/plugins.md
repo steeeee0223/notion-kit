@@ -79,8 +79,8 @@ const customTitleUi: TableUiPlugin<typeof customTitle> = {
   id: "title",
   meta: { name: "Title", desc: "", icon: <CustomTitleIcon /> },
   default: { name: "Name", icon: <CustomTitleIcon /> },
-  renderCell: (props) => <CustomTitleValue {...props} />,
-  renderBulkEditor: (props) => <CustomTitleEditor {...props} />,
+  renderCell: ({ cell }) => <CustomTitleValue cell={cell} />,
+  renderBulkEditor: ({ column }) => <CustomTitleEditor column={column} />,
   renderGroupingValue: () => null,
 };
 
@@ -102,10 +102,11 @@ for copy and other text consumers; it is not an empty-value fallback.
 The headless package has no React renderer, icon, editor, or bulk-edit
 contract. `TableUiPlugin` lives in `@notion-kit/table-view` and owns
 `renderCell`, optional `renderBulkEditor`, `renderConfigMenu`, and
-`renderGroupingValue`. Cell adapters receive surface, property metadata,
-data/configuration, text value, and mutation callbacks. Bulk adapters receive
-the selected row IDs and values; their presence alone makes a property
-bulk-editable.
+`renderGroupingValue`. Cell adapters receive only a TanStack cell instance;
+bulk and configuration adapters receive only a TanStack column instance. Cell
+and column feature APIs expose data/configuration, text values, selected rows,
+and mutation methods without prop drilling. A bulk adapter's presence alone
+makes a property bulk-editable.
 
 Bulk edits start from `plugin.default.data`. A functional updater is resolved
 once against that draft and committed as one atomic update across selected rows.

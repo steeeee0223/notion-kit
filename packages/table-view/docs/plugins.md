@@ -31,12 +31,12 @@ There is no array or combined-plugin compatibility path.
 - required `renderGroupingValue` for group labels;
 - menu labels, descriptions, icons, and default widths.
 
-Cell adapters receive the current surface, property metadata, data,
-configuration, text value, wrapping/disabled state, and mutations. They choose
-their trigger, popover, empty state, copy affordance, and layout classes.
-Bulk adapters receive the selected row IDs and values and start from the data
-plugin's default data. A functional update is committed once for every selected
-row.
+Cell adapters receive only a TanStack cell instance. Its feature APIs provide
+column information, the data plugin, cell data, a text value, and `update()`.
+Bulk and configuration adapters receive only a TanStack column instance. It
+provides property metadata/configuration, selected row IDs, cell access,
+`updateCells()`, and `updateConfig()`. They choose their trigger, popover,
+empty state, copy affordance, and layout classes.
 
 ## UI ownership by source area
 
@@ -45,7 +45,7 @@ row.
 | `src/common/cell.tsx`          | Resolves the paired adapter and invokes its direct cell renderer.            |
 | `src/common/cell-renderer.tsx` | Reusable trigger, popover, compact-frame, copy, and empty-state composition. |
 | `src/plugins/<type>/`          | Built-in UI adapters, editors, configuration menus, and grouping labels.     |
-| `src/common/bulk-edit/`        | Invokes optional adapter bulk renderers and owns selected-row mutations.     |
+| `src/common/bulk-edit/`        | Invokes optional adapter bulk renderers.                                     |
 | `src/menus/`                   | Reads data capabilities and UI metadata without built-in type branches.      |
 
 Title and checkbox are ordinary adapters: title owns its table/list/timeline

@@ -5,6 +5,12 @@ import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
 import type { TableUiPlugin } from "../registry";
 import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+  type BulkEditorRendererProps,
+  type CellRendererProps,
+} from "../renderers";
+import {
   DefaultGroupingValue,
   getCellTriggerClass,
   getCompactWidthClass,
@@ -13,9 +19,7 @@ import {
 import { TextCellEditor, TextCellValue } from "./text-cell";
 
 export function text(): TableUiPlugin<TextPlugin> {
-  const renderCell = (
-    props: Parameters<TableUiPlugin<TextPlugin>["renderCell"]>[0],
-  ) => {
+  const renderCell = (props: CellRendererProps<string>) => {
     const copy = getCopyClasses("text");
     return (
       <CellRenderer
@@ -70,13 +74,15 @@ export function text(): TableUiPlugin<TextPlugin> {
       icon: <DefaultIcon type="text" className="fill-menu-icon" />,
     },
     default: { name: "Text", icon: <DefaultIcon type="text" /> },
-    renderCell,
-    renderBulkEditor: (props) => (
-      <BulkEditorPopover {...props} initialData={props.data}>
-        {(data, onChange) => (
-          <TextCellEditor data={data} onChange={onChange} commitOnUnchanged />
-        )}
-      </BulkEditorPopover>
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<TextPlugin>(
+      (props: BulkEditorRendererProps<string>) => (
+        <BulkEditorPopover {...props} initialData={props.data}>
+          {(data, onChange) => (
+            <TextCellEditor data={data} onChange={onChange} commitOnUnchanged />
+          )}
+        </BulkEditorPopover>
+      ),
     ),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   };

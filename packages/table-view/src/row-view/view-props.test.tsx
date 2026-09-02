@@ -69,12 +69,12 @@ const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
 const directUpdateUi = createTestUiPlugin(directUpdatePlugin, {
   meta: { name: "Direct update", desc: "", icon: null },
   default: { name: "Direct update", icon: null },
-  renderCell: ({ onChange, onConfigChange }) => (
+  renderCell: ({ cell }) => (
     <button
       type="button"
       onClick={() => {
-        onChange("blocked update");
-        onConfigChange?.("blocked config");
+        cell.update("blocked update");
+        cell.column.updateConfig("blocked config");
       }}
     >
       Force mutation

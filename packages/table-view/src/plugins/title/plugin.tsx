@@ -1,19 +1,26 @@
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type { TitlePlugin } from "@notion-kit/table-hook/plugins";
+import type {
+  TitleConfig as TitleConfigData,
+  TitlePlugin,
+} from "@notion-kit/table-hook/plugins";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 
 import { DefaultIcon } from "@/common";
 import { CellTriggerScope } from "@/common/cell-trigger";
 
 import type { TableUiPlugin } from "../registry";
+import {
+  createCellRenderer,
+  createConfigMenuRenderer,
+  type CellRendererProps,
+  type ConfigMenuRendererProps,
+} from "../renderers";
 import { DefaultGroupingValue, getCellTriggerClass } from "../utils";
 import { TitleCompactSlot, TitleTableSlot } from "./title-cell";
 import { TitleConfig } from "./title-config";
 
 export function title(): TableUiPlugin<TitlePlugin> {
-  const renderCell = (
-    props: Parameters<TableUiPlugin<TitlePlugin>["renderCell"]>[0],
-  ) => {
+  const renderCell = (props: CellRendererProps<string, TitleConfigData>) => {
     const icon = props.config.showIcon ? props.row.icon : undefined;
     const triggerClassName = getCellTriggerClass({
       kind: "text",
@@ -73,8 +80,12 @@ export function title(): TableUiPlugin<TitlePlugin> {
     },
     default: { name: "Title", icon: <DefaultIcon type="title" /> },
     disablePropertyTooltip: true,
-    renderCell,
-    renderConfigMenu: (props) => <TitleConfig {...props} />,
+    renderCell: createCellRenderer(renderCell),
+    renderConfigMenu: createConfigMenuRenderer<TitlePlugin>(
+      (props: ConfigMenuRendererProps<TitleConfigData>) => (
+        <TitleConfig {...props} />
+      ),
+    ),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   };
 }

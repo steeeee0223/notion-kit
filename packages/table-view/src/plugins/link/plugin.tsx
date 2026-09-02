@@ -9,6 +9,12 @@ import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
 import type { TableUiPlugin } from "../registry";
 import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+  type BulkEditorRendererProps,
+  type CellRendererProps,
+} from "../renderers";
+import {
   DefaultGroupingValue,
   getCellTriggerClass,
   getCompactWidthClass,
@@ -17,9 +23,8 @@ import {
 import { LinkCellEditor, LinkCellValue } from "./link-cell";
 
 export function email(): TableUiPlugin<EmailPlugin> {
-  const renderCell = (
-    props: Parameters<TableUiPlugin<EmailPlugin>["renderCell"]>[0],
-  ) => renderLinkCell("email", props);
+  const renderCell = (props: CellRendererProps<string>) =>
+    renderLinkCell("email", props);
   return {
     id: "email",
     meta: {
@@ -28,16 +33,17 @@ export function email(): TableUiPlugin<EmailPlugin> {
       icon: <DefaultIcon type="email" className="fill-menu-icon" />,
     },
     default: { name: "Email", icon: <DefaultIcon type="email" /> },
-    renderCell,
-    renderBulkEditor: (props) => <LinkBulkEditor {...props} />,
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<EmailPlugin>((props) => (
+      <LinkBulkEditor {...props} />
+    )),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   };
 }
 
 export function phone(): TableUiPlugin<PhonePlugin> {
-  const renderCell = (
-    props: Parameters<TableUiPlugin<PhonePlugin>["renderCell"]>[0],
-  ) => renderLinkCell("phone", props);
+  const renderCell = (props: CellRendererProps<string>) =>
+    renderLinkCell("phone", props);
   return {
     id: "phone",
     meta: {
@@ -46,16 +52,17 @@ export function phone(): TableUiPlugin<PhonePlugin> {
       icon: <DefaultIcon type="phone" className="fill-menu-icon" />,
     },
     default: { name: "Phone", icon: <DefaultIcon type="phone" /> },
-    renderCell,
-    renderBulkEditor: (props) => <LinkBulkEditor {...props} />,
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<PhonePlugin>((props) => (
+      <LinkBulkEditor {...props} />
+    )),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   };
 }
 
 export function url(): TableUiPlugin<UrlPlugin> {
-  const renderCell = (
-    props: Parameters<TableUiPlugin<UrlPlugin>["renderCell"]>[0],
-  ) => renderLinkCell("url", props);
+  const renderCell = (props: CellRendererProps<string>) =>
+    renderLinkCell("url", props);
   return {
     id: "url",
     meta: {
@@ -64,17 +71,15 @@ export function url(): TableUiPlugin<UrlPlugin> {
       icon: <DefaultIcon type="url" className="fill-menu-icon" />,
     },
     default: { name: "URL", icon: <DefaultIcon type="url" /> },
-    renderCell,
-    renderBulkEditor: (props) => <LinkBulkEditor {...props} />,
+    renderCell: createCellRenderer(renderCell),
+    renderBulkEditor: createBulkEditorRenderer<UrlPlugin>((props) => (
+      <LinkBulkEditor {...props} />
+    )),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   };
 }
 
-function LinkBulkEditor(
-  props: Parameters<
-    NonNullable<TableUiPlugin<EmailPlugin>["renderBulkEditor"]>
-  >[0],
-) {
+function LinkBulkEditor(props: BulkEditorRendererProps<string>) {
   return (
     <BulkEditorPopover {...props} initialData={props.data}>
       {(data, onChange) => (
@@ -86,7 +91,7 @@ function LinkBulkEditor(
 
 function renderLinkCell(
   type: "email" | "phone" | "url",
-  props: Parameters<TableUiPlugin<EmailPlugin>["renderCell"]>[0],
+  props: CellRendererProps<string>,
 ) {
   const copy = getCopyClasses("link");
   return (

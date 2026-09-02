@@ -19,10 +19,10 @@ import {
 import { CellTrigger } from "@/common/cell-trigger";
 import { RowViewIcon } from "@/common/default-icon";
 import { TextInputPopover } from "@/common/text-input-popover";
-import type { CellUiProps } from "@/plugins/registry";
+import type { CellRendererProps } from "@/plugins/renderers";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TitleCellValueProps extends CellUiProps<string, TitleConfig> {
+interface TitleCellValueProps extends CellRendererProps<string, TitleConfig> {
   icon?: IconData;
 }
 
@@ -32,7 +32,7 @@ export function TitleCellValue({ data }: TitleCellValueProps) {
 
 export interface TitleCellSlotProps {
   value: ReactNode;
-  props: CellUiProps<string, TitleConfig>;
+  props: CellRendererProps<string, TitleConfig>;
   row: Row;
   icon?: IconData;
 }
