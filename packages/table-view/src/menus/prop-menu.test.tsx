@@ -7,8 +7,13 @@ import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { MenuSurfaceObject } from "@/__tests__/component-objects/menu-surface";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import type { TableViewObject } from "@/__tests__/component-objects/table-view";
-import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
-import { DEFAULT_PLUGINS } from "@/plugins";
+import {
+  createTestUiPlugin,
+  extendDefaultPlugins,
+  mockData,
+  mockProperties,
+  mockResizeObserver,
+} from "@/__tests__/mock";
 
 mockResizeObserver();
 
@@ -214,8 +219,7 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
   const onViewChange = vi.fn();
   const plugin: CellPlugin<"rank-code", string, undefined> = {
     id: "rank-code",
-    meta: { name: "Rank code", desc: "Rank code", icon: null },
-    default: { name: "Rank code", icon: null, config: undefined, data: "" },
+    default: { config: undefined, data: "" },
     fromValue: (value) => String(value ?? ""),
     toValue: (value) => value,
     toTextValue: (value) => value,
@@ -241,10 +245,9 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
         },
       ],
     },
-    renderCellValue: ({ data }) => <span>{data}</span>,
   };
   const tableView = renderTableView({
-    plugins: [...DEFAULT_PLUGINS, plugin],
+    plugins: extendDefaultPlugins([plugin], [createTestUiPlugin(plugin)]),
     properties: [
       { id: "name", name: "Name", type: "title", config: { showIcon: true } },
       { id: "rank", name: "Rank", type: "rank-code" },

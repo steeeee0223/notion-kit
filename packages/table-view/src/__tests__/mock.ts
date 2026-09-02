@@ -39,6 +39,30 @@ export function createTestPluginPair<TData extends CellPlugin[]>(
   return { data, ui };
 }
 
+export function extendDefaultPlugins(
+  data: CellPlugin[],
+  ui: TableUiPlugin[],
+): TablePluginPair {
+  return {
+    data: [...DEFAULT_PLUGINS.data, ...data],
+    ui: [...DEFAULT_PLUGINS.ui, ...ui],
+  };
+}
+
+export function createTestUiPlugin<TPlugin extends CellPlugin>(
+  plugin: TPlugin,
+  overrides: Partial<TableUiPlugin<TPlugin>> = {},
+): TableUiPlugin<TPlugin> {
+  return {
+    id: plugin.id as TableUiPlugin<TPlugin>["id"],
+    meta: { name: plugin.id, desc: "", icon: null },
+    default: { name: plugin.id, icon: null },
+    renderCell: () => null,
+    renderGroupingValue: () => null,
+    ...overrides,
+  };
+}
+
 const fixture = createMockTableFixture();
 export const mockProperties: ColumnDefs<DefaultPlugins> = fixture.properties;
 export const mockData: Row<DefaultPlugins>[] = fixture.data;

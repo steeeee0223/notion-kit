@@ -6,26 +6,18 @@ import type {
   GroupingValueProps,
 } from "@notion-kit/table-hook/plugins";
 
+import { createTestUiPlugin, extendDefaultPlugins } from "@/__tests__/mock";
+
 import {
-  checkbox,
-  createdTime,
-  date,
+  DEFAULT_DATA_PLUGINS,
   DEFAULT_PLUGINS,
+  DEFAULT_UI_PLUGINS,
   DefaultGroupingValue,
-  email,
-  lastEditedTime,
-  multiSelect,
-  number,
-  phone,
-  select,
-  text,
-  title,
-  url,
-} from "@/plugins";
+} from ".";
 
 describe("table-view plugin wrappers", () => {
   it("preserves the configured default plugin order", () => {
-    expect(DEFAULT_PLUGINS.map(({ id }) => id)).toEqual([
+    expect(DEFAULT_PLUGINS.data.map(({ id }) => id)).toEqual([
       "title",
       "text",
       "number",
@@ -41,25 +33,16 @@ describe("table-view plugin wrappers", () => {
     ]);
   });
 
-  it.each([
-    title,
-    text,
-    number,
-    checkbox,
-    select,
-    multiSelect,
-    email,
-    phone,
-    url,
-    date,
-    createdTime,
-    lastEditedTime,
-  ])("injects the existing UI into a no-argument factory", (factory) => {
-    const plugin = factory();
-    expect(plugin.meta.icon).not.toBeNull();
-    expect(plugin.default.icon).not.toBeNull();
-    expect(plugin.renderCellValue).toEqual(expect.any(Function));
-    expect(plugin.renderGroupingValue).toEqual(expect.any(Function));
+  it("pairs every default data plugin with a direct UI adapter", () => {
+    expect(DEFAULT_DATA_PLUGINS.map(({ id }) => id)).toEqual(
+      DEFAULT_UI_PLUGINS.map(({ id }) => id),
+    );
+    for (const plugin of DEFAULT_UI_PLUGINS) {
+      expect(plugin.meta.icon).not.toBeNull();
+      expect(plugin.default.icon).not.toBeNull();
+      expect(plugin.renderCell).toEqual(expect.any(Function));
+      expect(plugin.renderGroupingValue).toEqual(expect.any(Function));
+    }
   });
 
   it("renders the headless default grouping label with table-view UI", () => {
@@ -73,18 +56,22 @@ describe("table-view plugin wrappers", () => {
     expect(screen.getByText("False")).toHaveClass("truncate");
   });
 
-  it("keeps direct custom plugins compatible with configured defaults", () => {
+  it("registers custom data and UI plugins as an explicit pair", () => {
     const custom: CellPlugin<"custom", string, undefined> = {
       id: "custom",
-      meta: { name: "Custom", desc: "", icon: null },
-      default: { name: "Custom", icon: null, data: "", config: undefined },
+      default: { data: "", config: undefined },
       fromValue: (value) => value?.toString() ?? "",
       toValue: (data) => data,
       toTextValue: (data) => data,
       isEmpty: (data) => data.trim() === "",
-      renderCellValue: () => null,
     };
 
-    expect([...DEFAULT_PLUGINS, custom].at(-1)?.id).toBe("custom");
+    const plugins = extendDefaultPlugins(
+      [custom],
+      [createTestUiPlugin(custom)],
+    );
+
+    expect(plugins.data.at(-1)?.id).toBe("custom");
+    expect(plugins.ui.at(-1)?.id).toBe("custom");
   });
 });

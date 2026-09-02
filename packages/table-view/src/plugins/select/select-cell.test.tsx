@@ -24,7 +24,6 @@ it("SelectCellEditor_InvalidMultiSelectDraft_UsesAnEmptyOptionList", () => {
         config={selectConfig}
         data={null as unknown as string[]}
         onChange={vi.fn()}
-        scope={{ kind: "bulk", rowIds: ["row"], selectedValues: [] }}
       />
     </TableViewWrapper>,
   );

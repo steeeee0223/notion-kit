@@ -1,59 +1,68 @@
 ---
 title: Cell Plugins
-description: Define how a table property stores, displays, edits, and groups its values.
+description: Define a table property's data semantics and its matching UI adapter.
 ---
 
-A `CellPlugin<Key, Data, Config>` describes one property type. `Key` is its
-unique identifier, `Data` is the stored cell value, and `Config` is the
-property-level configuration.
+A custom property is registered as a matched pair: a pure
+`CellPlugin<Key, Data, Config>` from `@notion-kit/table-hook` and a
+`TableUiPlugin` from `@notion-kit/table-view`. Both use the same property type
+ID.
 
-## Plugin definition
+## Data plugin definition
 
-| Field         | Description                                                                                              |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| `id`          | Unique property type identifier.                                                                         |
-| `meta`        | Name, description, and icon displayed in the property-type menu.                                         |
-| `default`     | Default name, icon, configuration, width, and data for newly created properties and cells.               |
-| `fromValue`   | Converts a comparable value into the plugin's cell data.                                                 |
-| `toValue`     | Converts cell data into a string, number, boolean, or `null` value for sorting.                          |
-| `isEmpty`     | Returns whether cell data is empty for UI surfaces, filters, counts, sorting, and grouping.              |
-| `toTextValue` | Converts cell data into text for copy and other text consumers. It is not used as an emptiness fallback. |
+| Field                                          | Description                                                    |
+| ---------------------------------------------- | -------------------------------------------------------------- |
+| `id`                                           | Unique property type identifier.                               |
+| `default`                                      | Default cell data and property configuration.                  |
+| `fromValue`                                    | Converts a comparable value into cell data.                    |
+| `toValue`                                      | Converts cell data for sorting and grouping.                   |
+| `isEmpty`                                      | Defines empty data for filters, counts, sorting, and grouping. |
+| `toTextValue`                                  | Converts cell data to copyable text.                           |
+| `sorting`, `grouping`, `counting`, `filtering` | Optional pure data capabilities discovered by table menus.     |
 
-When a row has no cell for a property, table-hook passes `plugin.default.data`
-to `isEmpty`. Each plugin therefore owns one empty-data definition; surfaces
-and table behaviors do not infer emptiness from the plugin ID or converted
-text.
+Data plugins do not render React, carry icons, or decide cell presentation.
 
-## Optional capabilities
+## UI adapter definition
 
-| Field             | Description                                                                       |
-| ----------------- | --------------------------------------------------------------------------------- |
-| `toGroupValue`    | Supplies a value for grouping. Falls back to `toValue`.                           |
-| `sorting`         | Declares the sorting methods available for the property.                          |
-| `grouping`        | Declares the grouping methods available for the property.                         |
-| `counting`        | Declares footer calculations for the property.                                    |
-| `compare`         | Legacy row comparator for the property. Prefer `sorting.methods` for new plugins. |
-| `transferConfig`  | Converts an existing property configuration when its type changes.                |
-| `disableBulkEdit` | Excludes an editor-capable plugin from the bulk-edit bar.                         |
+| Field                 | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `id`                  | Must match the data plugin ID.                                  |
+| `meta`                | Type-menu name, description, and icon.                          |
+| `default`             | Default property name, icon, and optional width.                |
+| `renderCell`          | **Required.** Returns the complete React UI for a cell surface. |
+| `renderBulkEditor`    | Optional. Its presence enables bulk editing.                    |
+| `renderConfigMenu`    | Optional property configuration UI.                             |
+| `renderGroupingValue` | **Required.** Returns the grouped label UI.                     |
 
-## Rendering
+`renderCell` receives `CellUiProps<Data, Config>`: the surface, property
+metadata, cell data/configuration, text value, wrapping/disabled state, and
+cell mutation callbacks. `renderBulkEditor` receives `BulkEditorProps`,
+including selected row IDs and values. Adapters own their triggers, popovers,
+empty states, copy affordances, and layout classes.
 
-| Field                 | Description                                                                                                                                                                                                                                                            |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `renderCellValue`     | **Required.** Returns layout-neutral value content. It receives `CellValueProps` with the property ID, row, value, property configuration, wrapping hint, and disabled state. The table layout supplies the trigger, tooltip, width, classes, and activation behavior. |
-| `renderCellEditor`    | Renders the editing UI and returns either an inline or popover editor. It receives `CellEditorProps`, including `onChange`, `onCancel`, and a `scope` for a single cell or selected rows. Plugins with this capability are eligible for bulk editing.                  |
-| `renderConfigMenu`    | Renders the property configuration UI.                                                                                                                                                                                                                                 |
-| `renderGroupingValue` | Renders a group label.                                                                                                                                                                                                                                                 |
+## Registration
+
+```tsx
+const plugins = {
+  data: [tagPlugin],
+  ui: [tagPluginUi],
+};
+
+<TableView plugins={plugins} />;
+```
+
+The registry rejects missing, duplicate, and unmatched IDs. There is no
+combined-plugin registration path.
 
 ## Types
 
-| Type                                                  | Description                                                            |
-| ----------------------------------------------------- | ---------------------------------------------------------------------- |
-| `CellValueProps<Data, Config>`                        | Props for a cell value renderer.                                       |
-| `CellEditorProps<Data, Config>`                       | Props for a cell editor, including its update callback and edit scope. |
-| `ConfigMenuProps<Config>`                             | Props for a property configuration menu.                               |
-| `CellEditorResult`                                    | The inline or popover editor returned by `renderCellEditor`.           |
-| `InferKey`, `InferData`, `InferConfig`, `InferPlugin` | Utility types for deriving plugin types.                               |
+| Type                            | Description                                      |
+| ------------------------------- | ------------------------------------------------ |
+| `CellPlugin<Key, Data, Config>` | Pure table-hook data semantics and capabilities. |
+| `TableUiPlugin<TPlugin>`        | React adapter coupled to one data plugin.        |
+| `CellUiProps<Data, Config>`     | Inputs for direct cell rendering.                |
+| `BulkEditorProps<Data, Config>` | Inputs for optional bulk rendering.              |
+| `ConfigMenuProps<Config>`       | Inputs for property configuration UI.            |
 
 <Cards>
   <Card title="Create a Cell Plugin" href="/docs/blocks/table-view/tutorial" />

@@ -20,9 +20,10 @@ import { renderTableView } from "@/__tests__/component-objects/render-table-view
 import {
   createFullPluginFixture,
   createResourceProbe,
+  createTestUiPlugin,
+  extendDefaultPlugins,
   mockResizeObserver,
 } from "@/__tests__/mock";
-import { title } from "@/plugins";
 import { TableView, useTableViewCtx } from "@/table-contexts";
 
 mockResizeObserver();
@@ -55,10 +56,7 @@ const interactivePropertyNames = [
 
 const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
   id: "direct-update",
-  meta: { name: "Direct update", desc: "", icon: null },
   default: {
-    name: "Direct update",
-    icon: null,
     data: "",
     config: "default config",
   },
@@ -66,22 +64,23 @@ const directUpdatePlugin: CellPlugin<"direct-update", string, string> = {
   toValue: (data) => data,
   toTextValue: (data) => data,
   isEmpty: (data) => data.trim() === "",
-  renderCellValue: () => null,
-  renderCellEditor: ({ onChange, onConfigChange }) => ({
-    presentation: "inline",
-    content: (
-      <button
-        type="button"
-        onClick={() => {
-          onChange("blocked update");
-          onConfigChange?.("blocked config");
-        }}
-      >
-        Force mutation
-      </button>
-    ),
-  }),
 };
+
+const directUpdateUi = createTestUiPlugin(directUpdatePlugin, {
+  meta: { name: "Direct update", desc: "", icon: null },
+  default: { name: "Direct update", icon: null },
+  renderCell: ({ onChange, onConfigChange }) => (
+    <button
+      type="button"
+      onClick={() => {
+        onChange("blocked update");
+        onConfigChange?.("blocked config");
+      }}
+    >
+      Force mutation
+    </button>
+  ),
+});
 
 function renderOpenRow(locked: boolean) {
   const dataProbe = createResourceProbe<Row[], DataResourceAction>();
@@ -229,8 +228,8 @@ it("ViewProps_LockTransition_ClosesOpenEditorWithoutDataChange", async () => {
 
 it("TableCell_LockedView_BlocksPluginMutationDispatch", async () => {
   // Arrange
-  const plugins = [title(), directUpdatePlugin];
-  const properties: ColumnInfo<(typeof plugins)[number]>[] = [
+  const plugins = extendDefaultPlugins([directUpdatePlugin], [directUpdateUi]);
+  const properties: ColumnInfo[] = [
     {
       id: "title",
       name: "Name",
@@ -246,7 +245,7 @@ it("TableCell_LockedView_BlocksPluginMutationDispatch", async () => {
       config: "original config",
     },
   ];
-  const data: Row<typeof plugins>[] = [
+  const data: Row[] = [
     {
       id: "row",
       createdAt: 0,

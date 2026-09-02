@@ -16,7 +16,7 @@ interface BoardGroupProps {
 export function BoardGroup({ index, row }: BoardGroupProps) {
   const { table, plugins } = useTableViewCtx();
   const uiPlugin = row.groupingColumnId
-    ? plugins.getUiPlugin(row.groupingColumnId)
+    ? plugins.getUiPlugin(table.getColumnPlugin(row.groupingColumnId).id)
     : null;
 
   const addRow = (event: React.MouseEvent<HTMLButtonElement>) => {

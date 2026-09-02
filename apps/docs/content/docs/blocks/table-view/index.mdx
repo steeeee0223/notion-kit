@@ -85,9 +85,10 @@ const view = {
 
 ## Custom cell plugins
 
-Create a custom plugin when a property needs its own value display, editor, or
-configuration. A plugin that provides `renderCellEditor` also participates in
-bulk editing by default.
+Create a custom data plugin when a property needs its own storage or table
+semantics, then register a matching UI adapter for display, editing, or
+configuration. An adapter that provides `renderBulkEditor` participates in
+bulk editing.
 
 <Cards>
   <Card title="Create a Cell Plugin" href="/docs/blocks/table-view/tutorial" />
@@ -98,22 +99,22 @@ bulk editing by default.
 
 ### TableView
 
-| Prop                 | Type                        | Description                                                             |
-| -------------------- | --------------------------- | ----------------------------------------------------------------------- |
-| `plugins`            | `CellPlugin[]`              | Plugin factories available to the table. Defaults to `DEFAULT_PLUGINS`. |
-| `data`               | `Row[]`                     | Controlled rows resource.                                               |
-| `defaultData`        | `Row[]`                     | Initial rows for an uncontrolled table.                                 |
-| `properties`         | `ColumnDefs`                | Controlled properties resource.                                         |
-| `defaultProperties`  | `ColumnDefs`                | Initial properties for an uncontrolled table.                           |
-| `view`               | `PartialTableViewState`     | Controlled layout and presentation state.                               |
-| `defaultView`        | `PartialTableViewState`     | Initial view state for an uncontrolled table.                           |
-| `onDataChange`       | `(change) => void`          | Receives the next rows resource and its action.                         |
-| `onPropertiesChange` | `(change) => void`          | Receives the next properties resource and its action.                   |
-| `onViewChange`       | `(change) => void`          | Receives the next view resource and its action.                         |
-| `getRowUrl`          | `(rowId: string) => string` | Returns the URL used when opening a row in a new tab.                   |
-| `weekStartsOn`       | `Weekday`                   | Sets the first day of the week for date-based features.                 |
-| `defaultColumn`      | `Partial<ColumnDef>`        | Overrides the default TanStack Table column options.                    |
-| `children`           | `ReactNode`                 | Content rendered inside the Table View provider.                        |
+| Prop                 | Type                        | Description                                                        |
+| -------------------- | --------------------------- | ------------------------------------------------------------------ |
+| `plugins`            | `TablePluginPair`           | Paired data/UI plugin registration. Defaults to `DEFAULT_PLUGINS`. |
+| `data`               | `Row[]`                     | Controlled rows resource.                                          |
+| `defaultData`        | `Row[]`                     | Initial rows for an uncontrolled table.                            |
+| `properties`         | `ColumnDefs`                | Controlled properties resource.                                    |
+| `defaultProperties`  | `ColumnDefs`                | Initial properties for an uncontrolled table.                      |
+| `view`               | `PartialTableViewState`     | Controlled layout and presentation state.                          |
+| `defaultView`        | `PartialTableViewState`     | Initial view state for an uncontrolled table.                      |
+| `onDataChange`       | `(change) => void`          | Receives the next rows resource and its action.                    |
+| `onPropertiesChange` | `(change) => void`          | Receives the next properties resource and its action.              |
+| `onViewChange`       | `(change) => void`          | Receives the next view resource and its action.                    |
+| `getRowUrl`          | `(rowId: string) => string` | Returns the URL used when opening a row in a new tab.              |
+| `weekStartsOn`       | `Weekday`                   | Sets the first day of the week for date-based features.            |
+| `defaultColumn`      | `Partial<ColumnDef>`        | Overrides the default TanStack Table column options.               |
+| `children`           | `ReactNode`                 | Content rendered inside the Table View provider.                   |
 
 ### TableViewState
 

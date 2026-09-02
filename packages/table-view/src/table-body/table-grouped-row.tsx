@@ -21,7 +21,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
   }
 
   const { layout, locked } = table.getTableGlobalState();
-  const uiPlugin = plugins.getUiPlugin(groupId);
+  const uiPlugin = plugins.getUiPlugin(table.getColumnPlugin(groupId).id);
   const groupSelectionState = row.getGroupSelectionState();
   const showSelection = (layout === "table" || layout === "list") && !locked;
 

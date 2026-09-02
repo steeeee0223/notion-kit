@@ -3,6 +3,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import type { Row } from "@notion-kit/table-hook";
+import { text } from "@notion-kit/table-hook/plugins";
 
 import { NumberConfigMenuObject } from "@/__tests__/component-objects/number-config-menu";
 import {
@@ -10,7 +11,7 @@ import {
   type TableViewProps,
 } from "@/__tests__/component-objects/render-table-view";
 import { mockData, mockResizeObserver } from "@/__tests__/mock";
-import { DEFAULT_PLUGINS, text } from "@/plugins";
+import { DEFAULT_PLUGINS } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
 mockResizeObserver();
@@ -37,10 +38,13 @@ const customCountingTextPlugin: ReturnType<typeof text> = {
   ],
 };
 
-const customCountingPlugins = [
-  ...DEFAULT_PLUGINS.filter((plugin) => plugin.id !== "text"),
-  customCountingTextPlugin,
-];
+const customCountingPlugins = {
+  data: [
+    ...DEFAULT_PLUGINS.data.filter((plugin) => plugin.id !== "text"),
+    customCountingTextPlugin,
+  ],
+  ui: DEFAULT_PLUGINS.ui,
+};
 
 function SetColumnCountMethod({ id, method }: { id: string; method: string }) {
   const { table } = useTableViewCtx();
