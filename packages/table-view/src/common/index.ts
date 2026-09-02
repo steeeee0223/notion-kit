@@ -1,4 +1,6 @@
 export { Cell } from "./cell";
+export { CellEditorPopover, CellRenderer } from "./cell-renderer";
+export type { CellPopoverOptions } from "./cell-renderer";
 export { CopyButton } from "./copy-button";
 export {
   DefaultIcon,

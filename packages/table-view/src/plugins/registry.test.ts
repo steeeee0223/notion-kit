@@ -2,10 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
-import {
-  createPluginRegistry,
-  type TableUiPlugin,
-} from "./registry";
+import { DEFAULT_UI_PLUGINS } from "./index";
+import { createPluginRegistry, type TableUiPlugin } from "./registry";
 
 const text: CellPlugin<"text", string, undefined> = {
   id: "text",
@@ -41,5 +39,12 @@ describe("createPluginRegistry", () => {
     expect(() =>
       createPluginRegistry({ data: [text], ui: [textUi, textUi] }),
     ).toThrow('Duplicate UI plugin adapter "text"');
+  });
+
+  it("TestDefaultAdapters_ExposeOnlyDirectCellAndBulkRenderers", () => {
+    for (const plugin of DEFAULT_UI_PLUGINS) {
+      expect(plugin).not.toHaveProperty("renderCellValue");
+      expect(plugin).not.toHaveProperty("renderCellEditor");
+    }
   });
 });

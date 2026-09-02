@@ -1,8 +1,9 @@
+import type { OnChangeFn } from "@tanstack/react-table";
+
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
 import {
   formatNumber,
-  type CellEditorProps,
   type CellValueProps,
   type NumberConfig,
 } from "@notion-kit/table-hook/plugins";
@@ -29,12 +30,19 @@ export function NumberCellValue({
   );
 }
 
+interface NumberCellEditorProps {
+  data: string | null;
+  onChange: OnChangeFn<string | null>;
+  onCancel?: () => void;
+  commitOnUnchanged?: boolean;
+}
+
 export function NumberCellEditor({
   data,
   onChange,
   onCancel,
-  scope,
-}: CellEditorProps<string | null, NumberConfig>) {
+  commitOnUnchanged,
+}: NumberCellEditorProps) {
   const handleUpdate = (newValue: string) => {
     if (newValue === "") return onChange(null);
     const number = Number(newValue);
@@ -47,7 +55,7 @@ export function NumberCellEditor({
       value={data ?? ""}
       onUpdate={handleUpdate}
       onCancel={onCancel}
-      commitOnUnchanged={scope.kind === "bulk"}
+      commitOnUnchanged={commitOnUnchanged}
     />
   );
 }

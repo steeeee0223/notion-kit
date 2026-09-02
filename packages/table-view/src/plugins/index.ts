@@ -76,9 +76,7 @@ export {
 export { DefaultGroupingValue } from "./utils";
 export { createPluginRegistry } from "./registry";
 export type {
-  CellEditorProps,
-  CellEditorResult,
-  CellValueProps,
+  CellUiProps,
   ConfigMenuProps,
   GroupingValueProps,
   TablePluginPair,

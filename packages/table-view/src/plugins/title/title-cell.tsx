@@ -5,11 +5,7 @@ import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
 import type { Row } from "@notion-kit/table-hook";
-import type {
-  CellEditorProps,
-  CellValueProps,
-  TitleConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { TitleConfig } from "@notion-kit/table-hook/plugins";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -23,9 +19,10 @@ import {
 import { CellTrigger } from "@/common/cell-trigger";
 import { RowViewIcon } from "@/common/default-icon";
 import { TextInputPopover } from "@/common/text-input-popover";
+import type { CellUiProps } from "@/plugins/registry";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TitleCellValueProps extends CellValueProps<string, TitleConfig> {
+interface TitleCellValueProps extends CellUiProps<string, TitleConfig> {
   icon?: IconData;
 }
 
@@ -35,18 +32,18 @@ export function TitleCellValue({ data }: TitleCellValueProps) {
 
 export interface TitleCellSlotProps {
   value: ReactNode;
-  editorProps: CellEditorProps<string, TitleConfig>;
+  props: CellUiProps<string, TitleConfig>;
   row: Row;
   icon?: IconData;
 }
 
 export function TitleTableSlot({
   value,
-  editorProps,
+  props,
   row,
   icon,
 }: TitleCellSlotProps) {
-  const { data, disabled, onChange, wrapped } = editorProps;
+  const { data, disabled, onChange, wrapped } = props;
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
 
@@ -100,13 +97,13 @@ export function TitleTableSlot({
 
 export function TitleCompactSlot({
   value,
-  editorProps,
+  props: cellProps,
   icon,
 }: TitleCellSlotProps) {
-  const { data, disabled, onChange } = editorProps;
+  const { data, disabled, onChange } = cellProps;
   const [open, setOpen] = useState(false);
   const id = useId();
-  const { props, reset } = useInputField({
+  const { props: inputProps, reset } = useInputField({
     id: `title-list-cell-${id}`,
     initialValue: data,
     onUpdate: (v) => {
@@ -149,7 +146,7 @@ export function TitleCompactSlot({
                 spellCheck
                 className="max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary"
                 variant="flat"
-                {...props}
+                {...inputProps}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") {
                     event.stopPropagation();
@@ -157,7 +154,7 @@ export function TitleCompactSlot({
                     setOpen(false);
                     return;
                   }
-                  props.onKeyDown?.(event);
+                  inputProps.onKeyDown?.(event);
                 }}
               />
             </PopoverContent>

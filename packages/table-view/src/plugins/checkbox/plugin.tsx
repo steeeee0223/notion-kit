@@ -1,25 +1,47 @@
 import type { CheckboxPlugin } from "@notion-kit/table-hook/plugins";
 
-import { DefaultIcon } from "@/common";
+import { CellRenderer, DefaultIcon } from "@/common";
+import { BulkEditorToggle } from "@/common/bulk-edit/bulk-editor";
 
-import { CheckboxCellEditor, CheckboxCellValue } from "./checkbox-cell";
-import { CheckboxGroupingValue } from "./checkbox-grouping-value";
 import type { TableUiPlugin } from "../registry";
+import { getCellTriggerClass, getCompactWidthClass } from "../utils";
+import { CheckboxCellValue } from "./checkbox-cell";
+import { CheckboxGroupingValue } from "./checkbox-grouping-value";
 
 export function checkbox(): TableUiPlugin<CheckboxPlugin> {
-  const renderCell = (props: Parameters<TableUiPlugin<CheckboxPlugin>["renderCell"]>[0]) => (
-    <CheckboxCellValue {...props} />
+  const renderCell = (
+    props: Parameters<TableUiPlugin<CheckboxPlugin>["renderCell"]>[0],
+  ) => (
+    <CellRenderer
+      compactClassName={getCompactWidthClass("checkbox")}
+      disabled={props.disabled}
+      hideWhenEmpty={false}
+      isEmpty={false}
+      onClick={() => props.onChange(!props.data)}
+      surface={props.surface}
+      triggerClassName={getCellTriggerClass({
+        kind: "checkbox",
+        surface: props.surface,
+        wrapped: props.wrapped,
+      })}
+      value={<CheckboxCellValue {...props} />}
+    />
   );
   return {
     id: "checkbox",
-    meta: { name: "Checkbox", desc: "Use a checkbox to indicate whether a condition is true or false. Useful for lightweight task tracking.", icon: <DefaultIcon type="checkbox" className="fill-menu-icon" /> },
+    meta: {
+      name: "Checkbox",
+      desc: "Use a checkbox to indicate whether a condition is true or false. Useful for lightweight task tracking.",
+      icon: <DefaultIcon type="checkbox" className="fill-menu-icon" />,
+    },
     default: { name: "Checkbox", icon: <DefaultIcon type="checkbox" /> },
     renderCell,
-    renderCellValue: renderCell,
-    renderCellEditor: (props) => ({
-      presentation: "inline",
-      content: <CheckboxCellEditor {...props} />,
-    }),
+    renderBulkEditor: (props) => (
+      <BulkEditorToggle
+        {...props}
+        onClick={() => props.onChange(!props.selectedValues.every(Boolean))}
+      />
+    ),
     renderGroupingValue: (props) => <CheckboxGroupingValue {...props} />,
   };
 }

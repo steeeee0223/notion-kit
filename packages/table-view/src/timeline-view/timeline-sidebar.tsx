@@ -11,7 +11,6 @@ import {
 } from "@notion-kit/ui/timeline";
 
 import { Cell, RowActionGroup } from "@/common";
-import { getCellPresentation } from "@/plugins/utils";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -126,11 +125,6 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
 
     const title = String(titleDataCell.value || "New page");
     const wrapped = titleCell.column.getInfo().wrapped;
-    const presentation = getCellPresentation({
-      pluginId: titleCell.column.getPlugin().id,
-      surface: "timeline",
-      wrapped,
-    });
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
@@ -144,7 +138,6 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           cell={titleCell}
           table={table}
           surface="timeline"
-          presentation={presentation}
           wrapped={wrapped}
         >
           <Cell.Content />

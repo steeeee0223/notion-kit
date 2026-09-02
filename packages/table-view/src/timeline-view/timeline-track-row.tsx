@@ -8,7 +8,6 @@ import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
 import { Cell } from "@/common";
 import { RowActionMenu } from "@/menus";
-import { getCellPresentation } from "@/plugins/utils";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -131,19 +130,9 @@ function TimelineBarContent({ rowId }: { rowId: string }) {
 
   if (!titleCell) return null;
 
-  const presentation = getCellPresentation({
-    pluginId: titleCell.column.getPlugin().id,
-    surface: "timeline",
-  });
-
   return (
     <span className="me-2.5 flex min-w-0 items-center gap-1.5 overflow-hidden text-sm font-normal">
-      <Cell.Root
-        cell={titleCell}
-        table={table}
-        surface="timeline"
-        presentation={presentation}
-      >
+      <Cell.Root cell={titleCell} table={table} surface="timeline">
         <Cell.Content />
       </Cell.Root>
     </span>

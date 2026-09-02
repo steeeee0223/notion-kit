@@ -5,71 +5,27 @@ import type { Row } from "@notion-kit/table-hook";
 import type {
   CellPlugin,
   ComparableValue,
-  GroupingValueProps as LegacyGroupingValueProps,
   InferConfig,
   InferData,
   InferKey,
+  GroupingValueProps as LegacyGroupingValueProps,
 } from "@notion-kit/table-hook/plugins";
+import type { IconData } from "@notion-kit/ui/icon-block";
 
-export type CellSurface =
-  | "table"
-  | "list"
-  | "board"
-  | "row-view"
-  | "timeline";
-
-export type CellEditorScope<Data> =
-  | { kind: "cell"; row: Row }
-  | { kind: "bulk"; rowIds: string[]; selectedValues: Data[] };
-
-export type CellValueProps<Data, Config = undefined> = {
-  propId: string;
-  row: Row;
-  data: Data;
-  config: Config;
-  wrapped?: boolean;
-  disabled?: boolean;
-};
-
-export type CellEditorPopoverOptions = {
-  className?: string;
-  align?: "start" | "center" | "end";
-  alignOffset?: number;
-  side?: "top" | "right" | "bottom" | "left";
-  sideOffset?: number | ((triggerRect: { height: number }) => number);
-};
-
-export type CellEditorResult =
-  | {
-      presentation: "inline";
-      content: React.ReactNode;
-      closeOnChange?: boolean;
-    }
-  | {
-      presentation: "popover";
-      content: React.ReactNode;
-      popover?: CellEditorPopoverOptions;
-      closeOnChange?: boolean;
-    };
-
-export type CellEditorProps<Data, Config = undefined> = {
-  propId: string;
-  data: Data;
-  config: Config;
-  wrapped?: boolean;
-  disabled?: boolean;
-  onChange: OnChangeFn<Data>;
-  onCancel?: () => void;
-  onConfigChange?: OnChangeFn<Config>;
-  scope: CellEditorScope<Data>;
-};
+export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
 
 export type CellUiProps<Data, Config = undefined> = {
   propId: string;
   row: Row;
   data: Data;
   config: Config;
+  property: {
+    description?: string;
+    icon?: IconData | null;
+    name: string;
+  };
   surface: CellSurface;
+  textValue: string;
   wrapped?: boolean;
   disabled?: boolean;
   onChange: OnChangeFn<Data>;
@@ -86,6 +42,8 @@ export type BulkEditorProps<Data, Config = undefined> = {
   onConfigChange?: OnChangeFn<Config>;
   rowIds: string[];
   selectedValues: Data[];
+  label: string;
+  icon: React.ReactNode;
 };
 
 export type ConfigMenuProps<Config = unknown> = {
@@ -109,6 +67,7 @@ export interface TableUiPlugin<TPlugin extends CellPlugin = CellPlugin> {
     icon: React.ReactNode;
     width?: number;
   };
+  disablePropertyTooltip?: boolean;
   renderCell: (
     props: CellUiProps<InferData<TPlugin>, InferConfig<TPlugin>>,
   ) => React.ReactNode;
@@ -119,14 +78,6 @@ export interface TableUiPlugin<TPlugin extends CellPlugin = CellPlugin> {
     props: ConfigMenuProps<InferConfig<TPlugin>>,
   ) => React.ReactNode;
   renderGroupingValue: (props: GroupingValueProps) => React.ReactNode;
-  /** @internal Transitional bridge until direct cell composition lands. */
-  renderCellValue?: (
-    props: CellUiProps<InferData<TPlugin>, InferConfig<TPlugin>>,
-  ) => React.ReactNode;
-  /** @internal Transitional bridge until direct cell composition lands. */
-  renderCellEditor?: (
-    props: CellEditorProps<InferData<TPlugin>, InferConfig<TPlugin>>,
-  ) => CellEditorResult;
 }
 
 export interface TablePluginPair<TData extends CellPlugin[] = CellPlugin[]> {

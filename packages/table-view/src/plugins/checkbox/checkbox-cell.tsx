@@ -1,7 +1,4 @@
-import type {
-  CellEditorProps,
-  CellValueProps,
-} from "@notion-kit/table-hook/plugins";
+import type { CellValueProps } from "@notion-kit/table-hook/plugins";
 import { Checkbox } from "@notion-kit/ui/primitives";
 
 export function CheckboxCellValue({ data }: CellValueProps<boolean>) {
@@ -18,12 +15,15 @@ export function CheckboxCellValue({ data }: CellValueProps<boolean>) {
   );
 }
 
+interface CheckboxCellEditorProps {
+  disabled?: boolean;
+  selectedValues: boolean[];
+}
+
 export function CheckboxCellEditor({
-  data,
   disabled,
-  scope,
-}: CellEditorProps<boolean>) {
-  const selectedValues = scope.kind === "bulk" ? scope.selectedValues : [data];
+  selectedValues,
+}: CheckboxCellEditorProps) {
   const allChecked = selectedValues.every(Boolean);
   const allUnchecked = selectedValues.every((value) => !value);
   const indeterminate = !allChecked && !allUnchecked;

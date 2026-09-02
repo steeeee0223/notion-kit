@@ -1,9 +1,8 @@
+import type { OnChangeFn } from "@tanstack/react-table";
+
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type {
-  CellEditorProps,
-  CellValueProps,
-} from "@notion-kit/table-hook/plugins";
+import type { CellValueProps } from "@notion-kit/table-hook/plugins";
 
 import { TextInputPopoverContent } from "@/common";
 
@@ -16,18 +15,25 @@ export function TextCellValue({ data, wrapped }: CellValueProps<string>) {
   );
 }
 
+interface TextCellEditorProps {
+  data: string;
+  onChange: OnChangeFn<string>;
+  onCancel?: () => void;
+  commitOnUnchanged?: boolean;
+}
+
 export function TextCellEditor({
   data,
   onChange,
   onCancel,
-  scope,
-}: CellEditorProps<string>) {
+  commitOnUnchanged,
+}: TextCellEditorProps) {
   return (
     <TextInputPopoverContent
       value={data}
       onUpdate={onChange}
       onCancel={onCancel}
-      commitOnUnchanged={scope.kind === "bulk"}
+      commitOnUnchanged={commitOnUnchanged}
     />
   );
 }
