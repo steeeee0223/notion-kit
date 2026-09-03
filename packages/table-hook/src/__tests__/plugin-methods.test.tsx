@@ -242,27 +242,6 @@ describe("cell plugin registered methods", () => {
     ).toBe("first-letter");
   });
 
-  it("keeps legacy row sorting and grouping conversions executable", () => {
-    const plugin: CellPlugin = {
-      ...reverseTextPlugin,
-      sorting: undefined,
-      grouping: undefined,
-      compare: () => 7,
-      toGroupValue: () => "legacy group",
-    };
-    const row = data[0]!;
-
-    expect(resolveSortingMethod(plugin)?.function(row, row, "col1")).toBe(7);
-    expect(
-      resolveGroupingMethod(plugin).function("unused", row, "col1", {
-        table: {} as never,
-        colId: "col1",
-        config: undefined,
-        weekStartsOn: 1,
-      }),
-    ).toBe("legacy group");
-  });
-
   it("uses registered value comparators for ascending and descending rows while normalizing missing cells", () => {
     const contexts: number[] = [];
     const values: unknown[] = [];

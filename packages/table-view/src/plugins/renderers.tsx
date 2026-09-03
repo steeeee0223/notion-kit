@@ -95,8 +95,8 @@ function ResolvedCellRenderer<TPlugin extends CellPlugin>({
     textValue: cell.getTextValue(),
     wrapped,
     disabled: table.getTableGlobalState().locked,
-    onChange: (updater) => cell.update<TPlugin>(updater),
-    onConfigChange: (updater) => cell.column.updateConfig<TPlugin>(updater),
+    onChange: cell.update,
+    onConfigChange: cell.column.updateConfig,
   });
 }
 
@@ -141,7 +141,7 @@ function ResolvedBulkEditorRenderer<TPlugin extends CellPlugin>({
   const selectedValues: InferData<TPlugin>[] = [];
   for (const rowId of rowIds) {
     const value = column.getCell<TPlugin>(rowId).value;
-    selectedValues.push(value as unknown as InferData<TPlugin>);
+    selectedValues.push(value);
   }
 
   return renderer({
@@ -162,7 +162,7 @@ function ResolvedBulkEditorRenderer<TPlugin extends CellPlugin>({
         rowIds,
         functionalUpdate(updater, plugin.default.data),
       ),
-    onConfigChange: (updater) => column.updateConfig<TPlugin>(updater),
+    onConfigChange: column.updateConfig<TPlugin>,
   });
 }
 
@@ -185,6 +185,6 @@ function ResolvedConfigMenuRenderer<TPlugin extends CellPlugin>({
   return renderer({
     propId: column.id,
     config: info.config,
-    onChange: (updater) => column.updateConfig(updater),
+    onChange: column.updateConfig,
   });
 }

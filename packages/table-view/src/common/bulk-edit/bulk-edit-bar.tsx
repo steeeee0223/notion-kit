@@ -18,15 +18,11 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
       {() => {
         const rowIds = table.getSelectedRowIds();
         if (!rowIds.length) return null;
-        const columnIds = table
-          .getVisibleLeafColumns()
-          .filter((column) => {
-            return Boolean(
-              plugins.getUiPlugin(table.getColumnPlugin(column.id).id)
-                .renderBulkEditor,
-            );
-          })
-          .map((column) => column.id);
+        const columns = table.getVisibleLeafColumns().filter((column) => {
+          return Boolean(
+            plugins.getUiPlugin(column.getInfo().type).renderBulkEditor,
+          );
+        });
         return (
           <div
             data-testid="bulk-edit-bar"
@@ -35,10 +31,10 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
             <span className="inline-flex h-full items-center border-r px-2.5 text-sm text-blue">
               {rowIds.length} row{rowIds.length === 1 ? "" : "s"} selected
             </span>
-            {columnIds.map((columnId) => (
+            {columns.map((column) => (
               <BulkEditColumn
-                key={columnId}
-                columnId={columnId}
+                key={column.id}
+                columnId={column.id}
                 disabled={disabled}
               />
             ))}

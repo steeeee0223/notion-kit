@@ -42,7 +42,7 @@ interface PropMenuProps {
  * 0. ✅ Edit property config
  * 1. ✅ Change type
  * ---
- * 2. 🚧 Filter
+ * 2. ✅ Filter
  * 3. ✅ Sorting
  * 4. ✅ Grouping
  * 5. ✅ Calculate

@@ -31,8 +31,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   const { table, plugins } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
-  const plugin = table.getColumnPlugin(propId);
-  const uiPlugin = plugins.getUiPlugin(plugin.id);
+  const uiPlugin = plugins.getUiPlugin(info.type);
 
   // 1. Type selection
   const openTypesMenu = () =>

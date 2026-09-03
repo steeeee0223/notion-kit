@@ -79,22 +79,13 @@ function TableFrame({ children }: { children: ReactNode }) {
         {children}
       </div>
       {/* Cell focused */}
-      <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" />
+      {/* <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" /> */}
     </div>
   );
 }
 
-function CompactFrame({
-  children,
-  className,
-  ref,
-  ...props
-}: ComponentProps<"div">) {
-  return (
-    <div {...props} ref={ref} className={cn("flex empty:hidden", className)}>
-      {children}
-    </div>
-  );
+function CompactFrame({ className, ...props }: ComponentProps<"div">) {
+  return <div className={cn("flex empty:hidden", className)} {...props} />;
 }
 
 function Tooltip({ children }: { children: ReactElement }) {
@@ -130,8 +121,8 @@ function Tooltip({ children }: { children: ReactElement }) {
 function Content() {
   const { cell } = useCellContext();
   const { plugins } = useTableViewCtx();
-  const { column, row } = cell;
-  const data = row.original.properties[column.id];
+
+  const data = cell.getData();
   if (!data) return null;
 
   const plugin = cell.getPlugin();

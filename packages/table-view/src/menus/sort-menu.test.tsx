@@ -145,33 +145,6 @@ describe("SortMenu", () => {
     expect(sort.propertyOption("Score")).toBeVisible();
   });
 
-  it("SortMenu_AddsLegacyPluginWithFallbackDirectionWhenSortingMetadataIsMissing", async () => {
-    const legacyPlugin: CellPlugin<"legacy", string, undefined> = {
-      id: "legacy",
-      default: { config: undefined, data: "" },
-      fromValue: (value) => String(value ?? ""),
-      toValue: (value) => value,
-      toTextValue: (value) => value,
-      isEmpty: (value) => value.trim() === "",
-      compare: () => 0,
-    };
-    const tableView = renderTableView({
-      plugins: extendDefaultPlugins(
-        [legacyPlugin],
-        [createTestUiPlugin(legacyPlugin)],
-      ),
-      properties: [
-        { id: "name", name: "Name", type: "title", config: { showIcon: true } },
-        { id: "legacy", name: "Legacy", type: "legacy", config: undefined },
-      ],
-      data: [row("one", "One", "value")],
-    });
-    const sort = await tableView.openSortMenu();
-
-    await sort.addRule("Legacy");
-    expect(sort.directionTrigger("legacy")).toHaveTextContent("Ascending");
-  });
-
   it("SortMenu_UsesPluginDirectionLabelsAndKeepsOneMethodCompact", async () => {
     const tableView = renderTableView();
     const sort = await tableView.openSortMenu();

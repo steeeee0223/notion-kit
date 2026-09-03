@@ -98,7 +98,7 @@ export interface ColumnInfoColumnApi {
   getWidth: () => string;
   getPlugin: () => UnknownCellPlugin;
   handleResizeEnd: () => void;
-  updateConfig: <TPlugin extends CellPlugin>(
+  updateConfig: <TPlugin extends CellPlugin = UnknownCellPlugin>(
     updater: Updater<InferConfig<TPlugin>>,
   ) => void;
 }

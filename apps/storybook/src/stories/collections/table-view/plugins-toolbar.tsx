@@ -28,7 +28,7 @@ export function PluginsToolbar({
 
   return (
     <div className="grid size-fit grid-cols-5 items-center gap-2">
-      {DEFAULT_PLUGINS.map((plugin) => {
+      {DEFAULT_PLUGINS.ui.map((plugin) => {
         const column = mockProps.find((prop) => prop.type === plugin.id);
         if (!column) return;
         return (

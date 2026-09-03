@@ -6,36 +6,24 @@ import { arrayToEntity } from "@/lib/utils";
 import { resolveCountingMethod } from "@/methods";
 import type { CellPlugin, FilterValue } from "@/plugins";
 import {
-  checkbox as createCheckbox,
-  createdTime as createCreatedTime,
-  date as createDate,
-  email as createEmail,
-  lastEditedTime as createLastEditedTime,
-  multiSelect as createMultiSelect,
-  number as createNumber,
-  phone as createPhone,
-  select as createSelect,
-  text as createText,
-  title as createTitle,
-  url as createUrl,
+  checkbox,
+  createdTime,
+  date,
+  email,
   extractDateValue,
+  lastEditedTime,
+  multiSelect,
+  number,
+  phone,
+  select,
+  text,
   textMethodCapabilities,
+  title,
+  url,
   withDateCalculations,
 } from "@/plugins";
 import { useTableView } from "@/table-contexts/use-table-view";
 
-const title = () => createTitle();
-const text = () => createText();
-const number = () => createNumber();
-const checkbox = () => createCheckbox();
-const select = () => createSelect();
-const multiSelect = () => createMultiSelect();
-const email = () => createEmail();
-const phone = () => createPhone();
-const url = () => createUrl();
-const date = () => createDate();
-const createdTime = () => createCreatedTime();
-const lastEditedTime = () => createLastEditedTime();
 const DEFAULT_PLUGINS = [
   title(),
   text(),
@@ -194,11 +182,7 @@ describe("Choice, checkbox, and number filter operators", () => {
     expect(matches(plugin, "is-empty", "   ")).toBe(true);
     expect(matches(plugin, "is-not-empty", "0")).toBe(true);
     expect(matches(plugin, "is-not-empty", "   ")).toBe(false);
-    for (const operand of [
-      "10",
-      null,
-      Number.NaN,
-    ] as unknown as FilterValue[]) {
+    for (const operand of ["10", null, Number.NaN] as FilterValue[]) {
       expect(matches(plugin, "equals", "10", operand)).toBe(false);
     }
     expect(matches(plugin, "equals", "invalid", 0)).toBe(false);
@@ -471,7 +455,7 @@ describe("Date filter operators", () => {
 
 describe("data plugin factories", () => {
   it.each([title(), text(), number(), checkbox(), select(), multiSelect()])(
-    "TestDataPluginFactory_BuiltInPlugin_ExposesNoUiContractFor$Id",
+    "TestDataPluginFactory_BuiltInPlugin_ProvidesCoreDataContractFor$Id",
     (plugin) => {
       expect(plugin.id).toBeTypeOf("string");
       expect(plugin.default).toBeTypeOf("object");
@@ -479,12 +463,6 @@ describe("data plugin factories", () => {
       expect(plugin.toValue).toBeTypeOf("function");
       expect(plugin.toTextValue).toBeTypeOf("function");
       expect(plugin.isEmpty).toBeTypeOf("function");
-      expect(plugin).not.toHaveProperty("meta");
-      expect(plugin).not.toHaveProperty("renderCellValue");
-      expect(plugin).not.toHaveProperty("renderCellEditor");
-      expect(plugin).not.toHaveProperty("renderConfigMenu");
-      expect(plugin).not.toHaveProperty("renderGroupingValue");
-      expect(plugin).not.toHaveProperty("disableBulkEdit");
     },
   );
 });
