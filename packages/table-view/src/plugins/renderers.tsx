@@ -95,8 +95,8 @@ function ResolvedCellRenderer<TPlugin extends CellPlugin>({
     textValue: cell.getTextValue(),
     wrapped,
     disabled: table.getTableGlobalState().locked,
-    onChange: cell.update,
-    onConfigChange: cell.column.updateConfig,
+    onChange: (updater) => cell.update(updater),
+    onConfigChange: (updater) => cell.column.updateConfig(updater),
   });
 }
 
@@ -162,7 +162,7 @@ function ResolvedBulkEditorRenderer<TPlugin extends CellPlugin>({
         rowIds,
         functionalUpdate(updater, plugin.default.data),
       ),
-    onConfigChange: column.updateConfig<TPlugin>,
+    onConfigChange: (updater) => column.updateConfig(updater),
   });
 }
 
@@ -185,6 +185,6 @@ function ResolvedConfigMenuRenderer<TPlugin extends CellPlugin>({
   return renderer({
     propId: column.id,
     config: info.config,
-    onChange: column.updateConfig,
+    onChange: (updater) => column.updateConfig(updater),
   });
 }
