@@ -33,12 +33,15 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
     >
       <div className="flex h-full items-center">
         {/* Row selection */}
-        {showSelection && (
-          <div
-            data-slot="group-row-action"
-            className="sticky left-8 z-(--z-row) flex h-full items-center"
-          >
-            <div className="absolute -left-10.25 flex h-full w-8 items-center justify-center bg-main">
+        <div
+          data-slot="group-row-action-gutter"
+          className="sticky inset-s-(--table-view-inline-start) z-(--z-row) flex h-full w-(--table-view-row-action-gutter) shrink-0 items-center justify-center bg-main"
+        >
+          {showSelection && (
+            <div
+              data-slot="group-row-action"
+              className="flex h-full w-8 items-center justify-center"
+            >
               <Checkbox
                 id={`group-select-${row.id}`}
                 size="sm"
@@ -53,11 +56,11 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
                 onCheckedChange={() => row.toggleGroupSelection()}
               />
             </div>
-          </div>
-        )}
+          )}
+        </div>
         <div
           data-slot="grouped-row-content"
-          className="flex h-full items-center overflow-hidden"
+          className="sticky inset-s-(--table-view-pinned-start) flex h-full items-center overflow-hidden bg-main"
         >
           {/* Expand button */}
           <Button

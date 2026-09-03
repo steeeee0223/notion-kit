@@ -40,7 +40,12 @@ function ToolbarContent({ className }: ToolbarProps) {
   const tableMenu = table.getTableMenuState();
 
   return (
-    <div className={cn("flex items-center justify-end gap-0.5", className)}>
+    <div
+      className={cn(
+        "sticky inset-e-0 flex items-center justify-end gap-0.5",
+        className,
+      )}
+    >
       <TooltipPreset description="Filter" side="top">
         <PopoverTrigger
           id={FILTER_MENU_TOOLBAR_TRIGGER_ID}

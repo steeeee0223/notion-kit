@@ -32,6 +32,10 @@ export function TableFooter() {
         return (
           <div className="group/footer left-0 z-(--z-row) box-border flex h-8 min-w-full border-t border-t-border-cell bg-main text-sm select-none">
             <div
+              data-slot="table-footer-action-gutter"
+              className="sticky inset-s-(--table-view-inline-start) z-(--z-col) w-(--table-view-row-action-gutter) shrink-0 bg-main"
+            />
+            <div
               className={cn(
                 "pr-8 opacity-0 transition-opacity",
                 "group-hover/footer:opacity-100 group-has-data-[state=open]/footer:opacity-100",
@@ -41,7 +45,7 @@ export function TableFooter() {
               <div className={cn("m-0 inline-flex", isStartPinned && "flex")}>
                 {/* Pinned Columns */}
                 {isStartPinned && (
-                  <div className="sticky left-8 z-(--z-col) flex bg-main">
+                  <div className="sticky inset-s-(--table-view-pinned-start) z-(--z-col) flex bg-main">
                     {startPinnedHeaders.map((header) => (
                       <React.Fragment key={header.id}>
                         {flexRender(

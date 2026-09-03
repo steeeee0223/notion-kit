@@ -59,8 +59,16 @@ function TimelineSidebarContent({
   if (!titleHeader) return null;
 
   return (
-    <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
+    <TimelineSidebarPrimitive
+      role="complementary"
+      aria-label="Timeline table"
+      className="[--table-view-inline-start:0.25rem] [--table-view-pinned-start:5.25rem]"
+    >
       <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
+        <div
+          data-slot="timeline-sidebar-action-gutter"
+          className="ms-(--table-view-inline-start) w-(--table-view-row-action-gutter) shrink-0"
+        />
         <TableHeaderCellTrigger
           header={titleHeader}
           table={table}
@@ -112,6 +120,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           key={row.id}
           data-slot="timeline-sidebar-group"
           data-row-id={row.id}
+          className="ps-(--table-view-inline-start)"
         >
           <TableGroupedRow row={row} />
         </div>
@@ -130,7 +139,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
     const content = (
       <Button
         variant="cell"
-        className="h-full min-w-0 flex-1 justify-start overflow-hidden px-2 text-sm"
+        className="sticky inset-s-(--table-view-pinned-start) h-full min-w-0 flex-1 justify-start overflow-hidden bg-main px-2 text-sm"
         aria-label={title}
         onClick={() => table.openRow(row.id)}
       >
@@ -153,6 +162,10 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           data-row-id={row.id}
           className="flex h-(--timeline-row-height) items-center border-b border-border"
         >
+          <div
+            data-slot="timeline-sidebar-row-action-gutter"
+            className="ms-(--table-view-inline-start) w-(--table-view-row-action-gutter) shrink-0"
+          />
           {content}
         </div>
       );
@@ -180,12 +193,17 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           />
         }
       >
-        <RowActionGroup
-          className="ms-1"
-          isMobile={isMobile}
-          row={row}
-          onAddNext={addNextRow}
-        />
+        <div
+          data-slot="timeline-sidebar-row-action-gutter"
+          className="sticky inset-s-(--table-view-inline-start) z-(--z-row) ms-(--table-view-inline-start) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
+        >
+          <RowActionGroup
+            className="w-full"
+            isMobile={isMobile}
+            row={row}
+            onAddNext={addNextRow}
+          />
+        </div>
         {content}
       </Sortable.Item>
     );

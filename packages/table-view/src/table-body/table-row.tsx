@@ -48,17 +48,22 @@ export function TableRow({ row }: TableRowProps) {
           row.getIsFirstChild() && "border-t border-t-border-cell",
         )}
       >
+        <div
+          data-slot="table-row-action-gutter"
+          className="sticky inset-s-(--table-view-inline-start) z-(--z-row) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
+        >
+          {!locked && (
+            <RowActionGroup
+              className="w-full"
+              isMobile={isMobile}
+              row={row}
+              onAddNext={addNextRow}
+            />
+          )}
+        </div>
         <div className="flex">
-          <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
+          <div className="sticky inset-s-(--table-view-pinned-start) z-(--z-row) flex items-center bg-main">
             {/* Row actions */}
-            {!locked && (
-              <RowActionGroup
-                className="absolute -left-20"
-                isMobile={isMobile}
-                row={row}
-                onAddNext={addNextRow}
-              />
-            )}
             {/* Start pinned columns */}
             <TableCells cells={row.getStartVisibleCells()} />
           </div>

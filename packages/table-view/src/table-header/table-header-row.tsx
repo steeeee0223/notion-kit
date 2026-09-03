@@ -139,9 +139,12 @@ function TableHeaderRowContent() {
       dir="ltr"
       className="group/header relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
     >
-      <div className="sticky left-8 z-(--z-col) flex">
+      <div
+        data-slot="table-header-action-gutter"
+        className="sticky inset-s-(--table-view-inline-start) z-(--z-col) flex h-full w-(--table-view-row-action-gutter) shrink-0 items-center justify-end bg-main"
+      >
         {/* Hovered actions */}
-        <div className="absolute -left-8 flex h-full items-center justify-end border-b-border-cell bg-main">
+        <div className="flex h-full items-center justify-end">
           <table.Subscribe selector={(state) => state.tableGlobal.locked}>
             {(locked) =>
               !locked && (
@@ -172,7 +175,7 @@ function TableHeaderRowContent() {
         {isStartPinned && (
           <div
             id="draggable-ghost-section-left"
-            className="sticky left-8 z-(--z-col) flex bg-main shadow-header-sticky"
+            className="sticky inset-s-(--table-view-pinned-start) z-(--z-col) flex bg-main shadow-header-sticky"
           >
             {startPinnedHeaders.map((header) => (
               <React.Fragment key={header.id}>

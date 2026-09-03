@@ -9,13 +9,16 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
   return (
     <table.Subscribe
       selector={(state) => ({
+        layout: state.tableGlobal.layout,
+        locked: state.tableGlobal.locked,
         rowSelection: state.rowSelection,
         columnOrder: state.columnOrder,
         columnVisibility: state.columnVisibility,
         columnsInfo: state.columnsInfo,
       })}
     >
-      {() => {
+      {({ layout, locked }) => {
+        if (layout === "board") return null;
         const rowIds = table.getSelectedRowIds();
         if (!rowIds.length) return null;
         const columns = table.getVisibleLeafColumns().filter((column) => {
@@ -35,7 +38,7 @@ export function BulkEditBar({ disabled }: { disabled?: boolean }) {
               <BulkEditColumn
                 key={column.id}
                 columnId={column.id}
-                disabled={disabled}
+                disabled={disabled ?? locked}
               />
             ))}
             <BulkActionMenu rowIds={rowIds} />

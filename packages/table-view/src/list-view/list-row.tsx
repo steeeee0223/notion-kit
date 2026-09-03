@@ -37,14 +37,19 @@ export function ListRow({ rowId }: ListRowProps) {
           render={<div data-block-id={row.id} className="group/row my-1" />}
         >
           <div className="relative flex items-center">
-            {!locked && (
-              <RowActionGroup
-                className="absolute -left-20"
-                isMobile={isMobile}
-                row={row}
-                onAddNext={addNextRow}
-              />
-            )}
+            <div
+              data-slot="list-row-action-gutter"
+              className="sticky inset-s-(--table-view-inline-start) z-(--z-row) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
+            >
+              {!locked && (
+                <RowActionGroup
+                  className="w-full"
+                  isMobile={isMobile}
+                  row={row}
+                  onAddNext={addNextRow}
+                />
+              )}
+            </div>
             <div
               role="button"
               tabIndex={0}

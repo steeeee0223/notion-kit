@@ -88,7 +88,7 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   return (
     <TableViewWrapper {...props}>
       <MenuCoordinatorProvider>
-        <div className="relative flex flex-col gap-4">
+        <div className="relative flex flex-col gap-4 [--table-view-inline-start:1rem] [--table-view-pinned-start:6rem] [--table-view-row-action-gutter:5rem]">
           <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
             <ViewControls />
           </div>
