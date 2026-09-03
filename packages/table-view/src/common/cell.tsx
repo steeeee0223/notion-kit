@@ -1,10 +1,4 @@
-import {
-  createContext,
-  use,
-  type ComponentProps,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import React, { createContext, use } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -30,11 +24,10 @@ interface CellContextValue {
 
 const CellContext = createContext<CellContextValue | null>(null);
 
-interface CellRootProps extends CellContextValue {
-  children: ReactNode;
-}
-
-function Root({ children, ...value }: CellRootProps) {
+function Root({
+  children,
+  ...value
+}: React.PropsWithChildren<CellContextValue>) {
   return <CellContext value={value}>{children}</CellContext>;
 }
 
@@ -44,7 +37,7 @@ export function useCellContext() {
   return context;
 }
 
-function TableFrame({ children }: { children: ReactNode }) {
+function TableFrame({ children }: React.PropsWithChildren) {
   const { cell } = useCellContext();
   const { column, row } = cell;
   const width = column.getWidth();
@@ -84,16 +77,14 @@ function TableFrame({ children }: { children: ReactNode }) {
   );
 }
 
-function CompactFrame({ className, ...props }: ComponentProps<"div">) {
+function CompactFrame({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("flex empty:hidden", className)} {...props} />;
 }
 
-function Tooltip({ children }: { children: ReactElement }) {
+function Tooltip({ children }: { children: React.ReactElement }) {
   const { cell, surface, table } = useCellContext();
   const info = cell.column.getInfo();
-  const uiPlugin = useTableViewCtx().plugins.getUiPlugin(
-    cell.column.getPlugin().id,
-  );
+  const uiPlugin = useTableViewCtx().plugins.getUiPlugin(info.type);
 
   return (
     <TooltipPreset
@@ -121,10 +112,6 @@ function Tooltip({ children }: { children: ReactElement }) {
 function Content() {
   const { cell } = useCellContext();
   const { plugins } = useTableViewCtx();
-
-  const data = cell.getData();
-  if (!data) return null;
-
   const plugin = cell.getPlugin();
   const uiPlugin = plugins.getUiPlugin(plugin.id);
   return uiPlugin.renderCell({ cell });

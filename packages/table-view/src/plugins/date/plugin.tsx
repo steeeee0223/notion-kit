@@ -1,11 +1,11 @@
 import type React from "react";
 
-import {
-  type CreatedTimePlugin,
-  type DateConfig,
-  type DateData,
-  type DatePlugin,
-  type LastEditedTimePlugin,
+import type {
+  CreatedTimePlugin,
+  DateConfig,
+  DateData,
+  DatePlugin,
+  LastEditedTimePlugin,
 } from "@notion-kit/table-hook/plugins";
 
 import { CellRenderer, DefaultIcon } from "@/common";
@@ -28,11 +28,11 @@ import { DateConfigMenu } from "./date-config-menu";
 import { DateGroupingValue } from "./date-grouping-value";
 
 function DateConfigRenderer({ column }: ConfigMenuProps) {
-  const info = column.getInfo();
+  const info = column.getInfo<DatePlugin>();
   return (
     <DateConfigMenu
       propId={column.id}
-      config={info.config as DateConfig}
+      config={info.config}
       onChange={(updater) => column.updateConfig<DatePlugin>(updater)}
     />
   );
@@ -46,9 +46,7 @@ function dateRenderers() {
 }
 
 export function date(): TableUiPlugin<DatePlugin> {
-  const renderCell = (
-    props: CellRendererProps<DateData, DatePlugin["default"]["config"]>,
-  ) =>
+  const renderCell = (props: CellRendererProps<DateData, DateConfig>) =>
     renderDateCell(
       props,
       <DatePickerCellValue {...props} />,
@@ -99,7 +97,7 @@ export function createdTime(): TableUiPlugin<CreatedTimePlugin> {
     row,
     data: _data,
     ...props
-  }: CellRendererProps<unknown, CreatedTimePlugin["default"]["config"]>) =>
+  }: CellRendererProps<unknown, DateConfig>) =>
     renderDateCell(
       { ...props, data: { start: row.createdAt, includeTime: true } },
       <DateCell
@@ -130,7 +128,7 @@ export function lastEditedTime(): TableUiPlugin<LastEditedTimePlugin> {
     row,
     data: _data,
     ...props
-  }: CellRendererProps<unknown, LastEditedTimePlugin["default"]["config"]>) =>
+  }: CellRendererProps<unknown, DateConfig>) =>
     renderDateCell(
       { ...props, data: { start: row.lastEditedAt, includeTime: true } },
       <DateCell

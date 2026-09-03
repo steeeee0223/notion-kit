@@ -94,9 +94,11 @@ export interface ColumnsInfoTableApi {
 }
 
 export interface ColumnInfoColumnApi {
-  getInfo: () => ColumnInfo<UnknownCellPlugin>;
+  getInfo: <
+    TPlugin extends CellPlugin = UnknownCellPlugin,
+  >() => ColumnInfo<TPlugin>;
   getWidth: () => string;
-  getPlugin: () => UnknownCellPlugin;
+  getPlugin: <TPlugin extends CellPlugin = UnknownCellPlugin>() => TPlugin;
   handleResizeEnd: () => void;
   updateConfig: <TPlugin extends CellPlugin = UnknownCellPlugin>(
     updater: Updater<InferConfig<TPlugin>>,
@@ -104,11 +106,15 @@ export interface ColumnInfoColumnApi {
 }
 
 export interface ColumnInfoCellApi {
-  getInfo: () => ColumnInfo<UnknownCellPlugin>;
-  getPlugin: () => UnknownCellPlugin;
-  getData: <TPlugin extends CellPlugin>() => InferData<TPlugin>;
+  getInfo: <
+    TPlugin extends CellPlugin = UnknownCellPlugin,
+  >() => ColumnInfo<TPlugin>;
+  getPlugin: <TPlugin extends CellPlugin = UnknownCellPlugin>() => TPlugin;
+  getData: <
+    TPlugin extends CellPlugin = UnknownCellPlugin,
+  >() => InferData<TPlugin>;
   getTextValue: () => string;
-  update: <TPlugin extends CellPlugin>(
+  update: <TPlugin extends CellPlugin = UnknownCellPlugin>(
     updater: Updater<InferData<TPlugin>>,
   ) => void;
 }

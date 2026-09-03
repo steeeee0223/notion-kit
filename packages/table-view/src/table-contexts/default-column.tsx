@@ -20,10 +20,9 @@ export const defaultColumn: NonNullable<
     if (layout !== "table" && layout !== "list" && layout !== "board") {
       return null;
     }
-    if (!cell.row.original.properties[cell.column.id]) return null;
 
-    const info = cell.column.getInfo();
-    const wrapped = layout === "table" ? info.wrapped : undefined;
+    const info = cell.getInfo();
+    const wrapped = layout === "table" && info.wrapped;
     return (
       <Cell.Root cell={cell} table={table} surface={layout} wrapped={wrapped}>
         {layout === "table" ? (

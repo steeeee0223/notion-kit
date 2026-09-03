@@ -82,7 +82,7 @@ function ResolvedCellRenderer<TPlugin extends CellPlugin>({
   ) => ReactNode;
 }) {
   const { table, surface, wrapped } = useCellContext();
-  const info = cell.getInfo() as ColumnInfo<TPlugin>;
+  const info = cell.getInfo<TPlugin>();
   const data = cell.getData<TPlugin>();
 
   return renderer({
@@ -134,8 +134,8 @@ function ResolvedBulkEditorRenderer<TPlugin extends CellPlugin>({
 }) {
   const scope = use(BulkEditorContext);
   const { plugins } = useTableViewCtx();
-  const info = column.getInfo() as ColumnInfo<TPlugin>;
-  const plugin = column.getPlugin() as TPlugin;
+  const info = column.getInfo<TPlugin>();
+  const plugin = column.getPlugin<TPlugin>();
   const uiPlugin = plugins.getUiPlugin(plugin.id);
   const rowIds = column.getSelectedRowIds();
   const selectedValues: InferData<TPlugin>[] = [];
@@ -181,7 +181,7 @@ function ResolvedConfigMenuRenderer<TPlugin extends CellPlugin>({
   column: ColumnInstance;
   renderer: (props: ConfigMenuRendererProps<InferConfig<TPlugin>>) => ReactNode;
 }) {
-  const info = column.getInfo() as ColumnInfo<TPlugin>;
+  const info = column.getInfo<TPlugin>();
   return renderer({
     propId: column.id,
     config: info.config,
