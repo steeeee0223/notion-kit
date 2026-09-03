@@ -10,11 +10,10 @@ interaction are audited in [`table-view`](../../../table-view/docs/testing/menus
 
 - Built-in factories expose complete behavioral descriptors through
   `@notion-kit/table-hook/plugins`.
-- `renderCellValue` is required and `renderCellEditor` is optional; legacy
-  `renderCell` is not part of the contract.
-- Bulk-edit eligibility is capability-based: a plugin must provide
-  `renderCellEditor` and must not set `disableBulkEdit`. `disableBulkEdit`
-  excludes only bulk editing, not ordinary cell editing.
+- Data plugins contain no rendering, icon, or bulk-edit contract; those belong
+  to matching table-view UI adapters.
+- Bulk-edit eligibility is UI capability-based: the matching adapter supplies
+  an optional bulk renderer.
 - A bulk functional updater starts from `plugin.default.data`, is evaluated
   once, and is handed to the UI host as one atomic selected-row update.
 - Stable method IDs and resolver fallbacks remain compatible with old resources

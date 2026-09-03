@@ -20,17 +20,11 @@ import {
   type CellPlugin,
 } from "@/plugins";
 
-const renderCellValue = () => null;
-const pluginConfig = { icon: null, renderCellValue };
-
 export function createMockPlugins() {
   const isEmptyString = (data: string) => data.trim() === "";
   const titlePlugin: CellPlugin<"title", string, { showIcon: boolean }> = {
     id: "title",
-    meta: { name: "Title", desc: "Title", icon: null },
     default: {
-      name: "Title",
-      icon: null,
       data: "",
       config: { showIcon: true },
     },
@@ -39,13 +33,11 @@ export function createMockPlugins() {
     isEmpty: isEmptyString,
     toTextValue: (data) => data,
     counting: genericCounting(isEmptyString),
-    renderCellValue,
   };
 
   const textPlugin: CellPlugin<"text", string, undefined> = {
     id: "text",
-    meta: { name: "Text", desc: "Text", icon: null },
-    default: { name: "Text", icon: null, data: "", config: undefined },
+    default: { data: "", config: undefined },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     isEmpty: isEmptyString,
@@ -56,14 +48,12 @@ export function createMockPlugins() {
       methods: [groupByTextValue],
     },
     counting: genericCounting(isEmptyString),
-    renderCellValue,
   };
 
   const isEmptyNumber = (data: number | null) => data === null;
   const numberPlugin: CellPlugin<"number", number | null, undefined> = {
     id: "number",
-    meta: { name: "Number", desc: "Number", icon: null },
-    default: { name: "Number", icon: null, data: 0, config: undefined },
+    default: { data: 0, config: undefined },
     fromValue: (value) => {
       const next = typeof value === "number" ? value : Number(value);
       return Number.isFinite(next) ? next : null;
@@ -77,14 +67,12 @@ export function createMockPlugins() {
       methods: [groupByValue],
     },
     counting: genericCounting(isEmptyNumber),
-    renderCellValue,
   };
 
   const isEmptyCheckbox = (data: boolean) => data === false;
   const checkboxPlugin: CellPlugin<"checkbox", boolean, undefined> = {
     id: "checkbox",
-    meta: { name: "Checkbox", desc: "Checkbox", icon: null },
-    default: { name: "Checkbox", icon: null, data: false, config: undefined },
+    default: { data: false, config: undefined },
     fromValue: (value) => Boolean(value),
     toValue: (data) => data,
     isEmpty: isEmptyCheckbox,
@@ -95,15 +83,13 @@ export function createMockPlugins() {
       methods: [groupByValue],
     },
     counting: checkboxCounting(isEmptyCheckbox),
-    renderCellValue,
   };
 
   const isEmptySelect = (data: { name: string } | null) => data === null;
   const selectPlugin: CellPlugin<"select", { name: string } | null, undefined> =
     {
       id: "select",
-      meta: { name: "Select", desc: "Select", icon: null },
-      default: { name: "Select", icon: null, data: null, config: undefined },
+      default: { data: null, config: undefined },
       fromValue: (value) =>
         value === null ? null : { name: value.toString() },
       toValue: (data) => data?.name ?? null,
@@ -142,7 +128,6 @@ export function createMockPlugins() {
         ],
       },
       counting: genericCounting(isEmptySelect),
-      renderCellValue,
     };
 
   return [
@@ -151,13 +136,13 @@ export function createMockPlugins() {
     numberPlugin,
     checkboxPlugin,
     selectPlugin,
-    multiSelect(pluginConfig),
-    email(pluginConfig),
-    phone(pluginConfig),
-    url(pluginConfig),
-    date(pluginConfig),
-    createdTime(pluginConfig),
-    lastEditedTime(pluginConfig),
+    multiSelect(),
+    email(),
+    phone(),
+    url(),
+    date(),
+    createdTime(),
+    lastEditedTime(),
   ];
 }
 

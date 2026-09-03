@@ -26,6 +26,7 @@ import { COMMON_AGGREGATION_FNS } from "@/methods";
 
 import {
   ColumnsInfoFeature,
+  type ColumnInfoCellApi,
   type ColumnInfoColumnApi,
   type ColumnsInfoOptions,
   type ColumnsInfoTableApi,
@@ -144,6 +145,10 @@ declare module "@tanstack/table-core" {
   interface Column_FeatureMap<TFeatures, TData extends RowData> {
     columnsInfoFeature: ColumnInfoColumnApi;
     rowActionsFeature: RowActionsColumnApi;
+  }
+
+  interface Cell_FeatureMap {
+    columnsInfoFeature: ColumnInfoCellApi;
   }
 
   interface Row_FeatureMap<TFeatures, TData extends RowData> {

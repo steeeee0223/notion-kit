@@ -1,4 +1,4 @@
-import { flexRender, functionalUpdate } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
 import {
@@ -6,7 +6,6 @@ import {
   createFilterRule,
   TableViewMenuPage,
 } from "@notion-kit/table-hook";
-import type { ConfigMenuProps } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -43,7 +42,7 @@ interface PropMenuProps {
  * 0. ✅ Edit property config
  * 1. ✅ Change type
  * ---
- * 2. 🚧 Filter
+ * 2. ✅ Filter
  * 3. ✅ Sorting
  * 4. ✅ Grouping
  * 5. ✅ Calculate
@@ -57,10 +56,13 @@ interface PropMenuProps {
  */
 export function PropMenu({ propId, view }: PropMenuProps) {
   const { filterMenu } = useMenuCoordinator();
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
+  const column = table.getColumn(propId);
+  if (!column) return null;
+  const uiPlugin = plugins.getUiPlugin(plugin.id);
 
   // 3. Sorting
   const defaultSortingMethod = getDefaultSortingMethod(plugin);
@@ -110,14 +112,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     <>
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {flexRender<ConfigMenuProps>(plugin.renderConfigMenu, {
-          propId,
-          config: info.config ?? plugin.default.config,
-          onChange: (updater) =>
-            table._setColumnInfo(propId, (prev) => ({
-              ...prev,
-              config: functionalUpdate(updater, prev.config),
-            })),
+        {flexRender(uiPlugin.renderConfigMenu, {
+          column,
         })}
         {info.type !== "title" && (
           <DropdownMenuSub>

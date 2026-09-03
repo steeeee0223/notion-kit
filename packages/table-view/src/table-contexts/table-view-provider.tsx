@@ -10,7 +10,13 @@ import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
 import { ListViewContent } from "@/list-view";
-import { DEFAULT_PLUGINS, type DefaultPlugins } from "@/plugins";
+import {
+  createPluginRegistry,
+  DEFAULT_PLUGINS,
+  type DefaultPlugins,
+  type TablePluginPair,
+  type TablePluginRegistry,
+} from "@/plugins";
 import { RowView } from "@/row-view";
 import { TimelineViewContent } from "@/timeline-view";
 import { ViewControls } from "@/tools";
@@ -19,9 +25,10 @@ import { defaultColumn } from "./default-column";
 import { MenuCoordinatorProvider } from "./menu-coordinator-provider";
 import { TableViewContent } from "./table-view-content";
 
-type TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> = ReturnType<
-  typeof useTableView<TPlugins>
->;
+interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
+  table: ReturnType<typeof useTableView<TPlugins>>["table"];
+  plugins: TablePluginRegistry<TPlugins>;
+}
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
 
@@ -35,16 +42,23 @@ export function useTableViewCtx(): TableViewCtx {
 export function TableViewWrapper<
   TPlugins extends CellPlugin[] = DefaultPlugins,
 >({
-  plugins = DEFAULT_PLUGINS as TPlugins,
+  plugins = DEFAULT_PLUGINS as unknown as TablePluginPair<TPlugins>,
   children,
   ...props
-}: TableProps<TPlugins>) {
-  const pluginEntity = useMemo(() => arrayToEntity(plugins), [plugins]);
-  const ctx = useTableView<TPlugins>({
+}: Omit<TableProps<TPlugins>, "plugins"> & {
+  plugins?: TablePluginPair<TPlugins>;
+}) {
+  const registry = useMemo(() => createPluginRegistry(plugins), [plugins]);
+  const pluginEntity = useMemo(
+    () => arrayToEntity(registry.data),
+    [registry.data],
+  );
+  const tableOptions = {
     plugins: pluginEntity,
     defaultColumn: defaultColumn as TableProps<TPlugins>["defaultColumn"],
     ...props,
-  });
+  } as Parameters<typeof useTableView<TPlugins>>[0];
+  const ctx = useTableView<TPlugins>(tableOptions);
   const latestCtxRef = useRef(ctx);
   latestCtxRef.current = ctx;
   const contextValue = useMemo(
@@ -52,9 +66,10 @@ export function TableViewWrapper<
       get table() {
         return latestCtxRef.current.table;
       },
+      plugins: registry,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ctx.table.options.columns, ctx.table.options.data],
+    [ctx.table.options.columns, ctx.table.options.data, registry],
   );
 
   return (
@@ -67,7 +82,9 @@ export function TableViewWrapper<
 export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   children,
   ...props
-}: TableProps<TPlugins>) {
+}: Omit<TableProps<TPlugins>, "plugins"> & {
+  plugins?: TablePluginPair<TPlugins>;
+}) {
   return (
     <TableViewWrapper {...props}>
       <MenuCoordinatorProvider>

@@ -1,5 +1,4 @@
 import React from "react";
-import { flexRender } from "@tanstack/react-table";
 
 import { useIsClient } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -31,7 +30,7 @@ import { getSortingDirectionLabels } from "./sorting-options";
 
 export function EditGroupMenu() {
   const isClient = useIsClient();
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
 
   const col = table.getGroupedColumnInfo();
 
@@ -93,7 +92,8 @@ export function EditGroupMenu() {
             <Sortable.Root onDragEnd={table.handleGroupedRowDragEnd}>
               <Sortable.List>
                 {groupOrder.map((groupId, index) => {
-                  const renderer = table.getGroupingValueRenderer(groupId);
+                  if (!col) return null;
+                  const uiPlugin = plugins.getUiPlugin(col.type);
                   return (
                     <GroupItem
                       key={groupId}
@@ -104,7 +104,10 @@ export function EditGroupMenu() {
                         table.toggleGroupVisible(groupId)
                       }
                     >
-                      {flexRender(renderer, {})}
+                      {uiPlugin.renderGroupingValue({
+                        table: table as never,
+                        value: table.getGroupingValue(groupId),
+                      })}
                     </GroupItem>
                   );
                 })}

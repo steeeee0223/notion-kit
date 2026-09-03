@@ -1,11 +1,7 @@
 import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
-import type {
-  CellEditorProps,
-  CellValueProps,
-} from "@notion-kit/table-hook/plugins";
 
-import { TextInputPopoverContent } from "@/common";
+import type { CellValueProps } from "@/plugins/renderers";
 
 interface LinkCellValueProps extends CellValueProps<string> {
   type: "email" | "phone" | "url";
@@ -24,22 +20,6 @@ export function LinkCellValue({ type, data, wrapped }: LinkCellValueProps) {
         {data}
       </a>
     </div>
-  );
-}
-
-export function LinkCellEditor({
-  data,
-  onChange,
-  onCancel,
-  scope,
-}: CellEditorProps<string>) {
-  return (
-    <TextInputPopoverContent
-      value={data}
-      onUpdate={onChange}
-      onCancel={onCancel}
-      commitOnUnchanged={scope.kind === "bulk"}
-    />
   );
 }
 

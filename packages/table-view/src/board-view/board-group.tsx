@@ -14,7 +14,10 @@ interface BoardGroupProps {
 }
 
 export function BoardGroup({ index, row }: BoardGroupProps) {
-  const { table } = useTableViewCtx();
+  const { table, plugins } = useTableViewCtx();
+  const uiPlugin = row.groupingColumnId
+    ? plugins.getUiPlugin(table.getColumnPlugin(row.groupingColumnId).id)
+    : null;
 
   const addRow = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -34,7 +37,10 @@ export function BoardGroup({ index, row }: BoardGroupProps) {
         >
           <Kanban.ColumnHeader>
             <div className="flex max-w-100 items-center overflow-hidden text-sm/6 font-medium whitespace-nowrap">
-              {row.renderGroupingValue({})}
+              {uiPlugin?.renderGroupingValue({
+                table: table as never,
+                value: table.getGroupingValue(row.id),
+              })}
             </div>
             {row.getShouldShowGroupAggregates() && (
               <Button variant="hint" size="xs" className="text-muted">

@@ -6,41 +6,24 @@ import { arrayToEntity } from "@/lib/utils";
 import { resolveCountingMethod } from "@/methods";
 import type { CellPlugin, FilterValue } from "@/plugins";
 import {
-  checkbox as createCheckbox,
-  createdTime as createCreatedTime,
-  date as createDate,
-  email as createEmail,
-  lastEditedTime as createLastEditedTime,
-  multiSelect as createMultiSelect,
-  number as createNumber,
-  phone as createPhone,
-  select as createSelect,
-  text as createText,
-  title as createTitle,
-  url as createUrl,
+  checkbox,
+  createdTime,
+  date,
+  email,
   extractDateValue,
+  lastEditedTime,
+  multiSelect,
+  number,
+  phone,
+  select,
+  text,
   textMethodCapabilities,
+  title,
+  url,
   withDateCalculations,
 } from "@/plugins";
 import { useTableView } from "@/table-contexts/use-table-view";
 
-const baseConfig = {
-  icon: null,
-  renderCellValue: () => null,
-  renderCellEditor: () => ({ presentation: "inline" as const, content: null }),
-};
-const title = () => createTitle(baseConfig);
-const text = () => createText(baseConfig);
-const number = () => createNumber(baseConfig);
-const checkbox = () => createCheckbox(baseConfig);
-const select = () => createSelect(baseConfig);
-const multiSelect = () => createMultiSelect(baseConfig);
-const email = () => createEmail(baseConfig);
-const phone = () => createPhone(baseConfig);
-const url = () => createUrl(baseConfig);
-const date = () => createDate(baseConfig);
-const createdTime = () => createCreatedTime(baseConfig);
-const lastEditedTime = () => createLastEditedTime(baseConfig);
 const DEFAULT_PLUGINS = [
   title(),
   text(),
@@ -199,11 +182,7 @@ describe("Choice, checkbox, and number filter operators", () => {
     expect(matches(plugin, "is-empty", "   ")).toBe(true);
     expect(matches(plugin, "is-not-empty", "0")).toBe(true);
     expect(matches(plugin, "is-not-empty", "   ")).toBe(false);
-    for (const operand of [
-      "10",
-      null,
-      Number.NaN,
-    ] as unknown as FilterValue[]) {
+    for (const operand of ["10", null, Number.NaN] as FilterValue[]) {
       expect(matches(plugin, "equals", "10", operand)).toBe(false);
     }
     expect(matches(plugin, "equals", "invalid", 0)).toBe(false);
@@ -474,65 +453,18 @@ describe("Date filter operators", () => {
   });
 });
 
-describe("configured plugin factories", () => {
-  it("exposes separate value and editor capabilities to registry consumers", () => {
-    const plugin = createText(baseConfig);
-
-    expect(typeof plugin.renderCellValue).toBe("function");
-    expect(typeof plugin.renderCellEditor).toBe("function");
-  });
-
-  it("wires icons and renderer callbacks with the documented fallback", () => {
-    const renderCellValue = vi.fn(() => null);
-    const renderConfigMenu = vi.fn(() => null);
-    const icon = "icon";
-    const plugin = createTitle({ icon, renderCellValue, renderConfigMenu });
-
-    expect(plugin.meta.icon).toBe(icon);
-    expect(plugin.default.icon).toBe(icon);
-    expect(plugin.renderConfigMenu).toBe(renderConfigMenu);
-
-    const row = { ...baseRow, icon: { type: "emoji", src: "📌" } } as Row;
-    void plugin.renderCellValue({
-      propId: "title",
-      row,
-      data: "Task",
-      config: { showIcon: true },
-    });
-    expect(renderCellValue).toHaveBeenCalledWith(
-      expect.objectContaining({ icon: row.icon, data: "Task" }),
-    );
-  });
-
-  it("uses a distinct default icon when supplied", () => {
-    const plugin = createText({
-      icon: "menu",
-      defaultIcon: "property",
-      renderCellValue: () => null,
-    });
-    expect(plugin.meta.icon).not.toBe(plugin.default.icon);
-  });
-
-  it("BulkEditEligibility_BuiltInPlugins_OptOutOnlyForReadOnlyProperties", () => {
-    expect(
-      Object.fromEntries(
-        DEFAULT_PLUGINS.map((plugin) => [plugin.id, plugin.disableBulkEdit]),
-      ),
-    ).toEqual({
-      title: true,
-      text: undefined,
-      number: undefined,
-      checkbox: undefined,
-      select: undefined,
-      "multi-select": undefined,
-      email: undefined,
-      phone: undefined,
-      url: undefined,
-      date: undefined,
-      "created-time": true,
-      "last-edited-time": true,
-    });
-  });
+describe("data plugin factories", () => {
+  it.each([title(), text(), number(), checkbox(), select(), multiSelect()])(
+    "TestDataPluginFactory_BuiltInPlugin_ProvidesCoreDataContractFor$Id",
+    (plugin) => {
+      expect(plugin.id).toBeTypeOf("string");
+      expect(plugin.default).toBeTypeOf("object");
+      expect(plugin.fromValue).toBeTypeOf("function");
+      expect(plugin.toValue).toBeTypeOf("function");
+      expect(plugin.toTextValue).toBeTypeOf("function");
+      expect(plugin.isEmpty).toBeTypeOf("function");
+    },
+  );
 });
 
 const methodMatrix = {

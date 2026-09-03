@@ -1,7 +1,8 @@
-import type { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
+
+import { TableInstance } from "@notion-kit/table-hook";
 
 import { SelectGroupingValue } from "./select-grouping-value";
 
@@ -21,7 +22,7 @@ function tableWithTag(description?: string) {
         },
       },
     }),
-  } as unknown as ComponentProps<typeof SelectGroupingValue>["table"];
+  } as TableInstance;
 }
 
 it.each([

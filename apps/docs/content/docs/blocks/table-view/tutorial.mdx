@@ -3,20 +3,22 @@ title: Creating a Cell Plugin
 description: Build a custom property type for Table View.
 ---
 
-A cell plugin defines the data model for one property type. It must render a
-cell value; add an editor when users should be able to change that value.
+A custom property has two parts: a pure data plugin and a matching UI adapter.
+The data plugin defines storage and table behavior; the UI adapter renders and
+edits the property.
 
 ## Create a Tag plugin
 
 ### Define the plugin
 
 ```tsx
-import type {
-  CellEditorProps,
-  CellPlugin,
-  CellValueProps,
-} from "@notion-kit/table-hook/plugins";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { createCompareFn } from "@notion-kit/table-hook/plugins";
+import type {
+  BulkEditorProps,
+  CellProps,
+  TableUiPlugin,
+} from "@notion-kit/table-view";
 
 type TagData = string[];
 type TagConfig = { options: string[] };
@@ -24,17 +26,13 @@ type TagPlugin = CellPlugin<"tag", TagData, TagConfig>;
 
 const TagIcon = <span aria-hidden>🏷️</span>;
 
-function TagValue({ data }: Pick<CellValueProps<TagData, TagConfig>, "data">) {
-  return <span>{data.join(", ") || "—"}</span>;
-}
+function TagCell({ cell }: CellProps) {
+  const data = cell.getData<TagPlugin>();
+  const config = cell.getInfo().config as TagConfig;
 
-function TagEditor({
-  data,
-  config,
-  onChange,
-}: Pick<CellEditorProps<TagData, TagConfig>, "data" | "config" | "onChange">) {
   return (
     <div>
+      <span>{data.join(", ") || "—"}</span>
       {config.options.map((tag) => {
         const selected = data.includes(tag);
 
@@ -44,7 +42,7 @@ function TagEditor({
             type="button"
             aria-pressed={selected}
             onClick={() =>
-              onChange(
+              cell.update<TagPlugin>(
                 selected
                   ? data.filter((value) => value !== tag)
                   : [...data, tag],
@@ -59,16 +57,22 @@ function TagEditor({
   );
 }
 
+function ClearTags({ column }: BulkEditorProps) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        column.updateCells<TagPlugin>(column.getSelectedRowIds(), [])
+      }
+    >
+      Clear selected tags
+    </button>
+  );
+}
+
 export const tagPlugin: TagPlugin = {
   id: "tag",
-  meta: {
-    name: "Tag",
-    desc: "A multi-select tag property",
-    icon: TagIcon,
-  },
   default: {
-    name: "Tags",
-    icon: TagIcon,
     config: { options: [] },
     data: [],
   },
@@ -85,18 +89,27 @@ export const tagPlugin: TagPlugin = {
   compare: createCompareFn<TagPlugin>((a, b) =>
     a.join(", ").localeCompare(b.join(", ")),
   ),
-  renderCellValue: (props) => <TagValue {...props} />,
-  renderCellEditor: (props) => ({
-    presentation: "popover",
-    content: <TagEditor {...props} />,
-  }),
+};
+
+export const tagPluginUi: TableUiPlugin<typeof tagPlugin> = {
+  id: "tag",
+  meta: {
+    name: "Tag",
+    desc: "A multi-select tag property",
+    icon: TagIcon,
+  },
+  default: { name: "Tags", icon: TagIcon },
+  renderCell: (props) => <TagCell {...props} />,
+  renderBulkEditor: (props) => <ClearTags {...props} />,
+  renderGroupingValue: () => null,
 };
 ```
 
-`renderCellEditor` receives a `scope`. It is `{ kind: "cell", row }` for a
-single cell and `{ kind: "bulk", rowIds, selectedValues }` when the bulk-edit
-bar invokes the same editor for selected rows. The example does not need to
-branch on the scope, so it supports both paths automatically.
+`renderCell` receives only a TanStack cell instance. Its `getData()`,
+`getInfo()`, `getTextValue()`, and `update()` APIs provide the value and
+mutation behavior required by the renderer. `renderBulkEditor` is optional;
+including it makes the property available in the bulk-edit bar. Its column
+instance exposes `getSelectedRowIds()` and `updateCells()` for bulk changes.
 
 ### Register the plugin
 
@@ -104,12 +117,15 @@ Add the plugin to the list passed to `TableView`, then include a matching
 property in the table data.
 
 ```tsx
+import type { ColumnDefs, Row } from "@notion-kit/table-hook";
 import { DEFAULT_PLUGINS, TableView } from "@notion-kit/table-view";
-import type { ColumnDefs, Row } from "@notion-kit/table-view";
 
-import { tagPlugin } from "./tag-plugin";
+import { tagPlugin, tagPluginUi } from "./tag-plugin";
 
-const plugins = [...DEFAULT_PLUGINS, tagPlugin];
+const plugins = {
+  data: [...DEFAULT_PLUGINS.data, tagPlugin],
+  ui: [...DEFAULT_PLUGINS.ui, tagPluginUi],
+};
 
 const properties: ColumnDefs<typeof plugins> = [
   { id: "name", name: "Name", type: "title" },

@@ -32,10 +32,7 @@ interface DateData {
 
 const datePlugin: CellPlugin<"date", DateData, undefined> = {
   id: "date",
-  meta: { name: "Date", desc: "Date", icon: null },
   default: {
-    name: "Date",
-    icon: null,
     data: { start: 0, end: 0, endDate: false },
     config: undefined,
   },
@@ -47,7 +44,6 @@ const datePlugin: CellPlugin<"date", DateData, undefined> = {
   toValue: (data) => data.start,
   isEmpty: () => false,
   toTextValue: (data) => String(data.start),
-  renderCellValue: () => null,
 };
 
 const pluginsWithDate = {
@@ -56,6 +52,73 @@ const pluginsWithDate = {
 };
 
 describe("useTableView - Column Custom APIs", () => {
+  describe("Cell plugin APIs", () => {
+    it("TestCellPluginApi_CellDataAndText_ReturnsTheColumnPluginRepresentation", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const cell = table
+        .getRowModel()
+        .rows[0]!.getVisibleCells()
+        .find((candidate) => candidate.column.id === "col1") as unknown as {
+        getData: () => string;
+        getTextValue: () => string;
+      };
+
+      expect(cell.getData()).toBe("Task 1");
+      expect(cell.getTextValue()).toBe("Task 1");
+    });
+
+    it("TestCellPluginApi_Update_ChangesOnlyTheTargetCell", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const cell = table
+        .getRowModel()
+        .rows[0]!.getVisibleCells()
+        .find((candidate) => candidate.column.id === "col1") as unknown as {
+        update: (updater: string | ((value: string) => string)) => void;
+      };
+
+      act(() => cell.update("Renamed"));
+
+      expect(table.getCell("col1", "row1").value).toBe("Renamed");
+      expect(table.getCell("col1", "row2").value).toBe("");
+    });
+
+    it("TestColumnPluginApi_UpdateCells_ChangesOnlyTheRequestedRows", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const column = table.getColumn("col2") as unknown as {
+        updateCells: (rowIds: string[], value: boolean) => void;
+      };
+
+      act(() => column.updateCells(["row1", "row2"], false));
+
+      expect(table.getCell("col2", "row1").value).toBe(false);
+      expect(table.getCell("col2", "row2").value).toBe(false);
+      expect(table.getCell("col2", "row3").value).toBe(true);
+    });
+
+    it("TestColumnPluginApi_SelectedRows_ReturnsTheCurrentSelection", () => {
+      const { table } = renderTableHook({
+        data: mockData,
+        properties: mockProperties,
+      });
+      const column = table.getColumn("col2") as unknown as {
+        getSelectedRowIds: () => string[];
+      };
+
+      act(() => table.setRowSelection({ row1: true, row3: true }));
+
+      expect(column.getSelectedRowIds()).toEqual(["row1", "row3"]);
+    });
+  });
+
   describe("Column Visibility Source", () => {
     it("should derive initial column visibility from column info", () => {
       const { table } = renderTableHook({

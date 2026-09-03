@@ -17,9 +17,51 @@ import {
 } from "@notion-kit/table-hook/mock";
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
-import { DEFAULT_PLUGINS, type DefaultPlugins } from "@/plugins";
+import {
+  DEFAULT_PLUGINS,
+  type DefaultPlugins,
+  type TablePluginPair,
+  type TableUiPlugin,
+} from "@/plugins";
 
-export const plugins = arrayToEntity(DEFAULT_PLUGINS);
+export const plugins = arrayToEntity(DEFAULT_PLUGINS.data);
+
+export function createTestPluginPair<TData extends CellPlugin[]>(
+  data: TData,
+  ui: TableUiPlugin[] = data.map((plugin) => ({
+    id: plugin.id,
+    meta: { name: plugin.id, desc: "", icon: null },
+    default: { name: plugin.id, icon: null },
+    renderCell: () => null,
+    renderGroupingValue: () => null,
+  })),
+): TablePluginPair<TData> {
+  return { data, ui };
+}
+
+export function extendDefaultPlugins(
+  data: CellPlugin[],
+  ui: TableUiPlugin[],
+): TablePluginPair {
+  return {
+    data: [...DEFAULT_PLUGINS.data, ...data],
+    ui: [...DEFAULT_PLUGINS.ui, ...ui],
+  };
+}
+
+export function createTestUiPlugin<TPlugin extends CellPlugin>(
+  plugin: TPlugin,
+  overrides: Partial<TableUiPlugin<TPlugin>> = {},
+): TableUiPlugin<TPlugin> {
+  return {
+    id: plugin.id as TableUiPlugin<TPlugin>["id"],
+    meta: { name: plugin.id, desc: "", icon: null },
+    default: { name: plugin.id, icon: null },
+    renderCell: () => null,
+    renderGroupingValue: () => null,
+    ...overrides,
+  };
+}
 
 const fixture = createMockTableFixture();
 export const mockProperties: ColumnDefs<DefaultPlugins> = fixture.properties;

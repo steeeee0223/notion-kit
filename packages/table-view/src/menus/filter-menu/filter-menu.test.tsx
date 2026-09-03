@@ -26,7 +26,12 @@ import { isoToTs } from "@notion-kit/utils";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { FilterMenuObject } from "@/__tests__/component-objects/table-view";
-import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
+import {
+  createFullPluginFixture,
+  createTestPluginPair,
+  mockResizeObserver,
+} from "@/__tests__/mock";
+import type { TablePluginPair } from "@/plugins";
 import { TableViewWrapper } from "@/table-contexts";
 
 import { FilterMenu } from ".";
@@ -44,7 +49,7 @@ type ViewChangeMock = ReturnType<
 function renderFilterMenu(options: {
   filters?: FilterGroup | null;
   onViewChange?: (change: ResourceChange<TableViewState, unknown>) => void;
-  plugins?: CellPlugin[];
+  plugins?: TablePluginPair;
   properties?: ColumnInfo[];
   withTitle?: boolean;
 }) {
@@ -175,17 +180,15 @@ describe("FilterMenu", () => {
     const supported = metadataPlugin("text", "text-op");
     const unsupported: CellPlugin<"unsupported", string, undefined> = {
       id: "unsupported",
-      meta: { name: "Unsupported", desc: "Unsupported", icon: null },
-      default: { name: "Unsupported", icon: null, data: "", config: undefined },
+      default: { data: "", config: undefined },
       fromValue: String,
       toValue: (value) => value,
       toTextValue: (value) => value,
       isEmpty: (value) => value.trim() === "",
-      renderCellValue: () => null,
     };
     const tableView = renderFilterMenu({
       filters: seeded([rule("live-rule", "live", "text-op")]),
-      plugins: [supported, unsupported],
+      plugins: createTestPluginPair([supported, unsupported]),
       properties: [
         metadataProperty("live", "Live"),
         { ...metadataProperty("deleted", "Deleted"), isDeleted: true },
@@ -387,7 +390,7 @@ describe("FilterMenu", () => {
     const tableView = renderFilterMenu({
       filters: seeded([rule("unavailable", "missing", "missing-op")]),
       onViewChange,
-      plugins: [],
+      plugins: createTestPluginPair([]),
       properties: [],
     });
     const filter = tableView.filterMenu();
@@ -915,17 +918,15 @@ describe("FilterMenu operand metadata", () => {
     const supported = metadataPlugin("text", "text-op");
     const unsupported: CellPlugin<"unsupported", string, undefined> = {
       id: "unsupported",
-      meta: { name: "Unsupported", desc: "Unsupported", icon: null },
-      default: { name: "Unsupported", icon: null, data: "", config: undefined },
+      default: { data: "", config: undefined },
       fromValue: String,
       toValue: (value) => value,
       toTextValue: (value) => value,
       isEmpty: (value) => value.trim() === "",
-      renderCellValue: () => null,
     };
     const tableView = renderFilterMenu({
       filters: null,
-      plugins: [supported, unsupported],
+      plugins: createTestPluginPair([supported, unsupported]),
       properties: [
         metadataProperty("live", "Live"),
         { ...metadataProperty("deleted", "Deleted"), isDeleted: true },
@@ -961,7 +962,7 @@ function renderMetadataMenu(
       { ...rule("operand-rule", "metadata", operator), ...existing },
     ]),
     onViewChange,
-    plugins: [metadataPlugin(metadata, operator)],
+    plugins: createTestPluginPair([metadataPlugin(metadata, operator)]),
     properties: [metadataProperty("metadata", "Metadata", configOverrides)],
   });
   return { tableView, onViewChange };
@@ -983,10 +984,7 @@ function metadataPlugin(
   const operand = typeof metadata === "string" ? { kind: metadata } : metadata;
   return {
     id: "metadata",
-    meta: { name: "Metadata", desc: "Metadata", icon: null },
     default: {
-      name: "Metadata",
-      icon: null,
       data: "",
       config: { options: { names: [], items: {} } },
     },
@@ -1014,7 +1012,6 @@ function metadataPlugin(
             ]),
       ],
     },
-    renderCellValue: () => null,
   };
 }
 
@@ -1068,7 +1065,7 @@ function renderControlledMetadata(
     timeZone?: string;
   }) => (
     <TableViewWrapper
-      plugins={[plugin]}
+      plugins={createTestPluginPair([plugin])}
       data={[]}
       properties={[metadataProperty("metadata", "Metadata", { tz: timeZone })]}
       view={{ filters: makeFilters(nextValue) }}

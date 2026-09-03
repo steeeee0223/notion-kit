@@ -2,10 +2,11 @@ import { cn } from "@notion-kit/cn";
 import { wrappedClassName } from "@notion-kit/table-hook";
 import {
   toDateString,
-  type CellValueProps,
   type DateConfig,
   type DateData,
 } from "@notion-kit/table-hook/plugins";
+
+import type { CellValueProps } from "@/plugins/renderers";
 
 export function DateCell({
   data,

@@ -4,10 +4,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ColumnInfo, Row, TableViewState } from "@notion-kit/table-hook";
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
-import { DEFAULT_PLUGINS } from "@/plugins";
-
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
-import { createFullPluginFixture, mockResizeObserver } from "../__tests__/mock";
+import {
+  createFullPluginFixture,
+  createTestUiPlugin,
+  extendDefaultPlugins,
+  mockResizeObserver,
+} from "../__tests__/mock";
 
 const clientState = vi.hoisted(() => ({ value: true }));
 
@@ -381,10 +384,7 @@ describe("EditGroupMenu", () => {
     const onViewChange = vi.fn();
     const plugin: CellPlugin<"colon-sort", string, undefined> = {
       id: "colon-sort",
-      meta: { name: "Colon sort", desc: "Colon sort", icon: null },
       default: {
-        name: "Colon sort",
-        icon: null,
         config: undefined,
         data: "",
       },
@@ -414,7 +414,6 @@ describe("EditGroupMenu", () => {
           },
         ],
       },
-      renderCellValue: ({ data }) => <span>{data}</span>,
     };
     const properties: ColumnInfo[] = [
       { id: "name", name: "Name", type: "title", config: { showIcon: true } },
@@ -426,7 +425,7 @@ describe("EditGroupMenu", () => {
       colonSortRow("three", "Three", "cc"),
     ];
     const tableView = renderTableView({
-      plugins: [...DEFAULT_PLUGINS, plugin],
+      plugins: extendDefaultPlugins([plugin], [createTestUiPlugin(plugin)]),
       properties,
       data,
       onViewChange,

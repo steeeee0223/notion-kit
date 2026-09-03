@@ -1,2 +1,2 @@
 export { text } from "./plugin";
-export { TextCellEditor, TextCellValue } from "./text-cell";
+export { TextCellValue } from "./text-cell";

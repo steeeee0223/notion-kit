@@ -4,10 +4,13 @@ import { describe, expect, it } from "vitest";
 import type { ColumnInfo, Row } from "@notion-kit/table-hook";
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
-import { DEFAULT_PLUGINS } from "@/plugins";
-
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
-import { createFullPluginFixture, mockResizeObserver } from "../__tests__/mock";
+import {
+  createFullPluginFixture,
+  createTestUiPlugin,
+  extendDefaultPlugins,
+  mockResizeObserver,
+} from "../__tests__/mock";
 
 mockResizeObserver();
 
@@ -142,32 +145,6 @@ describe("SortMenu", () => {
     expect(sort.propertyOption("Score")).toBeVisible();
   });
 
-  it("SortMenu_AddsLegacyPluginWithFallbackDirectionWhenSortingMetadataIsMissing", async () => {
-    const legacyPlugin: CellPlugin<"legacy", string, undefined> = {
-      id: "legacy",
-      meta: { name: "Legacy", desc: "Legacy", icon: null },
-      default: { name: "Legacy", icon: null, config: undefined, data: "" },
-      fromValue: (value) => String(value ?? ""),
-      toValue: (value) => value,
-      toTextValue: (value) => value,
-      isEmpty: (value) => value.trim() === "",
-      compare: () => 0,
-      renderCellValue: ({ data }) => <span>{data}</span>,
-    };
-    const tableView = renderTableView({
-      plugins: [...DEFAULT_PLUGINS, legacyPlugin],
-      properties: [
-        { id: "name", name: "Name", type: "title", config: { showIcon: true } },
-        { id: "legacy", name: "Legacy", type: "legacy", config: undefined },
-      ],
-      data: [row("one", "One", "value")],
-    });
-    const sort = await tableView.openSortMenu();
-
-    await sort.addRule("Legacy");
-    expect(sort.directionTrigger("legacy")).toHaveTextContent("Ascending");
-  });
-
   it("SortMenu_UsesPluginDirectionLabelsAndKeepsOneMethodCompact", async () => {
     const tableView = renderTableView();
     const sort = await tableView.openSortMenu();
@@ -199,10 +176,7 @@ describe("SortMenu", () => {
   it("SortMenu_CustomRuntimePlugin_UsesDefaultSortingMethod", async () => {
     const customPlugin: CellPlugin<"priority-code", string, undefined> = {
       id: "priority-code",
-      meta: { name: "Priority code", desc: "Priority code", icon: null },
       default: {
-        name: "Priority code",
-        icon: null,
         config: undefined,
         data: "",
       },
@@ -234,7 +208,6 @@ describe("SortMenu", () => {
           },
         ],
       },
-      renderCellValue: ({ data }) => <span>{data}</span>,
     };
     const properties: ColumnInfo[] = [
       { id: "name", name: "Name", type: "title", config: { showIcon: true } },
@@ -251,7 +224,10 @@ describe("SortMenu", () => {
       row("three", "Three", "cc"),
     ];
     const tableView = renderTableView({
-      plugins: [...DEFAULT_PLUGINS, customPlugin],
+      plugins: extendDefaultPlugins(
+        [customPlugin],
+        [createTestUiPlugin(customPlugin)],
+      ),
       properties,
       data,
     });

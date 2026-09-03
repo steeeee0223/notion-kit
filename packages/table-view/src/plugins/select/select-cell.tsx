@@ -1,12 +1,11 @@
+import type { OnChangeFn } from "@tanstack/react-table";
+
 import { cn } from "@notion-kit/cn";
-import type {
-  CellEditorProps,
-  CellValueProps,
-  SelectConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "@/common/option-tag";
+import type { CellValueProps } from "@/plugins/renderers";
 
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
@@ -15,9 +14,13 @@ interface SelectCellValueProps extends CellValueProps<string[], SelectConfig> {
   multi?: boolean;
 }
 
-interface SelectCellEditorProps
-  extends CellEditorProps<string[], SelectConfig> {
+interface SelectCellEditorProps {
   multi?: boolean;
+  propId: string;
+  config: SelectConfig;
+  data: string[];
+  onChange: OnChangeFn<string[]>;
+  onConfigChange?: OnChangeFn<SelectConfig>;
 }
 
 export function SelectCellValue({

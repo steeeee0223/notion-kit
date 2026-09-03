@@ -8,8 +8,8 @@ the executable contract audit is indexed in
 ## Ownership
 
 Plugin factories in `@notion-kit/table-hook/plugins` own data semantics and
-capability descriptors. `@notion-kit/table-view` supplies only icons and React
-renderers through configured wrappers. If a change affects conversion,
+capability descriptors. `@notion-kit/table-view` supplies matching UI adapters
+with icons and React renderers. If a change affects conversion,
 empty-value classification, comparison, grouping, counting, sorting, method
 resolution, or persisted method IDs, update this document and the relevant
 [headless audit page](./testing/README.md).
@@ -66,68 +66,50 @@ It also provides resolver fallbacks:
 - grouping falls back from the registered default/first method to legacy `toGroupValue` or `toValue`;
 - counting resolves a method ID from the plugin's registered groups.
 
-`@notion-kit/table-view` owns the existing UI components and exposes no-argument wrappers that inject them into the headless factories. Its `DEFAULT_PLUGINS` is the configured default list:
+`@notion-kit/table-view` owns React rendering and pairs it with these pure data
+plugins at its public boundary. A custom property therefore has one data
+plugin and one UI adapter with the same ID:
 
 ```tsx
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
-import { title as createTitle } from "@notion-kit/table-hook/plugins";
-import { title as createTableViewTitle } from "@notion-kit/table-view";
+import {
+  title as createTitle,
+  type CellPlugin,
+} from "@notion-kit/table-hook/plugins";
+import type { TableUiPlugin } from "@notion-kit/table-view";
 
-const customTitle = createTitle({
-  icon: <CustomTitleIcon />,
-  renderCellValue: (props) => <CustomTitleValue {...props} />,
-  renderCellEditor: (props) => ({
-    presentation: "popover",
-    content: <CustomTitleEditor {...props} />,
-  }),
-});
-const tableViewTitle = createTableViewTitle();
-
-const customPlugin: CellPlugin<"custom", string, undefined> = {
-  // Developers may still implement the structural contract directly.
-  isEmpty: (data) => data.trim() === "",
-  toTextValue: (data) => data,
-  // ...
+const customTitle: CellPlugin = createTitle();
+const customTitleUi: TableUiPlugin<typeof customTitle> = {
+  id: customTitle.id,
+  meta: { name: "Title", desc: "", icon: <CustomTitleIcon /> },
+  default: { name: "Name", icon: <CustomTitleIcon /> },
+  renderCell: ({ cell }) => <CustomTitleValue cell={cell} />,
+  renderBulkEditor: ({ column }) => <CustomTitleEditor column={column} />,
+  renderGroupingValue: () => null,
 };
 ```
+
+The data plugin and UI adapter are registered as one pair; their IDs must
+match. Custom data plugins may implement the `CellPlugin` contract directly,
+but must still be paired with a `TableUiPlugin`.
 
 `isEmpty` is the single semantic boundary for empty UI states, empty filters
 and counts, and empty sorting/grouping handling. Missing cells are normalized
 to `plugin.default.data` before this callback runs. `toTextValue` converts data
 for copy and other text consumers; it is not an empty-value fallback.
 
-### Cell value and editing capabilities
+### UI adapters
 
-Every plugin must provide `renderCellValue`, which returns layout-neutral value
-content. It receives `CellValueProps` with the property ID, row, data, config,
-wrapping hint, and disabled state. `CellValueProps` does not expose layout,
-tooltip, presentation class, or an activation callback.
+The headless package has no React renderer, icon, editor, or bulk-edit
+contract. `TableUiPlugin` lives in `@notion-kit/table-view` and owns
+`renderCell`, optional `renderBulkEditor`, `renderConfigMenu`, and
+`renderGroupingValue`. Cell adapters receive only a TanStack cell instance;
+bulk and configuration adapters receive only a TanStack column instance. Cell
+and column feature APIs expose data/configuration, text values, selected rows,
+and mutation methods without prop drilling. A bulk adapter's presence alone
+makes a property bulk-editable.
 
-A plugin can additionally provide `renderCellEditor`, which returns either an
-inline control or a popover editor. `CellEditorScope<Data>` distinguishes a
-normal cell (`{ kind: "cell"; row }`) from bulk editing
-(`{ kind: "bulk"; rowIds; selectedValues }`). The table view composes these
-capabilities for both ordinary cells and bulk editing; renderers do not need to
-inspect a built-in plugin ID.
-
-`renderCell` is not a supported compatibility entry point. A value-only plugin
-is visible but has no editing affordance. An editor-capable plugin is editable
-in a normal cell, subject to its view-level lock state and the host's supplied
-callbacks.
-
-The editor receives a `scope` discriminator. In a normal cell it contains the
-row; in bulk it contains the selected row IDs and selected values. Bulk editors
-start from `plugin.default.data`, so a functional updater never inherits an
-arbitrary selected row's value.
-
-A property is eligible for bulk edit only when it has `renderCellEditor` and
-does not set `disableBulkEdit`. `disableBulkEdit` does not make a normal cell
-read-only.
-
-The bulk host supplies the same editor capability with a bulk scope and a
-shared disabled state. Its initial draft is `plugin.default.data`; when an
-editor uses the functional form of `onChange`, the host resolves that updater
-once against that draft and commits one atomic update for all selected rows.
+Bulk edits start from `plugin.default.data`. A functional updater is resolved
+once against that draft and committed as one atomic update across selected rows.
 
 ### Capability policy
 
@@ -135,7 +117,8 @@ once against that draft and commits one atomic update for all selected rows.
 - A missing or unknown method ID falls back to the plugin default, then the first registered method, then the existing legacy field where applicable.
 - Existing `compare`, `toValue`, and `toGroupValue` support remains during this migration.
 - Unsupported options are omitted from menus rather than rendered as disabled placeholders.
-- Shared mechanics, built-in data semantics, registrations, and renderer prop adaptation live in table-hook. Table-view plugin wrappers only inject components and icons.
+- Table-hook owns data semantics and registrations; table-view owns all React
+  components, icons, and renderer composition.
 - Generic menu components must not branch on built-in plugin IDs when a capability descriptor can provide the option.
 
 Table-hook also owns cross-plugin method configuration. `useTableView` exposes `weekStartsOn`, using `0` for Sunday through `6` for Saturday and defaulting to `1` (Monday). This is runtime table configuration, not duplicated in each date column and not stored as a plugin method ID. Grouping method context must expose it to date plugins.
@@ -189,10 +172,9 @@ Old resources without these fields must resolve to the same effective defaults t
 ### Verification policy
 
 - Test every built-in plugin's registered method IDs and groups.
-- Test the split renderer contract: value-only plugins remain visible but are
-  not editable, while `renderCellEditor` is discoverable without a plugin-ID
-  branch and receives its cell or bulk scope.
-- Test bulk eligibility for missing editors and `disableBulkEdit`, including
+- Test the paired data/UI registry contract: every data plugin has one UI
+  adapter, a direct cell renderer, and optional bulk rendering.
+- Test bulk eligibility from the UI adapter's optional bulk renderer, including
   default-data functional updates and one atomic selected-row commit.
 - Test custom plugin discovery through calculation, sorting, and grouping menus without editing generic menu code.
 - Test numeric calculations with empty, negative, decimal, and invalid values and verify configured units/rounding.
@@ -203,5 +185,5 @@ Old resources without these fields must resolve to the same effective defaults t
 - Run focused tests, typecheck, lint, and builds for both `@notion-kit/table-hook` and `@notion-kit/table-view`.
 
 Custom arbitrary numeric ranges, new plugin types, dependency additions, and
-removal of legacy method fields are outside this branch. The removed
-`renderCell` renderer entry point is not a legacy method fallback.
+removal of legacy method fields are outside this branch. There is no
+compatibility path for the previous combined plugin contract.

@@ -1,12 +1,11 @@
 import { cva } from "@notion-kit/cn";
-import {
-  getDefaultGroupingValue,
-  type GroupingValueProps,
-} from "@notion-kit/table-hook/plugins";
+import { getDefaultGroupingValue } from "@notion-kit/table-hook/plugins";
+
+import type { GroupingValueProps } from "./registry";
 
 export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
 
-export type CellPresentationType =
+export type CellStyleKind =
   | "text"
   | "number"
   | "select"
@@ -14,42 +13,6 @@ export type CellPresentationType =
   | "date"
   | "checkbox"
   | "neutral";
-
-export interface CellPresentation {
-  type: CellPresentationType;
-  frameClassName: string;
-  triggerClassName: string;
-  copyGroupClassName?: string;
-  copyHoverClassName?: string;
-  compactWidthClassName?: string;
-}
-
-const PRESENTATION_BY_PLUGIN_ID: Record<string, CellPresentationType> = {
-  title: "text",
-  text: "text",
-  number: "number",
-  select: "select",
-  "multi-select": "select",
-  email: "link",
-  phone: "link",
-  url: "link",
-  date: "date",
-  "created-time": "date",
-  "last-edited-time": "date",
-  checkbox: "checkbox",
-};
-
-const frameVariants = cva("", {
-  variants: {
-    surface: {
-      table: "relative flex h-full border-r border-r-border-cell",
-      list: "",
-      board: "",
-      "row-view": "flex h-full min-w-0 flex-[1_1_auto] flex-wrap",
-      timeline: "",
-    },
-  },
-});
 
 const triggerVariants = cva("relative px-2 aria-disabled:pointer-events-none", {
   variants: {
@@ -101,34 +64,24 @@ const compactWidthVariants = cva("", {
   },
 });
 
-interface GetCellPresentationOptions {
-  pluginId: string;
-  surface: CellSurface;
-  wrapped?: boolean;
-}
-
-export function getCellPresentation({
-  pluginId,
+export function getCellTriggerClass({
+  kind,
   surface,
   wrapped,
-}: GetCellPresentationOptions): CellPresentation {
-  const type = PRESENTATION_BY_PLUGIN_ID[pluginId] ?? "neutral";
-
-  return {
-    type,
-    frameClassName: frameVariants({ surface }),
-    triggerClassName: triggerVariants({ surface, wrapped, type }),
-    ...(surface === "list"
-      ? { compactWidthClassName: compactWidthVariants({ type }) }
-      : {}),
-    ...getCopyClasses(type),
-  };
+}: {
+  kind: CellStyleKind;
+  surface: CellSurface;
+  wrapped?: boolean;
+}) {
+  return triggerVariants({ surface, wrapped, type: kind });
 }
 
-function getCopyClasses(
-  type: CellPresentationType,
-): Pick<CellPresentation, "copyGroupClassName" | "copyHoverClassName"> {
-  switch (type) {
+export function getCompactWidthClass(kind: CellStyleKind) {
+  return compactWidthVariants({ type: kind });
+}
+
+export function getCopyClasses(kind: CellStyleKind) {
+  switch (kind) {
     case "text":
       return {
         copyGroupClassName: "group/text-cell",
