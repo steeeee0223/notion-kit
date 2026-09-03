@@ -65,10 +65,10 @@ change its width, resize behavior, or timeline-track positioning.
 
 ## Testing and verification
 
-- Add focused structural tests first for shared gutter slots and the intended
-  logical sticky classes on table, list, timeline sidebar, and outer controls.
-- Preserve the existing row-action, selection, drag-and-drop, toolbar, and
-  timeline interaction tests.
+- Do not add tests for this CSS-only refactor. Update existing tests only when
+  a necessary rendering-tree change invalidates their assumptions.
+- Run the existing row-action, selection, drag-and-drop, toolbar, and timeline
+  interaction tests.
 - Run the table-view package's unit tests, typecheck, and lint after the
   refactor. Perform a visual browser check of horizontally scrolled table and
   timeline sidebar states, including pinned columns.
