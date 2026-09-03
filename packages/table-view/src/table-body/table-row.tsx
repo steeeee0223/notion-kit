@@ -6,7 +6,7 @@ import { useIsMobile } from "@notion-kit/hooks";
 import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
 import { Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActionGroup } from "@/common";
+import { Row, RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
@@ -44,35 +44,31 @@ export function TableRow({ row }: TableRowProps) {
         id="notion-table-view-row"
         dir="ltr"
         className={cn(
-          "flex w-full border-b border-b-border-cell",
+          "flex w-max min-w-full shrink-0 border-b border-b-border-cell",
           row.getIsFirstChild() && "border-t border-t-border-cell",
         )}
       >
-        <div
-          data-slot="table-row-action-gutter"
-          className="sticky inset-s-(--table-view-inline-start) z-(--z-row) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
-        >
+        {/* Row actions */}
+        <Row.ActionPortal>
           {!locked && (
             <RowActionGroup
-              className="w-full"
               isMobile={isMobile}
               row={row}
               onAddNext={addNextRow}
             />
           )}
-        </div>
-        <div className="flex">
-          <div className="sticky inset-s-(--table-view-pinned-start) z-(--z-row) flex items-center bg-main">
-            {/* Row actions */}
+        </Row.ActionPortal>
+        <div className="flex w-max shrink-0">
+          <div className="sticky inset-s-(--table-view-row-action-gutter) z-(--z-row) flex items-center bg-main">
             {/* Start pinned columns */}
             <TableCells cells={row.getStartVisibleCells()} />
           </div>
           {/* Center unpinned columns */}
           <TableCells cells={row.getCenterVisibleCells()} />
         </div>
+        {/* Keeps the row rule visible after the last rendered data cell. */}
+        <div aria-hidden="true" className="min-w-16 grow" />
       </div>
-      {/* Bottom line at row end */}
-      <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
     </Sortable.Item>
   );
 }

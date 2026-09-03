@@ -72,10 +72,7 @@ function ListViewContentInner({
   };
 
   return (
-    <div
-      key="notion-list-view"
-      className="min-w-177 ps-(--table-view-inline-start) pe-24 pb-0"
-    >
+    <div key="notion-list-view" className="min-w-177 ps-0 pe-24 pb-0">
       <table.Subscribe
         selector={(state) => ({
           locked: state.tableGlobal.locked,

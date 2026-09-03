@@ -42,7 +42,7 @@ function ToolbarContent({ className }: ToolbarProps) {
   return (
     <div
       className={cn(
-        "sticky inset-e-0 flex items-center justify-end gap-0.5",
+        "flex items-center justify-end gap-0.5",
         className,
       )}
     >

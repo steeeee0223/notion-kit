@@ -4,7 +4,7 @@ import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
 import { Button, Checkbox } from "@notion-kit/ui/primitives";
 
-import { GroupActions } from "@/common";
+import { GroupActions, Row } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableGroupedRowProps {
@@ -33,14 +33,15 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
     >
       <div className="flex h-full items-center">
         {/* Row selection */}
-        <div
-          data-slot="group-row-action-gutter"
-          className="sticky inset-s-(--table-view-inline-start) z-(--z-row) flex h-full w-(--table-view-row-action-gutter) shrink-0 items-center justify-center bg-main"
-        >
+        <Row.ActionPortal className="h-full">
           {showSelection && (
-            <div
-              data-slot="group-row-action"
-              className="flex h-full w-8 items-center justify-center"
+            <Row.ActionContent
+              className={cn(
+                "group-hover/grouped-row:opacity-100",
+
+                (groupSelectionState !== "unchecked" || isMobile) &&
+                  "opacity-100",
+              )}
             >
               <Checkbox
                 id={`group-select-${row.id}`}
@@ -48,16 +49,12 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
                 checked={groupSelectionState === "checked"}
                 indeterminate={groupSelectionState === "indeterminate"}
                 aria-label={`Select group ${row.id}`}
-                className={cn(
-                  "cursor-pointer rounded-xs accent-blue opacity-0 transition-opacity delay-0 duration-200 group-hover/grouped-row:opacity-100",
-                  (groupSelectionState !== "unchecked" || isMobile) &&
-                    "opacity-100",
-                )}
+                className="cursor-pointer rounded-xs accent-blue"
                 onCheckedChange={() => row.toggleGroupSelection()}
               />
-            </div>
+            </Row.ActionContent>
           )}
-        </div>
+        </Row.ActionPortal>
         <div
           data-slot="grouped-row-content"
           className="sticky inset-s-(--table-view-pinned-start) flex h-full items-center overflow-hidden bg-main"

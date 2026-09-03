@@ -36,7 +36,7 @@ export function TableViewContent() {
           <div
             role="table"
             id="notion-table-view"
-            className="relative float-left min-w-full ps-(--table-view-inline-start) pe-24 pb-0 lining-nums tabular-nums select-none"
+            className="relative float-left min-w-full ps-(--table-view-row-action-gutter) pe-24 pb-0 lining-nums tabular-nums select-none"
           >
             <div className="absolute z-9990 w-full" />
             <div className="pointer-events-none mt-0 h-0" />

@@ -117,20 +117,18 @@ function DndTableBodyContent({
       </div>
       <div className="w-[438px]" />
       {!locked && (
-        <div className="ps-(--table-view-row-action-gutter)">
-          <Button
-            id="notion-table-view-add-row"
-            tabIndex={0}
-            variant="cell"
-            className="h-[33px] w-full bg-main pl-2 leading-5"
-            onClick={() => table.addRow()}
-          >
-            <span className="sticky inset-s-(--table-view-pinned-start) inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
-              <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
-              New page
-            </span>
-          </Button>
-        </div>
+        <Button
+          id="notion-table-view-add-row"
+          tabIndex={0}
+          variant="cell"
+          className="h-[33px] w-full bg-main pl-2 leading-5"
+          onClick={() => table.addRow()}
+        >
+          <span className="sticky inset-s-(--table-view-row-action-gutter) inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
+            <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
+            New page
+          </span>
+        </Button>
       )}
       <Dialog
         open={pendingDragEndEvent !== null}

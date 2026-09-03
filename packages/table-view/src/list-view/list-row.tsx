@@ -39,7 +39,7 @@ export function ListRow({ rowId }: ListRowProps) {
           <div className="relative flex items-center">
             <div
               data-slot="list-row-action-gutter"
-              className="sticky inset-s-(--table-view-inline-start) z-(--z-row) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
+              className="sticky inset-s-0 z-(--z-row) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
             >
               {!locked && (
                 <RowActionGroup

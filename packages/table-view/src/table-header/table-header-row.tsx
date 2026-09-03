@@ -17,6 +17,7 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
+import { Row } from "@/common";
 import { PropsMenu, TypesMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -137,14 +138,11 @@ function TableHeaderRowContent() {
     <div
       id="notion-table-view-header-row"
       dir="ltr"
-      className="group/header relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
+      className="group/header relative inset-x-0 box-border flex h-[34px] w-max min-w-full shrink-0 bg-main shadow-header-row"
     >
-      <div
-        data-slot="table-header-action-gutter"
-        className="sticky inset-s-(--table-view-inline-start) z-(--z-col) flex h-full w-(--table-view-row-action-gutter) shrink-0 items-center justify-end bg-main"
-      >
+      <Row.ActionPortal className="z-(--z-col) h-8">
         {/* Hovered actions */}
-        <div className="flex h-full items-center justify-end">
+        <Row.ActionContent className="h-full justify-end opacity-100">
           <table.Subscribe selector={(state) => state.tableGlobal.locked}>
             {(locked) =>
               !locked && (
@@ -165,8 +163,8 @@ function TableHeaderRowContent() {
               )
             }
           </table.Subscribe>
-        </div>
-      </div>
+        </Row.ActionContent>
+      </Row.ActionPortal>
       <Sortable.List
         orientation="horizontal"
         className={cn("m-0 inline-flex", isStartPinned && "flex")}
@@ -175,7 +173,7 @@ function TableHeaderRowContent() {
         {isStartPinned && (
           <div
             id="draggable-ghost-section-left"
-            className="sticky inset-s-(--table-view-pinned-start) z-(--z-col) flex bg-main shadow-header-sticky"
+            className="sticky inset-s-(--table-view-row-action-gutter) z-(--z-col) flex bg-main shadow-header-sticky"
           >
             {startPinnedHeaders.map((header) => (
               <React.Fragment key={header.id}>
