@@ -1,72 +1,58 @@
-# Table-view sticky layout refactor
+# Table-view sticky layout correction
 
 ## Goal
 
-Replace table-view's hand-tuned inline offsets with a structural, shared sticky
-layout. The rendered layout and all existing row-action interactions remain
-unchanged.
+Correct the regressions introduced by the structural sticky-gutter refactor:
+table headers and row cells must share an inline origin, row borders must
+remain continuous through horizontal scrolling, and timeline sidebar titles
+must align with their header.
 
 ## Scope
 
-The refactor covers the table, list, and timeline layouts:
+The correction covers table and timeline layouts only:
 
-- Table header, ordinary rows, grouped rows, footer, and pinned columns.
-- List rows and grouped rows.
+- Table header, ordinary rows, the trailing row surface, and pinned columns.
 - Timeline sidebar rows, header, and pinned title column.
-- The outer view controls: `Toolbar`, `ActiveBar`, and `BulkEditBar`.
 
-Board and row-view layouts are outside this change.
+List, board, row-view, toolbar, active-bar, and bulk-edit layouts are outside
+this change.
 
 ## Positioning model
 
-`TableView` owns the shared inline sticky context and exposes named CSS custom
-properties for its controls and row-action gutter. Components use logical
-inset properties so the model is expressed in start/end terms rather than
-physical left/right offsets.
-
-The main toolbar is sticky at inline-end. The active filter/sort bar and bulk
-edit bar are sticky at inline-start. This applies through the shared outer
-view-controls layer, so the behavior is consistent across every table-view
-layout.
-
-Each applicable view body explicitly reserves a row-action gutter. The gutter
-is a structural column, not an absolutely positioned overflow area. Row action
-groups, the table header selection control, and grouped-row selection use this
-space. The content edge immediately after the gutter is the shared start
-anchor for pinned columns.
+Row actions are an overlay lane adjacent to the data grid, rather than a
+structural data column. The table header, data cells, and footer use the same
+data-grid inline origin. Pinned data columns derive their sticky inset from
+that origin only; they never include row-action width.
 
 ## Layout details
 
 ### Table
 
-The header, body rows, grouped rows, and footer use the same action-gutter
-width and pinned-content anchor. Header selection occupies the gutter; row
-actions occupy it for ordinary rows; grouped rows preserve their selection
-control; and the footer carries an empty gutter so pinned footer cells align
-with their header and body counterparts.
+The header, data rows, and pinned columns begin on the identical inline edge.
+The action group remains outside the data-grid width and does not create a
+header/body offset. Ordinary rows own their bottom border. The action overlay
+has no independent bottom border at rest; when it is sticky over a row, the
+row's own bottom rule remains visible beneath it. A trailing row surface
+extends that rule through the horizontal end of the table, including after the
+last visible column.
 
-Pinned columns remain sticky, but their inset is derived from the common
-content anchor rather than a local numeric class. Unpinned columns, row order,
-cell rendering, selection, and drag behavior are unchanged.
-
-### List
-
-List rows reserve the gutter next to their content. `RowActionGroup` remains
-visually outside the row's content surface but participates in the row layout
-instead of using a negative inline offset. Grouped list rows use the same
-selection alignment as table grouped rows.
+Pinning must retain the same overlay model: a pinned title column and its
+header align at the data-grid edge while actions remain in the adjacent lane.
+Unpinned rendering, row order, cell rendering, selection, and drag behavior
+are unchanged.
 
 ### Timeline sidebar
 
-Timeline sidebar rows reserve the same action gutter for sortable row actions.
-The sidebar header and title/pinned column align to the resulting content
-anchor. The sidebar remains its own scrollable region; this refactor does not
-change its width, resize behavior, or timeline-track positioning.
+Timeline sidebar header and row title cells use one shared title-cell origin.
+Sortable row actions occupy the adjacent overlay lane without pushing a row
+title farther right than its header. The sidebar remains its own scrollable
+region; this correction does not change its width, resize behavior, track
+positioning, or row-to-track vertical alignment.
 
 ## Testing and verification
 
-- Do not add tests for this CSS-only refactor. Update existing tests only when
-  a necessary rendering-tree change invalidates their assumptions.
+- Do not add test-first coverage. Update existing tests only when a necessary
+  rendering-tree change invalidates their assumptions, per the user's request.
 - Run the existing row-action, selection, drag-and-drop, toolbar, and timeline
   interaction tests.
 - Run the table-view package's unit tests, typecheck, and lint after the
