@@ -6,7 +6,7 @@ import { useIsMobile } from "@notion-kit/hooks";
 import type { RowInstance } from "@notion-kit/table-hook";
 import { buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActionGroup } from "@/common";
+import { Row, RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {
@@ -37,25 +37,22 @@ export function ListRow({ rowId }: ListRowProps) {
           render={<div data-block-id={row.id} className="group/row my-1" />}
         >
           <div className="relative flex items-center">
-            <div
-              data-slot="list-row-action-gutter"
-              className="sticky inset-s-0 z-(--z-row) flex w-(--table-view-row-action-gutter) shrink-0 items-center bg-main"
-            >
+            <Row.ActionPortal className="inset-s-0 w-(--table-view-row-action-gutter) translate-x-0">
               {!locked && (
                 <RowActionGroup
-                  className="w-full"
                   isMobile={isMobile}
                   row={row}
                   onAddNext={addNextRow}
                 />
               )}
-            </div>
+            </Row.ActionPortal>
             <div
               role="button"
               tabIndex={0}
               className={cn(
                 buttonVariants({ variant: "cell" }),
                 "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
+                row.getIsSelected() && "bg-blue/10",
               )}
               onClick={() => table.openRow(row.id)}
               onKeyDown={() => {

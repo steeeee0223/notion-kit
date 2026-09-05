@@ -58,7 +58,12 @@ export function TableRow({ row }: TableRowProps) {
             />
           )}
         </Row.ActionPortal>
-        <div className="flex w-max shrink-0">
+        <div
+          className={cn(
+            "flex w-max shrink-0",
+            row.getIsSelected() && "bg-blue/10",
+          )}
+        >
           <div className="sticky inset-s-(--table-view-row-action-gutter) z-(--z-row) flex items-center bg-main">
             {/* Start pinned columns */}
             <TableCells cells={row.getStartVisibleCells()} />

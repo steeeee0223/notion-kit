@@ -87,8 +87,13 @@ function TimelineSidebarContent({
         <TimelineSidebarClose onClick={onClose} />
       </TimelineSidebarHeader>
       <TimelineSidebarBody>
-        <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-          {(locked) =>
+        <table.Subscribe
+          selector={(state) => ({
+            locked: state.tableGlobal.locked,
+            _rowSelection: state.rowSelection,
+          })}
+        >
+          {({ locked }) =>
             locked ? (
               <TimelineSidebarRows />
             ) : (
@@ -130,7 +135,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
     if (!titleCell) return null;
 
     const title = String(titleDataCell.value || "New page");
-    const wrapped = titleCell.column.getInfo().wrapped;
+    const wrapped = titleCell.getInfo().wrapped;
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
