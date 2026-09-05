@@ -9,6 +9,7 @@ import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
+import { Table } from "@/common";
 import { ListViewContent } from "@/list-view";
 import {
   createPluginRegistry,
@@ -88,12 +89,15 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   return (
     <TableViewWrapper {...props}>
       <MenuCoordinatorProvider>
-        <div className="relative flex flex-col gap-4">
-          <div className="sticky top-0 z-(--z-row) bg-main px-24 pb-2">
+        <Table.Root className="flex flex-col gap-4">
+          <div
+            data-slot="table-view-toolbar-container"
+            className="sticky top-0 z-(--z-row) w-full min-w-0 overflow-x-clip bg-main px-24 pb-2"
+          >
             <ViewControls />
           </div>
           <Content />
-        </div>
+        </Table.Root>
         <RowView />
         {children}
       </MenuCoordinatorProvider>
@@ -119,11 +123,30 @@ function Content() {
           case "board":
             return <BoardViewContent />;
           case "timeline":
-            return <TimelineViewContent />;
+            return (
+              <ScrollableContent>
+                <TimelineViewContent />
+              </ScrollableContent>
+            );
           default:
-            return <TableViewContent />;
+            return (
+              <ScrollableContent>
+                <TableViewContent />
+              </ScrollableContent>
+            );
         }
       }}
     </table.Subscribe>
+  );
+}
+
+function ScrollableContent({ children }: React.PropsWithChildren) {
+  return (
+    <div
+      data-slot="table-view-scroll-container"
+      className="w-full min-w-0 overflow-x-auto"
+    >
+      {children}
+    </div>
   );
 }

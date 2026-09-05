@@ -41,7 +41,7 @@ export function TableFooter() {
               <div className={cn("m-0 inline-flex", isStartPinned && "flex")}>
                 {/* Pinned Columns */}
                 {isStartPinned && (
-                  <div className="sticky left-8 z-(--z-col) flex bg-main">
+                  <div className="sticky inset-s-(--table-view-row-action-gutter) z-(--z-col) flex bg-main">
                     {startPinnedHeaders.map((header) => (
                       <React.Fragment key={header.id}>
                         {flexRender(

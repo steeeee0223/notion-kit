@@ -10,7 +10,7 @@ import {
   TimelineSidebar as TimelineSidebarPrimitive,
 } from "@notion-kit/ui/timeline";
 
-import { Cell, RowActionGroup } from "@/common";
+import { Cell, Row, RowActionGroup } from "@/common";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -38,6 +38,7 @@ export function TimelineSidebar({
         groupingState: state.groupingState,
         expanded: state.expanded,
         columnVisibility: state.columnVisibility,
+        rowSelection: state.rowSelection,
       })}
     >
       {() => (
@@ -59,8 +60,13 @@ function TimelineSidebarContent({
   if (!titleHeader) return null;
 
   return (
-    <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
-      <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
+    <TimelineSidebarPrimitive
+      role="complementary"
+      aria-label="Timeline table"
+      className="[--table-view-row-action-gutter:68px]"
+    >
+      <TimelineSidebarHeader className="relative flex h-17 ps-(--table-view-row-action-gutter) text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
+        <Row.ActionPortal className="h-full" />
         <TableHeaderCellTrigger
           header={titleHeader}
           table={table}
@@ -81,8 +87,13 @@ function TimelineSidebarContent({
         <TimelineSidebarClose onClick={onClose} />
       </TimelineSidebarHeader>
       <TimelineSidebarBody>
-        <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-          {(locked) =>
+        <table.Subscribe
+          selector={(state) => ({
+            locked: state.tableGlobal.locked,
+            _rowSelection: state.rowSelection,
+          })}
+        >
+          {({ locked }) =>
             locked ? (
               <TimelineSidebarRows />
             ) : (
@@ -124,7 +135,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
     if (!titleCell) return null;
 
     const title = String(titleDataCell.value || "New page");
-    const wrapped = titleCell.column.getInfo().wrapped;
+    const wrapped = titleCell.getInfo().wrapped;
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
@@ -151,7 +162,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           key={row.id}
           data-slot="timeline-sidebar-row"
           data-row-id={row.id}
-          className="flex h-(--timeline-row-height) items-center border-b border-border"
+          className="flex h-(--timeline-row-height) items-center border-b border-border ps-(--table-view-row-action-gutter)"
         >
           {content}
         </div>
@@ -176,16 +187,17 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           <div
             data-slot="timeline-sidebar-row"
             data-row-id={row.id}
-            className="group/row flex h-(--timeline-row-height) items-center border-b border-border"
+            className="group/row flex h-(--timeline-row-height) items-center border-b border-border ps-(--table-view-row-action-gutter)"
           />
         }
       >
-        <RowActionGroup
-          className="ms-1"
-          isMobile={isMobile}
-          row={row}
-          onAddNext={addNextRow}
-        />
+        <Row.ActionPortal>
+          <RowActionGroup
+            isMobile={isMobile}
+            row={row}
+            onAddNext={addNextRow}
+          />
+        </Row.ActionPortal>
         {content}
       </Sortable.Item>
     );

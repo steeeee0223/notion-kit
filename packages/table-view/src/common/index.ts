@@ -14,6 +14,7 @@ export { OptionTag } from "./option-tag";
 export { PropertySelect } from "./property-select";
 export { PropMeta } from "./prop-meta";
 export { RowActionGroup } from "./row-action-group";
+export { Table, Row } from "./table";
 export {
   TextInputPopover,
   TextInputPopoverContent,

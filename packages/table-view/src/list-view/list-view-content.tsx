@@ -6,7 +6,6 @@ import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
-import { BulkEditBar } from "@/common/bulk-edit/bulk-edit-bar";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -27,13 +26,11 @@ export function ListViewContent() {
         columnOrder: state.columnOrder,
         columnVisibility: state.columnVisibility,
         columnsInfo: state.columnsInfo,
-        locked: state.tableGlobal.locked,
       })}
     >
-      {({ sorting, locked }) => (
+      {({ sorting }) => (
         <ListViewContentInner
           sorting={sorting}
-          locked={locked}
           pendingDragEndEvent={pendingDragEndEvent}
           setPendingDragEndEvent={setPendingDragEndEvent}
         />
@@ -44,14 +41,12 @@ export function ListViewContent() {
 
 interface ListViewContentInnerProps {
   sorting: SortingState;
-  locked?: boolean;
   pendingDragEndEvent: DragEndEvent | null;
   setPendingDragEndEvent: (event: DragEndEvent | null) => void;
 }
 
 function ListViewContentInner({
   sorting,
-  locked,
   pendingDragEndEvent,
   setPendingDragEndEvent,
 }: ListViewContentInnerProps) {
@@ -77,8 +72,7 @@ function ListViewContentInner({
   };
 
   return (
-    <div key="notion-list-view" className="min-w-177 px-24 pb-0">
-      <BulkEditBar disabled={locked} />
+    <div key="notion-list-view" className="min-w-177 ps-0 pe-24 pb-0">
       <table.Subscribe
         selector={(state) => ({
           locked: state.tableGlobal.locked,
@@ -102,15 +96,17 @@ function ListViewContentInner({
               </Sortable.List>
             </Sortable.Root>
             {!locked && (
-              <Button
-                tabIndex={0}
-                variant="cell"
-                className="h-7.5 rounded-md px-2 text-muted"
-                onClick={() => table.addRow()}
-              >
-                <Icon.Plus className="size-3.5 fill-current" />
-                New page
-              </Button>
+              <div className="ps-(--table-view-row-action-gutter)">
+                <Button
+                  tabIndex={0}
+                  variant="cell"
+                  className="h-7.5 w-full rounded-md px-2 text-muted"
+                  onClick={() => table.addRow()}
+                >
+                  <Icon.Plus className="size-3.5 fill-current" />
+                  New page
+                </Button>
+              </div>
             )}
           </div>
         )}

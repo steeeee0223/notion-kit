@@ -21,7 +21,10 @@ export function ActiveBar() {
         if (sortingCount === 0 && filterCount === 0) return null;
 
         return (
-          <div className="flex pt-1" data-testid="table-view-active-bar">
+          <div
+            className="sticky inset-s-0 flex pt-1"
+            data-testid="table-view-active-bar"
+          >
             <div className="relative grow-0 overflow-hidden">
               <div className="z-10 flex h-10 items-center gap-1 overflow-x-hidden overflow-y-auto py-2">
                 {filterCount > 0 && <FilterSelector />}
