@@ -26,73 +26,61 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
   const showSelection = (layout === "table" || layout === "list") && !locked;
 
   return (
-    <div
-      role="group"
-      aria-label={`Group ${row.id}`}
-      className="group/grouped-row h-11"
-    >
-      <div className="flex h-full items-center">
-        {/* Row selection */}
-        <Row.ActionPortal className="h-full">
-          {showSelection && (
-            <Row.ActionContent
-              className={cn(
-                "group-hover/grouped-row:opacity-100",
-
-                (groupSelectionState !== "unchecked" || isMobile) &&
-                  "opacity-100",
-              )}
-            >
-              <Checkbox
-                id={`group-select-${row.id}`}
-                size="sm"
-                checked={groupSelectionState === "checked"}
-                indeterminate={groupSelectionState === "indeterminate"}
-                aria-label={`Select group ${row.id}`}
-                className="cursor-pointer rounded-xs accent-blue"
-                onCheckedChange={() => row.toggleGroupSelection()}
-              />
-            </Row.ActionContent>
-          )}
-        </Row.ActionPortal>
-        <div
-          data-slot="grouped-row-content"
-          className="sticky inset-s-(--table-view-pinned-start) flex h-full items-center overflow-hidden bg-main"
-        >
-          {/* Expand button */}
-          <Button
-            tabIndex={0}
-            variant="hint"
-            className="size-6"
-            aria-expanded={row.getIsExpanded()}
-            aria-label={row.getIsExpanded() ? "Close" : "Open"}
-            onPointerDown={row.getToggleExpandedHandler()}
+    <Row.Root role="group" aria-label={`Group ${row.id}`} className="h-11">
+      <Row.ActionPortal className="h-full">
+        {showSelection && (
+          <Row.ActionContent
+            className={cn(
+              (groupSelectionState !== "unchecked" || isMobile) &&
+                "opacity-100",
+            )}
           >
-            <Icon.ArrowCaretFillSmall
-              className="size-[0.8em] fill-menu-icon transition-[rotate]"
-              side={row.getIsExpanded() ? "down" : "right"}
+            <Checkbox
+              id={`group-select-${row.id}`}
+              size="sm"
+              checked={groupSelectionState === "checked"}
+              indeterminate={groupSelectionState === "indeterminate"}
+              aria-label={`Select group ${row.id}`}
+              className="cursor-pointer rounded-xs accent-blue"
+              onCheckedChange={() => row.toggleGroupSelection()}
             />
-          </Button>
-          {/* Grouped value */}
-          <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
-            {uiPlugin.renderGroupingValue({
-              table: table as never,
-              value: table.getGroupingValue(row.id),
-            })}
-          </div>
-          {/* Count */}
-          {row.getShouldShowGroupAggregates() && (
-            <Button variant="hint" size="xs" className="text-muted">
-              {row.subRows.length}
-            </Button>
-          )}
-          {/* Group actions */}
-          <GroupActions
-            className="opacity-0 group-hover/grouped-row:opacity-100"
-            row={row}
+          </Row.ActionContent>
+        )}
+      </Row.ActionPortal>
+      <Row.StickyContent className="overflow-hidden">
+        {/* Expand button */}
+        <Button
+          tabIndex={0}
+          variant="hint"
+          className="size-6"
+          aria-expanded={row.getIsExpanded()}
+          aria-label={row.getIsExpanded() ? "Close" : "Open"}
+          onPointerDown={row.getToggleExpandedHandler()}
+        >
+          <Icon.ArrowCaretFillSmall
+            className="size-[0.8em] fill-menu-icon transition-[rotate]"
+            side={row.getIsExpanded() ? "down" : "right"}
           />
+        </Button>
+        {/* Grouped value */}
+        <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
+          {uiPlugin.renderGroupingValue({
+            table: table as never,
+            value: table.getGroupingValue(row.id),
+          })}
         </div>
-      </div>
-    </div>
+        {/* Count */}
+        {row.getShouldShowGroupAggregates() && (
+          <Button variant="hint" size="xs" className="text-muted">
+            {row.subRows.length}
+          </Button>
+        )}
+        {/* Group actions */}
+        <GroupActions
+          className="opacity-0 group-hover/row:opacity-100"
+          row={row}
+        />
+      </Row.StickyContent>
+    </Row.Root>
   );
 }

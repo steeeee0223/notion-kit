@@ -130,19 +130,19 @@ function TableHeaderRowContent() {
 
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
-  const isStartPinned = startPinnedHeaders.length > 0;
   const isAllRowsSelected = table.getIsAllRowsSelected();
   const isSomeRowsSelected = table.getIsSomeRowsSelected();
 
   return (
-    <div
-      id="notion-table-view-header-row"
+    <Row.Root
+      data-notion-slot="notion-table-view-header-row"
       dir="ltr"
-      className="group/header relative inset-x-0 box-border flex h-[34px] w-max min-w-full shrink-0 bg-main shadow-header-row"
+      className="inset-x-0 box-border h-[34px] bg-main shadow-header-row"
     >
       <Row.ActionPortal className="z-(--z-col) h-8">
-        {/* Hovered actions */}
-        <Row.ActionContent className="h-full justify-end opacity-100">
+        <Row.ActionContent
+          className={cn((isSomeRowsSelected || isMobile) && "opacity-100")}
+        >
           <table.Subscribe selector={(state) => state.tableGlobal.locked}>
             {(locked) =>
               !locked && (
@@ -152,10 +152,7 @@ function TableHeaderRowContent() {
                   checked={isAllRowsSelected}
                   indeterminate={isSomeRowsSelected && !isAllRowsSelected}
                   aria-label="Select all rows"
-                  className={cn(
-                    "cursor-pointer rounded-xs accent-blue opacity-0 group-hover/header:opacity-100 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
-                    (isSomeRowsSelected || isMobile) && "opacity-100",
-                  )}
+                  className="cursor-pointer rounded-xs accent-blue"
                   onCheckedChange={(checked) =>
                     table.toggleAllRowsSelected(checked)
                   }
@@ -165,26 +162,18 @@ function TableHeaderRowContent() {
           </table.Subscribe>
         </Row.ActionContent>
       </Row.ActionPortal>
-      <Sortable.List
-        orientation="horizontal"
-        className={cn("m-0 inline-flex", isStartPinned && "flex")}
-      >
+      <Sortable.List orientation="horizontal" render={<Row.Content />}>
         {/* Start pinned Columns */}
-        {isStartPinned && (
-          <div
-            id="draggable-ghost-section-left"
-            className="sticky inset-s-(--table-view-row-action-gutter) z-(--z-col) flex bg-main shadow-header-sticky"
-          >
-            {startPinnedHeaders.map((header) => (
-              <React.Fragment key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        )}
+        <Row.StickyContent
+          id="draggable-ghost-section-left"
+          className="z-(--z-col) shadow-header-sticky"
+        >
+          {startPinnedHeaders.map((header) => (
+            <React.Fragment key={header.id}>
+              {flexRender(header.column.columnDef.header, header.getContext())}
+            </React.Fragment>
+          ))}
+        </Row.StickyContent>
         {/* Center unpinned Columns */}
         <div id="draggable-ghost-section-center" className="flex">
           {headers.map((header) => (
@@ -220,6 +209,6 @@ function TableHeaderRowContent() {
           <PropsMenu />
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </Row.Root>
   );
 }
