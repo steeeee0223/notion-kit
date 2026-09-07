@@ -34,39 +34,43 @@ export function ListRow({ rowId }: ListRowProps) {
           group={row.parentId}
           disabled={locked}
           data={{ type: "list-row", groupId: row.parentId }}
-          render={<div data-block-id={row.id} className="group/row my-1" />}
+          render={
+            <Row.Root
+              data-block-id={row.id}
+              selected={row.getIsSelected()}
+              className="my-1 w-full"
+            />
+          }
         >
-          <div className="relative flex items-center">
-            <Row.ActionPortal className="inset-s-0 w-(--table-view-row-action-gutter) translate-x-0">
-              {!locked && (
-                <RowActionGroup
-                  isMobile={isMobile}
-                  row={row}
-                  onAddNext={addNextRow}
-                />
-              )}
-            </Row.ActionPortal>
-            <div
-              role="button"
-              tabIndex={0}
-              className={cn(
-                buttonVariants({ variant: "cell" }),
-                "relative h-7.5 grow overflow-hidden rounded-md px-1 text-inherit opacity-100",
-                row.getIsSelected() && "bg-blue/10",
-              )}
-              onClick={() => table.openRow(row.id)}
-              onKeyDown={() => {
-                // noop
-              }}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <React.Fragment key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </React.Fragment>
-              ))}
-            </div>
-            <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
-          </div>
+          <Row.ActionPortal>
+            {!locked && (
+              <RowActionGroup
+                isMobile={isMobile}
+                row={row}
+                onAddNext={addNextRow}
+              />
+            )}
+          </Row.ActionPortal>
+          <Row.Content
+            role="button"
+            tabIndex={0}
+            className={cn(
+              buttonVariants({ variant: "cell" }),
+              "relative h-7.5 w-full overflow-hidden rounded-md px-1 text-inherit opacity-100",
+            )}
+            onClick={() => table.openRow(row.id)}
+            onKeyDown={() => {
+              // noop
+            }}
+          >
+            {row.getVisibleCells().map((cell) => (
+              <React.Fragment key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </React.Fragment>
+            ))}
+          </Row.Content>
+          <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
+          {/* </div> */}
         </Sortable.Item>
       )}
     </table.Subscribe>

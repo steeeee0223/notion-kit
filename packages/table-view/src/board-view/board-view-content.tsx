@@ -14,7 +14,7 @@ export function BoardViewContent() {
   const handlers = useBoardDnd();
 
   return (
-    <div data-slot="notion-board-view" className="relative float-start px-24">
+    <div data-slot="notion-board-view" className="relative float-start">
       <div className="contain-layout">
         <table.Subscribe
           selector={(state) => ({

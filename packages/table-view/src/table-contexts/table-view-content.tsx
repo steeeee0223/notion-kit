@@ -1,3 +1,4 @@
+import { Table } from "@/common";
 import { DndTableBody } from "@/table-body";
 import { TableFooter } from "@/table-footer";
 import { TableHeader } from "@/table-header";
@@ -33,10 +34,10 @@ export function TableViewContent() {
           );
 
         return (
-          <div
+          <Table.Content
             role="table"
-            id="notion-table-view"
-            className="relative float-left min-w-full ps-(--table-view-row-action-gutter) pe-24 pb-0 lining-nums tabular-nums select-none"
+            data-notion-slot="notion-table-view"
+            className="relative float-left min-w-full pb-0 lining-nums tabular-nums select-none"
           >
             <div className="absolute z-9990 w-full" />
             <div className="pointer-events-none mt-0 h-0" />
@@ -54,7 +55,7 @@ export function TableViewContent() {
             </div>
             <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
             <div className="absolute z-9990 w-full translate-y-[-34px]" />
-          </div>
+          </Table.Content>
         );
       }}
     </table.Subscribe>

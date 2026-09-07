@@ -33,11 +33,9 @@ export function RowActionGroup({
     <Row.ActionContent
       data-slot="row-action-group"
       className={cn(
-        "group-hover/row:opacity-100",
         "group-data-dragging/row:opacity-100",
         "has-[button[aria-expanded='true']]:opacity-100",
         isMobile && "opacity-100",
-        row.getIsSelected() && "opacity-100",
         className,
       )}
     >

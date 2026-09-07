@@ -46,7 +46,7 @@ export function TableHeaderCell({ header, table }: TableHeaderCellProps) {
       dropAnimation={null}
       style={style}
       render={
-        <div className="relative flex cursor-grab flex-row whitespace-nowrap" />
+        <div className="relative flex h-full cursor-grab flex-row whitespace-nowrap" />
       }
     >
       <TableHeaderCellTrigger

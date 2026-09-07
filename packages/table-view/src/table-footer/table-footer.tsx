@@ -31,9 +31,12 @@ export function TableFooter() {
         );
 
         return (
-          <Row.Root className="z-(--z-row) box-border h-8 border-t border-t-border-cell text-sm select-none">
+          <Row.Root
+            pinned={isStartPinned}
+            className="z-(--z-row) box-border h-8 border-t border-t-border-cell text-sm select-none"
+          >
             <Row.ActionPortal>
-              {isStartPinned && <Row.ActionContent className="opacity-100" />}
+              <Row.ActionContent />
             </Row.ActionPortal>
             <Row.Content
               className={cn(

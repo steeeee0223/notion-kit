@@ -7,8 +7,20 @@ function TableRoot({ className, ...props }: React.ComponentProps<"div">) {
     <div
       className={cn(
         "relative w-full min-w-0",
+        // "[--table-view-row-action-gutter:96px]",
+        // "px-(--table-view-row-action-gutter)",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+function TableContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
         "[--table-view-row-action-gutter:96px]",
-        "[--table-view-pinned-start:var(--table-view-row-action-gutter)]",
+        "px-(--table-view-row-action-gutter)",
         className,
       )}
       {...props}
@@ -18,6 +30,7 @@ function TableRoot({ className, ...props }: React.ComponentProps<"div">) {
 
 interface RowProps extends React.ComponentProps<"div"> {
   selected?: boolean;
+  pinned?: boolean;
 }
 
 /**
@@ -28,11 +41,12 @@ interface RowProps extends React.ComponentProps<"div"> {
  * └─ Row.Content
  *    └─ Row.StickyContent
  */
-function RowRoot({ className, selected, ...props }: RowProps) {
+function RowRoot({ className, selected, pinned, ...props }: RowProps) {
   return (
     <div
       data-slot="table-row"
       data-selected={selected}
+      data-pinned={pinned}
       className={cn(
         "group/row relative flex w-max min-w-full shrink-0",
         "[--z-action-portal:60]",
@@ -43,7 +57,11 @@ function RowRoot({ className, selected, ...props }: RowProps) {
   );
 }
 
-function RowActionPortal({ className, ...props }: React.ComponentProps<"div">) {
+function RowActionPortal({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="table-row-action-portal"
@@ -52,7 +70,18 @@ function RowActionPortal({ className, ...props }: React.ComponentProps<"div">) {
         className,
       )}
       {...props}
-    />
+    >
+      <div
+        className={cn(
+          "flex h-full w-(--table-view-row-action-gutter) bg-main opacity-0 transition-opacity delay-0 duration-200",
+          "group-hover/row:opacity-100",
+          "group-data-[pinned=true]/row:opacity-100",
+          "group-data-[selected=true]/row:opacity-100",
+        )}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -102,7 +131,7 @@ function RowStickyContent({
     <div
       data-slot="table-row-sticky-content"
       className={cn(
-        "sticky inset-s-(--table-view-pinned-start) z-(--z-row) flex items-center bg-main",
+        "sticky inset-s-(--table-view-row-action-gutter) z-(--z-row) flex items-center bg-main",
         className,
       )}
       {...props}
@@ -112,6 +141,7 @@ function RowStickyContent({
 
 export const Table = {
   Root: TableRoot,
+  Content: TableContent,
 };
 
 export const Row = {

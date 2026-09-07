@@ -38,7 +38,8 @@ export function TableRow({ row }: TableRowProps) {
           data-block-id={row.id}
           role="row"
           dir="ltr"
-          data-selected={row.getIsSelected()}
+          selected={row.getIsSelected()}
+          pinned={table.atoms.columnPinning.get().start.length > 0}
           className={cn(
             "h-[calc(100%+2px)] border-b border-b-border-cell",
             row.getIsFirstChild() && "border-t border-t-border-cell",

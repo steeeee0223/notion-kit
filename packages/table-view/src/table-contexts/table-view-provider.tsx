@@ -90,16 +90,16 @@ export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
     <TableViewWrapper {...props}>
       <MenuCoordinatorProvider>
         <Table.Root className="flex flex-col gap-4">
-          <div
+          <Table.Content
             data-slot="table-view-toolbar-container"
-            className="sticky top-0 z-(--z-row) w-full min-w-0 overflow-x-clip bg-main px-24 pb-2"
+            className="sticky top-0 z-(--z-row) w-full min-w-0 overflow-x-clip bg-main pb-2"
           >
             <ViewControls />
-          </div>
+          </Table.Content>
           <Content />
+          {children}
         </Table.Root>
         <RowView />
-        {children}
       </MenuCoordinatorProvider>
     </TableViewWrapper>
   );

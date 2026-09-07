@@ -138,6 +138,7 @@ function TableHeaderRowContent() {
       data-notion-slot="notion-table-view-header-row"
       dir="ltr"
       className="inset-x-0 box-border h-[34px] bg-main shadow-header-row"
+      pinned={startPinnedHeaders.length > 0}
     >
       <Row.ActionPortal className="z-(--z-col) h-8">
         <Row.ActionContent

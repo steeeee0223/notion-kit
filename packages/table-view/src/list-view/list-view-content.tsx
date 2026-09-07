@@ -6,6 +6,7 @@ import { Icon } from "@notion-kit/icons";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
+import { Table } from "@/common";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -72,7 +73,10 @@ function ListViewContentInner({
   };
 
   return (
-    <div key="notion-list-view" className="min-w-177 ps-0 pe-24 pb-0">
+    <Table.Content
+      data-notion-slot="notion-list-view"
+      className="min-w-177 pb-0"
+    >
       <table.Subscribe
         selector={(state) => ({
           locked: state.tableGlobal.locked,
@@ -85,7 +89,7 @@ function ListViewContentInner({
             className="flex flex-col py-1"
           >
             <Sortable.Root disabled={locked} onDragEnd={handleRowDragEnd}>
-              <Sortable.List>
+              <Sortable.List className="w-full">
                 {rows.map((row) =>
                   row.getIsGrouped() ? (
                     <TableGroupedRow key={row.id} row={row} />
@@ -96,17 +100,15 @@ function ListViewContentInner({
               </Sortable.List>
             </Sortable.Root>
             {!locked && (
-              <div className="ps-(--table-view-row-action-gutter)">
-                <Button
-                  tabIndex={0}
-                  variant="cell"
-                  className="h-7.5 w-full rounded-md px-2 text-muted"
-                  onClick={() => table.addRow()}
-                >
-                  <Icon.Plus className="size-3.5 fill-current" />
-                  New page
-                </Button>
-              </div>
+              <Button
+                tabIndex={0}
+                variant="cell"
+                className="h-7.5 w-full rounded-md px-2 text-muted"
+                onClick={() => table.addRow()}
+              >
+                <Icon.Plus className="size-3.5 fill-current" />
+                New page
+              </Button>
             )}
           </div>
         )}
@@ -124,6 +126,6 @@ function ListViewContentInner({
           onTrigger={handleConfirmRemoveSorting}
         />
       </Dialog>
-    </div>
+    </Table.Content>
   );
 }

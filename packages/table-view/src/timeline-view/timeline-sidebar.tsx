@@ -1,8 +1,9 @@
 import type { MouseEvent } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
+import { cn } from "@notion-kit/cn";
 import { useIsMobile } from "@notion-kit/hooks";
-import { Button, Sortable } from "@notion-kit/ui/primitives";
+import { Button, buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 import {
   TimelineSidebarBody,
   TimelineSidebarClose,
@@ -60,12 +61,8 @@ function TimelineSidebarContent({
   if (!titleHeader) return null;
 
   return (
-    <TimelineSidebarPrimitive
-      role="complementary"
-      aria-label="Timeline table"
-      className="[--table-view-row-action-gutter:68px]"
-    >
-      <TimelineSidebarHeader className="relative flex h-17 ps-(--table-view-row-action-gutter) text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
+    <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
+      <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
         <Row.ActionPortal className="h-full" />
         <TableHeaderCellTrigger
           header={titleHeader}
@@ -139,9 +136,11 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
-      <Button
-        variant="cell"
-        className="h-full min-w-0 flex-1 justify-start overflow-hidden px-2 text-sm"
+      <Row.Content
+        className={cn(
+          buttonVariants({ variant: "cell" }),
+          "h-full min-w-0 flex-1 justify-start overflow-hidden px-2 text-sm",
+        )}
         aria-label={title}
         onClick={() => table.openRow(row.id)}
       >
@@ -153,7 +152,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         >
           <Cell.Content />
         </Cell.Root>
-      </Button>
+      </Row.Content>
     );
 
     if (!sortable) {
@@ -162,7 +161,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           key={row.id}
           data-slot="timeline-sidebar-row"
           data-row-id={row.id}
-          className="flex h-(--timeline-row-height) items-center border-b border-border ps-(--table-view-row-action-gutter)"
+          className="flex h-(--timeline-row-height) items-center border-b border-border"
         >
           {content}
         </div>
@@ -184,10 +183,11 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         group={row.parentId}
         data={{ type: "timeline-row", groupId: row.parentId }}
         render={
-          <div
+          <Row.Root
             data-slot="timeline-sidebar-row"
             data-row-id={row.id}
-            className="group/row flex h-(--timeline-row-height) items-center border-b border-border ps-(--table-view-row-action-gutter)"
+            selected={row.getIsSelected()}
+            className="h-(--timeline-row-height) items-center border-b border-border"
           />
         }
       >
