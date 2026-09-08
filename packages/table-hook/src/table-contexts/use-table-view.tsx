@@ -21,6 +21,10 @@ import {
   type FilterGroup,
   type TableFeatures,
 } from "@/features";
+import {
+  canSelectDataCell,
+  useCellSelectionDomain,
+} from "@/features/cell-selection";
 import type { TableViewState } from "@/features/menu";
 import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
@@ -413,6 +417,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       columnResizeMode: "onChange",
       groupedColumnMode: false,
       autoResetExpanded: false,
+      autoResetCellSelection: false,
+      enableCellSelection: canSelectDataCell,
       getRowId: (row) => row.id,
       state: tableState,
       onColumnInfoChange: handleColumnChange,
@@ -425,6 +431,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => null,
   );
   tableRef.current = table as _TableInstance;
+  useCellSelectionDomain(table);
 
   const sortingMethods = tableGlobalState.pluginMethods?.sortingMethodByColumn;
   const previousSortingMethods = useRef(sortingMethods);

@@ -14,6 +14,9 @@ import {
 
 import type { CellSurface } from "@/plugins/registry";
 import { useTableViewCtx } from "@/table-contexts";
+import { useCellSelection } from "@/table-contexts/cell-selection-provider";
+
+import { CellSelectionOverlay } from "./cell-selection-overlay";
 
 interface CellContextValue {
   cell: CellInstance;
@@ -31,6 +34,10 @@ function Root({
   return <CellContext value={value}>{children}</CellContext>;
 }
 
+export function useOptionalCellContext() {
+  return use(CellContext);
+}
+
 export function useCellContext() {
   const context = use(CellContext);
   if (!context) throw new Error("Cell compound components require Cell.Root");
@@ -39,41 +46,91 @@ export function useCellContext() {
 
 function TableFrame({ children }: React.PropsWithChildren) {
   const { cell } = useCellContext();
+  const selection = useCellSelection();
+  const { table } = useTableViewCtx();
   const { column, row } = cell;
   const width = column.getWidth();
 
   return (
-    <div
-      id="notion-table-view-cell"
-      data-row-index={`${row.depth}:${row.index}`}
-      data-col-index={column.getIndex()}
-      data-property-id={column.id}
-      className="relative flex h-full border-r border-r-border-cell"
-      style={{ width }}
+    <table.Subscribe
+      selector={(state) => {
+        void state.cellSelection;
+        const rows = table.getRowsInDisplayOrder();
+        const index = row.getDisplayIndex();
+        const edges = cell.getSelectionEdges();
+        return {
+          selected: cell.getIsSelected(),
+          focused: cell.getIsFocused(),
+          ...edges,
+          // Synthetic group headings interrupt the visible selected region.
+          top: edges.top || rows[index - 1]?.getIsGrouped() === true,
+          bottom: edges.bottom || rows[index + 1]?.getIsGrouped() === true,
+        };
+      }}
     >
-      {row.subRows.length > 0 && (
-        <div className="mt-1.5 flex">
-          <Button
-            tabIndex={0}
-            variant="hint"
-            className="size-6"
-            aria-expanded={row.getIsExpanded()}
-            aria-label={row.getIsExpanded() ? "Close" : "Open"}
-            onPointerDown={row.getToggleExpandedHandler()}
-          >
-            <Icon.ArrowCaretFillSmall
-              className="size-[0.8em] fill-menu-icon transition-[rotate]"
-              side={row.getIsExpanded() ? "down" : "right"}
-            />
-          </Button>
+      {(state) => (
+        <div
+          ref={(element) => {
+            if (element) selection?.controller.frames.set(cell.id, element);
+            else selection?.controller.frames.delete(cell.id);
+          }}
+          tabIndex={-1}
+          data-cell-selected={Boolean(
+            selection && !selection.editing && state.selected,
+          )}
+          data-cell-focused={Boolean(
+            selection && !selection.editing && state.focused,
+          )}
+          onMouseDownCapture={(event) =>
+            selection?.controller.start(cell, event)
+          }
+          onClickCapture={(event) =>
+            selection?.controller.afterClick(cell, event)
+          }
+          onMouseEnter={(event) => selection?.controller.extend(cell, event)}
+          onKeyDownCapture={(event) => selection?.controller.key(cell, event)}
+          id="notion-table-view-cell"
+          data-row-index={`${row.depth}:${row.index}`}
+          data-col-index={column.getIndex()}
+          data-property-id={column.id}
+          className="relative flex h-full border-r border-r-border-cell outline-none"
+          style={{ width }}
+        >
+          {row.subRows.length > 0 && (
+            <div className="mt-1.5 flex">
+              <Button
+                tabIndex={0}
+                variant="hint"
+                className="size-6"
+                aria-expanded={row.getIsExpanded()}
+                aria-label={row.getIsExpanded() ? "Close" : "Open"}
+                onPointerDown={row.getToggleExpandedHandler()}
+              >
+                <Icon.ArrowCaretFillSmall
+                  className="size-[0.8em] fill-menu-icon transition-[rotate]"
+                  side={row.getIsExpanded() ? "down" : "right"}
+                />
+              </Button>
+            </div>
+          )}
+          <div className="flex h-full overflow-x-clip" style={{ width }}>
+            {children}
+          </div>
+          {/* Cell focused / selected */}
+          {selection &&
+            !selection.editing &&
+            (state.selected || state.focused) && (
+              <CellSelectionOverlay
+                edges={
+                  state.focused && !state.selected
+                    ? { top: true, right: true, bottom: true, left: true }
+                    : state
+                }
+              />
+            )}
         </div>
       )}
-      <div className="flex h-full overflow-x-clip" style={{ width }}>
-        {children}
-      </div>
-      {/* Cell focused */}
-      {/* <div className="pointer-events-none absolute top-0 left-0 z-(--z-col) size-full rounded-sm bg-blue/5 shadow-cell-focus" /> */}
-    </div>
+    </table.Subscribe>
   );
 }
 

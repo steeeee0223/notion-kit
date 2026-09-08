@@ -1,0 +1,13 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/*/src/**/*.{ts,tsx}",
+        "$TURBO_ROOT$/tooling/tailwind/base.css"
+      ]
+    }
+  }
+}
