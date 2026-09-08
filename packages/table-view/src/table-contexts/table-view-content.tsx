@@ -1,4 +1,4 @@
-import { BulkEditBar } from "@/common/bulk-edit/bulk-edit-bar";
+import { Table } from "@/common";
 import { DndTableBody } from "@/table-body";
 import { TableFooter } from "@/table-footer";
 import { TableHeader } from "@/table-header";
@@ -13,10 +13,9 @@ export function TableViewContent() {
       selector={(state) => ({
         columnResizing: state.columnResizing,
         columnSizing: state.columnSizing,
-        locked: state.tableGlobal.locked,
       })}
     >
-      {({ locked }) => {
+      {() => {
         /**
          * Instead of calling `column.getSize()` on every render for every header
          * and especially every data cell (very expensive),
@@ -35,13 +34,12 @@ export function TableViewContent() {
           );
 
         return (
-          <div
+          <Table.Content
             role="table"
-            id="notion-table-view"
-            className="relative float-left min-w-full px-24 pb-0 lining-nums tabular-nums select-none"
+            data-notion-slot="notion-table-view"
+            className="relative float-left min-w-full pb-0 lining-nums tabular-nums select-none"
           >
             <div className="absolute z-9990 w-full" />
-            <BulkEditBar disabled={locked} />
             <div className="pointer-events-none mt-0 h-0" />
             <div
               data-block-id="15f35e0f-492c-8003-9976-f8ae747a6aeb"
@@ -57,7 +55,7 @@ export function TableViewContent() {
             </div>
             <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
             <div className="absolute z-9990 w-full translate-y-[-34px]" />
-          </div>
+          </Table.Content>
         );
       }}
     </table.Subscribe>

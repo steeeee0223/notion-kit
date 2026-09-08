@@ -1,3 +1,4 @@
+import { cn } from "@notion-kit/cn";
 import type { RowInstance } from "@notion-kit/table-hook";
 import {
   ContextMenu,
@@ -39,8 +40,13 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
   const feature = toTimelineFeature(row.original, propertyId, title);
 
   return (
-    <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-      {(locked) => {
+    <table.Subscribe
+      selector={(state) => ({
+        locked: state.tableGlobal.locked,
+        rowSelection: state.rowSelection,
+      })}
+    >
+      {({ locked, rowSelection }) => {
         const updateRange = (
           _rowId: string,
           start: number,
@@ -62,7 +68,11 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
         };
 
         return (
-          <div data-slot="timeline-track-row" data-row-id={row.id}>
+          <div
+            data-slot="timeline-track-row"
+            data-row-id={row.id}
+            className={cn(rowSelection[row.id] && "bg-blue/10")}
+          >
             {feature ? (
               <TimelineRow.Root
                 item={feature}

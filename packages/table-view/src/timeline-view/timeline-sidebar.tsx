@@ -1,8 +1,7 @@
-import type { MouseEvent } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
-import { useIsMobile } from "@notion-kit/hooks";
-import { Button, Sortable } from "@notion-kit/ui/primitives";
+import { cn } from "@notion-kit/cn";
+import { Button, buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 import {
   TimelineSidebarBody,
   TimelineSidebarClose,
@@ -10,7 +9,7 @@ import {
   TimelineSidebar as TimelineSidebarPrimitive,
 } from "@notion-kit/ui/timeline";
 
-import { Cell, RowActionGroup } from "@/common";
+import { Cell, Row, RowActionGroup } from "@/common";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -38,6 +37,7 @@ export function TimelineSidebar({
         groupingState: state.groupingState,
         expanded: state.expanded,
         columnVisibility: state.columnVisibility,
+        rowSelection: state.rowSelection,
       })}
     >
       {() => (
@@ -61,6 +61,7 @@ function TimelineSidebarContent({
   return (
     <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
       <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
+        <Row.ActionPortal className="h-full" />
         <TableHeaderCellTrigger
           header={titleHeader}
           table={table}
@@ -81,8 +82,13 @@ function TimelineSidebarContent({
         <TimelineSidebarClose onClick={onClose} />
       </TimelineSidebarHeader>
       <TimelineSidebarBody>
-        <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-          {(locked) =>
+        <table.Subscribe
+          selector={(state) => ({
+            locked: state.tableGlobal.locked,
+            _rowSelection: state.rowSelection,
+          })}
+        >
+          {({ locked }) =>
             locked ? (
               <TimelineSidebarRows />
             ) : (
@@ -101,7 +107,6 @@ function TimelineSidebarContent({
 
 function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
   const { table } = useTableViewCtx();
-  const isMobile = useIsMobile();
   const rows = table.getRowModel().rows;
   const nextIndexByGroup = new Map<string | undefined, number>();
 
@@ -124,13 +129,15 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
     if (!titleCell) return null;
 
     const title = String(titleDataCell.value || "New page");
-    const wrapped = titleCell.column.getInfo().wrapped;
+    const wrapped = titleCell.getInfo().wrapped;
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);
     const content = (
-      <Button
-        variant="cell"
-        className="h-full min-w-0 flex-1 justify-start overflow-hidden px-2 text-sm"
+      <Row.Content
+        className={cn(
+          buttonVariants({ variant: "cell" }),
+          "h-full min-w-0 flex-1 justify-start overflow-hidden px-2 text-sm",
+        )}
         aria-label={title}
         onClick={() => table.openRow(row.id)}
       >
@@ -142,7 +149,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         >
           <Cell.Content />
         </Cell.Root>
-      </Button>
+      </Row.Content>
     );
 
     if (!sortable) {
@@ -158,13 +165,6 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
       );
     }
 
-    const addNextRow = (event: MouseEvent) => {
-      table.addRow({
-        id: row.id,
-        at: event.altKey ? "prev" : "next",
-      });
-    };
-
     return (
       <Sortable.Item
         key={row.id}
@@ -173,19 +173,20 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
         group={row.parentId}
         data={{ type: "timeline-row", groupId: row.parentId }}
         render={
-          <div
+          <Row.Root
             data-slot="timeline-sidebar-row"
             data-row-id={row.id}
-            className="group/row flex h-(--timeline-row-height) items-center border-b border-border"
+            selected={row.getIsSelected()}
+            className="h-(--timeline-row-height) items-center border-b border-border"
           />
         }
       >
-        <RowActionGroup
-          className="ms-1"
-          isMobile={isMobile}
-          row={row}
-          onAddNext={addNextRow}
-        />
+        <Row.ActionPortal
+          className="h-(--timeline-row-height)"
+          display={row.getIsSelected() ? "content" : "none"}
+        >
+          <RowActionGroup row={row} />
+        </Row.ActionPortal>
         {content}
       </Sortable.Item>
     );

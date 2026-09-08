@@ -124,7 +124,7 @@ function DndTableBodyContent({
           className="h-[33px] w-full bg-main pl-2 leading-5"
           onClick={() => table.addRow()}
         >
-          <span className="sticky left-10 inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
+          <span className="sticky inset-s-(--table-view-row-action-gutter) inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
             <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
             New page
           </span>

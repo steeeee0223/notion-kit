@@ -65,3 +65,18 @@ export const BoardView: Story = {
     />
   ),
 };
+
+export const TimelineView: Story = {
+  render: () => (
+    <TableView
+      defaultView={{
+        layout: "timeline",
+        timeline: {
+          range: "monthly",
+        },
+      }}
+      defaultProperties={mockProps}
+      defaultData={mockData}
+    />
+  ),
+};

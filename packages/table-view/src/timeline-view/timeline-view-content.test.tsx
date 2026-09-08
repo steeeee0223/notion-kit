@@ -97,7 +97,8 @@ it("TimelineFlatRows_ValidEmptyAndInvalidDates_KeepSidebarAndTrackProjectionAlig
   expect(sidebarIds).toEqual(["valid", "empty", "invalid"]);
   expect(trackIds).toEqual(sidebarIds);
   expect(timeline.items()).toHaveLength(1);
-  expect(timeline.titleButtons("Valid task")).toHaveLength(2);
+  expect(timeline.sidebarTitle("valid", "Valid task")).toBeVisible();
+  expect(timeline.itemTitle("valid", "Valid task")).toBeVisible();
 });
 
 it("TimelineSidebar_CollapseAndReopen_PreservesLocalVisibility", async () => {
@@ -157,15 +158,9 @@ it("TimelineSidebarTitleAndCardSurface_Click_OpenTheConfiguredRow", async () => 
       onViewChange={onViewChange}
     />,
   );
-  const sidebar = await screen.findByRole("complementary", {
-    name: "Timeline table",
-  });
+  await screen.findByRole("complementary", { name: "Timeline table" });
 
-  fireEvent.click(
-    sidebar.querySelector<HTMLButtonElement>(
-      'button[aria-label="Valid task"]',
-    )!,
-  );
+  fireEvent.click(timeline.sidebarTitle("valid", "Valid task"));
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
     type: "view.opened_row.change",
     payload: { previousRowId: null, nextRowId: "valid" },
@@ -263,9 +258,9 @@ it("TimelineSingleDate_Render_DoesNotMutateSourceCell", async () => {
     />,
   );
 
-  expect(
-    await screen.findAllByRole("button", { name: "Valid task" }),
-  ).toHaveLength(2);
+  await screen.findByRole("complementary", { name: "Timeline table" });
+  expect(timeline.sidebarTitle("valid", "Valid task")).toBeVisible();
+  expect(timeline.itemTitle("valid", "Valid task")).toBeVisible();
   expect(timeline.resizers()).toHaveLength(2);
   expect(onDataChange).not.toHaveBeenCalled();
 });
@@ -422,9 +417,9 @@ it("TimelineLockedRows_RenderOpenableItemsWithoutWriteOrReorderControls", async 
     />,
   );
 
-  expect(
-    await screen.findAllByRole("button", { name: "Valid task" }),
-  ).toHaveLength(2);
+  await screen.findByRole("complementary", { name: "Timeline table" });
+  expect(timeline.sidebarTitle("valid", "Valid task")).toBeVisible();
+  expect(timeline.itemTitle("valid", "Valid task")).toBeVisible();
   expect(screen.getByRole("combobox")).toBeDisabled();
   expect(
     screen.queryByRole("button", { name: "Add date to Empty task" }),

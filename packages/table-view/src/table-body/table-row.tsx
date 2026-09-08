@@ -2,11 +2,10 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
 import { Sortable } from "@notion-kit/ui/primitives";
 
-import { RowActionGroup } from "@/common";
+import { Row, RowActionGroup } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
@@ -14,60 +13,51 @@ interface TableRowProps {
 }
 
 export function TableRow({ row }: TableRowProps) {
-  const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
-  const addNextRow = (e: React.MouseEvent) => {
-    if (e.altKey) {
-      table.addRow({ id: row.id, at: "prev" });
-      return;
-    }
-    table.addRow({ id: row.id, at: "next" });
-  };
+  const isSomeColumnPinned = table.atoms.columnPinning.get().start.length > 0;
+
   return (
     <Sortable.Item
+      data-notion-slot="notion-table-view-row"
       id={row.id}
       index={row.index}
       group={row.parentId}
       disabled={locked}
       data={{ type: "table-row", groupId: row.parentId }}
       render={
-        <div
+        <Row.Root
           data-block-id={row.id}
-          className="group/row flex h-[calc(100%+2px)]"
+          role="row"
+          dir="ltr"
+          selected={row.getIsSelected()}
+          className={cn(
+            "h-[calc(100%+2px)] border-b border-b-border-cell",
+            row.getIsFirstChild() && "border-t border-t-border-cell",
+          )}
         />
       }
     >
-      <div
-        role="row"
-        id="notion-table-view-row"
-        dir="ltr"
-        className={cn(
-          "flex w-full border-b border-b-border-cell",
-          row.getIsFirstChild() && "border-t border-t-border-cell",
-        )}
+      <Row.ActionPortal
+        display={
+          row.getIsSelected()
+            ? "content"
+            : isSomeColumnPinned
+              ? "portal"
+              : "none"
+        }
       >
-        <div className="flex">
-          <div className="sticky left-8 z-(--z-row) flex items-center bg-main">
-            {/* Row actions */}
-            {!locked && (
-              <RowActionGroup
-                className="absolute -left-20"
-                isMobile={isMobile}
-                row={row}
-                onAddNext={addNextRow}
-              />
-            )}
-            {/* Start pinned columns */}
-            <TableCells cells={row.getStartVisibleCells()} />
-          </div>
-          {/* Center unpinned columns */}
-          <TableCells cells={row.getCenterVisibleCells()} />
-        </div>
-      </div>
-      {/* Bottom line at row end */}
-      <div className="flex w-16 grow justify-start border-b border-b-border-cell" />
+        {!locked && <RowActionGroup row={row} />}
+      </Row.ActionPortal>
+      <Row.Content>
+        <Row.StickyContent>
+          <TableCells cells={row.getStartVisibleCells()} />
+        </Row.StickyContent>
+        <TableCells cells={row.getCenterVisibleCells()} />
+      </Row.Content>
+      {/* Keeps the row rule visible after the last rendered data cell. */}
+      <div aria-hidden="true" className="min-w-16 grow" />
     </Sortable.Item>
   );
 }

@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 
 export class TimelineViewObject {
   root() {
@@ -32,8 +32,12 @@ export class TimelineViewObject {
     );
   }
 
-  titleButtons(name: string) {
-    return screen.getAllByRole("button", { name });
+  sidebarTitle(rowId: string, name: string) {
+    return within(this.sidebarRow(rowId)).getByText(name, { exact: true });
+  }
+
+  itemTitle(rowId: string, name: string) {
+    return within(this.trackRow(rowId)).getByRole("button", { name });
   }
 
   itemCard(rowId: string) {

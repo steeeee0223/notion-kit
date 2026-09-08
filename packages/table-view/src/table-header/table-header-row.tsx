@@ -2,8 +2,6 @@ import React from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 import { flexRender } from "@tanstack/react-table";
 
-import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import {
@@ -17,6 +15,7 @@ import {
   Sortable,
 } from "@notion-kit/ui/primitives";
 
+import { Row } from "@/common";
 import { PropsMenu, TypesMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -125,23 +124,29 @@ function TableHeaderRow() {
 
 function TableHeaderRowContent() {
   const { table } = useTableViewCtx();
-  const isMobile = useIsMobile();
 
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
-  const isStartPinned = startPinnedHeaders.length > 0;
   const isAllRowsSelected = table.getIsAllRowsSelected();
   const isSomeRowsSelected = table.getIsSomeRowsSelected();
 
   return (
-    <div
-      id="notion-table-view-header-row"
+    <Row.Root
+      data-notion-slot="notion-table-view-header-row"
       dir="ltr"
-      className="group/header relative inset-x-0 box-border flex h-[34px] min-w-[708px] bg-main text-default/65 shadow-header-row"
+      className="inset-x-0 box-border h-[34px] bg-main shadow-header-row"
     >
-      <div className="sticky left-8 z-(--z-col) flex">
-        {/* Hovered actions */}
-        <div className="absolute -left-8 flex h-full items-center justify-end border-b-border-cell bg-main">
+      <Row.ActionPortal
+        className="h-8"
+        display={
+          isSomeRowsSelected
+            ? "content"
+            : startPinnedHeaders.length > 0
+              ? "portal"
+              : "none"
+        }
+      >
+        <Row.ActionContent>
           <table.Subscribe selector={(state) => state.tableGlobal.locked}>
             {(locked) =>
               !locked && (
@@ -151,10 +156,7 @@ function TableHeaderRowContent() {
                   checked={isAllRowsSelected}
                   indeterminate={isSomeRowsSelected && !isAllRowsSelected}
                   aria-label="Select all rows"
-                  className={cn(
-                    "cursor-pointer rounded-xs accent-blue opacity-0 group-hover/header:opacity-100 hover:opacity-100 data-checked:opacity-100 data-indeterminate:opacity-100",
-                    (isSomeRowsSelected || isMobile) && "opacity-100",
-                  )}
+                  className="cursor-pointer rounded-xs accent-blue"
                   onCheckedChange={(checked) =>
                     table.toggleAllRowsSelected(checked)
                   }
@@ -162,28 +164,20 @@ function TableHeaderRowContent() {
               )
             }
           </table.Subscribe>
-        </div>
-      </div>
-      <Sortable.List
-        orientation="horizontal"
-        className={cn("m-0 inline-flex", isStartPinned && "flex")}
-      >
+        </Row.ActionContent>
+      </Row.ActionPortal>
+      <Sortable.List orientation="horizontal" render={<Row.Content />}>
         {/* Start pinned Columns */}
-        {isStartPinned && (
-          <div
-            id="draggable-ghost-section-left"
-            className="sticky left-8 z-(--z-col) flex bg-main shadow-header-sticky"
-          >
-            {startPinnedHeaders.map((header) => (
-              <React.Fragment key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        )}
+        <Row.StickyContent
+          id="draggable-ghost-section-left"
+          className="z-(--z-col) shadow-header-sticky"
+        >
+          {startPinnedHeaders.map((header) => (
+            <React.Fragment key={header.id}>
+              {flexRender(header.column.columnDef.header, header.getContext())}
+            </React.Fragment>
+          ))}
+        </Row.StickyContent>
         {/* Center unpinned Columns */}
         <div id="draggable-ghost-section-center" className="flex">
           {headers.map((header) => (
@@ -219,6 +213,6 @@ function TableHeaderRowContent() {
           <PropsMenu />
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </Row.Root>
   );
 }

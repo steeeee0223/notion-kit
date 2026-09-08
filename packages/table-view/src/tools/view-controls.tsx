@@ -5,6 +5,7 @@ import {
   PopoverContent,
 } from "@notion-kit/ui/primitives";
 
+import { BulkEditBar } from "@/common/bulk-edit/bulk-edit-bar";
 import { FilterMenu, SortMenu } from "@/menus";
 import { useMenuCoordinator } from "@/table-contexts";
 
@@ -18,6 +19,7 @@ export function ViewControls() {
     <>
       <Toolbar />
       <ActiveBar />
+      <BulkEditBar />
       <Popover handle={filterMenu.handle}>
         <PopoverContent
           aria-label="Filters"
