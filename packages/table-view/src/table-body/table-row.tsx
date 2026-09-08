@@ -2,7 +2,6 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
 import { Sortable } from "@notion-kit/ui/primitives";
 
@@ -14,17 +13,11 @@ interface TableRowProps {
 }
 
 export function TableRow({ row }: TableRowProps) {
-  const isMobile = useIsMobile();
   /** Add row */
   const { table } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
-  const addNextRow = (e: React.MouseEvent) => {
-    if (e.altKey) {
-      table.addRow({ id: row.id, at: "prev" });
-      return;
-    }
-    table.addRow({ id: row.id, at: "next" });
-  };
+  const isSomeColumnPinned = table.atoms.columnPinning.get().start.length > 0;
+
   return (
     <Sortable.Item
       data-notion-slot="notion-table-view-row"
@@ -39,7 +32,6 @@ export function TableRow({ row }: TableRowProps) {
           role="row"
           dir="ltr"
           selected={row.getIsSelected()}
-          pinned={table.atoms.columnPinning.get().start.length > 0}
           className={cn(
             "h-[calc(100%+2px)] border-b border-b-border-cell",
             row.getIsFirstChild() && "border-t border-t-border-cell",
@@ -47,14 +39,16 @@ export function TableRow({ row }: TableRowProps) {
         />
       }
     >
-      <Row.ActionPortal>
-        {!locked && (
-          <RowActionGroup
-            isMobile={isMobile}
-            row={row}
-            onAddNext={addNextRow}
-          />
-        )}
+      <Row.ActionPortal
+        display={
+          row.getIsSelected()
+            ? "content"
+            : isSomeColumnPinned
+              ? "portal"
+              : "none"
+        }
+      >
+        {!locked && <RowActionGroup row={row} />}
       </Row.ActionPortal>
       <Row.Content>
         <Row.StickyContent>

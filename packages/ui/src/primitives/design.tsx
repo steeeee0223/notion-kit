@@ -114,7 +114,7 @@ const popupVariants = cva(
          * - layout: `null`
          */
         tooltip: cn(
-          "inline-flex w-fit max-w-55 items-center gap-1.5 rounded-sm px-2 py-1 text-xs/[1.4] font-medium wrap-break-word",
+          "flex w-fit max-w-55 flex-col items-center gap-1 rounded-sm px-2 py-1 text-xs/[1.4] font-medium wrap-break-word",
           "has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm",
           "data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95",
         ),

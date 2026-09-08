@@ -2,8 +2,6 @@ import React from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 import { flexRender } from "@tanstack/react-table";
 
-import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import {
@@ -126,7 +124,6 @@ function TableHeaderRow() {
 
 function TableHeaderRowContent() {
   const { table } = useTableViewCtx();
-  const isMobile = useIsMobile();
 
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
@@ -138,12 +135,18 @@ function TableHeaderRowContent() {
       data-notion-slot="notion-table-view-header-row"
       dir="ltr"
       className="inset-x-0 box-border h-[34px] bg-main shadow-header-row"
-      pinned={startPinnedHeaders.length > 0}
     >
-      <Row.ActionPortal className="z-(--z-col) h-8">
-        <Row.ActionContent
-          className={cn((isSomeRowsSelected || isMobile) && "opacity-100")}
-        >
+      <Row.ActionPortal
+        className="h-8"
+        display={
+          isSomeRowsSelected
+            ? "content"
+            : startPinnedHeaders.length > 0
+              ? "portal"
+              : "none"
+        }
+      >
+        <Row.ActionContent>
           <table.Subscribe selector={(state) => state.tableGlobal.locked}>
             {(locked) =>
               !locked && (

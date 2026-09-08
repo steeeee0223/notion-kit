@@ -121,7 +121,11 @@ function Content() {
           case "list":
             return <ListViewContent />;
           case "board":
-            return <BoardViewContent />;
+            return (
+              <ScrollableContent>
+                <BoardViewContent />
+              </ScrollableContent>
+            );
           case "timeline":
             return (
               <ScrollableContent>

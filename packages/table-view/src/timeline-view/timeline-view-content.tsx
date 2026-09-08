@@ -13,6 +13,7 @@ import {
   TimelineToday,
 } from "@notion-kit/ui/timeline";
 
+import { Table } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TimelineSidebar } from "./timeline-sidebar";
@@ -140,7 +141,7 @@ function TimelineViewReadyContent({
   if (!titleHeader) return null;
 
   return (
-    <>
+    <Table.Content>
       <TimelineProvider
         className="min-h-80"
         range={resources.timeline.range}
@@ -189,6 +190,6 @@ function TimelineViewReadyContent({
           onTrigger={handleConfirmRemoveSorting}
         />
       </Dialog>
-    </>
+    </Table.Content>
   );
 }

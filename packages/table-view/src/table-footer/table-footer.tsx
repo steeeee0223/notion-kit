@@ -31,16 +31,11 @@ export function TableFooter() {
         );
 
         return (
-          <Row.Root
-            pinned={isStartPinned}
-            className="z-(--z-row) box-border h-8 border-t border-t-border-cell text-sm select-none"
-          >
-            <Row.ActionPortal>
-              <Row.ActionContent />
-            </Row.ActionPortal>
+          <Row.Root className="z-(--z-row) box-border h-8 border-t border-t-border-cell text-sm select-none">
+            <Row.ActionPortal display={isStartPinned ? "portal" : "none"} />
             <Row.Content
               className={cn(
-                "pr-8",
+                "pr-8 opacity-0 transition-opacity delay-0 duration-200",
                 "group-hover/row:opacity-100 group-has-data-open/row:opacity-100",
                 isSomeCountMethodSet && "opacity-100",
               )}

@@ -1,8 +1,6 @@
-import type { MouseEvent } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 
 import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import { Button, buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 import {
   TimelineSidebarBody,
@@ -109,7 +107,6 @@ function TimelineSidebarContent({
 
 function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
   const { table } = useTableViewCtx();
-  const isMobile = useIsMobile();
   const rows = table.getRowModel().rows;
   const nextIndexByGroup = new Map<string | undefined, number>();
 
@@ -168,13 +165,6 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
       );
     }
 
-    const addNextRow = (event: MouseEvent) => {
-      table.addRow({
-        id: row.id,
-        at: event.altKey ? "prev" : "next",
-      });
-    };
-
     return (
       <Sortable.Item
         key={row.id}
@@ -191,12 +181,11 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
           />
         }
       >
-        <Row.ActionPortal>
-          <RowActionGroup
-            isMobile={isMobile}
-            row={row}
-            onAddNext={addNextRow}
-          />
+        <Row.ActionPortal
+          className="h-(--timeline-row-height)"
+          display={row.getIsSelected() ? "content" : "none"}
+        >
+          <RowActionGroup row={row} />
         </Row.ActionPortal>
         {content}
       </Sortable.Item>

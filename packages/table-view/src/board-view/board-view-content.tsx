@@ -4,6 +4,7 @@ import { TableViewMenuPage } from "@notion-kit/table-hook";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
+import { Table } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { BoardGroup } from "./board-group";
@@ -14,7 +15,10 @@ export function BoardViewContent() {
   const handlers = useBoardDnd();
 
   return (
-    <div data-slot="notion-board-view" className="relative float-start">
+    <Table.Content
+      data-notion-slot="notion-board-view"
+      className="relative float-start"
+    >
       <div className="contain-layout">
         <table.Subscribe
           selector={(state) => ({
@@ -69,6 +73,6 @@ export function BoardViewContent() {
           }}
         </table.Subscribe>
       </div>
-    </div>
+    </Table.Content>
   );
 }

@@ -18,24 +18,23 @@ import { Row } from "./table";
 
 interface RowActionGroupProps {
   className?: string;
-  isMobile?: boolean;
   row: RowInstance;
-  onAddNext: (e: React.MouseEvent) => void;
 }
 
-export function RowActionGroup({
-  className,
-  isMobile,
-  row,
-  onAddNext,
-}: RowActionGroupProps) {
+export function RowActionGroup({ className, row }: RowActionGroupProps) {
+  const addNextRow = (event: React.MouseEvent) => {
+    row.table.addRow({
+      id: row.id,
+      at: event.altKey ? "prev" : "next",
+    });
+  };
+
   return (
     <Row.ActionContent
       data-slot="row-action-group"
       className={cn(
         "group-data-dragging/row:opacity-100",
         "has-[button[aria-expanded='true']]:opacity-100",
-        isMobile && "opacity-100",
         className,
       )}
     >
@@ -55,7 +54,7 @@ export function RowActionGroup({
           variant="hint"
           aria-label="Add row"
           className="size-6"
-          onClick={onAddNext}
+          onClick={addNextRow}
         >
           <Icon.Plus className="size-3.5 fill-icon" />
         </Button>

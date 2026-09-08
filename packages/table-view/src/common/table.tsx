@@ -1,18 +1,11 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
+import { useIsMobile } from "@notion-kit/hooks";
 
 function TableRoot({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn(
-        "relative w-full min-w-0",
-        // "[--table-view-row-action-gutter:96px]",
-        // "px-(--table-view-row-action-gutter)",
-        className,
-      )}
-      {...props}
-    />
+    <div className={cn("relative w-full min-w-0", className)} {...props} />
   );
 }
 function TableContent({ className, ...props }: React.ComponentProps<"div">) {
@@ -30,7 +23,6 @@ function TableContent({ className, ...props }: React.ComponentProps<"div">) {
 
 interface RowProps extends React.ComponentProps<"div"> {
   selected?: boolean;
-  pinned?: boolean;
 }
 
 /**
@@ -41,12 +33,11 @@ interface RowProps extends React.ComponentProps<"div"> {
  * └─ Row.Content
  *    └─ Row.StickyContent
  */
-function RowRoot({ className, selected, pinned, ...props }: RowProps) {
+function RowRoot({ className, selected, ...props }: RowProps) {
   return (
     <div
       data-slot="table-row"
       data-selected={selected}
-      data-pinned={pinned}
       className={cn(
         "group/row relative flex w-max min-w-full shrink-0",
         "[--z-action-portal:60]",
@@ -57,26 +48,31 @@ function RowRoot({ className, selected, pinned, ...props }: RowProps) {
   );
 }
 
+interface RowActionPortalProps extends React.ComponentProps<"div"> {
+  display?: "portal" | "content" | "none";
+}
 function RowActionPortal({
   className,
+  display = "none",
   children,
   ...props
-}: React.ComponentProps<"div">) {
+}: RowActionPortalProps) {
+  const isMobile = useIsMobile();
+
   return (
     <div
       data-slot="table-row-action-portal"
-      className={cn(
-        "sticky inset-s-(--table-view-row-action-gutter) z-(--z-action-portal) w-0 -translate-x-(--table-view-row-action-gutter)",
-        className,
-      )}
+      data-display={isMobile ? "content" : display}
+      className="group/row-action sticky inset-s-(--table-view-row-action-gutter) z-(--z-action-portal) w-0 -translate-x-(--table-view-row-action-gutter)"
       {...props}
     >
       <div
         className={cn(
           "flex h-full w-(--table-view-row-action-gutter) bg-main opacity-0 transition-opacity delay-0 duration-200",
           "group-hover/row:opacity-100",
-          "group-data-[pinned=true]/row:opacity-100",
-          "group-data-[selected=true]/row:opacity-100",
+          "group-data-[display=portal]/row-action:opacity-100",
+          "group-data-[display=content]/row-action:opacity-100",
+          className,
         )}
       >
         {children}
@@ -95,7 +91,7 @@ function RowActionContent({
       className={cn(
         "flex h-full w-(--table-view-row-action-gutter) items-center justify-end bg-main pr-1.5 opacity-0 transition-opacity delay-0 duration-200",
         "group-hover/row:opacity-100",
-        "group-data-[selected=true]/row:opacity-100",
+        "group-data-[display=content]/row-action:opacity-100",
         className,
       )}
       {...props}

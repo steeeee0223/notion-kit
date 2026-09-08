@@ -2,7 +2,6 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import type { RowInstance } from "@notion-kit/table-hook";
 import { buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 
@@ -14,16 +13,8 @@ interface ListRowProps {
 }
 
 export function ListRow({ rowId }: ListRowProps) {
-  const isMobile = useIsMobile();
   const { table } = useTableViewCtx();
   const row = table.getRow(rowId) as RowInstance;
-  const addNextRow = (e: React.MouseEvent) => {
-    if (e.altKey) {
-      table.addRow({ id: row.id, at: "prev" });
-      return;
-    }
-    table.addRow({ id: row.id, at: "next" });
-  };
 
   return (
     <table.Subscribe selector={(state) => state.tableGlobal.locked}>
@@ -42,14 +33,8 @@ export function ListRow({ rowId }: ListRowProps) {
             />
           }
         >
-          <Row.ActionPortal>
-            {!locked && (
-              <RowActionGroup
-                isMobile={isMobile}
-                row={row}
-                onAddNext={addNextRow}
-              />
-            )}
+          <Row.ActionPortal display={row.getIsSelected() ? "content" : "none"}>
+            {!locked && <RowActionGroup row={row} />}
           </Row.ActionPortal>
           <Row.Content
             role="button"
@@ -70,7 +55,6 @@ export function ListRow({ rowId }: ListRowProps) {
             ))}
           </Row.Content>
           <div className="absolute -inset-e-7 top-1/2 h-full w-7 -translate-y-1/2 cursor-pointer" />
-          {/* </div> */}
         </Sortable.Item>
       )}
     </table.Subscribe>

@@ -1,5 +1,3 @@
-import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
 import { Button, Checkbox } from "@notion-kit/ui/primitives";
@@ -13,7 +11,6 @@ interface TableGroupedRowProps {
 
 export function TableGroupedRow({ row }: TableGroupedRowProps) {
   const { table, plugins } = useTableViewCtx();
-  const isMobile = useIsMobile();
   const groupId = row.groupingColumnId;
   if (!groupId) {
     console.error(`No grouping column id found for the grouped row ${row.id}`);
@@ -27,14 +24,11 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
 
   return (
     <Row.Root role="group" aria-label={`Group ${row.id}`} className="h-11">
-      <Row.ActionPortal className="h-full">
+      <Row.ActionPortal
+        display={groupSelectionState !== "unchecked" ? "content" : "none"}
+      >
         {showSelection && (
-          <Row.ActionContent
-            className={cn(
-              (groupSelectionState !== "unchecked" || isMobile) &&
-                "opacity-100",
-            )}
-          >
+          <Row.ActionContent>
             <Checkbox
               id={`group-select-${row.id}`}
               size="sm"
