@@ -1,11 +1,13 @@
 import React from "react";
 
 import { cn } from "@notion-kit/cn";
-import { useIsMobile } from "@notion-kit/hooks";
 
 function TableRoot({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("relative w-full min-w-0", className)} {...props} />
+    <div
+      className={cn("group/table-root relative w-full min-w-0", className)}
+      {...props}
+    />
   );
 }
 function TableContent({ className, ...props }: React.ComponentProps<"div">) {
@@ -57,18 +59,17 @@ function RowActionPortal({
   children,
   ...props
 }: RowActionPortalProps) {
-  const isMobile = useIsMobile();
-
   return (
     <div
       data-slot="table-row-action-portal"
-      data-display={isMobile ? "content" : display}
+      data-display={display}
       className="group/row-action sticky inset-s-(--table-view-row-action-gutter) z-(--z-action-portal) w-0 -translate-x-(--table-view-row-action-gutter)"
       {...props}
     >
       <div
         className={cn(
           "flex h-full w-(--table-view-row-action-gutter) bg-main opacity-0 transition-opacity delay-0 duration-200",
+          "max-md:opacity-100",
           "group-hover/row:opacity-100",
           "group-data-[display=portal]/row-action:opacity-100",
           "group-data-[display=content]/row-action:opacity-100",
@@ -90,6 +91,7 @@ function RowActionContent({
       data-slot="table-row-action-content"
       className={cn(
         "flex h-full w-(--table-view-row-action-gutter) items-center justify-end bg-main pr-1.5 opacity-0 transition-opacity delay-0 duration-200",
+        "max-md:opacity-100",
         "group-hover/row:opacity-100",
         "group-data-[display=content]/row-action:opacity-100",
         className,
