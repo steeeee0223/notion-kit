@@ -68,7 +68,7 @@ function RowActionPortal({
     >
       <div
         className={cn(
-          "flex h-full w-(--table-view-row-action-gutter) bg-main opacity-0 transition-opacity delay-0 duration-200",
+          "flex h-full w-(--table-view-row-action-gutter) bg-main opacity-0 transition-opacity delay-0 duration-200 empty:pointer-events-none",
           "max-md:opacity-100",
           "group-hover/row:opacity-100",
           "group-data-[display=portal]/row-action:opacity-100",
