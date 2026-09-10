@@ -71,8 +71,7 @@ function TableFrame({ children }: React.PropsWithChildren) {
       {(state) => (
         <div
           ref={(element) => {
-            if (element) selection?.controller.frames.set(cell.id, element);
-            else selection?.controller.frames.delete(cell.id);
+            selection?.controller.registerFrame(cell.id, element);
           }}
           tabIndex={-1}
           data-cell-selected={Boolean(

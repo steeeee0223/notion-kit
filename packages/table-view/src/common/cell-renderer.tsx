@@ -42,20 +42,6 @@ export function CellEditorPopover({
     >
       <PopoverTrigger ref={ref} nativeButton={false} render={children} />
       <PopoverContent
-        onKeyDownCapture={(event) => {
-          // The inline, always-open option list consumes Escape itself. Close its
-          // cell editor without intercepting separately portaled option menus.
-          if (
-            event.key === "Escape" &&
-            event.target instanceof Element &&
-            event.currentTarget.contains(event.target) &&
-            event.target.matches('[role="combobox"]')
-          ) {
-            event.preventDefault();
-            event.stopPropagation();
-            setOpen(false);
-          }
-        }}
         align={options?.align}
         alignOffset={options?.alignOffset}
         side={options?.side}

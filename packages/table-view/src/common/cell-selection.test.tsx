@@ -1,8 +1,8 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
-import { mockResizeObserver } from "@/__tests__/mock";
+import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
 
 mockResizeObserver();
 
@@ -94,7 +94,18 @@ it("keeps direct checkbox click behavior but suppresses drag-generated clicks", 
   expect(checked()).toBe("false");
 });
 
-it("does not select through copy controls and permits locked-table selection", async () => {
+it("copies a cell without selecting it or opening its editor", async () => {
+  const view = renderTableView(createFullPluginFixture());
+  const cell = view.propertyCell("Alpha", "email");
+  await view.user.click(
+    within(cell).getByRole("button", { name: "Copy to Clipboard" }),
+  );
+  expect(await navigator.clipboard.readText()).toBe("alpha@example.com");
+  expect(cell).toHaveAttribute("data-cell-selected", "false");
+  expect(screen.queryByRole("textbox", { name: "" })).not.toBeInTheDocument();
+});
+
+it("permits locked-table selection", async () => {
   const view = renderTableView({ defaultView: { locked: true } });
   const first = view.propertyCell("Task 1", "col1");
   fireEvent.mouseDown(first, { button: 0 });

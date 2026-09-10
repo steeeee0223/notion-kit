@@ -72,6 +72,20 @@ it("navigates displayed data cells across group headings", async () => {
     );
   const first = cells[0]!;
   const next = cells[1]!;
+  const boundary = screen
+    .getAllByRole("group")
+    .find(
+      (group) =>
+        Boolean(
+          first.compareDocumentPosition(group) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+        ) &&
+        Boolean(
+          group.compareDocumentPosition(next) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+        ),
+    );
+  expect(boundary).toBeDefined();
   fireEvent.mouseDown(first, { button: 0 });
   fireEvent.mouseUp(first);
   await view.user.keyboard("{ArrowDown}");

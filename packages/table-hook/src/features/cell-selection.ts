@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useEffectEvent, useLayoutEffect } from "react";
 
 import type { CellInstance, TableInstance } from "@/table-contexts/types";
 
@@ -12,7 +12,7 @@ export function canSelectDataCell(cell: CellInstance) {
 
 /** Value edits retain focus; structural changes cannot revive stale endpoints. */
 export function useCellSelectionDomain(table: TableInstance) {
-  const reconcile = () => {
+  const reconcile = useEffectEvent(() => {
     const selection = table.atoms.cellSelection.get();
     if (!selection.length) return;
     const rows = new Set(
@@ -35,19 +35,21 @@ export function useCellSelectionDomain(table: TableInstance) {
               columns.has(range.focusColumnId),
           );
     if (next.length !== selection.length) table.setCellSelection(next);
-  };
-  useLayoutEffect(reconcile);
+  });
+  const { data, columns } = table.options;
+  const { atoms } = table;
+  useLayoutEffect(() => reconcile(), [data, columns]);
   useLayoutEffect(() => {
     const subscriptions = [
-      table.atoms.expanded,
-      table.atoms.grouping,
-      table.atoms.columnVisibility,
-      table.atoms.globalFilter,
-      table.atoms.columnFilters,
-      table.atoms.tableGlobal,
-      table.atoms.groupingState,
+      atoms.expanded,
+      atoms.grouping,
+      atoms.columnVisibility,
+      atoms.globalFilter,
+      atoms.columnFilters,
+      atoms.tableGlobal,
+      atoms.groupingState,
     ].map((atom) => atom.subscribe(reconcile));
     return () =>
       subscriptions.forEach((subscription) => subscription.unsubscribe());
-  });
+  }, [atoms]);
 }

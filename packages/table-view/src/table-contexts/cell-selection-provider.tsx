@@ -47,7 +47,10 @@ function createController(
     cell.column.getIsVisible();
 
   return {
-    frames,
+    registerFrame(cellId: string, element: HTMLElement | null) {
+      if (element) frames.set(cellId, element);
+      else frames.delete(cellId);
+    },
     mount(doc: Document) {
       disposed = false;
       const claimInteraction = (event: PointerEvent) => {

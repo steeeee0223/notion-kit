@@ -44,10 +44,6 @@ async function openHeader(tableView: TableViewObject, name: string) {
   return MenuSurfaceObject.findByItem(tableView.user, "Calculate");
 }
 
-async function reopenHeader(tableView: TableViewObject, name: string) {
-  return openHeader(tableView, name);
-}
-
 it("PropMenu_Filter_AppendsARootRuleAndOpensTheSharedFilterEditor", async () => {
   const onViewChange = vi.fn();
   const tableView = renderTableView({
@@ -116,7 +112,7 @@ it("PropMenu_Wrap_TogglesObservableHeaderState", async () => {
       next: { ...mockProperties[0], wrapped: true },
     },
   });
-  menu = await reopenHeader(tableView, "Name");
+  menu = await openHeader(tableView, "Name");
   expect(menu.item("Unwrap text")).toBeVisible();
 });
 
@@ -193,7 +189,7 @@ it("PropMenu_Freeze_TogglesObservableHeaderState", async () => {
 
   let menu = await openHeader(tableView, "Name");
   await tableView.user.click(menu.item("Freeze up to column"));
-  menu = await reopenHeader(tableView, "Name");
+  menu = await openHeader(tableView, "Name");
   expect(menu.item("Unfreeze columns")).toBeVisible();
 });
 
@@ -207,7 +203,7 @@ it("PropMenu_Group_TogglesGroupedRowsAndHeaderAction", async () => {
       0,
     );
   });
-  menu = await reopenHeader(tableView, "Name");
+  menu = await openHeader(tableView, "Name");
   expect(menu.item("Ungroup")).toBeVisible();
   await tableView.user.click(menu.item("Ungroup"));
   await waitFor(() =>

@@ -501,7 +501,7 @@ describe("FilterMenu operand metadata", () => {
       );
       expect(onViewChange).not.toHaveBeenCalled();
       await tableView.user.tab();
-      expect(lastValue(onViewChange)).toEqual(expected);
+      expect(lastRule(onViewChange).value).toEqual(expected);
     },
   );
 
@@ -516,7 +516,7 @@ describe("FilterMenu operand metadata", () => {
     await tableView.user.click(
       await screen.findByRole("option", { name: "Beta" }, { timeout: 5_000 }),
     );
-    expect(lastValue(onViewChange)).toBe("Beta");
+    expect(lastRule(onViewChange).value).toBe("Beta");
   });
 
   it("persists every selected multi-option operand", async () => {
@@ -537,7 +537,7 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("option", { name: "Beta" }),
     );
 
-    expect(lastValue(onViewChange)).toEqual(["Alpha", "Beta"]);
+    expect(lastRule(onViewChange).value).toEqual(["Alpha", "Beta"]);
     await tableView.user.click(filter.rule("operand-rule"));
     expect(filter.selectOperand("operand-rule")).toHaveAttribute(
       "aria-expanded",
@@ -582,7 +582,7 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("button", { name: /Today/ }),
     );
 
-    expect(lastValue(onViewChange)).toEqual({
+    expect(lastRule(onViewChange).value).toEqual({
       timestamp: Date.UTC(
         today.getFullYear(),
         today.getMonth(),
@@ -604,7 +604,7 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("option", { name: "Week" }),
     );
 
-    expect(lastValue(onViewChange)).toEqual({ amount: -2, unit: "week" });
+    expect(lastRule(onViewChange).value).toEqual({ amount: -2, unit: "week" });
   });
 
   it("persists a typed range only when both dates are complete and ordered", async () => {
@@ -619,7 +619,7 @@ describe("FilterMenu operand metadata", () => {
     await range.tableView.user.type(end, "2026-08-27");
     expect(range.onViewChange).not.toHaveBeenCalled();
     await range.tableView.user.tab();
-    const value = lastValue(range.onViewChange) as {
+    const value = lastRule(range.onViewChange).value as {
       start: number;
       end: number;
     };
@@ -645,7 +645,7 @@ describe("FilterMenu operand metadata", () => {
     );
     expect(number.onViewChange).not.toHaveBeenCalled();
     await number.tableView.user.tab();
-    expect(lastValue(number.onViewChange)).toBe(1);
+    expect(lastRule(number.onViewChange).value).toBe(1);
     number.onViewChange.mockClear();
     await number.tableView.user.type(
       number.tableView.filterMenu().operand("operand-rule"),
@@ -662,7 +662,7 @@ describe("FilterMenu operand metadata", () => {
     );
     expect(relative.onViewChange).not.toHaveBeenCalled();
     await relative.tableView.user.tab();
-    expect(lastValue(relative.onViewChange)).toEqual({
+    expect(lastRule(relative.onViewChange).value).toEqual({
       amount: 1,
       unit: "day",
     });
@@ -712,7 +712,7 @@ describe("FilterMenu operand metadata", () => {
       }),
     );
 
-    expect(lastValue(date.onViewChange)).toEqual({
+    expect(lastRule(date.onViewChange).value).toEqual({
       timestamp: isoToTs(
         { date: format(tomorrow, "yyyy-MM-dd"), time: "00:00:00" },
         "America/Los_Angeles",
@@ -737,7 +737,7 @@ describe("FilterMenu operand metadata", () => {
       }),
     );
 
-    expect(lastValue(range.onViewChange)).toEqual({
+    expect(lastRule(range.onViewChange).value).toEqual({
       start: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
       end: Date.UTC(
         tomorrow.getFullYear(),
@@ -775,7 +775,7 @@ describe("FilterMenu operand metadata", () => {
     await date.tableView.user.type(input, "1960-01-02");
     await date.tableView.user.tab();
 
-    expect(lastValue(date.onViewChange)).toEqual({
+    expect(lastRule(date.onViewChange).value).toEqual({
       timestamp: isoToTs({ date: "1960-01-02", time: "00:00:00" }, timeZone),
     });
   });
@@ -799,7 +799,7 @@ describe("FilterMenu operand metadata", () => {
     );
     await date.tableView.user.tab();
 
-    expect(lastValue(date.onViewChange)).toEqual({
+    expect(lastRule(date.onViewChange).value).toEqual({
       timestamp: isoToTs(
         { date: "2026-08-26", time: "00:00:00" },
         "America/Los_Angeles",
@@ -872,7 +872,7 @@ describe("FilterMenu operand metadata", () => {
     });
     await controlled.user.tab();
 
-    expect(lastValue(controlled.onViewChange)).toBe(9);
+    expect(lastRule(controlled.onViewChange).value).toBe(9);
     expect(operand).toHaveValue("7");
   });
 
@@ -1105,10 +1105,6 @@ function lastRule(onViewChange: ViewChangeMock) {
     throw new Error("Expected the first filter child to be a rule");
   }
   return child;
-}
-
-function lastValue(onViewChange: ViewChangeMock) {
-  return lastRule(onViewChange).value;
 }
 
 function dateValue(timestamp: unknown) {

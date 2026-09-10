@@ -1,6 +1,7 @@
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 import { TableViewObject } from "./component-objects/table-view";
+import { expect, test } from "./fixtures";
 
 async function point(cell: Locator) {
   await cell.scrollIntoViewIfNeeded();
@@ -87,7 +88,17 @@ for (const modifier of ["Control", "Meta"] as const) {
     await expect(page.getByRole("textbox")).toHaveCount(0);
     await first.click({ modifiers: [modifier], position: { x: 30, y: 18 } });
     await expect(first).toHaveAttribute("data-cell-selected", "true");
-    await last.click({ modifiers: ["Shift"], position: { x: 30, y: 18 } });
+    const extended = table.propertyCell("Omega", "score");
+    await expect(extended).toHaveAttribute("data-cell-selected", "false");
+    await extended
+      .getByRole("button", { name: "90", exact: true })
+      .click({ modifiers: ["Shift"] });
+    await expect(page.locator('[data-cell-selected="true"]')).toHaveCount(9);
+    for (const row of ["Alpha", "Empty", "Omega"])
+      await expect(table.propertyCell(row, "score")).toHaveAttribute(
+        "data-cell-selected",
+        "true",
+      );
     await expect(page.getByRole("textbox")).toHaveCount(0);
   });
 }
@@ -221,4 +232,103 @@ test("CellSelection_DateEscapeCancelsDraftBeforeRestoringFocus", async ({
   await expect(date).toHaveAttribute("data-cell-selected", "true");
   await expect(date).toContainText("January 1, 2025");
   await expect(table.controlledState()).toContainText('"dataCount":0');
+});
+
+for (const modifier of ["Control", "Meta"] as const) {
+  test(`CellSelection_${modifier}_RectangleDragAddsAndSubtractsInteriorCells`, async ({
+    page,
+  }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    await drag(
+      page,
+      table.propertyCell("Alpha", "title"),
+      table.propertyCell("Omega", "status"),
+    );
+    await expect(page.locator('[data-cell-selected="true"]')).toHaveCount(12);
+
+    const holeStart = table.propertyCell("Empty", "notes");
+    const holeEnd = table.propertyCell("Empty", "score");
+    await page.keyboard.down(modifier);
+    await drag(page, holeStart, holeEnd);
+    await page.keyboard.up(modifier);
+    await expect(page.locator('[data-cell-selected="true"]')).toHaveCount(10);
+    await expect(holeStart).toHaveAttribute("data-cell-selected", "false");
+    await expect(holeEnd).toHaveAttribute("data-cell-selected", "false");
+    await expect(
+      table
+        .propertyCell("Alpha", "notes")
+        .locator("[data-cell-selection-overlay]"),
+    ).toHaveAttribute("data-selection-edges", "top bottom");
+    await expect(
+      table
+        .propertyCell("Omega", "score")
+        .locator("[data-cell-selection-overlay]"),
+    ).toHaveAttribute("data-selection-edges", "top bottom");
+
+    await page.keyboard.down(modifier);
+    await drag(page, holeStart, holeEnd);
+    await page.keyboard.up(modifier);
+    await expect(page.locator('[data-cell-selected="true"]')).toHaveCount(12);
+    await expect(holeStart).toHaveAttribute("data-cell-selected", "true");
+    await expect(holeEnd).toHaveAttribute("data-cell-selected", "true");
+    await expect(page.getByRole("textbox")).toHaveCount(0);
+    await expect(table.controlledState()).toContainText('"dataCount":0');
+  });
+}
+
+test("CellSelection_FilteredRows_AreExcludedFromNavigationAndSelectAll", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  await (await table.openSearch()).fill("note");
+  await expect(table.row("Empty")).toHaveCount(0);
+  await expect(table.rows()).toHaveCount(2);
+  const first = table.propertyCell("Alpha", "title");
+  await first.getByRole("button", { name: "Alpha", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(first).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(table.propertyCell("Omega", "title")).toBeFocused();
+  await page.keyboard.press("Control+a");
+  await expect(page.locator('[data-cell-selected="true"]')).toHaveCount(
+    await page.locator("[data-cell-selected]").count(),
+  );
+});
+
+test("CellSelection_WrappedRows_KeepTheirHeightAndContinuousPerimeter", async ({
+  page,
+}, testInfo) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const notes = table.propertyCell("Alpha", "notes");
+  const before = await notes.boundingBox();
+  expect(before).not.toBeNull();
+  await (await table.openHeader("Notes")).toggleWrap();
+  await table
+    .cellEditor("Alpha", "first note")
+    .fill(
+      "A long wrapped note that spans several lines inside this narrow table column. ".repeat(
+        4,
+      ),
+    );
+  const wrapped = await notes.boundingBox();
+  expect(wrapped).not.toBeNull();
+  expect(wrapped!.height).toBeGreaterThan(before!.height);
+
+  const first = table.propertyCell("Alpha", "title");
+  const last = table.propertyCell("Omega", "notes");
+  await drag(page, first, last);
+  await expect(page.locator('[data-cell-selected="true"]')).toHaveCount(6);
+  expect(await notes.boundingBox()).toEqual(wrapped);
+  await expect(first.locator("[data-cell-selection-overlay]")).toHaveAttribute(
+    "data-selection-edges",
+    "top left",
+  );
+  await expect(last.locator("[data-cell-selection-overlay]")).toHaveAttribute(
+    "data-selection-edges",
+    "right bottom",
+  );
+  await testInfo.attach("wrapped-selection-perimeter", {
+    body: await page.screenshot({ fullPage: true }),
+    contentType: "image/png",
+  });
 });

@@ -59,6 +59,7 @@ export function select(): TableUiPlugin<SelectPlugin> {
       renderEditor={(close) => (
         <SelectCellEditor
           {...props}
+          onClose={close}
           data={data ? [data] : []}
           onChange={(updater) => {
             onChange(
@@ -155,6 +156,7 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
         <SelectCellEditor
           multi
           {...props}
+          onClose={close}
           onChange={(updater) => {
             onChange(updater);
             close();

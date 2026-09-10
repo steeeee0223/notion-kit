@@ -21,6 +21,7 @@ import { SelectMenuApi } from "./use-select-menu";
 
 interface SelectMenuProps {
   menu: SelectMenuApi;
+  onClose?: () => void;
 }
 
 interface GroupOption {
@@ -29,7 +30,7 @@ interface GroupOption {
   creatable: boolean;
 }
 
-export function SelectMenu({ menu }: SelectMenuProps) {
+export function SelectMenu({ menu, onClose }: SelectMenuProps) {
   const {
     config,
     optionSuggestion,
@@ -91,7 +92,16 @@ export function SelectMenu({ menu }: SelectMenuProps) {
                   </ComboboxChip>
                 );
               })}
-              <ComboboxChipsInput placeholder="Search for an option..." />
+              <ComboboxChipsInput
+                placeholder="Search for an option..."
+                onKeyDownCapture={(event) => {
+                  // This list stays open; Escape dismisses its owning editor.
+                  if (event.key !== "Escape" || !onClose) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onClose();
+                }}
+              />
             </>
           )}
         </ComboboxValue>
