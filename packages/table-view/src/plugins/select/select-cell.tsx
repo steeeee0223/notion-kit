@@ -21,6 +21,7 @@ interface SelectCellEditorProps {
   data: string[];
   onChange: OnChangeFn<string[]>;
   onConfigChange?: OnChangeFn<SelectConfig>;
+  onClose?: () => void;
 }
 
 export function SelectCellValue({
@@ -74,6 +75,7 @@ export function SelectCellEditor({
   data: options,
   onChange,
   onConfigChange,
+  onClose,
 }: SelectCellEditorProps) {
   const selectedOptions = Array.isArray(options) ? options : [];
   const menu = useSelectMenu({
@@ -85,5 +87,5 @@ export function SelectCellEditor({
     onConfigChange,
   });
 
-  return <SelectMenu menu={menu} />;
+  return <SelectMenu menu={menu} onClose={onClose} />;
 }

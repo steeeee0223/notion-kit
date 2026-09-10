@@ -61,6 +61,7 @@ export function CellTrigger({
   return (
     <div
       {...props}
+      data-cell-trigger=""
       ref={ref}
       role="button"
       tabIndex={disabled ? -1 : (tabIndex ?? 0)}

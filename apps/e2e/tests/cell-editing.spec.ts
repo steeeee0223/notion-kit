@@ -86,21 +86,15 @@ test("CellEditors_EmptyValues_RoundTripThroughNamedRowViewProperties", async ({
     .click();
   const rowView = page.getByRole("dialog", { name: "Empty" });
 
-  const valueButton = (property: string) =>
-    rowView
-      .getByRole("row", { name: new RegExp(`^${property}`) })
-      .getByRole("cell")
-      .last()
-      .getByRole("button")
-      .first();
-
   const fill = async (property: string, value: string) => {
-    const trigger = valueButton(property);
+    const trigger = table.rowViewPropertyValue(rowView, property);
     await trigger.press("Enter");
     const textbox = page.getByRole("textbox").last();
     await textbox.fill(value);
     await textbox.press("Enter");
-    await expect(valueButton(property)).toContainText(value);
+    await expect(table.rowViewPropertyValue(rowView, property)).toContainText(
+      value,
+    );
   };
 
   await fill("Notes", "filled note");
@@ -109,25 +103,31 @@ test("CellEditors_EmptyValues_RoundTripThroughNamedRowViewProperties", async ({
   await fill("Phone", "+886900000007");
   await fill("Website", "https://example.com/empty");
 
-  await valueButton("Status").press("Enter");
+  await table.rowViewPropertyValue(rowView, "Status").press("Enter");
   await page.getByRole("option", { name: "Backlog" }).click();
-  await expect(valueButton("Status")).toContainText("Backlog");
+  await expect(table.rowViewPropertyValue(rowView, "Status")).toContainText(
+    "Backlog",
+  );
 
-  await valueButton("Tags").press("Enter");
+  await table.rowViewPropertyValue(rowView, "Tags").press("Enter");
   await page.getByRole("option", { name: "Backend" }).click();
   await page.keyboard.press("Escape");
-  await expect(valueButton("Tags")).toContainText("Backend");
+  await expect(table.rowViewPropertyValue(rowView, "Tags")).toContainText(
+    "Backend",
+  );
 
   await table.rowViewPropertyCheckboxTrigger(rowView, "Complete").click();
   await expect(
     table.rowViewPropertyCheckboxDisplay(rowView, "Complete"),
   ).toBeChecked();
 
-  await valueButton("Due").press("Enter");
+  await table.rowViewPropertyValue(rowView, "Due").press("Enter");
   const dateInput = page.getByRole("textbox").last();
   await dateInput.fill("2025-01-20");
   await dateInput.press("Tab");
-  await expect(valueButton("Due")).toContainText("January 20, 2025");
+  await expect(table.rowViewPropertyValue(rowView, "Due")).toContainText(
+    "January 20, 2025",
+  );
 });
 
 test("SelectEditor_DuplicateOption_ShowsValidationWithoutMutation", async ({

@@ -1,4 +1,4 @@
-import { useState, type ReactElement, type ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useRect } from "@notion-kit/hooks";
@@ -10,6 +10,7 @@ import {
 
 import { CellTrigger } from "./cell-trigger";
 import { CopyButton } from "./copy-button";
+import { useCellEditorSelection } from "./use-cell-editor-selection";
 
 export interface CellPopoverOptions {
   className?: string;
@@ -30,11 +31,15 @@ export function CellEditorPopover({
   options,
   renderEditor,
 }: CellEditorPopoverProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen, onOpenChangeComplete] = useCellEditorSelection();
   const { ref, rect } = useRect<HTMLElement>();
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+      onOpenChangeComplete={onOpenChangeComplete}
+    >
       <PopoverTrigger ref={ref} nativeButton={false} render={children} />
       <PopoverContent
         align={options?.align}
