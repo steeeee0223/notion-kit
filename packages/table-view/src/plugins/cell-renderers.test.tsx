@@ -303,9 +303,75 @@ describe("LinkCell", () => {
       href,
     );
   });
+
+  it.each([
+    ["notes", "Notes"],
+    ["email", "Email"],
+  ] as const)(
+    "%sCell_WhitespaceOnlyRowViewValue_RendersExplicitEmpty",
+    (propertyId, propertyName) => {
+      const fixture = createFullPluginFixture();
+      fixture.data.find((item) => item.id === "row-empty")!.properties[
+        propertyId
+      ]!.value = "   ";
+
+      renderTableView({
+        ...fixture,
+        view: {
+          ...fixture.view,
+          layout: "table",
+          rowView: "side",
+          openedRowId: "row-empty",
+        },
+      });
+
+      expect(
+        screen.getByRole("row", {
+          name: new RegExp(`${propertyName} Empty`, "i"),
+        }),
+      ).toBeVisible();
+    },
+  );
+
+  it.each([
+    ["notes", "group/text-cell"],
+    ["email", "group/link-cell"],
+  ] as const)(
+    "%sCell_WhitespaceOnlyListValue_HidesTheCellTrigger",
+    (propertyId, triggerClass) => {
+      const fixture = createFullPluginFixture();
+      fixture.data.find((item) => item.id === "row-empty")!.properties[
+        propertyId
+      ]!.value = "   ";
+      renderTableView({
+        ...fixture,
+        view: { ...fixture.view, layout: "list" },
+      });
+      const row = document.querySelector('[data-block-id="row-empty"]');
+
+      expect(row).not.toBeNull();
+      expect(
+        row!.querySelector(`[data-cell-trigger][class*="${triggerClass}"]`),
+      ).toBeNull();
+    },
+  );
 });
 
 describe("TextAndCheckboxCells", () => {
+  it("TitleCell_EmptyValue_UsesTheNewPageAccessibleName", () => {
+    const fixture = createFullPluginFixture();
+    fixture.data.find(
+      (item) => item.id === "row-alpha",
+    )!.properties.title!.value = "";
+    const table = renderTableView(fixture);
+
+    expect(
+      within(table.propertyCell("first note", "title")).getByRole("button", {
+        name: "New page",
+      }),
+    ).toBeVisible();
+  });
+
   it("TextCell_EscapeAfterEditing_CancelsWithoutResourceChange", async () => {
     // Arrange
     const dataProbe = createResourceProbe<Row[], DataResourceAction>();

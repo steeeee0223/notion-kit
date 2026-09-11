@@ -417,7 +417,15 @@ export const ExtendedGroupingFeature: TableFeature = {
         createdAt: 0,
         lastEditedAt: 0,
       };
-      return constructRow(table, groupId, original, 0, 0, []);
+      const row = constructRow(table, groupId, original, 0, 0, []);
+      const groupingColumnId = table.atoms.grouping.get()[0];
+      if (groupingColumnId) {
+        Object.assign(row, {
+          groupingColumnId,
+          groupingValue: table.getGroupingValue(groupId),
+        });
+      }
+      return row;
     };
   },
 

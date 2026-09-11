@@ -48,6 +48,7 @@ export function useCellSelectionDomain(table: TableInstance) {
       atoms.columnFilters,
       atoms.tableGlobal,
       atoms.groupingState,
+      atoms.filterEvaluationTick,
     ].map((atom) => atom.subscribe(reconcile));
     return () =>
       subscriptions.forEach((subscription) => subscription.unsubscribe());

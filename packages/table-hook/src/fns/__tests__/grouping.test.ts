@@ -187,7 +187,7 @@ describe("common grouping functions", () => {
     expect(groupByDateRelative(Date.now(), { timeZone: "UTC" })).toBe("today");
   });
 
-  it("DateGrouping_InvalidDates_ReturnsNull", () => {
+  it("DateGrouping_InvalidDatesReturnNullAndPreEpochDatesRemainValid", () => {
     const options = { timeZone: "UTC", now: Date.UTC(2025, 0, 15) };
     expect(groupByDateDay(Number.NaN, options)).toBeNull();
     expect(
@@ -195,7 +195,7 @@ describe("common grouping functions", () => {
     ).toBeNull();
     expect(groupByDateMonth({ start: Number.NaN }, options)).toBeNull();
     expect(groupByDateYear(Number.NEGATIVE_INFINITY, options)).toBeNull();
-    expect(groupByDateDay({ start: -1 }, options)).toBeNull();
+    expect(groupByDateDay({ start: -1 }, options)).toBe("1969-12-31");
     expect(dateGroupSortValue("2025-02-30", options)).toBeNull();
   });
 });

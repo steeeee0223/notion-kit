@@ -1,3 +1,4 @@
+import { screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { SelectMenuObject } from "@/__tests__/component-objects/select-menu";
@@ -15,9 +16,12 @@ describe("SelectMenu - Single Select", () => {
 
     expect(menu.combobox()).toBeInTheDocument();
     expect(menu.option("Option A")).toBeInTheDocument();
-    menu.choose("Option A");
+    await menu.choose("Option A");
 
     await menu.waitForCellText("Option A");
+    await waitFor(() =>
+      expect(screen.queryByRole("combobox")).not.toBeInTheDocument(),
+    );
   });
 
   it("SelectMenu_SingleSelect_BackspaceClearsSelection", async () => {
@@ -42,6 +46,7 @@ describe("SelectMenu - Single Select", () => {
     const newName = "Brand New Option";
     await menu.create(newName);
 
+    expect(menu.combobox()).toBeVisible();
     expect(menu.option(newName)).toBeInTheDocument();
   });
 
@@ -70,7 +75,7 @@ describe("SelectMenu - Single Select", () => {
 
     const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
-    menu.choose("Option B");
+    await menu.choose("Option B");
 
     await menu.waitForCellText("Option B");
     expect(menu.selectedCell()).not.toHaveTextContent("Option A");
@@ -85,8 +90,9 @@ describe("SelectMenu - Multi Select", () => {
 
     expect(menu.combobox()).toBeInTheDocument();
 
-    menu.choose("Option A");
-    menu.choose("Option B");
+    await menu.choose("Option A");
+    expect(menu.combobox()).toBeVisible();
+    await menu.choose("Option B");
 
     expect(menu.optionGroup()).toHaveTextContent("Option A");
     expect(menu.optionGroup()).toHaveTextContent("Option B");
@@ -106,12 +112,13 @@ describe("SelectMenu - Option Management", () => {
   });
 
   it("SelectMenu_OptionActions_DeletesOption", async () => {
-    const tableView = renderSelectTable();
+    const tableView = renderSelectTable({ preselected: "single" });
 
     const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
 
     await menu.deleteOption("Option A");
 
+    expect(menu.combobox()).toBeVisible();
     expect(menu.queryOption("Option A")).not.toBeInTheDocument();
   });
 });

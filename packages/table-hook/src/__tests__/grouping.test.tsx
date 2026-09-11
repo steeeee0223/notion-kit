@@ -1484,6 +1484,8 @@ describe("useTableView - Extended Grouping", () => {
       const placeholder = table.getPlaceholderGroupedRow(groupId);
       expect(placeholder.id).toBe(groupId);
       expect(placeholder.original.properties).toEqual({});
+      expect(placeholder.groupingColumnId).toBe("col2");
+      expect(placeholder.groupingValue).toBe(table.getGroupingValue(groupId));
 
       act(() => {
         table.toggleGroupVisible(groupId);

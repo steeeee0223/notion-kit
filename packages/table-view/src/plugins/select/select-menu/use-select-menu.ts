@@ -19,6 +19,7 @@ interface UseSelectMenuOptions {
   options: string[];
   onChange: (options: string[]) => void;
   onConfigChange?: OnChangeFn<SelectConfig>;
+  onSelect?: () => void;
 }
 
 export function useSelectMenu({
@@ -28,6 +29,7 @@ export function useSelectMenu({
   options,
   onChange,
   onConfigChange,
+  onSelect,
 }: UseSelectMenuOptions) {
   const { table } = useTableViewCtx();
 
@@ -132,8 +134,9 @@ export function useSelectMenu({
         return;
       }
       onChange(tags.slice(multi ? 0 : -1));
+      if (!multi) onSelect?.();
     },
-    [multi, config.options.items, addOption, onChange],
+    [multi, config.options.items, addOption, onChange, onSelect],
   );
 
   const selectTag = useCallback(
@@ -141,8 +144,9 @@ export function useSelectMenu({
       setSearch("");
       if (options.includes(value)) return;
       onChange(multi ? [...options, value] : [value]);
+      if (!multi) onSelect?.();
     },
-    [options, multi, onChange],
+    [options, multi, onChange, onSelect],
   );
 
   const tags = useMemo(

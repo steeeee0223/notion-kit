@@ -1,5 +1,6 @@
 import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
 import { Button, Checkbox } from "@notion-kit/ui/primitives";
 
 import { GroupActions, Row } from "@/common";
@@ -60,7 +61,7 @@ export function TableGroupedRow({ row }: TableGroupedRowProps) {
         <div className="flex max-w-100 items-center overflow-hidden px-2 text-sm/6 font-medium whitespace-nowrap">
           {uiPlugin.renderGroupingValue({
             table: table as never,
-            value: table.getGroupingValue(row.id),
+            value: row.groupingValue as ComparableValue,
           })}
         </div>
         {/* Count */}

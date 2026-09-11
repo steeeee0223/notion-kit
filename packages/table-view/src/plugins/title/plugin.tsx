@@ -31,7 +31,10 @@ export function title(): TableUiPlugin<TitlePlugin> {
     switch (props.surface) {
       case "table":
         return (
-          <CellTriggerScope ariaLabel={props.data} className={triggerClassName}>
+          <CellTriggerScope
+            ariaLabel={props.data.trim() || "New page"}
+            className={triggerClassName}
+          >
             <TitleTableSlot
               value={props.data}
               props={props}

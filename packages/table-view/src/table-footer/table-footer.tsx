@@ -36,7 +36,7 @@ export function TableFooter() {
             <Row.Content
               className={cn(
                 "pr-8 opacity-0 transition-opacity delay-0 duration-200",
-                "group-hover/row:opacity-100 group-has-data-open/row:opacity-100",
+                "group-hover/row:opacity-100 group-has-data-popup-open/row:opacity-100",
                 isSomeCountMethodSet && "opacity-100",
               )}
             >

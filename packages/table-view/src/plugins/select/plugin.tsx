@@ -60,6 +60,7 @@ export function select(): TableUiPlugin<SelectPlugin> {
         <SelectCellEditor
           {...props}
           onClose={close}
+          onSelect={close}
           data={data ? [data] : []}
           onChange={(updater) => {
             onChange(
@@ -67,7 +68,6 @@ export function select(): TableUiPlugin<SelectPlugin> {
                 functionalUpdate(updater, previous ? [previous] : []).at(0) ??
                 null,
             );
-            close();
           }}
         />
       )}
@@ -157,10 +157,7 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
           multi
           {...props}
           onClose={close}
-          onChange={(updater) => {
-            onChange(updater);
-            close();
-          }}
+          onChange={onChange}
         />
       )}
       surface={props.surface}

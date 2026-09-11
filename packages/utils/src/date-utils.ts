@@ -62,7 +62,6 @@ function getTimeFormatStr(format: TimeFormat) {
  * @todo format with timezone
  */
 export function formatDate(ts: number, options: FormatOptions): string {
-  if (ts < 0) return "";
   const timeStr = getTimeFormatStr(options.timeFormat);
   if (options.dateFormat !== "relative") {
     const formatStr =

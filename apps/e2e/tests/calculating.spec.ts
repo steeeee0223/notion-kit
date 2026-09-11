@@ -63,3 +63,19 @@ test("Calculating_EditAddAndDelete_RecomputesImmediately", async ({ page }) => {
   await expect(table.rows()).toHaveCount(3);
   await expectCalculation(table, "Notes", "count", "3");
 });
+
+test("Calculating_OpenMenu_KeepsFooterVisibleAfterPointerLeaves", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const trigger = table.calculation("Notes");
+  const footer = trigger.locator(
+    'xpath=ancestor::*[@data-slot="table-row-content"]',
+  );
+  await trigger.click();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+  await page.mouse.move(0, 0);
+
+  await expect(footer).toHaveCSS("opacity", "1");
+});

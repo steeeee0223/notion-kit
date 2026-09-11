@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { functionalUpdate, type OnChangeFn } from "@tanstack/react-table";
+import { useEffect, useEffectEvent, useState, type ReactNode } from "react";
+import type { OnChangeFn } from "@tanstack/react-table";
 
 import {
   Button,
@@ -28,10 +28,15 @@ export function BulkEditorPopover<Data>({
 }: BulkEditorPopoverProps<Data>) {
   // An internal draft state
   const [data, setData] = useState(initialData);
+  const [revision, setRevision] = useState(0);
+  const notifyChange = useEffectEvent(onChange);
+  useEffect(() => {
+    if (revision > 0) notifyChange(data);
+  }, [data, revision]);
+
   const update: OnChangeFn<Data> = (updater) => {
-    const next = functionalUpdate(updater, data);
-    setData(next);
-    onChange(next);
+    setData(updater);
+    setRevision((previous) => previous + 1);
   };
 
   return (

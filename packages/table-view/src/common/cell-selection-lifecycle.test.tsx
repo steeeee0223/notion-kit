@@ -144,6 +144,22 @@ it("keeps a newly clicked unrelated input focused when dismissing an editor", as
   );
 });
 
+it("keeps a keyboard-focused unrelated input focused when dismissing an editor", async () => {
+  const view = renderTableView({
+    children: <input aria-label="Outside editor" />,
+  });
+  await view.user.click(view.cellButton("Task 1", "Task 1"));
+  const editor = await screen.findByRole("textbox", { name: "" });
+  const outside = screen.getByRole("textbox", { name: "Outside editor" });
+  outside.focus();
+  expect(outside).toHaveFocus();
+
+  fireEvent.keyDown(editor, { key: "Escape" });
+
+  await waitFor(() => expect(editor).not.toBeInTheDocument());
+  expect(outside).toHaveFocus();
+});
+
 it("outlines each selected region at a non-data group heading", async () => {
   const view = renderTableView({
     ...createFullPluginFixture(),

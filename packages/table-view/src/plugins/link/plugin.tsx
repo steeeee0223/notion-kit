@@ -98,6 +98,7 @@ function renderLinkCell(
   props: CellRendererProps<string>,
 ) {
   const copy = getCopyClasses("link");
+  const isEmpty = props.data.trim() === "";
   return (
     <CellRenderer
       compactClassName={getCompactWidthClass("link")}
@@ -110,12 +111,12 @@ function renderLinkCell(
       }
       disabled={props.disabled}
       emptyContent={
-        props.surface === "row-view" && !props.data ? (
+        props.surface === "row-view" && isEmpty ? (
           <div className="leading-normal text-muted">Empty</div>
         ) : undefined
       }
       hideWhenEmpty={props.surface === "list" || props.surface === "board"}
-      isEmpty={!props.data}
+      isEmpty={isEmpty}
       popover={{
         align: "start",
         side: "bottom",

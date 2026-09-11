@@ -53,7 +53,7 @@ function createController(
     },
     mount(doc: Document) {
       disposed = false;
-      const claimInteraction = (event: PointerEvent) => {
+      const claimInteraction = (event: Event) => {
         if (
           event.target instanceof Element &&
           !event.target.closest(
@@ -63,8 +63,11 @@ function createController(
           revision++;
       };
       doc.addEventListener("pointerdown", claimInteraction, true);
-      cleanupOwnership = () =>
+      doc.addEventListener("focusin", claimInteraction, true);
+      cleanupOwnership = () => {
         doc.removeEventListener("pointerdown", claimInteraction, true);
+        doc.removeEventListener("focusin", claimInteraction, true);
+      };
     },
     dispose() {
       disposed = true;

@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
 import { mockData, mockProperties, plugins } from "@/__tests__/mock";
+import { useCellSelectionDomain } from "@/features/cell-selection";
 import { useTableView } from "@/table-contexts/use-table-view";
 
 function setup() {
@@ -98,6 +99,61 @@ it("prunes a filtered endpoint and selects only the remaining displayed rows", (
   expect(table.getCellSelectionRowIds()).toEqual(["row3"]);
   act(() => table.resetGlobalFilter());
   expect(table.getFocusedCell()?.row.id).toBe("row3");
+});
+
+it("reconciles selected endpoints when the filter evaluation tick changes", () => {
+  const createAtom = <T,>(initial: T) => {
+    let value = initial;
+    const listeners = new Set<() => void>();
+    return {
+      get: () => value,
+      subscribe: (listener: () => void) => {
+        listeners.add(listener);
+        return { unsubscribe: () => listeners.delete(listener) };
+      },
+      emit: (next: T) => {
+        value = next;
+        listeners.forEach((listener) => listener());
+      },
+    };
+  };
+  const selection = [
+    {
+      anchorRowId: "row",
+      anchorColumnId: "clock",
+      focusRowId: "row",
+      focusColumnId: "clock",
+    },
+  ];
+  const filterEvaluationTick = createAtom(0);
+  const structuralAtom = createAtom(null);
+  let rowVisible = true;
+  const setCellSelection = vi.fn();
+  const table = {
+    atoms: {
+      cellSelection: { get: () => selection },
+      expanded: structuralAtom,
+      grouping: structuralAtom,
+      columnVisibility: structuralAtom,
+      globalFilter: structuralAtom,
+      columnFilters: structuralAtom,
+      tableGlobal: structuralAtom,
+      groupingState: structuralAtom,
+      filterEvaluationTick,
+    },
+    options: { data: [], columns: [] },
+    getRowsInDisplayOrder: () =>
+      rowVisible ? [{ id: "row", getIsGrouped: () => false }] : [],
+    getVisibleLeafColumns: () => [{ id: "clock" }],
+    getTableGlobalState: () => ({ layout: "table" }),
+    setCellSelection,
+  } as unknown as Parameters<typeof useCellSelectionDomain>[0];
+  renderHook(() => useCellSelectionDomain(table));
+
+  rowVisible = false;
+  act(() => filterEvaluationTick.emit(1));
+
+  expect(setCellSelection).toHaveBeenCalledWith([]);
 });
 
 it("prunes removed endpoints when controlled data and properties change", () => {

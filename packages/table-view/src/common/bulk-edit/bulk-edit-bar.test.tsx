@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { OnChangeFn } from "@tanstack/react-table";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
@@ -124,6 +125,37 @@ function addTextLikeColumn(
     row.properties[id] = { id: `${row.id}-${id}`, value: values[row.id] ?? "" };
   }
 }
+
+it("BulkEditorPopover_ConsecutiveFunctionalUpdates_ComposeAgainstTheLatestDraft", async () => {
+  const onChange = vi.fn<OnChangeFn<string>>();
+  const user = userEvent.setup();
+  render(
+    <BulkEditorPopover
+      icon={null}
+      initialData=""
+      label="Draft"
+      onChange={onChange}
+    >
+      {(data, update) => (
+        <button
+          type="button"
+          onClick={() => {
+            update((previous) => `${previous}a`);
+            update((previous) => `${previous}b`);
+          }}
+        >
+          Update {data}
+        </button>
+      )}
+    </BulkEditorPopover>,
+  );
+  await user.click(screen.getByRole("button", { name: "Draft" }));
+
+  await user.click(screen.getByRole("button", { name: "Update" }));
+
+  expect(screen.getByRole("button", { name: "Update ab" })).toBeVisible();
+  expect(onChange).toHaveBeenLastCalledWith("ab");
+});
 
 it.each(["table", "list", "timeline"] as const)(
   "BulkEditBar_%sLayout_SelectedRow_ShowsOnlyEligibleColumnControls",

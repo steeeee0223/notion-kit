@@ -169,7 +169,7 @@ it("DateTimePicker_SelectedSingleDateClick_RetainsTheExistingBoundary", async ()
   );
 });
 
-it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
+it("DateRangeInput_InvalidThenValidDate_KeepsInvalidDraftLocal", async () => {
   const user = userEvent.setup();
   render(<DateRangeHarness initial={{}} />);
   const input = screen.getByRole("textbox");
@@ -177,7 +177,7 @@ it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
   await user.type(input, "not-a-date");
   await user.tab();
   expect(input).toHaveAttribute("aria-invalid", "true");
-  expect(screen.getByTestId("range-state")).toHaveTextContent('"start":-1');
+  expect(screen.getByTestId("range-state")).toHaveTextContent("{}");
 
   await user.click(input);
   await user.clear(input);
@@ -191,11 +191,7 @@ it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
 
 it("DateRangeInput_DateTimeBoundaries_UpdateStartAndEndIndependently", async () => {
   const user = userEvent.setup();
-  render(
-    <DateRangeHarness
-      initial={{ includeTime: true, endDate: true, start: -1, end: -1 }}
-    />,
-  );
+  render(<DateRangeHarness initial={{ includeTime: true, endDate: true }} />);
   const range = screen.getByTestId("range-state").previousElementSibling!;
   const inputs = within(range as HTMLElement).getAllByRole("textbox");
   expect(inputs).toHaveLength(4);
@@ -211,7 +207,14 @@ it("DateRangeInput_DateTimeBoundaries_UpdateStartAndEndIndependently", async () 
 
   await user.type(inputs[2]!, "invalid");
   await user.tab();
-  expect(screen.getByTestId("range-state")).toHaveTextContent('"end":-1');
+  expect(screen.getByTestId("range-state")).not.toHaveTextContent('"end"');
+});
+
+it("DateRangeInput_PreEpochTimestamp_RemainsAVisibleValidDate", () => {
+  render(<DateRangeHarness initial={{ start: -1 }} />);
+
+  expect(screen.getByRole("textbox")).toHaveValue("1969-12-31");
+  expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "false");
 });
 
 it("DateRangeInput_UnchangedBlur_DoesNotReportRedundantTimestamp", async () => {
@@ -277,7 +280,7 @@ it("DateRangeInput_UntouchedEmptyThenInvalidBlur_SuppressesOnlyEmptyMutation", a
 
   // Assert
   expect(input).toHaveAttribute("aria-invalid", "true");
-  expect(screen.getByTestId("range-state")).toHaveTextContent('"start":-1');
+  expect(screen.getByTestId("range-state")).toHaveTextContent("{}");
 });
 
 it("DatePicker_NextMonthDateSelection_EmitsExactCellResourcePayload", async () => {

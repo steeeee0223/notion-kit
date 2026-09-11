@@ -127,7 +127,7 @@ const plugins = {
   ui: [...DEFAULT_PLUGINS.ui, tagPluginUi],
 };
 
-const properties: ColumnDefs<typeof plugins> = [
+const properties: ColumnDefs<typeof plugins.data> = [
   { id: "name", name: "Name", type: "title" },
   {
     id: "tags",
@@ -138,7 +138,7 @@ const properties: ColumnDefs<typeof plugins> = [
 ];
 
 const now = Date.now();
-const data: Row<typeof plugins>[] = [
+const data: Row<typeof plugins.data>[] = [
   {
     id: "task-1",
     createdAt: now,
