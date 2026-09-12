@@ -1,7 +1,6 @@
 import { cn } from "@notion-kit/cn";
 import type { ColumnInfo } from "@notion-kit/table-hook";
 import type {
-  GroupingValueProps,
   MultiSelectPlugin,
   SelectPlugin,
 } from "@notion-kit/table-hook/plugins";
@@ -9,6 +8,7 @@ import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "@/common";
 
+import type { GroupingValueProps } from "../registry";
 import { DefaultGroupingValue } from "../utils";
 
 export function SelectGroupingValue({

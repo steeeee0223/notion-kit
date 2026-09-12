@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  cellSelectionFeature,
   columnFilteringFeature,
   columnGroupingFeature,
   columnOrderingFeature,
@@ -25,6 +26,7 @@ import { COMMON_AGGREGATION_FNS } from "@/methods";
 
 import {
   ColumnsInfoFeature,
+  type ColumnInfoCellApi,
   type ColumnInfoColumnApi,
   type ColumnsInfoOptions,
   type ColumnsInfoTableApi,
@@ -145,6 +147,10 @@ declare module "@tanstack/table-core" {
     rowActionsFeature: RowActionsColumnApi;
   }
 
+  interface Cell_FeatureMap {
+    columnsInfoFeature: ColumnInfoCellApi;
+  }
+
   interface Row_FeatureMap<TFeatures, TData extends RowData> {
     rowActionsFeature: RowActionsRowApi;
     extendedGroupingFeature: ExtendedGroupingRowApi & {
@@ -175,6 +181,7 @@ export * from "@/features/constants";
 export * from "@/features/types";
 
 export interface TableFeatures extends BaseTableFeatures {
+  cellSelectionFeature: typeof cellSelectionFeature;
   columnsInfoFeature: typeof ColumnsInfoFeature;
   countingFeature: typeof CountingFeature;
   freezingFeature: typeof FreezingFeature;
@@ -197,6 +204,7 @@ const COMMON_SORT_FNS = {
 export const DEFAULT_FEATURES = tableFeatures({
   columnFilteringFeature,
   globalFilteringFeature,
+  cellSelectionFeature,
   columnGroupingFeature,
   columnOrderingFeature,
   columnPinningFeature,

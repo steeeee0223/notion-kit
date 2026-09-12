@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   fireEvent,
   render,
@@ -15,11 +15,16 @@ import type {
   Row,
 } from "@notion-kit/table-hook";
 
-import { TableView } from "@/table-contexts";
+import { TableView, useTableViewCtx } from "@/table-contexts";
 
 import { renderTableView } from "./component-objects/render-table-view";
 import type { TableViewObject } from "./component-objects/table-view";
-import { mockData, mockProperties, mockResizeObserver } from "./mock";
+import {
+  createFullPluginFixture,
+  mockData,
+  mockProperties,
+  mockResizeObserver,
+} from "./mock";
 
 mockResizeObserver();
 
@@ -79,6 +84,15 @@ async function groupTableByDone(tableView: TableViewObject) {
   await tableView.clickOutside();
 }
 
+function NestedGrouping() {
+  const { table } = useTableViewCtx();
+  useEffect(() => {
+    table.setGrouping(["complete", "notes"]);
+    table.setExpanded(true);
+  }, [table]);
+  return null;
+}
+
 it("TableBody_EmptyData_RendersNoRowsAndCreatesFirstRow", async () => {
   const onDataChange = vi.fn<(change: DataChange) => void>();
   const tableView = renderTableView({
@@ -130,6 +144,20 @@ it("TableBody_GroupedData_RendersGroupRowsAndExpandedChildren", async () => {
   );
 
   expect(await screen.findAllByRole("row")).toHaveLength(2);
+});
+
+it("TableBody_NestedGrouping_RendersEachNestedRowsOwnValue", () => {
+  renderTableView({
+    ...createFullPluginFixture(),
+    children: <NestedGrouping />,
+  });
+
+  const nestedGroup = screen
+    .getAllByRole("group", { name: /^Group / })
+    .find((group) => group.getAttribute("aria-label")?.includes("notes:"));
+
+  expect(nestedGroup).toBeDefined();
+  expect(nestedGroup).toHaveTextContent(/first note|second note/);
 });
 
 it("TableHeader_ResizeStartAndEnd_PersistsExactColumnWidth", async () => {

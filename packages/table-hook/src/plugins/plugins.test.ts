@@ -6,41 +6,24 @@ import { arrayToEntity } from "@/lib/utils";
 import { resolveCountingMethod } from "@/methods";
 import type { CellPlugin, FilterValue } from "@/plugins";
 import {
-  checkbox as createCheckbox,
-  createdTime as createCreatedTime,
-  date as createDate,
-  email as createEmail,
-  lastEditedTime as createLastEditedTime,
-  multiSelect as createMultiSelect,
-  number as createNumber,
-  phone as createPhone,
-  select as createSelect,
-  text as createText,
-  title as createTitle,
-  url as createUrl,
+  checkbox,
+  createdTime,
+  date,
+  email,
   extractDateValue,
+  lastEditedTime,
+  multiSelect,
+  number,
+  phone,
+  select,
+  text,
   textMethodCapabilities,
+  title,
+  url,
   withDateCalculations,
 } from "@/plugins";
 import { useTableView } from "@/table-contexts/use-table-view";
 
-const baseConfig = {
-  icon: null,
-  renderCellValue: () => null,
-  renderCellEditor: () => ({ presentation: "inline" as const, content: null }),
-};
-const title = () => createTitle(baseConfig);
-const text = () => createText(baseConfig);
-const number = () => createNumber(baseConfig);
-const checkbox = () => createCheckbox(baseConfig);
-const select = () => createSelect(baseConfig);
-const multiSelect = () => createMultiSelect(baseConfig);
-const email = () => createEmail(baseConfig);
-const phone = () => createPhone(baseConfig);
-const url = () => createUrl(baseConfig);
-const date = () => createDate(baseConfig);
-const createdTime = () => createCreatedTime(baseConfig);
-const lastEditedTime = () => createLastEditedTime(baseConfig);
 const DEFAULT_PLUGINS = [
   title(),
   text(),
@@ -147,7 +130,6 @@ describe("Text-like filter operators", () => {
       expect(matches(plugin, "starts-with", "Alpha Beta", "ALP")).toBe(true);
       expect(matches(plugin, "ends-with", "Alpha Beta", "BETA")).toBe(true);
       expect(matches(plugin, "is-empty", "")).toBe(true);
-      expect(matches(plugin, "is-empty", undefined)).toBe(true);
       expect(matches(plugin, "is-not-empty", "x")).toBe(true);
       expect(matches(plugin, "equals", "Alpha", 1)).toBe(false);
     },
@@ -200,11 +182,7 @@ describe("Choice, checkbox, and number filter operators", () => {
     expect(matches(plugin, "is-empty", "   ")).toBe(true);
     expect(matches(plugin, "is-not-empty", "0")).toBe(true);
     expect(matches(plugin, "is-not-empty", "   ")).toBe(false);
-    for (const operand of [
-      "10",
-      null,
-      Number.NaN,
-    ] as unknown as FilterValue[]) {
+    for (const operand of ["10", null, Number.NaN] as FilterValue[]) {
       expect(matches(plugin, "equals", "10", operand)).toBe(false);
     }
     expect(matches(plugin, "equals", "invalid", 0)).toBe(false);
@@ -475,65 +453,18 @@ describe("Date filter operators", () => {
   });
 });
 
-describe("configured plugin factories", () => {
-  it("exposes separate value and editor capabilities to registry consumers", () => {
-    const plugin = createText(baseConfig);
-
-    expect(typeof plugin.renderCellValue).toBe("function");
-    expect(typeof plugin.renderCellEditor).toBe("function");
-  });
-
-  it("wires icons and renderer callbacks with the documented fallback", () => {
-    const renderCellValue = vi.fn(() => null);
-    const renderConfigMenu = vi.fn(() => null);
-    const icon = "icon";
-    const plugin = createTitle({ icon, renderCellValue, renderConfigMenu });
-
-    expect(plugin.meta.icon).toBe(icon);
-    expect(plugin.default.icon).toBe(icon);
-    expect(plugin.renderConfigMenu).toBe(renderConfigMenu);
-
-    const row = { ...baseRow, icon: { type: "emoji", src: "📌" } } as Row;
-    void plugin.renderCellValue({
-      propId: "title",
-      row,
-      data: "Task",
-      config: { showIcon: true },
-    });
-    expect(renderCellValue).toHaveBeenCalledWith(
-      expect.objectContaining({ icon: row.icon, data: "Task" }),
-    );
-  });
-
-  it("uses a distinct default icon when supplied", () => {
-    const plugin = createText({
-      icon: "menu",
-      defaultIcon: "property",
-      renderCellValue: () => null,
-    });
-    expect(plugin.meta.icon).not.toBe(plugin.default.icon);
-  });
-
-  it("BulkEditEligibility_BuiltInPlugins_OptOutOnlyForReadOnlyProperties", () => {
-    expect(
-      Object.fromEntries(
-        DEFAULT_PLUGINS.map((plugin) => [plugin.id, plugin.disableBulkEdit]),
-      ),
-    ).toEqual({
-      title: true,
-      text: undefined,
-      number: undefined,
-      checkbox: undefined,
-      select: undefined,
-      "multi-select": undefined,
-      email: undefined,
-      phone: undefined,
-      url: undefined,
-      date: undefined,
-      "created-time": true,
-      "last-edited-time": true,
-    });
-  });
+describe("data plugin factories", () => {
+  it.each([title(), text(), number(), checkbox(), select(), multiSelect()])(
+    "TestDataPluginFactory_BuiltInPlugin_ProvidesCoreDataContractFor$Id",
+    (plugin) => {
+      expect(plugin.id).toBeTypeOf("string");
+      expect(plugin.default).toBeTypeOf("object");
+      expect(plugin.fromValue).toBeTypeOf("function");
+      expect(plugin.toValue).toBeTypeOf("function");
+      expect(plugin.toTextValue).toBeTypeOf("function");
+      expect(plugin.isEmpty).toBeTypeOf("function");
+    },
+  );
 });
 
 const methodMatrix = {
@@ -860,11 +791,20 @@ describe("Scalar plugin value contracts", () => {
   });
 
   it("ScalarPlugins_ToValueAndText_PreserveCanonicalMeaning", () => {
-    expect(title().toValue("Task", baseRow)).toBe("Task");
-    expect(text().toTextValue("notes", baseRow)).toBe("notes");
-    expect(number().toTextValue(null, baseRow)).toBe("");
-    expect(checkbox().toTextValue(true, baseRow)).toBe("✅");
-    expect(checkbox().toTextValue(false, baseRow)).toBe("");
+    const titlePlugin = title();
+    const textPlugin = text();
+    const numberPlugin = number();
+    const checkboxPlugin = checkbox();
+
+    expect(titlePlugin.toValue("Task", baseRow)).toBe("Task");
+    expect(textPlugin.toTextValue("notes", baseRow)).toBe("notes");
+    expect(textPlugin.isEmpty("   ")).toBe(true);
+    expect(numberPlugin.toTextValue(null, baseRow)).toBe("");
+    expect(numberPlugin.isEmpty("abc")).toBe(true);
+    expect(numberPlugin.isEmpty("0")).toBe(false);
+    expect(checkboxPlugin.toTextValue(true, baseRow)).toBe("✅");
+    expect(checkboxPlugin.toTextValue(false, baseRow)).toBe("");
+    expect(checkboxPlugin.isEmpty(false)).toBe(true);
     expect(email().toValue("a@example.com", baseRow)).toBe("a@example.com");
   });
 });
@@ -890,7 +830,7 @@ describe("Plugin sorting boundaries", () => {
     },
   );
 
-  it("orders checkbox rows in the direction named by its sorting labels", () => {
+  it("keeps unchecked empty rows last in both directions", () => {
     const plugin = checkbox();
     const method = plugin.sorting!.methods[0]!;
     if (!("ascendingLabel" in method)) throw new Error("Expected value method");
@@ -922,7 +862,7 @@ describe("Plugin sorting boundaries", () => {
     act(() => result.current.table.setSorting([{ id: "value", desc: true }]));
     expect(
       result.current.table.getSortedRowModel().rows.map(({ id }) => id),
-    ).toEqual(["unchecked", "checked"]);
+    ).toEqual(["checked", "unchecked"]);
   });
 
   it("keeps empty dates last in ascending and descending table execution", () => {

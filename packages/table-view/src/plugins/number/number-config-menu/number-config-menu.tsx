@@ -1,8 +1,5 @@
 import { Icon } from "@notion-kit/icons";
-import type {
-  ConfigMenuProps,
-  NumberConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { NumberConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -12,6 +9,8 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
+import type { ConfigMenuRendererProps } from "@/plugins/renderers";
+
 import { DisplayTypeSelect } from "./display-type-select";
 import { FormatMenu } from "./format-menu";
 import { OptionSettings } from "./option-settings";
@@ -20,7 +19,7 @@ import { RoundingMenu } from "./rounding-menu";
 export function NumberConfigMenu({
   config,
   onChange,
-}: ConfigMenuProps<NumberConfig>) {
+}: ConfigMenuRendererProps<NumberConfig>) {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />

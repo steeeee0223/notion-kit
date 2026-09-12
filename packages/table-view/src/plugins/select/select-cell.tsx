@@ -1,12 +1,11 @@
+import type { OnChangeFn } from "@tanstack/react-table";
+
 import { cn } from "@notion-kit/cn";
-import type {
-  CellEditorProps,
-  CellValueProps,
-  SelectConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { SelectConfig } from "@notion-kit/table-hook/plugins";
 import { TooltipDescription, TooltipPreset } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, OptionTag } from "@/common";
+import { OptionTag } from "@/common/option-tag";
+import type { CellValueProps } from "@/plugins/renderers";
 
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
@@ -15,71 +14,58 @@ interface SelectCellValueProps extends CellValueProps<string[], SelectConfig> {
   multi?: boolean;
 }
 
-interface SelectCellEditorProps
-  extends CellEditorProps<string[], SelectConfig> {
+interface SelectCellEditorProps {
   multi?: boolean;
+  propId: string;
+  config: SelectConfig;
+  data: string[];
+  onChange: OnChangeFn<string[]>;
+  onConfigChange?: OnChangeFn<SelectConfig>;
+  onClose?: () => void;
+  onSelect?: () => void;
 }
 
 export function SelectCellValue({
   config,
   data: options,
   wrapped,
-  disabled,
-  layout,
-  tooltip,
-  onClick,
 }: SelectCellValueProps) {
-  if (layout !== "table" && layout !== "row-view" && options.length === 0)
-    return null;
+  if (options.length === 0) return null;
   return (
-    <CellTrigger
-      wrapped={wrapped}
-      aria-disabled={disabled}
-      layout={layout}
-      tooltip={tooltip}
-      widthType="select"
-      onClick={onClick}
-    >
-      <div className="flex items-center justify-between">
-        <div
-          className={cn(
-            "flex flex-nowrap gap-x-2 gap-y-1.5",
-            wrapped && "flex-wrap",
-          )}
-        >
-          {options.length > 0 ? (
-            options.map((name) => {
-              const option = config.options.items[name];
-              if (!option) return;
-              return (
-                <TooltipPreset
-                  key={option.id}
-                  disabled={layout !== "table"}
-                  description={
-                    option.description ? (
-                      <>
-                        <TooltipDescription text={option.name} />
-                        <TooltipDescription
-                          type="secondary"
-                          text={option.description}
-                        />
-                      </>
-                    ) : (
-                      option.name
-                    )
-                  }
-                  side="top"
-                >
-                  <OptionTag name={option.name} color={option.color} />
-                </TooltipPreset>
-              );
-            })
-          ) : layout === "row-view" ? (
-            <span className="text-muted">Empty</span>
-          ) : null}
-        </div>
+    <div className="flex items-center justify-between">
+      <div
+        className={cn(
+          "flex flex-nowrap gap-x-2 gap-y-1.5",
+          wrapped && "flex-wrap",
+        )}
+      >
+        {options.map((name) => {
+          const option = config.options.items[name];
+          if (!option) return;
+          return (
+            <TooltipPreset
+              key={option.id}
+              description={
+                option.description ? (
+                  <>
+                    <TooltipDescription text={option.name} />
+                    <TooltipDescription
+                      type="secondary"
+                      text={option.description}
+                    />
+                  </>
+                ) : (
+                  option.name
+                )
+              }
+              side="top"
+            >
+              <OptionTag name={option.name} color={option.color} />
+            </TooltipPreset>
+          );
+        })}
       </div>
-    </CellTrigger>
+    </div>
   );
 }
 
@@ -90,6 +76,8 @@ export function SelectCellEditor({
   data: options,
   onChange,
   onConfigChange,
+  onClose,
+  onSelect,
 }: SelectCellEditorProps) {
   const selectedOptions = Array.isArray(options) ? options : [];
   const menu = useSelectMenu({
@@ -99,7 +87,8 @@ export function SelectCellEditor({
     options: selectedOptions,
     onChange,
     onConfigChange,
+    onSelect,
   });
 
-  return <SelectMenu menu={menu} />;
+  return <SelectMenu menu={menu} onClose={onClose} />;
 }

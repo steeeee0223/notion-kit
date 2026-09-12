@@ -1,4 +1,6 @@
-export { CellTrigger } from "./cell-trigger";
+export { Cell } from "./cell";
+export { CellEditorPopover, CellRenderer } from "./cell-renderer";
+export type { CellPopoverOptions } from "./cell-renderer";
 export { CopyButton } from "./copy-button";
 export {
   DefaultIcon,
@@ -12,8 +14,8 @@ export { OptionTag } from "./option-tag";
 export { PropertySelect } from "./property-select";
 export { PropMeta } from "./prop-meta";
 export { RowActionGroup } from "./row-action-group";
+export { Table, Row } from "./table";
 export {
   TextInputPopover,
   TextInputPopoverContent,
 } from "./text-input-popover";
-export { TableCell } from "./table-cell";

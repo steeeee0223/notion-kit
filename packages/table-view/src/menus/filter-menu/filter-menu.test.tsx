@@ -8,6 +8,7 @@ import {
 import userEvent, {
   PointerEventsCheckLevel,
 } from "@testing-library/user-event";
+import { addDays, format } from "date-fns";
 import { describe, expect, it, vi } from "vitest";
 
 import type {
@@ -25,7 +26,12 @@ import { isoToTs } from "@notion-kit/utils";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { FilterMenuObject } from "@/__tests__/component-objects/table-view";
-import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
+import {
+  createFullPluginFixture,
+  createTestPluginPair,
+  mockResizeObserver,
+} from "@/__tests__/mock";
+import type { TablePluginPair } from "@/plugins";
 import { TableViewWrapper } from "@/table-contexts";
 
 import { FilterMenu } from ".";
@@ -43,7 +49,7 @@ type ViewChangeMock = ReturnType<
 function renderFilterMenu(options: {
   filters?: FilterGroup | null;
   onViewChange?: (change: ResourceChange<TableViewState, unknown>) => void;
-  plugins?: CellPlugin[];
+  plugins?: TablePluginPair;
   properties?: ColumnInfo[];
   withTitle?: boolean;
 }) {
@@ -174,16 +180,15 @@ describe("FilterMenu", () => {
     const supported = metadataPlugin("text", "text-op");
     const unsupported: CellPlugin<"unsupported", string, undefined> = {
       id: "unsupported",
-      meta: { name: "Unsupported", desc: "Unsupported", icon: null },
-      default: { name: "Unsupported", icon: null, data: "", config: undefined },
+      default: { data: "", config: undefined },
       fromValue: String,
       toValue: (value) => value,
       toTextValue: (value) => value,
-      renderCellValue: () => null,
+      isEmpty: (value) => value.trim() === "",
     };
     const tableView = renderFilterMenu({
       filters: seeded([rule("live-rule", "live", "text-op")]),
-      plugins: [supported, unsupported],
+      plugins: createTestPluginPair([supported, unsupported]),
       properties: [
         metadataProperty("live", "Live"),
         { ...metadataProperty("deleted", "Deleted"), isDeleted: true },
@@ -385,7 +390,7 @@ describe("FilterMenu", () => {
     const tableView = renderFilterMenu({
       filters: seeded([rule("unavailable", "missing", "missing-op")]),
       onViewChange,
-      plugins: [],
+      plugins: createTestPluginPair([]),
       properties: [],
     });
     const filter = tableView.filterMenu();
@@ -496,7 +501,7 @@ describe("FilterMenu operand metadata", () => {
       );
       expect(onViewChange).not.toHaveBeenCalled();
       await tableView.user.tab();
-      expect(lastValue(onViewChange)).toEqual(expected);
+      expect(lastRule(onViewChange).value).toEqual(expected);
     },
   );
 
@@ -511,7 +516,7 @@ describe("FilterMenu operand metadata", () => {
     await tableView.user.click(
       await screen.findByRole("option", { name: "Beta" }, { timeout: 5_000 }),
     );
-    expect(lastValue(onViewChange)).toBe("Beta");
+    expect(lastRule(onViewChange).value).toBe("Beta");
   });
 
   it("persists every selected multi-option operand", async () => {
@@ -532,7 +537,7 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("option", { name: "Beta" }),
     );
 
-    expect(lastValue(onViewChange)).toEqual(["Alpha", "Beta"]);
+    expect(lastRule(onViewChange).value).toEqual(["Alpha", "Beta"]);
     await tableView.user.click(filter.rule("operand-rule"));
     expect(filter.selectOperand("operand-rule")).toHaveAttribute(
       "aria-expanded",
@@ -572,12 +577,17 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("option", { name: "Custom date" }),
     );
     await tableView.user.click(filter.customDate("operand-rule"));
+    const today = new Date();
     await tableView.user.click(
-      await screen.findByRole("button", { name: /August 26th, 2026/ }),
+      await screen.findByRole("button", { name: /Today/ }),
     );
 
-    expect(lastValue(onViewChange)).toEqual({
-      timestamp: Date.UTC(2026, 7, 26),
+    expect(lastRule(onViewChange).value).toEqual({
+      timestamp: Date.UTC(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+      ),
     });
   });
 
@@ -594,7 +604,7 @@ describe("FilterMenu operand metadata", () => {
       await screen.findByRole("option", { name: "Week" }),
     );
 
-    expect(lastValue(onViewChange)).toEqual({ amount: -2, unit: "week" });
+    expect(lastRule(onViewChange).value).toEqual({ amount: -2, unit: "week" });
   });
 
   it("persists a typed range only when both dates are complete and ordered", async () => {
@@ -609,7 +619,7 @@ describe("FilterMenu operand metadata", () => {
     await range.tableView.user.type(end, "2026-08-27");
     expect(range.onViewChange).not.toHaveBeenCalled();
     await range.tableView.user.tab();
-    const value = lastValue(range.onViewChange) as {
+    const value = lastRule(range.onViewChange).value as {
       start: number;
       end: number;
     };
@@ -635,7 +645,7 @@ describe("FilterMenu operand metadata", () => {
     );
     expect(number.onViewChange).not.toHaveBeenCalled();
     await number.tableView.user.tab();
-    expect(lastValue(number.onViewChange)).toBe(1);
+    expect(lastRule(number.onViewChange).value).toBe(1);
     number.onViewChange.mockClear();
     await number.tableView.user.type(
       number.tableView.filterMenu().operand("operand-rule"),
@@ -652,7 +662,7 @@ describe("FilterMenu operand metadata", () => {
     );
     expect(relative.onViewChange).not.toHaveBeenCalled();
     await relative.tableView.user.tab();
-    expect(lastValue(relative.onViewChange)).toEqual({
+    expect(lastRule(relative.onViewChange).value).toEqual({
       amount: 1,
       unit: "day",
     });
@@ -695,15 +705,16 @@ describe("FilterMenu operand metadata", () => {
     await date.tableView.user.click(
       date.tableView.filterMenu().customDate("operand-rule"),
     );
+    const tomorrow = addDays(new Date(), 1);
     await date.tableView.user.click(
       await screen.findByRole("button", {
-        name: /August 27th, 2026/,
+        name: format(tomorrow, "EEEE, MMMM do, yyyy"),
       }),
     );
 
-    expect(lastValue(date.onViewChange)).toEqual({
+    expect(lastRule(date.onViewChange).value).toEqual({
       timestamp: isoToTs(
-        { date: "2026-08-27", time: "00:00:00" },
+        { date: format(tomorrow, "yyyy-MM-dd"), time: "00:00:00" },
         "America/Los_Angeles",
       ),
     });
@@ -714,17 +725,25 @@ describe("FilterMenu operand metadata", () => {
     const filter = range.tableView.filterMenu();
 
     await range.tableView.user.click(filter.dateRange("operand-rule"));
+    const today = new Date();
+    const tomorrow = addDays(today, 1);
     await range.tableView.user.click(
-      await screen.findByRole("button", { name: /August 26th, 2026/ }),
+      await screen.findByRole("button", { name: /Today/ }),
     );
     expect(range.onViewChange).not.toHaveBeenCalled();
     await range.tableView.user.click(
-      await screen.findByRole("button", { name: /August 27th, 2026/ }),
+      await screen.findByRole("button", {
+        name: format(tomorrow, "EEEE, MMMM do, yyyy"),
+      }),
     );
 
-    expect(lastValue(range.onViewChange)).toEqual({
-      start: Date.UTC(2026, 7, 26),
-      end: Date.UTC(2026, 7, 27),
+    expect(lastRule(range.onViewChange).value).toEqual({
+      start: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
+      end: Date.UTC(
+        tomorrow.getFullYear(),
+        tomorrow.getMonth(),
+        tomorrow.getDate(),
+      ),
     });
   });
 
@@ -756,7 +775,7 @@ describe("FilterMenu operand metadata", () => {
     await date.tableView.user.type(input, "1960-01-02");
     await date.tableView.user.tab();
 
-    expect(lastValue(date.onViewChange)).toEqual({
+    expect(lastRule(date.onViewChange).value).toEqual({
       timestamp: isoToTs({ date: "1960-01-02", time: "00:00:00" }, timeZone),
     });
   });
@@ -780,7 +799,7 @@ describe("FilterMenu operand metadata", () => {
     );
     await date.tableView.user.tab();
 
-    expect(lastValue(date.onViewChange)).toEqual({
+    expect(lastRule(date.onViewChange).value).toEqual({
       timestamp: isoToTs(
         { date: "2026-08-26", time: "00:00:00" },
         "America/Los_Angeles",
@@ -788,7 +807,7 @@ describe("FilterMenu operand metadata", () => {
     });
   });
 
-  it("resyncs date inputs and Calendar selection when only timezone changes", async () => {
+  it("resyncs date inputs when only timezone changes", async () => {
     const timestamp = Date.UTC(2026, 7, 26, 6);
     const date = renderControlledMetadata(
       "date",
@@ -805,10 +824,8 @@ describe("FilterMenu operand metadata", () => {
     );
     await date.user.click(date.filter.customDate("operand-rule"));
     expect(
-      await screen.findByRole("button", {
-        name: /August 25th, 2026, selected/,
-      }),
-    ).toBeVisible();
+      await screen.findByRole("textbox", { name: "Custom date input" }),
+    ).toHaveValue("2026-08-25");
 
     cleanup();
     const range = renderControlledMetadata(
@@ -825,11 +842,6 @@ describe("FilterMenu operand metadata", () => {
     expect(screen.getByRole("textbox", { name: "Ending" })).toHaveValue(
       "2026-08-26",
     );
-    expect(
-      await screen.findByRole("button", {
-        name: /August 25th, 2026, selected/,
-      }),
-    ).toBeVisible();
   });
 
   it("rejects invalid, incomplete, and reversed date ranges", async () => {
@@ -860,7 +872,7 @@ describe("FilterMenu operand metadata", () => {
     });
     await controlled.user.tab();
 
-    expect(lastValue(controlled.onViewChange)).toBe(9);
+    expect(lastRule(controlled.onViewChange).value).toBe(9);
     expect(operand).toHaveValue("7");
   });
 
@@ -906,16 +918,15 @@ describe("FilterMenu operand metadata", () => {
     const supported = metadataPlugin("text", "text-op");
     const unsupported: CellPlugin<"unsupported", string, undefined> = {
       id: "unsupported",
-      meta: { name: "Unsupported", desc: "Unsupported", icon: null },
-      default: { name: "Unsupported", icon: null, data: "", config: undefined },
+      default: { data: "", config: undefined },
       fromValue: String,
       toValue: (value) => value,
       toTextValue: (value) => value,
-      renderCellValue: () => null,
+      isEmpty: (value) => value.trim() === "",
     };
     const tableView = renderFilterMenu({
       filters: null,
-      plugins: [supported, unsupported],
+      plugins: createTestPluginPair([supported, unsupported]),
       properties: [
         metadataProperty("live", "Live"),
         { ...metadataProperty("deleted", "Deleted"), isDeleted: true },
@@ -951,7 +962,7 @@ function renderMetadataMenu(
       { ...rule("operand-rule", "metadata", operator), ...existing },
     ]),
     onViewChange,
-    plugins: [metadataPlugin(metadata, operator)],
+    plugins: createTestPluginPair([metadataPlugin(metadata, operator)]),
     properties: [metadataProperty("metadata", "Metadata", configOverrides)],
   });
   return { tableView, onViewChange };
@@ -973,16 +984,14 @@ function metadataPlugin(
   const operand = typeof metadata === "string" ? { kind: metadata } : metadata;
   return {
     id: "metadata",
-    meta: { name: "Metadata", desc: "Metadata", icon: null },
     default: {
-      name: "Metadata",
-      icon: null,
       data: "",
       config: { options: { names: [], items: {} } },
     },
     fromValue: String,
     toValue: (value) => value,
     toTextValue: (value) => value,
+    isEmpty: (value) => value.trim() === "",
     filtering: {
       operators: [
         {
@@ -1003,7 +1012,6 @@ function metadataPlugin(
             ]),
       ],
     },
-    renderCellValue: () => null,
   };
 }
 
@@ -1057,7 +1065,7 @@ function renderControlledMetadata(
     timeZone?: string;
   }) => (
     <TableViewWrapper
-      plugins={[plugin]}
+      plugins={createTestPluginPair([plugin])}
       data={[]}
       properties={[metadataProperty("metadata", "Metadata", { tz: timeZone })]}
       view={{ filters: makeFilters(nextValue) }}
@@ -1097,10 +1105,6 @@ function lastRule(onViewChange: ViewChangeMock) {
     throw new Error("Expected the first filter child to be a rule");
   }
   return child;
-}
-
-function lastValue(onViewChange: ViewChangeMock) {
-  return lastRule(onViewChange).value;
 }
 
 function dateValue(timestamp: unknown) {

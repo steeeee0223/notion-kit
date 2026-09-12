@@ -84,9 +84,7 @@ function getDateStart(value: unknown) {
       : value && typeof value === "object" && "start" in value
         ? (value as { start?: unknown }).start
         : undefined;
-  return typeof candidate === "number" &&
-    candidate >= 0 &&
-    Number.isFinite(candidate)
+  return typeof candidate === "number" && Number.isFinite(candidate)
     ? candidate
     : null;
 }

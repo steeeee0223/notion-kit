@@ -1,4 +1,3 @@
-import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
 
 import { getRandomColor } from "@notion-kit/utils";
@@ -6,35 +5,9 @@ import { getRandomColor } from "@notion-kit/utils";
 import { compareEmptyLastStrings, getFirstOption, groupByValue } from "@/fns";
 import type { Cell, ColumnInfo, Row } from "@/lib/types";
 
-import type {
-  CellEditorProps,
-  CellEditorResult,
-  CellPlugin,
-  CellValueProps,
-  ComparableValue,
-  ConfigMenuProps,
-  GroupingValueProps,
-} from "../types";
+import type { CellPlugin, ComparableValue } from "../types";
 import { compareStrings, createCompareFn, genericCounting } from "../utils";
 import type { MultiSelectPlugin, SelectConfig, SelectPlugin } from "./types";
-
-interface SelectRendererConfig {
-  icon: React.ReactNode;
-  defaultIcon?: React.ReactNode;
-  renderCellValue: (
-    props: CellValueProps<string[], SelectConfig> & { multi?: boolean },
-  ) => React.ReactNode;
-  renderCellEditor?: (
-    props: CellEditorProps<string[], SelectConfig> & { multi?: boolean },
-  ) => CellEditorResult;
-  renderConfigMenu?: (
-    props: ConfigMenuProps<SelectConfig> & { multi?: boolean },
-  ) => React.ReactNode;
-  renderGroupingValue?: (props: GroupingValueProps) => React.ReactNode;
-}
-
-export type SelectPluginConfig = SelectRendererConfig;
-export type MultiSelectPluginConfig = SelectRendererConfig;
 
 function getDefaultConfig(): SelectConfig {
   return {
@@ -51,7 +24,10 @@ function optionValues(operand: unknown, multiple: boolean) {
     : undefined;
 }
 
-function selectFiltering(multiple = false) {
+function selectFiltering<Data extends string | string[] | null>(
+  isEmpty: (data: Data) => boolean,
+  multiple = false,
+) {
   const values = (data: string | string[] | null | undefined) =>
     Array.isArray(data) ? data : typeof data === "string" ? [data] : [];
   const membershipOperator = (id: string, name: string, invert: boolean) => ({
@@ -89,15 +65,13 @@ function selectFiltering(multiple = false) {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" as const },
-          matches: (data: string | string[] | null | undefined) =>
-            values(data).length === 0,
+          matches: (data: Data) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" as const },
-          matches: (data: string | string[] | null | undefined) =>
-            values(data).length > 0,
+          matches: (data: Data) => !isEmpty(data),
         },
       ],
     },
@@ -153,18 +127,11 @@ function fromValue(
   return Array.from(values);
 }
 
-export function select(config: SelectPluginConfig): SelectPlugin {
-  const renderCellEditor = config.renderCellEditor;
+export function select(): SelectPlugin {
+  const isEmpty = (data: string | null) => data === null;
   return {
     id: "select",
-    meta: {
-      name: "Select",
-      icon: config.icon,
-      desc: "Use a select property to choose one option from a predefined list. Great for categorization.",
-    },
     default: {
-      name: "Select",
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: getDefaultConfig(),
     },
@@ -173,6 +140,7 @@ export function select(config: SelectPluginConfig): SelectPlugin {
       return options.at(0) ?? null;
     },
     toValue: (data) => data,
+    isEmpty,
     toTextValue: (data) => data ?? "",
     transferConfig: toSelectConfig,
     compare: createCompareFn<SelectPlugin>((a, b) => {
@@ -206,59 +174,23 @@ export function select(config: SelectPluginConfig): SelectPlugin {
         },
       ],
     },
-    counting: genericCounting,
-    ...selectFiltering(),
-    renderCellValue: ({ data, ...props }) =>
-      config.renderCellValue({
-        data: data ? [data] : [],
-        ...props,
-      }),
-    renderCellEditor: renderCellEditor
-      ? ({ data, onChange, ...props }) =>
-          renderCellEditor({
-            data: data ? [data] : [],
-            onChange: (updater) =>
-              onChange((prev) => {
-                const res = functionalUpdate(updater, prev ? [prev] : []);
-                return res.at(0) ?? null;
-              }),
-            ...props,
-            scope:
-              props.scope.kind === "cell"
-                ? props.scope
-                : {
-                    ...props.scope,
-                    selectedValues: props.scope.selectedValues.map((value) =>
-                      value ? [value] : [],
-                    ),
-                  },
-          })
-      : undefined,
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
+    counting: genericCounting(isEmpty),
+    ...selectFiltering(isEmpty),
   };
 }
 
-export function multiSelect(
-  config: MultiSelectPluginConfig,
-): MultiSelectPlugin {
-  const renderCellEditor = config.renderCellEditor;
+export function multiSelect(): MultiSelectPlugin {
+  const isEmpty = (data: string[]) => data.length === 0;
   return {
     id: "multi-select",
-    meta: {
-      name: "Multi-Select",
-      icon: config.icon,
-      desc: "Use a multi-select property to choose multiple options from a predefined list. Useful for tagging or categorization.",
-    },
     default: {
-      name: "Multi-Select",
-      icon: config.defaultIcon ?? config.icon,
       data: [],
       config: getDefaultConfig(),
     },
     fromValue: (value, config) => fromValue(value, config, "multi-select"),
     toValue: (data) => data.join(","),
     toGroupValue: (data) => data[0] ?? null,
+    isEmpty,
     toTextValue: (data) => data.join(","),
     compare: createCompareFn<MultiSelectPlugin>((a, b) => {
       if (a.length === 0 && b.length === 0) return 0;
@@ -292,16 +224,7 @@ export function multiSelect(
       ],
     },
     transferConfig: toSelectConfig,
-    counting: genericCounting,
-    ...selectFiltering(true),
-    renderCellValue: (props) =>
-      config.renderCellValue({ multi: true, ...props }),
-    renderCellEditor: renderCellEditor
-      ? (props) => renderCellEditor({ multi: true, ...props })
-      : undefined,
-    renderConfigMenu: config.renderConfigMenu
-      ? (props) => config.renderConfigMenu?.({ multi: true, ...props })
-      : undefined,
-    renderGroupingValue: config.renderGroupingValue,
+    counting: genericCounting(isEmpty),
+    ...selectFiltering(isEmpty, true),
   };
 }

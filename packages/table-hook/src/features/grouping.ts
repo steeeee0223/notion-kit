@@ -2,15 +2,11 @@ import type { DragEndEvent } from "@dnd-kit/react";
 import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
 import {
   constructRow,
-  flexRender,
   functionalUpdate,
   makeStateUpdater,
 } from "@tanstack/react-table";
 
-import {
-  getDefaultGroupingValue,
-  type ComparableValue,
-} from "@notion-kit/table-hook/plugins";
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _RowInstance, _TableInstance } from "@/features/types";
@@ -66,6 +62,7 @@ export interface ExtendedGroupingOptions {
 
 export interface ExtendedGroupingTableApi {
   getGroupedColumnInfo: () => ColumnInfo | null;
+  getGroupingValue: (groupId: string) => ComparableValue;
   getIsSomeGroupVisible: () => boolean;
   _setGroupingState: OnChangeFn<ExtendedGroupingState>;
   setGroupingColumn: OnChangeFn<string | null>;
@@ -82,9 +79,6 @@ export interface ExtendedGroupingTableApi {
   _settlePendingGroupedRowDrag: (
     groupSort: PluginMethodState["groupSort"],
   ) => void;
-  getGroupingValueRenderer: (
-    groupId: string,
-  ) => (props: { className?: string }) => React.ReactNode;
   /**
    * Use this to render the empty group
    */
@@ -97,7 +91,6 @@ export interface ExtendedGroupingRowApi {
   toggleGroupVisibility: () => void;
   getGroupSelectionState: () => "checked" | "indeterminate" | "unchecked";
   toggleGroupSelection: () => void;
-  renderGroupingValue: (props: { className?: string }) => React.ReactNode;
 }
 
 interface GroupSelectionRow {
@@ -244,6 +237,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       const info = table.getGroupedColumnInfo();
       if (!info) return [];
 
+      const plugin = table.getColumnPlugin(info.id);
       const groupingMethod = table.getSelectedGroupingMethod(info.id);
       const context = createRuntimePluginMethodContext(
         table,
@@ -254,8 +248,13 @@ export const ExtendedGroupingFeature: TableFeature = {
       const entries = new Map<string, GroupingEntry>();
 
       rows.forEach((row) => {
-        const original: unknown = row.properties[info.id]?.value;
-        const value = groupingMethod.function(original, row, info.id, context);
+        const property = row.properties[info.id];
+        const original = (
+          property ? property.value : plugin.default.data
+        ) as never;
+        const value = plugin.isEmpty(original)
+          ? null
+          : groupingMethod.function(original, row, info.id, context);
         const id = createGroupId(info.id, value);
         if (!entries.has(id)) {
           entries.set(id, {
@@ -284,6 +283,8 @@ export const ExtendedGroupingFeature: TableFeature = {
       if (!groupedColumnId) return null;
       return table.getColumnInfo(groupedColumnId);
     };
+    table.getGroupingValue = (groupId) =>
+      table.atoms.groupingState.get().groupValues[groupId]?.value ?? null;
     table.getIsSomeGroupVisible = () => {
       const { groupOrder, groupVisibility } = table.atoms.groupingState.get();
       return groupOrder.some((groupId) => groupVisibility[groupId] ?? true);
@@ -409,28 +410,6 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupValues: {},
       }));
     };
-    table.getGroupingValueRenderer = (groupId) => {
-      return function Renderer(props) {
-        const { groupValues } = table.atoms.groupingState.get();
-        const info = table.getGroupedColumnInfo();
-        if (!info) {
-          console.error(
-            `No grouping column id found for the grouped row ${groupId}`,
-          );
-          return null;
-        }
-        const plugin = table.getColumnPlugin(info.id);
-        const resolvedProps = {
-          ...props,
-          value: groupValues[groupId]?.value ?? null,
-          table,
-        };
-        if (plugin.renderGroupingValue) {
-          return flexRender(plugin.renderGroupingValue, resolvedProps);
-        }
-        return getDefaultGroupingValue(resolvedProps.value);
-      };
-    };
     table.getPlaceholderGroupedRow = (groupId) => {
       const original: RowModel = {
         id: groupId,
@@ -438,7 +417,15 @@ export const ExtendedGroupingFeature: TableFeature = {
         createdAt: 0,
         lastEditedAt: 0,
       };
-      return constructRow(table, groupId, original, 0, 0, []);
+      const row = constructRow(table, groupId, original, 0, 0, []);
+      const groupingColumnId = table.atoms.grouping.get()[0];
+      if (groupingColumnId) {
+        Object.assign(row, {
+          groupingColumnId,
+          groupingValue: table.getGroupingValue(groupId),
+        });
+      }
+      return row;
     };
   },
 
@@ -493,12 +480,6 @@ export const ExtendedGroupingFeature: TableFeature = {
         }
         return changed ? next : previous;
       });
-    };
-    prototype.renderGroupingValue = function (
-      this: { id: string },
-      props: { className?: string },
-    ) {
-      return flexRender(table.getGroupingValueRenderer(this.id), props);
     };
   },
 };

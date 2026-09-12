@@ -1,7 +1,5 @@
 import {
   aggregateCountAll,
-  aggregateCountEmpty,
-  aggregateCountNonEmpty,
   aggregateCountUnique,
   aggregateCountValues,
   compareBooleans,
@@ -59,80 +57,111 @@ const countUnique: CountingMethod = {
   aggregationFn: aggregateCountUnique,
   formatResult: (result, { isCapped }) => capCount(result, isCapped),
 };
-const countEmpty: CountingMethod = {
-  id: CountMethod.EMPTY,
-  name: "Empty",
-  label: "empty",
-  aggregationFn: aggregateCountEmpty,
-  formatResult: (result, { isCapped }) => capCount(result, isCapped),
-};
-const countNonEmpty: CountingMethod = {
-  id: CountMethod.NONEMPTY,
-  name: "Not empty",
-  label: "not empty",
-  aggregationFn: aggregateCountNonEmpty,
-  formatResult: (result, { isCapped }) => capCount(result, isCapped),
-};
-const countChecked: CountingMethod = {
-  ...countNonEmpty,
-  id: CountMethod.CHECKED,
-  name: "Checked",
-  label: "checked",
-};
-const countUnchecked: CountingMethod = {
-  ...countEmpty,
-  id: CountMethod.UNCHECKED,
-  name: "Unchecked",
-  label: "unchecked",
-};
-const percentageChecked: CountingMethod = {
-  id: CountMethod.PERCENTAGE_CHECKED,
-  name: "Checked",
-  label: "checked",
-  aggregationFn: aggregateCountNonEmpty,
-  formatResult: (result, { rows }) => percentage(result, rows.length),
-};
-const percentageUnchecked: CountingMethod = {
-  id: CountMethod.PERCENTAGE_UNCHECKED,
-  name: "Unchecked",
-  label: "unchecked",
-  aggregationFn: aggregateCountEmpty,
-  formatResult: (result, { rows }) => percentage(result, rows.length),
-};
-const percentageEmpty: CountingMethod = {
-  ...percentageUnchecked,
-  id: CountMethod.PERCENTAGE_EMPTY,
-  name: "Empty",
-  label: "empty",
-};
-const percentageNonEmpty: CountingMethod = {
-  ...percentageChecked,
-  id: CountMethod.PERCENTAGE_NONEMPTY,
-  name: "Not empty",
-  label: "not empty",
-};
+function createEmptyCountingMethods<Data>(isEmpty: (data: Data) => boolean) {
+  const toAggregationValue = (data: unknown) => data;
+  const aggregateEmpty: CountingMethod["aggregationFn"] = {
+    aggregate: ({ rows, getValue }) =>
+      rows.reduce(
+        (count, row) => count + Number(isEmpty(getValue(row) as Data)),
+        0,
+      ),
+  };
+  const aggregateNonEmpty: CountingMethod["aggregationFn"] = {
+    aggregate: ({ rows, getValue }) =>
+      rows.reduce(
+        (count, row) => count + Number(!isEmpty(getValue(row) as Data)),
+        0,
+      ),
+  };
+  const countEmpty = {
+    id: CountMethod.EMPTY,
+    name: "Empty",
+    label: "empty",
+    aggregationFn: aggregateEmpty,
+    toAggregationValue,
+    formatResult: (result, { isCapped }) => capCount(result, isCapped),
+  } satisfies CountingMethod;
+  const countNonEmpty = {
+    id: CountMethod.NONEMPTY,
+    name: "Not empty",
+    label: "not empty",
+    aggregationFn: aggregateNonEmpty,
+    toAggregationValue,
+    formatResult: (result, { isCapped }) => capCount(result, isCapped),
+  } satisfies CountingMethod;
+  const percentageEmpty = {
+    ...countEmpty,
+    id: CountMethod.PERCENTAGE_EMPTY,
+    formatResult: (result, { rows }) => percentage(result, rows.length),
+  } satisfies CountingMethod;
+  const percentageNonEmpty = {
+    ...countNonEmpty,
+    id: CountMethod.PERCENTAGE_NONEMPTY,
+    formatResult: (result, { rows }) => percentage(result, rows.length),
+  } satisfies CountingMethod;
 
-export const genericCounting = [
-  {
-    group: "Count",
-    functions: [countAll, countValues, countUnique, countEmpty, countNonEmpty],
-  },
-  {
-    group: "Percentage",
-    functions: [percentageEmpty, percentageNonEmpty],
-  },
-];
+  return { countEmpty, countNonEmpty, percentageEmpty, percentageNonEmpty };
+}
 
-export const checkboxCounting = [
-  {
-    group: "Count",
-    functions: [countAll, countChecked, countUnchecked],
-  },
-  {
-    group: "Percentage",
-    functions: [percentageChecked, percentageUnchecked],
-  },
-];
+export function genericCounting<Data>(isEmpty: (data: Data) => boolean) {
+  const methods = createEmptyCountingMethods(isEmpty);
+
+  return [
+    {
+      group: "Count",
+      functions: [
+        countAll,
+        countValues,
+        countUnique,
+        methods.countEmpty,
+        methods.countNonEmpty,
+      ],
+    },
+    {
+      group: "Percentage",
+      functions: [methods.percentageEmpty, methods.percentageNonEmpty],
+    },
+  ];
+}
+
+export function checkboxCounting<Data>(isEmpty: (data: Data) => boolean) {
+  const methods = createEmptyCountingMethods(isEmpty);
+  const countChecked = {
+    ...methods.countNonEmpty,
+    id: CountMethod.CHECKED,
+    name: "Checked",
+    label: "checked",
+  } satisfies CountingMethod;
+  const countUnchecked = {
+    ...methods.countEmpty,
+    id: CountMethod.UNCHECKED,
+    name: "Unchecked",
+    label: "unchecked",
+  } satisfies CountingMethod;
+  const percentageChecked = {
+    ...methods.percentageNonEmpty,
+    id: CountMethod.PERCENTAGE_CHECKED,
+    name: "Checked",
+    label: "checked",
+  } satisfies CountingMethod;
+  const percentageUnchecked = {
+    ...methods.percentageEmpty,
+    id: CountMethod.PERCENTAGE_UNCHECKED,
+    name: "Unchecked",
+    label: "unchecked",
+  } satisfies CountingMethod;
+
+  return [
+    {
+      group: "Count",
+      functions: [countAll, countChecked, countUnchecked],
+    },
+    {
+      group: "Percentage",
+      functions: [percentageChecked, percentageUnchecked],
+    },
+  ];
+}
 
 export function textMethodCapabilities<Data = string>() {
   return {
@@ -170,7 +199,9 @@ export function textMethodCapabilities<Data = string>() {
   };
 }
 
-export function textFilteringCapabilities<Config = undefined>() {
+export function textFilteringCapabilities<Config = undefined>(
+  isEmpty: (data: string) => boolean,
+) {
   const normalizeOperand = (operand: unknown) =>
     typeof operand === "string" ? operand.toLowerCase() : null;
   const normalizeData = (data: string | undefined) =>
@@ -223,13 +254,13 @@ export function textFilteringCapabilities<Config = undefined>() {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" as const },
-          matches: (data: string | undefined) => !data,
+          matches: (data: string) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" as const },
-          matches: (data: string | undefined) => Boolean(data),
+          matches: (data: string) => !isEmpty(data),
         },
       ],
     },

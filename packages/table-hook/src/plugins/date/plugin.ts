@@ -15,12 +15,7 @@ import {
 import type { Row } from "@/lib/types";
 import type { CountingMethod, CountingMethodGroup } from "@/methods";
 
-import type {
-  CellValueProps,
-  ComparableValue,
-  FilterEvaluationContext,
-  PluginFactoryConfig,
-} from "../types";
+import type { ComparableValue, FilterEvaluationContext } from "../types";
 import { createCompareFn, genericCounting } from "../utils";
 import type {
   CreatedTimePlugin,
@@ -38,21 +33,6 @@ import {
   type RelativeDateOperand,
 } from "./utils";
 
-export type DatePluginConfig = PluginFactoryConfig<DatePlugin>;
-
-interface DerivedTimePluginConfig {
-  icon: React.ReactNode;
-  defaultIcon?: React.ReactNode;
-  renderCellValue: (
-    props: CellValueProps<DateData, DateConfig>,
-  ) => React.ReactNode;
-  renderConfigMenu?: DatePlugin["renderConfigMenu"];
-  renderGroupingValue?: DatePlugin["renderGroupingValue"];
-}
-
-export type CreatedTimePluginConfig = DerivedTimePluginConfig;
-export type LastEditedTimePluginConfig = DerivedTimePluginConfig;
-
 type DateValue = DateData;
 type DateExtractor<Data> = (data: Data | undefined, row: Row) => DateValue;
 
@@ -66,7 +46,10 @@ export const extractLastEditedTime: DateExtractor<null> = (_data, row) => ({
   includeTime: true,
 });
 
-function dateCapabilities<Data>(extract: DateExtractor<Data>) {
+function dateCapabilities<Data>(
+  extract: DateExtractor<Data>,
+  isEmpty: (data: Data) => boolean,
+) {
   const grouping =
     (
       function_: (
@@ -277,15 +260,13 @@ function dateCapabilities<Data>(extract: DateExtractor<Data>) {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" as const },
-          matches: (data: Data | undefined, row: Row) =>
-            extract(data, row).start === undefined,
+          matches: (data: Data) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" as const },
-          matches: (data: Data | undefined, row: Row) =>
-            extract(data, row).start !== undefined,
+          matches: (data: Data) => !isEmpty(data),
         },
         {
           id: "relative-to-today",
@@ -410,25 +391,19 @@ export function withDateCalculations<Data>(
   ];
 }
 
-export function date(config: DatePluginConfig): DatePlugin {
+export function date(): DatePlugin {
   const id = "date";
-  const name = "Date";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isEmpty = (data: DateData) => data.start === undefined;
   return {
     id,
-    meta: {
-      name,
-      icon: config.icon,
-      desc: "Accepts a date or a date range (time optional). Useful for deadlines, especially with calendar and timeline views.",
-    },
     default: {
-      name,
-      icon: config.defaultIcon ?? config.icon,
       data: {},
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromValue: () => ({}),
     toValue: (data) => data.start ?? null,
+    isEmpty,
     toTextValue: (data) =>
       toDateString(data, { dateFormat: "full", timeFormat: "24-hour", tz }),
     toGroupValue: (data) => {
@@ -442,37 +417,24 @@ export function date(config: DatePluginConfig): DatePlugin {
       if (b.start === undefined) return -1;
       return compareNumbers(a.start, b.start);
     }),
-    ...dateCapabilities(extractDateValue),
-    counting: withDateCalculations(genericCounting, extractDateValue),
-    renderCellValue: config.renderCellValue,
-    renderCellEditor: config.renderCellEditor,
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
+    ...dateCapabilities(extractDateValue, isEmpty),
+    counting: withDateCalculations(genericCounting(isEmpty), extractDateValue),
   };
 }
 
-export function createdTime(
-  config: CreatedTimePluginConfig,
-): CreatedTimePlugin {
+export function createdTime(): CreatedTimePlugin {
   const id = "created-time";
-  const name = "Created time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isEmpty = () => false;
   return {
     id,
-    disableBulkEdit: true,
-    meta: {
-      name,
-      icon: config.icon,
-      desc: "Records the timestamp of an item's creation. Auto-generated and not editable.",
-    },
     default: {
-      name,
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromValue: () => null,
     toValue: (_, row) => row.createdAt,
+    isEmpty,
     toTextValue: (_, row) =>
       toDateString(
         { start: row.createdAt, includeTime: true },
@@ -480,41 +442,28 @@ export function createdTime(
       ),
     toGroupValue: (_, row) => trimTs(row.createdAt, "date"),
     compare: (rowA, rowB) => compareNumbers(rowA.createdAt, rowB.createdAt),
-    ...dateCapabilities(extractCreatedTime),
-    counting: withDateCalculations(genericCounting, extractCreatedTime, true),
-    renderCellValue: ({ row, data: _data, ...props }) =>
-      config.renderCellValue({
-        data: { start: row.createdAt, includeTime: true },
-        row,
-        ...props,
-      }),
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
+    ...dateCapabilities(extractCreatedTime, isEmpty),
+    counting: withDateCalculations(
+      genericCounting(isEmpty),
+      extractCreatedTime,
+      true,
+    ),
   };
 }
 
-export function lastEditedTime(
-  config: LastEditedTimePluginConfig,
-): LastEditedTimePlugin {
+export function lastEditedTime(): LastEditedTimePlugin {
   const id = "last-edited-time";
-  const name = "Last edited time";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isEmpty = () => false;
   return {
     id,
-    disableBulkEdit: true,
-    meta: {
-      name,
-      icon: config.icon,
-      desc: "Records the timestamp of an item's last edit. Auto-updated and not editable.",
-    },
     default: {
-      name,
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: { dateFormat: "full", timeFormat: "24-hour", tz },
     },
     fromValue: () => null,
     toValue: (_, row) => row.lastEditedAt,
+    isEmpty,
     toTextValue: (_, row) =>
       toDateString(
         { start: row.lastEditedAt, includeTime: true },
@@ -523,19 +472,11 @@ export function lastEditedTime(
     toGroupValue: (_, row) => trimTs(row.lastEditedAt, "date"),
     compare: (rowA, rowB) =>
       compareNumbers(rowA.lastEditedAt, rowB.lastEditedAt),
-    ...dateCapabilities(extractLastEditedTime),
+    ...dateCapabilities(extractLastEditedTime, isEmpty),
     counting: withDateCalculations(
-      genericCounting,
+      genericCounting(isEmpty),
       extractLastEditedTime,
       true,
     ),
-    renderCellValue: ({ row, data: _data, ...props }) =>
-      config.renderCellValue({
-        data: { start: row.lastEditedAt, includeTime: true },
-        row,
-        ...props,
-      }),
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }

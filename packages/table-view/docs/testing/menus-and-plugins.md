@@ -14,9 +14,8 @@ headless data semantics.
 - Plugin renderers, config menus, grouping values, and editors preserve their
   user-visible behavior.
 - Locked views block mutation while leaving permitted navigation available.
-- Bulk editing is discovered through `renderCellEditor`, not built-in plugin
-  IDs. A property is eligible only with that capability and without
-  `disableBulkEdit`.
+- Bulk editing is discovered through an adapter's optional `renderBulkEditor`,
+  not built-in plugin IDs. A property is eligible only with that capability.
 - A custom popover editor receives the correct detached-popover routing and
   config callbacks; its default-data functional update commits once across the
   selected rows.

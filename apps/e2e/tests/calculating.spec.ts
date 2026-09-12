@@ -1,15 +1,6 @@
 import { TableViewObject } from "./component-objects/table-view";
 import { expect, test } from "./fixtures";
 
-async function setCalculation(
-  table: TableViewObject,
-  property: string,
-  category: "Count" | "Percentage",
-  method: string,
-) {
-  await table.setCalculation(property, category, method);
-}
-
 async function expectCalculation(
   table: TableViewObject,
   property: string,
@@ -33,7 +24,7 @@ test("Calculating_TextAndCheckboxMethods_RenderExactResults", async ({
     ["Not empty", "not empty", "2"],
   ] as const;
   for (const [method, label, value] of textMethods) {
-    await setCalculation(table, "Notes", "Count", method);
+    await table.setCalculation("Notes", "Count", method);
     await expectCalculation(table, "Notes", label, value);
   }
 
@@ -44,7 +35,7 @@ test("Calculating_TextAndCheckboxMethods_RenderExactResults", async ({
     ["Percentage", "Checked", "checked", "33.3%"],
   ] as const;
   for (const [category, method, label, value] of checkboxMethods) {
-    await setCalculation(table, "Complete", category, method);
+    await table.setCalculation("Complete", category, method);
     await expectCalculation(table, "Complete", label, value);
   }
 
@@ -57,12 +48,12 @@ test("Calculating_TextAndCheckboxMethods_RenderExactResults", async ({
 test("Calculating_EditAddAndDelete_RecomputesImmediately", async ({ page }) => {
   const table = await TableViewObject.open(page, "controlled");
 
-  await setCalculation(table, "Notes", "Count", "Values");
+  await table.setCalculation("Notes", "Count", "Values");
   await expectCalculation(table, "Notes", "values", "2");
   await table.cellEditor("Alpha", "first note").fill("");
   await expectCalculation(table, "Notes", "values", "1");
 
-  await setCalculation(table, "Notes", "Count", "All");
+  await table.setCalculation("Notes", "Count", "All");
   await table.table().getByRole("button", { name: "New page" }).click();
   await expect(table.rows()).toHaveCount(4);
   await expectCalculation(table, "Notes", "count", "4");
@@ -71,4 +62,20 @@ test("Calculating_EditAddAndDelete_RecomputesImmediately", async ({ page }) => {
   await addedRowActions.delete();
   await expect(table.rows()).toHaveCount(3);
   await expectCalculation(table, "Notes", "count", "3");
+});
+
+test("Calculating_OpenMenu_KeepsFooterVisibleAfterPointerLeaves", async ({
+  page,
+}) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const trigger = table.calculation("Notes");
+  const footer = trigger.locator(
+    'xpath=ancestor::*[@data-slot="table-row-content"]',
+  );
+  await trigger.click();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+  await page.mouse.move(0, 0);
+
+  await expect(footer).toHaveCSS("opacity", "1");
 });

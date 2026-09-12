@@ -1,14 +1,12 @@
 import { within } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
-import { findMenuByHeading, MenuSurfaceObject } from "./menu-surface";
+import { MenuSurfaceObject } from "./menu-surface";
 
 export class SelectGroupingMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new SelectGroupingMenuObject(
-      user,
-      await findMenuByHeading("Group by"),
-    );
+    const menu = await MenuSurfaceObject.findByHeading(user, "Group by");
+    return new SelectGroupingMenuObject(user, menu.root);
   }
 
   heading() {
@@ -40,16 +38,14 @@ export class SelectGroupingMenuObject extends MenuSurfaceObject {
 
   async backToViewSettings() {
     await this.back();
-    return new MenuSurfaceObject(
-      this.user,
-      await findMenuByHeading("View Settings"),
-    );
+    return MenuSurfaceObject.findByHeading(this.user, "View Settings");
   }
 }
 
 export class EditGroupingMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new EditGroupingMenuObject(user, await findMenuByHeading("Group"));
+    const menu = await MenuSurfaceObject.findByHeading(user, "Group");
+    return new EditGroupingMenuObject(user, menu.root);
   }
 
   heading() {
@@ -132,9 +128,6 @@ export class EditGroupingMenuObject extends MenuSurfaceObject {
 
   async backToViewSettings() {
     await this.back();
-    return new MenuSurfaceObject(
-      this.user,
-      await findMenuByHeading("View Settings"),
-    );
+    return MenuSurfaceObject.findByHeading(this.user, "View Settings");
   }
 }

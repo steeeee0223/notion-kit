@@ -80,14 +80,14 @@ export function DateRangeInput({
 interface DateTimeInputProps {
   id: string;
   value?: number; // timestamp in ms
-  onChange: (ts: number) => void;
+  onChange: (ts: number | undefined) => void;
   tz?: string;
 }
 
 function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
   const [error, setError] = useState(false);
   const getValue = (): DateTimeSchema => {
-    if (ts === undefined || ts < 0) return { date: "", time: "" };
+    if (ts === undefined) return { date: "", time: "" };
     const [date, time] = formatDate(ts, {
       dateFormat: "_edit_mode",
       timeFormat: "_edit_mode",
@@ -101,7 +101,9 @@ function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse(value);
     setError(!res.success);
-    const nextTs = res.success ? parsedDateTimeToTs(res.data, tz) : -1;
+    if (!res.success) return;
+    const nextTs =
+      res.data.date === "" ? undefined : parsedDateTimeToTs(res.data, tz);
     if (nextTs !== ts) onChange(nextTs);
   };
 
@@ -142,7 +144,7 @@ function DateTimeInput({ id, value: ts, onChange, tz }: DateTimeInputProps) {
 interface DateInputProps {
   id: string;
   value?: number; // timestamp in ms
-  onChange: (ts: number) => void;
+  onChange: (ts: number | undefined) => void;
   tz?: string;
 }
 
@@ -156,7 +158,9 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
   const handleBlur = () => {
     const res = dateTimeSchema.safeParse({ date: value, time: "" });
     setError(!res.success);
-    const nextTs = res.success ? parsedDateTimeToTs(res.data, tz) : -1;
+    if (!res.success) return;
+    const nextTs =
+      res.data.date === "" ? undefined : parsedDateTimeToTs(res.data, tz);
     const unchangedEmpty = value === "" && ts === undefined;
     if (!unchangedEmpty && nextTs !== ts) onChange(nextTs);
   };
@@ -175,7 +179,7 @@ function DateInput({ id, value: ts, onChange, tz }: DateInputProps) {
 }
 
 function getTimeValue(ts?: number, tz?: string) {
-  if (ts === undefined || ts < 0) return "";
+  if (ts === undefined) return "";
   return formatDate(ts, {
     dateFormat: "_edit_mode",
     timeFormat: "hidden",

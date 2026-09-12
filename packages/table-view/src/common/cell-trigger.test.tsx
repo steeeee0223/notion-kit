@@ -1,9 +1,8 @@
 import type React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
-import { CellTrigger } from "./cell-trigger";
+import { CellTrigger, CellTriggerScope } from "./cell-trigger";
 
 function EventDelegationHarness({
   children,
@@ -42,7 +41,9 @@ it("CellTrigger_PropagationOptOut_AllowsParentInteractions", () => {
   const parentKeyDown = vi.fn();
   render(
     <EventDelegationHarness onClick={parentClick} onKeyDown={parentKeyDown}>
-      <CellTrigger stopPropagation={false}>Value</CellTrigger>
+      <CellTriggerScope stopPropagation={false}>
+        <CellTrigger>Value</CellTrigger>
+      </CellTriggerScope>
     </EventDelegationHarness>,
   );
   const trigger = screen.getByRole("button", { name: "Value" });
@@ -54,32 +55,24 @@ it("CellTrigger_PropagationOptOut_AllowsParentInteractions", () => {
   expect(parentKeyDown).toHaveBeenCalledOnce();
 });
 
-it("CellTrigger_TooltipTitleAndDescription_AreShownOnHover", async () => {
-  const user = userEvent.setup();
+it("CellTrigger_ScopeLabel_ProvidesTheAccessibleName", () => {
   render(
-    <CellTrigger
-      layout="board"
-      tooltip={{ title: "Status", description: "Current workflow state" }}
-    >
-      Done
-    </CellTrigger>,
+    <CellTriggerScope ariaLabel="Status: Done">
+      <CellTrigger>Done</CellTrigger>
+    </CellTriggerScope>,
   );
 
-  await user.hover(screen.getByRole("button", { name: "Done" }));
-
-  expect(await screen.findByText("Status")).toBeVisible();
-  expect(screen.getByText("Current workflow state")).toBeVisible();
+  expect(screen.getByRole("button", { name: "Status: Done" })).toBeVisible();
 });
 
-it("CellTrigger_TitleOnlyTooltip_IsShownOnHover", async () => {
-  const user = userEvent.setup();
+it("CellTrigger_ScopeClassName_IsAppliedToTheTrigger", () => {
   render(
-    <CellTrigger layout="list" widthType="select" tooltip={{ title: "Tags" }}>
-      Feature
-    </CellTrigger>,
+    <CellTriggerScope className="text-sm">
+      <CellTrigger>Feature</CellTrigger>
+    </CellTriggerScope>,
   );
 
-  await user.hover(screen.getByRole("button", { name: "Feature" }));
-
-  expect(await screen.findByText("Tags")).toBeVisible();
+  expect(screen.getByRole("button", { name: "Feature" })).toHaveClass(
+    "text-sm",
+  );
 });

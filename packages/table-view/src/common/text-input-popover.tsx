@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useId, useRef } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField, useRect } from "@notion-kit/hooks";
@@ -10,6 +10,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
+
+import { useCellEditorSelection } from "./use-cell-editor-selection";
 
 interface TextInputPopoverProps extends TextInputPopoverContentProps {
   renderTrigger: ({ width }: { width: number }) => React.ReactElement;
@@ -21,9 +23,13 @@ export function TextInputPopover({
   ...props
 }: TextInputPopoverProps) {
   const { ref, rect } = useRect<HTMLButtonElement>();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen, onOpenChangeComplete] = useCellEditorSelection();
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+      onOpenChangeComplete={onOpenChangeComplete}
+    >
       <PopoverTrigger
         ref={ref}
         nativeButton={false}

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { OnChangeFn } from "@tanstack/react-table";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
@@ -11,11 +12,20 @@ import type {
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
-import { createFullPluginFixture, mockResizeObserver } from "@/__tests__/mock";
-import { DEFAULT_PLUGINS } from "@/plugins";
+import {
+  createFullPluginFixture,
+  extendDefaultPlugins,
+  mockResizeObserver,
+} from "@/__tests__/mock";
+import type { TableUiPlugin } from "@/plugins";
+import {
+  createBulkEditorRenderer,
+  createCellRenderer,
+} from "@/plugins/renderers";
 import { TableViewWrapper, useTableViewCtx } from "@/table-contexts";
 
 import { BulkEditBar } from "./bulk-edit-bar";
+import { BulkEditorPopover } from "./bulk-editor";
 
 mockResizeObserver();
 
@@ -65,28 +75,43 @@ function createTextLikePopoverPlugin(
   onCommit: (
     onChange: (value: string | ((previous: string) => string)) => void,
   ) => void,
-): CellPlugin<string, string, undefined> {
-  return {
+): {
+  data: CellPlugin<string, string, undefined>;
+  ui: TableUiPlugin<CellPlugin<string, string, undefined>>;
+} {
+  const data: CellPlugin<string, string, undefined> = {
     id,
-    meta: { name, desc: "", icon: null },
-    default: { name, icon: null, data: "draft", config: undefined },
+    default: { data: "draft", config: undefined },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     toTextValue: (data) => data,
-    renderCellValue: ({ data, onClick }) => (
-      <button type="button" onClick={onClick}>
-        {data}
-      </button>
-    ),
-    renderCellEditor: ({ onChange }) => ({
-      presentation: "popover",
-      content: (
-        <button type="button" onClick={() => onCommit(onChange)}>
-          Commit {name}
-        </button>
-      ),
-    }),
+    isEmpty: (data) => data.trim() === "",
   };
+  const ui: TableUiPlugin<typeof data> = {
+    id,
+    meta: { name, desc: "", icon: null },
+    default: { name, icon: null },
+    renderCell: createCellRenderer(({ textValue }) => textValue),
+    renderBulkEditor: createBulkEditorRenderer<typeof data>(
+      ({ data, disabled, icon, label, onChange }) => (
+        <BulkEditorPopover
+          disabled={disabled}
+          icon={icon}
+          initialData={data}
+          label={label}
+          onChange={onChange}
+        >
+          {() => (
+            <button type="button" onClick={() => onCommit(onChange)}>
+              Commit {name}
+            </button>
+          )}
+        </BulkEditorPopover>
+      ),
+    ),
+    renderGroupingValue: () => null,
+  };
+  return { data, ui };
 }
 
 function addTextLikeColumn(
@@ -100,6 +125,37 @@ function addTextLikeColumn(
     row.properties[id] = { id: `${row.id}-${id}`, value: values[row.id] ?? "" };
   }
 }
+
+it("BulkEditorPopover_ConsecutiveFunctionalUpdates_ComposeAgainstTheLatestDraft", async () => {
+  const onChange = vi.fn<OnChangeFn<string>>();
+  const user = userEvent.setup();
+  render(
+    <BulkEditorPopover
+      icon={null}
+      initialData=""
+      label="Draft"
+      onChange={onChange}
+    >
+      {(data, update) => (
+        <button
+          type="button"
+          onClick={() => {
+            update((previous) => `${previous}a`);
+            update((previous) => `${previous}b`);
+          }}
+        >
+          Update {data}
+        </button>
+      )}
+    </BulkEditorPopover>,
+  );
+  await user.click(screen.getByRole("button", { name: "Draft" }));
+
+  await user.click(screen.getByRole("button", { name: "Update" }));
+
+  expect(screen.getByRole("button", { name: "Update ab" })).toBeVisible();
+  expect(onChange).toHaveBeenLastCalledWith("ab");
+});
 
 it.each(["table", "list", "timeline"] as const)(
   "BulkEditBar_%sLayout_SelectedRow_ShowsOnlyEligibleColumnControls",
@@ -246,7 +302,7 @@ it("BulkEditBar_CustomPopoverEditor_IsDiscoveredAndResolvesItsFunctionalDraftInO
   const onDataChange = vi.fn<(change: DataChange) => void>();
   const table = renderTableView({
     ...fixture,
-    plugins: [...DEFAULT_PLUGINS, custom],
+    plugins: extendDefaultPlugins([custom.data], [custom.ui]),
     onDataChange,
     children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
   });
@@ -273,18 +329,16 @@ it("BulkEditBar_CustomPopoverEditor_IsDiscoveredAndResolvesItsFunctionalDraftInO
 
 it("BulkEditBar_OnlyShowsCustomPluginsWithAnEnabledEditor", async () => {
   const fixture = createFullPluginFixture();
-  const valueOnly: CellPlugin<string, string, undefined> = {
-    ...createTextLikePopoverPlugin("value-only", "Value only", () => undefined),
-    renderCellEditor: undefined,
-  };
-  const disabledEditor: CellPlugin<string, string, undefined> = {
-    ...createTextLikePopoverPlugin(
-      "disabled-editor",
-      "Disabled editor",
-      () => undefined,
-    ),
-    disableBulkEdit: true,
-  };
+  const valueOnly = createTextLikePopoverPlugin(
+    "value-only",
+    "Value only",
+    () => undefined,
+  );
+  const disabledEditor = createTextLikePopoverPlugin(
+    "disabled-editor",
+    "Disabled editor",
+    () => undefined,
+  );
   const editable = createTextLikePopoverPlugin(
     "editable",
     "Editable",
@@ -295,7 +349,14 @@ it("BulkEditBar_OnlyShowsCustomPluginsWithAnEnabledEditor", async () => {
   addTextLikeColumn(fixture, "editable", "Editable", {});
   renderTableView({
     ...fixture,
-    plugins: [...DEFAULT_PLUGINS, valueOnly, disabledEditor, editable],
+    plugins: extendDefaultPlugins(
+      [valueOnly.data, disabledEditor.data, editable.data],
+      [
+        { ...valueOnly.ui, renderBulkEditor: undefined },
+        { ...disabledEditor.ui, renderBulkEditor: undefined },
+        editable.ui,
+      ],
+    ),
     children: <SelectFirstRow />,
   });
 
@@ -322,7 +383,10 @@ it("BulkEditBar_TwoPopoverColumns_RouteTheVisiblePayloadAndMutationToTheLatestCo
   const onDataChange = vi.fn<(change: DataChange) => void>();
   const table = renderTableView({
     ...fixture,
-    plugins: [...DEFAULT_PLUGINS, first, second],
+    plugins: extendDefaultPlugins(
+      [first.data, second.data],
+      [first.ui, second.ui],
+    ),
     onDataChange,
     children: <SelectRows rowIds={["row-alpha", "row-empty"]} />,
   });
@@ -353,34 +417,45 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
   const fixture = createFullPluginFixture();
   const configurable: CellPlugin<"configurable", string, { mode: string }> = {
     id: "configurable",
-    meta: { name: "Configurable", desc: "", icon: null },
     default: {
-      name: "Configurable",
-      icon: null,
       data: "",
       config: { mode: "default" },
     },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (data) => data,
     toTextValue: (data) => data,
-    renderCellValue: ({ data, onClick }) => (
-      <button type="button" onClick={onClick}>
-        {data}
-      </button>
-    ),
-    renderCellEditor: ({ onConfigChange }) => ({
-      presentation: "popover",
-      content: (
-        <button
-          type="button"
-          onClick={() =>
-            onConfigChange?.((config) => ({ mode: `${config.mode}!` }))
-          }
+    isEmpty: (data) => data.trim() === "",
+  };
+  const configurableUi: TableUiPlugin<typeof configurable> = {
+    id: "configurable",
+    meta: { name: "Configurable", desc: "", icon: null },
+    default: { name: "Configurable", icon: null },
+    renderCell: createCellRenderer(({ textValue }) => textValue),
+    renderBulkEditor: createBulkEditorRenderer<typeof configurable>(
+      ({ data, disabled, icon, label, onConfigChange }) => (
+        <BulkEditorPopover
+          disabled={disabled}
+          icon={icon}
+          initialData={data}
+          label={label}
+          onChange={() => undefined}
         >
-          Change config
-        </button>
+          {() => (
+            <button
+              type="button"
+              onClick={() =>
+                onConfigChange?.((config: { mode: string }) => ({
+                  mode: `${config.mode}!`,
+                }))
+              }
+            >
+              Change config
+            </button>
+          )}
+        </BulkEditorPopover>
       ),
-    }),
+    ),
+    renderGroupingValue: () => null,
   };
   fixture.properties.push({
     id: "configurable",
@@ -397,7 +472,7 @@ it("BulkEditBar_CustomEditor_ForwardsConfigUpdatesThroughTheColumnResource", asy
   const propertyChanges: unknown[] = [];
   const table = renderTableView({
     ...fixture,
-    plugins: [...DEFAULT_PLUGINS, configurable],
+    plugins: extendDefaultPlugins([configurable], [configurableUi]),
     onPropertiesChange: (change) => propertyChanges.push(change),
     children: <SelectFirstRow />,
   });

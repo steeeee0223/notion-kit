@@ -32,7 +32,7 @@ export function SideView({ children }: React.PropsWithChildren) {
               hideClose
               id={visibleRowId ?? undefined}
               side="right"
-              className="w-150 overflow-x-hidden overflow-y-auto sm:max-w-150"
+              className="w-full overflow-x-hidden overflow-y-auto md:max-w-150"
             >
               {visibleRowId && (
                 <>

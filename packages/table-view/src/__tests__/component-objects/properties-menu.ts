@@ -1,14 +1,12 @@
 import { waitFor, within } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
-import { findMenuByHeading, MenuSurfaceObject } from "./menu-surface";
+import { MenuSurfaceObject } from "./menu-surface";
 
 export class PropertiesMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new PropertiesMenuObject(
-      user,
-      await findMenuByHeading("Properties"),
-    );
+    const menu = await MenuSurfaceObject.findByHeading(user, "Properties");
+    return new PropertiesMenuObject(user, menu.root);
   }
 
   heading() {
@@ -75,19 +73,14 @@ export class PropertiesMenuObject extends MenuSurfaceObject {
 
   async backToViewSettings() {
     await this.back();
-    return new MenuSurfaceObject(
-      this.user,
-      await findMenuByHeading("View Settings"),
-    );
+    return MenuSurfaceObject.findByHeading(this.user, "View Settings");
   }
 }
 
 export class PropertyTypesMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new PropertyTypesMenuObject(
-      user,
-      await findMenuByHeading("New property"),
-    );
+    const menu = await MenuSurfaceObject.findByHeading(user, "New property");
+    return new PropertyTypesMenuObject(user, menu.root);
   }
 
   heading() {
@@ -116,10 +109,11 @@ export class PropertyTypesMenuObject extends MenuSurfaceObject {
 
 export class DeletedPropertiesMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new DeletedPropertiesMenuObject(
+    const menu = await MenuSurfaceObject.findByHeading(
       user,
-      await findMenuByHeading("Deleted properties"),
+      "Deleted properties",
     );
+    return new DeletedPropertiesMenuObject(user, menu.root);
   }
 
   heading() {

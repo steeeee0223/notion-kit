@@ -11,13 +11,10 @@ import {
   groupByNumberInterval,
 } from "@/fns";
 import type { CountingMethod, CountingMethodGroup } from "@/methods";
-import type { PluginFactoryConfig } from "@/plugins";
 
 import { createCompareFn, genericCounting } from "../utils";
 import { formatNumber } from "./format";
 import type { NumberPlugin } from "./types";
-
-export type NumberPluginConfig = PluginFactoryConfig<NumberPlugin>;
 
 const numberSchema = z.pipe(
   z.custom((value) => !isNaN(Number(value))),
@@ -58,14 +55,13 @@ export function withNumberCalculations(groups: CountingMethodGroup[] = []) {
   return [...groups, { group: "Calculate", functions: numberCalculations }];
 }
 
-export function number(config: NumberPluginConfig): NumberPlugin {
+export function number(): NumberPlugin {
   const parseData = (data: string | null | undefined) => {
     if (typeof data !== "string" || data.trim() === "") return null;
     const value = Number(data);
     return Number.isFinite(value) ? value : null;
   };
-  const isEmptyData = (data: string | null | undefined) =>
-    data === null || data === undefined || data.trim() === "";
+  const isEmpty = (data: string | null) => parseData(data) === null;
   const comparisonOperator = (
     id: string,
     name: string,
@@ -91,14 +87,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
   });
   return {
     id: "number",
-    meta: {
-      name: "Number",
-      icon: config.icon,
-      desc: "Accepts numbers. These can also be formatted as currency or progress bars. Useful for tracking counts, prices and completion.",
-    },
     default: {
-      name: "Number",
-      icon: config.defaultIcon ?? config.icon,
       data: null,
       config: {
         format: "number",
@@ -112,6 +101,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
       return res.success ? res.data : null;
     },
     toValue: (data) => (data ? Number(data) : null),
+    isEmpty,
     toTextValue: (data) => data ?? "",
     compare: createCompareFn<NumberPlugin>((a, b) => {
       if (a === null && b === null) return 0;
@@ -150,7 +140,7 @@ export function number(config: NumberPluginConfig): NumberPlugin {
           groupByNumberInterval(data, interval),
       })),
     },
-    counting: withNumberCalculations(genericCounting),
+    counting: withNumberCalculations(genericCounting(isEmpty)),
     filtering: {
       operators: [
         comparisonOperator(
@@ -187,19 +177,15 @@ export function number(config: NumberPluginConfig): NumberPlugin {
           id: "is-empty",
           name: "Is empty",
           operand: { kind: "none" },
-          matches: (data) => isEmptyData(data),
+          matches: (data) => isEmpty(data),
         },
         {
           id: "is-not-empty",
           name: "Is not empty",
           operand: { kind: "none" },
-          matches: (data) => !isEmptyData(data) && parseData(data) !== null,
+          matches: (data) => !isEmpty(data),
         },
       ],
     },
-    renderCellValue: config.renderCellValue,
-    renderCellEditor: config.renderCellEditor,
-    renderConfigMenu: config.renderConfigMenu,
-    renderGroupingValue: config.renderGroupingValue,
   };
 }

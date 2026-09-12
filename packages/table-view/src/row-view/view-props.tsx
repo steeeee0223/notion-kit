@@ -8,7 +8,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { DefaultIcon, TableCell } from "@/common";
+import { Cell, DefaultIcon } from "@/common";
 import { PropMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -96,12 +96,9 @@ export function ViewProps({ rowId }: ViewPropsProps) {
                 inert={locked ? true : undefined}
                 className="flex h-full min-w-0 flex-[1_1_auto] flex-wrap"
               >
-                <TableCell
-                  view="row-view"
-                  row={row}
-                  column={cell.column}
-                  table={table}
-                />
+                <Cell.Root cell={cell} table={table} surface="row-view">
+                  <Cell.Content />
+                </Cell.Root>
               </div>
             </div>
           );
