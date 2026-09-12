@@ -54,10 +54,22 @@ function createController(
     mount(doc: Document) {
       disposed = false;
       const claimInteraction = (event: Event) => {
+        const target = event.target;
         if (
-          event.target instanceof Element &&
-          !event.target.closest(
+          !(target instanceof Element) ||
+          target === doc.body ||
+          target === doc.documentElement ||
+          target.closest(
             '[data-slot="popover-content"], [data-slot="dropdown-menu-content"]',
+          )
+        )
+          return;
+        // Blank-space dismissal returns to the cell. Only another control
+        // (including another cell frame) takes ownership of pointer interaction.
+        if (
+          event.type === "focusin" ||
+          target.closest(
+            'button, a[href], input, textarea, select, label, summary, [tabindex], [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"], [role="checkbox"], [role="combobox"], [role="menuitem"], [data-cell-selection-ignore]',
           )
         )
           revision++;

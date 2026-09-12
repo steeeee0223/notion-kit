@@ -49,6 +49,32 @@ it("does not steal focus when switching editors", async () => {
   );
 });
 
+it.each(["Escape", "outside click"])(
+  "resumes navigation and range selection after closing an editor with %s",
+  async (dismiss) => {
+    const view = renderTableView({
+      ...createFullPluginFixture(),
+      children: <p>Outside blank area</p>,
+    });
+    const cell = view.propertyCell("Alpha", "notes");
+    await view.user.click(view.cellButton("Alpha", "first note"));
+    if (dismiss === "Escape") await view.user.keyboard("{Escape}");
+    else await view.user.click(screen.getByText("Outside blank area"));
+
+    await waitFor(() => expect(cell).toHaveFocus());
+    expect(cell).toHaveAttribute("data-cell-focused", "true");
+    expect(cell).toHaveAttribute("data-cell-selected", "true");
+    await view.user.keyboard("{ArrowLeft}");
+    const next = view.propertyCell("Alpha", "title");
+    expect(next).toHaveFocus();
+    expect(cell).toHaveAttribute("data-cell-selected", "false");
+    await view.user.keyboard("{Shift>}{ArrowRight}{/Shift}");
+    expect(cell).toHaveFocus();
+    expect(cell).toHaveAttribute("data-cell-selected", "true");
+    expect(next).toHaveAttribute("data-cell-selected", "true");
+  },
+);
+
 function Grouping() {
   const { table } = useTableViewCtx();
   useEffect(() => {
@@ -142,6 +168,22 @@ it("keeps a newly clicked unrelated input focused when dismissing an editor", as
       screen.getByRole("textbox", { name: "Outside editor" }),
     ).toHaveFocus(),
   );
+});
+
+it("keeps an outside button focused when its child dismisses an editor", async () => {
+  const view = renderTableView({
+    children: (
+      <button type="button">
+        <span>Outside action</span>
+      </button>
+    ),
+  });
+  await view.user.click(view.cellButton("Task 1", "Task 1"));
+  const editor = await screen.findByRole("textbox", { name: "" });
+  await view.user.click(screen.getByText("Outside action"));
+
+  await waitFor(() => expect(editor).not.toBeInTheDocument());
+  expect(screen.getByRole("button", { name: "Outside action" })).toHaveFocus();
 });
 
 it("keeps a keyboard-focused unrelated input focused when dismissing an editor", async () => {
