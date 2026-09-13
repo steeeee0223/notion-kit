@@ -1,18 +1,11 @@
 import { TableViewObject } from "./component-objects/table-view";
 import { expect, test } from "./fixtures";
 
-async function groupByStatus(table: TableViewObject) {
-  const settings = await table.openSettings();
-  const grouping = await settings.openGrouping();
-  await grouping.choose("Status");
-  await table.page.keyboard.press("Escape");
-}
-
 test("GroupActions_AddAndAggregation_ApplyOnlyToSelectedGroup", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
-  await groupByStatus(table);
+  await table.groupBy("Status");
 
   const active = table.groupActions("status:Active");
   await expect(active.aggregationCount(1)).toBeVisible();
@@ -53,7 +46,7 @@ test("GroupActions_HideAndDeleteConfirmation_RespectUserDecision", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
-  await groupByStatus(table);
+  await table.groupBy("Status");
 
   let active = table.groupActions("status:Active");
   let menu = await active.openOptions();
@@ -98,7 +91,7 @@ test("GroupActions_HideAndDeleteConfirmation_RespectUserDecision", async ({
 
 test("GroupActions_LockedView_HidesMutationControls", async ({ page }) => {
   const table = await TableViewObject.open(page, "controlled");
-  await groupByStatus(table);
+  await table.groupBy("Status");
 
   const settings = await table.openSettings();
   await settings.toggleLock();

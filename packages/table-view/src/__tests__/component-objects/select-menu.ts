@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { expect } from "vitest";
 
 import { TableViewObject } from "./table-view";
@@ -57,13 +57,13 @@ export class SelectMenuObject {
     await this.tableView.user.type(this.combobox(), value);
   }
 
-  choose(name: string) {
-    fireEvent.click(this.option(name));
+  async choose(name: string) {
+    await this.tableView.user.click(this.option(name));
   }
 
   async create(name: string) {
     await this.search(name);
-    fireEvent.click(this.createOption(name));
+    await this.tableView.user.click(this.createOption(name));
   }
 
   async close() {

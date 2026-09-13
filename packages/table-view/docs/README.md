@@ -8,8 +8,8 @@ into table, list, board, timeline, and row-view interactions.
 
 `table-view` owns:
 
-- no-argument wrappers that inject icons and React renderers into
-  `table-hook/plugins` factories;
+- UI-adapter factories that provide icons, React renderers, and display
+  metadata for matching `table-hook` data plugins;
 - the shared cell-editor host, which composes plugin values with optional
   editors for normal cells and bulk edit without built-in plugin-type branches;
 - cell renderers, config menus, selection menus, date pickers, and grouping-value

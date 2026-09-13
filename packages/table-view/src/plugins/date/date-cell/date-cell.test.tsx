@@ -13,52 +13,30 @@ import {
   createResourceProbe,
   mockResizeObserver,
 } from "@/__tests__/mock";
-import { CellEditorHost } from "@/common/cell-editor-host";
 
-import { date as createDate } from "../plugin";
-import { DatePickerCellValue } from "./date-picker-cell";
 import { DateRangeInput } from "./date-range-input";
+import { DateTimePicker } from "./date-time-picker";
 
 mockResizeObserver();
 
-const row: Row = {
-  id: "row",
-  createdAt: 0,
-  lastEditedAt: 0,
-  properties: {},
-};
-const config: DateConfig = {
-  dateFormat: "full",
-  timeFormat: "24-hour",
-  tz: "UTC",
-};
-
 function DateCellHarness({ initial }: { initial: DateData }) {
   const [data, setData] = useState(initial);
-  const [currentConfig, setConfig] = useState(config);
-  const plugin = createDate();
+  const [currentConfig, setConfig] = useState<DateConfig>({
+    dateFormat: "full",
+    timeFormat: "24-hour",
+    tz: "UTC",
+  });
   return (
     <>
-      <CellEditorHost
-        plugin={plugin}
-        valueProps={{
-          propId: "due",
-          row,
-          data,
-          config: currentConfig,
-          layout: "table",
-        }}
-        editorProps={{
-          propId: "due",
-          data,
-          config: currentConfig,
-          layout: "table",
-          scope: { kind: "cell", row },
-          onChange: (updater) =>
-            setData((previous) => functionalUpdate(updater, previous)),
-          onConfigChange: (updater) =>
-            setConfig((previous) => functionalUpdate(updater, previous)),
-        }}
+      <DateTimePicker
+        data={data}
+        config={currentConfig}
+        onChange={(updater) =>
+          setData((previous) => functionalUpdate(updater, previous))
+        }
+        onConfigChange={(updater) =>
+          setConfig((previous) => functionalUpdate(updater, previous))
+        }
       />
       <output data-testid="date-state">{JSON.stringify(data)}</output>
       <output data-testid="date-config">{JSON.stringify(currentConfig)}</output>
@@ -71,7 +49,6 @@ it("DatePicker_EndTimeFormatsAndClear_UpdateCanonicalState", async () => {
   render(
     <DateCellHarness initial={{ start: Date.UTC(2025, 0, 15, 13, 45) }} />,
   );
-  await user.click(screen.getByRole("button", { name: "January 15, 2025" }));
 
   await user.click(screen.getByRole("switch", { name: "End date" }));
   expect(screen.getByTestId("date-state")).toHaveTextContent('"endDate":true');
@@ -152,7 +129,6 @@ it("DateTimePicker_RangeSelection_UpdatesBothDateBoundaries", async () => {
       }}
     />,
   );
-  await user.click(screen.getByRole("button", { name: /January 15, 2025/i }));
   await user.click(
     screen.getByRole("button", { name: /Tuesday, January 14/i }),
   );
@@ -181,7 +157,6 @@ it("DateTimePicker_SelectedSingleDateClick_RetainsTheExistingBoundary", async ()
   const user = userEvent.setup();
   const start = Date.UTC(2025, 0, 15);
   render(<DateCellHarness initial={{ start }} />);
-  await user.click(screen.getByRole("button", { name: "January 15, 2025" }));
 
   // Act
   await user.click(
@@ -194,7 +169,7 @@ it("DateTimePicker_SelectedSingleDateClick_RetainsTheExistingBoundary", async ()
   );
 });
 
-it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
+it("DateRangeInput_InvalidThenValidDate_KeepsInvalidDraftLocal", async () => {
   const user = userEvent.setup();
   render(<DateRangeHarness initial={{}} />);
   const input = screen.getByRole("textbox");
@@ -202,7 +177,7 @@ it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
   await user.type(input, "not-a-date");
   await user.tab();
   expect(input).toHaveAttribute("aria-invalid", "true");
-  expect(screen.getByTestId("range-state")).toHaveTextContent('"start":-1');
+  expect(screen.getByTestId("range-state")).toHaveTextContent("{}");
 
   await user.click(input);
   await user.clear(input);
@@ -216,11 +191,7 @@ it("DateRangeInput_InvalidThenValidDate_ReportsErrorAndTimestamp", async () => {
 
 it("DateRangeInput_DateTimeBoundaries_UpdateStartAndEndIndependently", async () => {
   const user = userEvent.setup();
-  render(
-    <DateRangeHarness
-      initial={{ includeTime: true, endDate: true, start: -1, end: -1 }}
-    />,
-  );
+  render(<DateRangeHarness initial={{ includeTime: true, endDate: true }} />);
   const range = screen.getByTestId("range-state").previousElementSibling!;
   const inputs = within(range as HTMLElement).getAllByRole("textbox");
   expect(inputs).toHaveLength(4);
@@ -236,7 +207,14 @@ it("DateRangeInput_DateTimeBoundaries_UpdateStartAndEndIndependently", async () 
 
   await user.type(inputs[2]!, "invalid");
   await user.tab();
-  expect(screen.getByTestId("range-state")).toHaveTextContent('"end":-1');
+  expect(screen.getByTestId("range-state")).not.toHaveTextContent('"end"');
+});
+
+it("DateRangeInput_PreEpochTimestamp_RemainsAVisibleValidDate", () => {
+  render(<DateRangeHarness initial={{ start: -1 }} />);
+
+  expect(screen.getByRole("textbox")).toHaveValue("1969-12-31");
+  expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "false");
 });
 
 it("DateRangeInput_UnchangedBlur_DoesNotReportRedundantTimestamp", async () => {
@@ -302,31 +280,7 @@ it("DateRangeInput_UntouchedEmptyThenInvalidBlur_SuppressesOnlyEmptyMutation", a
 
   // Assert
   expect(input).toHaveAttribute("aria-invalid", "true");
-  expect(screen.getByTestId("range-state")).toHaveTextContent('"start":-1');
-});
-
-it("DatePicker_EmptyBoardAndRowView_RespectDisplayBoundary", () => {
-  const { container, rerender } = render(
-    <DatePickerCellValue
-      propId="due"
-      row={row}
-      data={{}}
-      config={config}
-      layout="board"
-    />,
-  );
-  expect(container).toBeEmptyDOMElement();
-
-  rerender(
-    <DatePickerCellValue
-      propId="due"
-      row={row}
-      data={{}}
-      config={config}
-      layout="row-view"
-    />,
-  );
-  expect(screen.getByText("Empty")).toBeVisible();
+  expect(screen.getByTestId("range-state")).toHaveTextContent("{}");
 });
 
 it("DatePicker_NextMonthDateSelection_EmitsExactCellResourcePayload", async () => {

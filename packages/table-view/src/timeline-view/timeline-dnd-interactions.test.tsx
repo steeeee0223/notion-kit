@@ -135,14 +135,14 @@ it("TimelineCardSurface_ActivatedDragThenReset_NextClickOpensExactRow", async ()
     />,
   );
 
-  const card = getTimelineCard("valid");
+  const card = timeline.itemCard("valid");
   await dragPointer(card, [0, 20, 30, 5]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
   expect(onViewChange).not.toHaveBeenCalled();
 
   await waitForDragClickReset();
-  fireEvent.click(getTimelineCard("valid"));
+  fireEvent.click(timeline.itemCard("valid"));
 
   await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
@@ -167,14 +167,14 @@ it("TimelineCardSurface_PointerCancel_DoesNotCommitAndNextClickOpensExactRow", a
     onViewChange,
   });
 
-  const card = getTimelineCard("valid");
+  const card = timeline.itemCard("valid");
   await cancelPointerDrag(card, [0, 20, 30]);
 
   expect(onDataChange).not.toHaveBeenCalled();
   expect(onViewChange).not.toHaveBeenCalled();
 
   await waitForDragClickReset();
-  fireEvent.click(getTimelineCard("valid"));
+  fireEvent.click(timeline.itemCard("valid"));
 
   await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
@@ -214,7 +214,7 @@ it("TimelineCardSurface_RejectedControlledMove_NextDragUsesAuthoritativeRange", 
   );
   onDataChange.mockClear();
 
-  await dragPointer(getTimelineCard("valid"), [0, 20, 30, 5]);
+  await dragPointer(timeline.itemCard("valid"), [0, 20, 30, 5]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
   expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({
@@ -249,13 +249,13 @@ it("TimelineLockedCard_PointerGestureDoesNotWriteAndNextClickOpensExactRow", asy
     onViewChange,
   });
 
-  const lockedCard = getTimelineCard("valid");
+  const lockedCard = timeline.itemCard("valid");
   await dragPointer(lockedCard, [0, 20, 30, 5]);
 
   expect(onDataChange).not.toHaveBeenCalled();
   expect(onViewChange).not.toHaveBeenCalled();
 
-  fireEvent.click(getTimelineCard("valid"));
+  fireEvent.click(timeline.itemCard("valid"));
 
   await waitFor(() => expect(onViewChange).toHaveBeenCalledOnce());
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
@@ -493,10 +493,6 @@ async function cancelPointerDrag(handle: Element, positions: number[]) {
     pointerType: "mouse",
   });
   await flushAnimationFrame();
-}
-
-function getTimelineCard(rowId: string) {
-  return timeline.itemCard(rowId);
 }
 
 async function waitForDragClickReset() {

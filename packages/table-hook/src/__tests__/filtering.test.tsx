@@ -48,17 +48,16 @@ function plugin(
 ) {
   return {
     id,
-    default: { name: id, icon: null, config: undefined, data: "" },
-    meta: { name: id, desc: "", icon: null },
+    default: { config: undefined, data: "" },
     fromValue: () => "",
     toValue: (value: string) => value,
+    isEmpty: (value: string) => value.trim() === "",
     toTextValue: (value: string) => value,
     filtering: {
       operators: [
         { id: "matches", name: "Matches", operand: { kind: "text" }, matches },
       ],
     },
-    renderCellValue: () => null,
   } as CellPlugin;
 }
 

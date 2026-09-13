@@ -50,9 +50,8 @@ export function TableViewMenu() {
 function TableViewMenuContent() {
   const { table } = useTableViewCtx();
   const menu = table.getTableMenuState();
-  const page = menu.page as TableViewMenuPage | null;
 
-  switch (page) {
+  switch (menu.page) {
     case TableViewMenuPage.Layout:
       return <LayoutMenu />;
     case TableViewMenuPage.Sort:
@@ -76,7 +75,7 @@ function TableViewMenuContent() {
       return (
         <TypesMenu
           propId={menu.id}
-          menu={page}
+          menu={menu.page}
           back
           at={
             menu.data?.at as { id: string; side: "left" | "right" } | undefined

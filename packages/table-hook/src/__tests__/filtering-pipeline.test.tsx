@@ -20,10 +20,10 @@ function createTextPlugin(
 ): CellPlugin<string, string, undefined> {
   return {
     id,
-    meta: { name: id, desc: id, icon: null },
-    default: { name: id, icon: null, data: "", config: undefined },
+    default: { data: "", config: undefined },
     fromValue: (value) => value?.toString() ?? "",
     toValue: (value) => value,
+    isEmpty: (value) => value.trim() === "",
     toTextValue,
     filtering: {
       operators: [
@@ -33,11 +33,10 @@ function createTextPlugin(
           operand: { kind: "text" },
           matches: (value, _row, _config, operand) =>
             typeof operand === "string" &&
-            (value ?? "").toLowerCase().includes(operand.toLowerCase()),
+            value.toLowerCase().includes(operand.toLowerCase()),
         },
       ],
     },
-    renderCellValue: () => null,
   };
 }
 
@@ -46,10 +45,10 @@ function createNumberPlugin(
 ): CellPlugin<string, number, undefined> {
   return {
     id: "score",
-    meta: { name: "Score", desc: "Score", icon: null },
-    default: { name: "Score", icon: null, data: 0, config: undefined },
+    default: { data: 0, config: undefined },
     fromValue: (value) => Number(value),
     toValue: (value) => value,
+    isEmpty: () => false,
     toTextValue: (value) => String(value),
     filtering: {
       operators: [
@@ -59,12 +58,11 @@ function createNumberPlugin(
           operand: { kind: "number" },
           matches: (value, _row, _config, operand, context) => {
             receivedContexts?.push(context);
-            return typeof operand === "number" && (value ?? 0) > operand;
+            return typeof operand === "number" && value > operand;
           },
         },
       ],
     },
-    renderCellValue: () => null,
   };
 }
 
@@ -73,10 +71,10 @@ function createRelativeClockPlugin(
 ): CellPlugin<string, number, undefined> {
   return {
     id: "score",
-    meta: { name: "Score", desc: "Score", icon: null },
-    default: { name: "Score", icon: null, data: 0, config: undefined },
+    default: { data: 0, config: undefined },
     fromValue: (value) => Number(value),
     toValue: (value) => value,
+    isEmpty: () => false,
     toTextValue: (value) => String(value),
     filtering: {
       operators: [
@@ -91,7 +89,6 @@ function createRelativeClockPlugin(
         },
       ],
     },
-    renderCellValue: () => null,
   };
 }
 

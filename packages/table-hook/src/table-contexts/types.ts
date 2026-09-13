@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Cell, Header, Row, Table } from "@tanstack/table-core";
+import type { Cell, Column, Header, Row, Table } from "@tanstack/table-core";
 
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
@@ -93,6 +93,7 @@ export type TableProps<TPlugins extends CellPlugin[]> =
   };
 
 export type TableInstance = Table<TableFeatures, RowModel>;
+export type ColumnInstance = Column<TableFeatures, RowModel>;
 export type RowInstance = Row<TableFeatures, RowModel>;
 export type CellInstance = Cell<TableFeatures, RowModel>;
 export type HeaderInstance = Header<TableFeatures, RowModel>;

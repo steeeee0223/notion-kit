@@ -144,7 +144,7 @@ function propagate(
       next = updater(previous);
       action = createAction(previous, next);
     },
-  } as unknown as TableInstance;
+  } as TableInstance;
 
   propagateSelectEvent(table, "status", type, event);
   return { previous, next, action };

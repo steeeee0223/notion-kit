@@ -1,8 +1,5 @@
 import { Icon } from "@notion-kit/icons";
-import type {
-  ConfigMenuProps,
-  DateConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { DateConfig } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -10,12 +7,14 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
+import type { ConfigMenuRendererProps } from "@/plugins/renderers";
+
 import { DateFormatMenu, TimeFormatMenu } from "./common";
 
 export function DateConfigMenu({
   config,
   onChange,
-}: ConfigMenuProps<DateConfig>) {
+}: ConfigMenuRendererProps<DateConfig>) {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />

@@ -52,21 +52,25 @@ function renderSelectMenuHook({
 } = {}) {
   const onChange = vi.fn();
   const onConfigChange = vi.fn();
+  const onSelect = vi.fn();
   const hook = renderHook(
-    (props: { multi: boolean; options: string[] }) =>
-      useSelectMenu({
+    (props: { multi: boolean; options: string[] }) => {
+      const hookOptions = {
         ...props,
         propId: props.multi ? "tags" : "status",
         config: selectConfig,
         onChange,
         onConfigChange,
-      }),
+        onSelect,
+      };
+      return useSelectMenu(hookOptions);
+    },
     {
       initialProps: { multi, options },
       wrapper,
     },
   );
-  return { ...hook, onChange, onConfigChange };
+  return { ...hook, onChange, onConfigChange, onSelect };
 }
 
 describe("useSelectMenu", () => {
@@ -120,6 +124,28 @@ describe("useSelectMenu", () => {
     expect(multi.onChange).toHaveBeenLastCalledWith(["Option A", "Option B"]);
     act(() => multi.result.current.handleTagsChange(["Option A", "Option C"]));
     expect(multi.onChange).toHaveBeenLastCalledWith(["Option A", "Option C"]);
+  });
+
+  it("SelectionCompletion_OnlySingleExistingOptionRequestsEditorClose", () => {
+    const single = renderSelectMenuHook({ options: ["Option A"] });
+    act(() => single.result.current.selectTag("Option B"));
+    expect(single.onSelect).toHaveBeenCalledOnce();
+
+    single.onSelect.mockClear();
+    act(() => single.result.current.setSearch("New single"));
+    act(() => single.result.current.addOption());
+    act(() =>
+      single.result.current.updateOption("Option A", { name: "Renamed" }),
+    );
+    act(() => single.result.current.deleteOption("Option A"));
+    expect(single.onSelect).not.toHaveBeenCalled();
+
+    const multi = renderSelectMenuHook({
+      multi: true,
+      options: ["Option A"],
+    });
+    act(() => multi.result.current.selectTag("Option B"));
+    expect(multi.onSelect).not.toHaveBeenCalled();
   });
 
   it("HandleTagsChange_CreatableTag_AddsSearchedOption", () => {

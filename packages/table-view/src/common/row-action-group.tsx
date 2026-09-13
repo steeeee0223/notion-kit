@@ -14,29 +14,27 @@ import {
 
 import { RowActionMenu } from "@/menus";
 
+import { Row } from "./table";
+
 interface RowActionGroupProps {
   className?: string;
-  isMobile?: boolean;
   row: RowInstance;
-  onAddNext: (e: React.MouseEvent) => void;
 }
 
-export function RowActionGroup({
-  className,
-  isMobile,
-  row,
-  onAddNext,
-}: RowActionGroupProps) {
+export function RowActionGroup({ className, row }: RowActionGroupProps) {
+  const addNextRow = (event: React.MouseEvent) => {
+    row.table.addRow({
+      id: row.id,
+      at: event.altKey ? "prev" : "next",
+    });
+  };
+
   return (
-    <div
+    <Row.ActionContent
       data-slot="row-action-group"
       className={cn(
-        "flex h-9 items-center bg-main opacity-0 transition-opacity delay-0 duration-200",
-        "group-hover/row:opacity-100",
         "group-data-dragging/row:opacity-100",
         "has-[button[aria-expanded='true']]:opacity-100",
-        isMobile && "opacity-100",
-        row.getIsSelected() && "opacity-100",
         className,
       )}
     >
@@ -56,7 +54,7 @@ export function RowActionGroup({
           variant="hint"
           aria-label="Add row"
           className="size-6"
-          onClick={onAddNext}
+          onClick={addNextRow}
         >
           <Icon.Plus className="size-3.5 fill-icon" />
         </Button>
@@ -85,10 +83,10 @@ export function RowActionGroup({
         id={`row-select-${row.id}`}
         size="sm"
         checked={row.getIsSelected()}
-        className="mx-1.5 cursor-pointer rounded-xs accent-blue"
+        className="ml-1.5 cursor-pointer rounded-xs accent-blue"
         aria-label={`Select row ${row.id}`}
         onCheckedChange={(checked) => row.toggleSelected(checked)}
       />
-    </div>
+    </Row.ActionContent>
   );
 }

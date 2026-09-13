@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   aggregateCountAll,
-  aggregateCountEmpty,
-  aggregateCountNonEmpty,
   aggregateCountUnique,
   aggregateCountValues,
   aggregateDateEarliest,
@@ -35,9 +33,6 @@ describe("common calculation functions", () => {
     expect(aggregate(aggregateCountAll, values)).toBe(5);
     expect(aggregate(aggregateCountValues, values)).toBe(3);
     expect(aggregate(aggregateCountUnique, values)).toBe(2);
-    expect(aggregate(aggregateCountEmpty, values)).toBe(3);
-    expect(aggregate(aggregateCountNonEmpty, values)).toBe(2);
-    expect(aggregate(aggregateCountEmpty, [{}])).toBe(1);
   });
 
   it("calculates semantic number results while ignoring invalid values", () => {

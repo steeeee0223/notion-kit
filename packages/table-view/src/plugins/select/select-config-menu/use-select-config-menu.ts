@@ -2,12 +2,10 @@
 
 import { useCallback } from "react";
 
-import type {
-  ConfigMenuProps,
-  SelectConfig,
-  SelectSort,
-} from "@notion-kit/table-hook/plugins";
+import type { SelectConfig, SelectSort } from "@notion-kit/table-hook/plugins";
 import { getRandomColor, type Color } from "@notion-kit/utils";
+
+import type { ConfigMenuRendererProps } from "@/plugins/renderers";
 
 import { useTableViewCtx } from "../../../table-contexts";
 import {
@@ -16,7 +14,8 @@ import {
   type SelectConfigActionPayload,
 } from "../select-config-reducer";
 
-interface UseSelectConfigMenuOptions extends ConfigMenuProps<SelectConfig> {
+interface UseSelectConfigMenuOptions
+  extends ConfigMenuRendererProps<SelectConfig> {
   multi?: boolean;
 }
 

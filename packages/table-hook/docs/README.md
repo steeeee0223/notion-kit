@@ -17,8 +17,9 @@ provide cells, menus, editors, and layouts.
 
 It does not own presentation. Cell components, icons, menus, picker controls,
 and layout-specific interactions belong to a consumer such as `table-view`.
-Plugin factories can accept renderer callbacks from that consumer without
-making the headless package depend on its UI implementation.
+Data-plugin factories accept only UI-neutral data semantics. Consumers pair
+those plugins with their own UI adapters, keeping the headless package free of
+renderer and icon contracts.
 
 The dependency direction is one-way:
 
@@ -82,13 +83,11 @@ always reflects the application's authoritative state.
 ## Property plugins
 
 A `CellPlugin` defines how one property type participates in the table domain.
-Its stable ID and metadata make the type persistable; its conversion functions
-translate stored values into usable values and canonical text; optional
-capabilities define how the property sorts, groups, counts, and filters.
-
-Plugins may expose renderer contracts, but the renderers are supplied by the
-consumer. This lets the same value and filtering semantics serve different UI
-packages while keeping the dependency direction intact.
+Its stable ID and default data/configuration make the type persistable; its
+conversion functions translate stored values into usable values and canonical
+text; optional capabilities define how the property sorts, groups, counts, and
+filters. Rendering, icons, editors, and presentation metadata are not part of
+this contract; `table-view` represents them with a matching `TableUiPlugin`.
 
 Methods and filter operators likewise use stable IDs and UI-neutral metadata.
 The engine resolves configured IDs through the plugin registry and falls back

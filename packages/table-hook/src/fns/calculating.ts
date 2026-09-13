@@ -45,22 +45,6 @@ export const aggregateCountUnique: CommonAggregationFn = {
   },
 };
 
-export const aggregateCountEmpty: CommonAggregationFn = {
-  aggregate: ({ rows, getValue }) =>
-    rows.reduce(
-      (count, row) => count + Number(toTextValue(getValue(row)) === ""),
-      0,
-    ),
-};
-
-export const aggregateCountNonEmpty: CommonAggregationFn = {
-  aggregate: ({ rows, getValue }) =>
-    rows.reduce(
-      (count, row) => count + Number(toTextValue(getValue(row)) !== ""),
-      0,
-    ),
-};
-
 function numberValues<TRow>(context: {
   rows: readonly TRow[];
   getValue: (row: TRow) => unknown;

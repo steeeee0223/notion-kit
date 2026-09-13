@@ -93,24 +93,6 @@ it.each([
   },
 );
 
-it("Board_EmptyData_RendersNoColumnsOrCards", async () => {
-  // Arrange
-  const tableView = renderTableView({
-    data: [],
-    properties: titleProperties,
-  });
-
-  // Act
-  await selectGroupedBoard(tableView);
-
-  // Assert
-  expect(
-    document.querySelector('[data-slot="notion-board-view"]'),
-  ).toBeInTheDocument();
-  expect(screen.queryAllByRole("group", { name: /^Group / })).toHaveLength(0);
-  expect(screen.queryByRole("button", { name: "New page" })).toBeNull();
-});
-
 it("BoardGroup_HideAggregation_RemovesCurrentCardCount", async () => {
   // Arrange
   const tableView = renderTableView({ properties: titleProperties });

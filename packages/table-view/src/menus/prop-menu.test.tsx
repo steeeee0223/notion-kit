@@ -4,14 +4,16 @@ import { expect, it, vi } from "vitest";
 import type { ColumnInfo, Row, TableViewState } from "@notion-kit/table-hook";
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 
-import {
-  findMenuByHeading,
-  findMenuByItem,
-} from "@/__tests__/component-objects/menu-surface";
+import { MenuSurfaceObject } from "@/__tests__/component-objects/menu-surface";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import type { TableViewObject } from "@/__tests__/component-objects/table-view";
-import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
-import { DEFAULT_PLUGINS } from "@/plugins";
+import {
+  createTestUiPlugin,
+  extendDefaultPlugins,
+  mockData,
+  mockProperties,
+  mockResizeObserver,
+} from "@/__tests__/mock";
 
 mockResizeObserver();
 
@@ -39,11 +41,7 @@ async function openHeader(tableView: TableViewObject, name: string) {
     );
   }
   await tableView.user.click(header);
-  return findMenuByItem("Calculate");
-}
-
-async function reopenHeader(tableView: TableViewObject, name: string) {
-  return openHeader(tableView, name);
+  return MenuSurfaceObject.findByItem(tableView.user, "Calculate");
 }
 
 it("PropMenu_Filter_AppendsARootRuleAndOpensTheSharedFilterEditor", async () => {
@@ -68,11 +66,9 @@ it("PropMenu_Filter_AppendsARootRuleAndOpensTheSharedFilterEditor", async () => 
   });
   const menu = await openHeader(tableView, "Name");
 
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Filter" }),
-  );
+  await tableView.user.click(menu.item("Filter"));
 
-  await waitFor(() => expect(menu).not.toBeInTheDocument());
+  await waitFor(() => expect(menu.root).not.toBeInTheDocument());
   expect(screen.getByRole("dialog", { name: "Filters" })).toBeVisible();
   expect(
     lastResourceChange<TableViewState>(onViewChange)?.next.filters,
@@ -104,9 +100,7 @@ it("PropMenu_Wrap_TogglesObservableHeaderState", async () => {
   let menu = await openHeader(tableView, "Name");
 
   // Act
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Wrap text" }),
-  );
+  await tableView.user.click(menu.item("Wrap text"));
 
   // Assert
   expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
@@ -118,10 +112,8 @@ it("PropMenu_Wrap_TogglesObservableHeaderState", async () => {
       next: { ...mockProperties[0], wrapped: true },
     },
   });
-  menu = await reopenHeader(tableView, "Name");
-  expect(
-    within(menu).getByRole("menuitem", { name: "Unwrap text" }),
-  ).toBeVisible();
+  menu = await openHeader(tableView, "Name");
+  expect(menu.item("Unwrap text")).toBeVisible();
 });
 
 it("PropMenu_Rename_UpdatesHeaderAndReportsPropertyChange", async () => {
@@ -129,7 +121,7 @@ it("PropMenu_Rename_UpdatesHeaderAndReportsPropertyChange", async () => {
   const onPropertiesChange = vi.fn();
   const tableView = renderTableView({ onPropertiesChange });
   const menu = await openHeader(tableView, "Name");
-  const name = within(menu).getByDisplayValue("Name");
+  const name = within(menu.root).getByDisplayValue("Name");
 
   // Act
   await tableView.user.clear(name);
@@ -152,15 +144,13 @@ it("PropMenu_Rename_UpdatesHeaderAndReportsPropertyChange", async () => {
 it("PropMenu_DuplicateName_ShowsValidationWithoutChangingHeader", async () => {
   const tableView = renderTableView();
   const menu = await openHeader(tableView, "Name");
-  const name = within(menu).getByDisplayValue("Name");
+  const name = within(menu.root).getByDisplayValue("Name");
 
   await tableView.user.clear(name);
   await tableView.user.type(name, "Done");
   await tableView.user.tab();
 
-  expect(
-    within(menu).getByText(/A property named Done already exists/),
-  ).toBeVisible();
+  expect(menu.text(/A property named Done already exists/)).toBeVisible();
   expect(screen.getByRole("button", { name: "Name" })).toBeVisible();
 });
 
@@ -172,9 +162,13 @@ it("PropMenu_DescriptionToggle_UpdatesPropertyMetadata", async () => {
 
   // Act
   await tableView.user.click(
-    menu.querySelector<HTMLElement>('[aria-label="Add property description"]')!,
+    menu.root.querySelector<HTMLElement>(
+      '[aria-label="Add property description"]',
+    )!,
   );
-  const description = within(menu).getByPlaceholderText("Add a description...");
+  const description = within(menu.root).getByPlaceholderText(
+    "Add a description...",
+  );
   await tableView.user.type(description, "Primary task name");
   await tableView.user.tab();
 
@@ -194,32 +188,24 @@ it("PropMenu_Freeze_TogglesObservableHeaderState", async () => {
   const tableView = renderTableView();
 
   let menu = await openHeader(tableView, "Name");
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Freeze up to column" }),
-  );
-  menu = await reopenHeader(tableView, "Name");
-  expect(
-    within(menu).getByRole("menuitem", { name: "Unfreeze columns" }),
-  ).toBeVisible();
+  await tableView.user.click(menu.item("Freeze up to column"));
+  menu = await openHeader(tableView, "Name");
+  expect(menu.item("Unfreeze columns")).toBeVisible();
 });
 
 it("PropMenu_Group_TogglesGroupedRowsAndHeaderAction", async () => {
   const tableView = renderTableView();
 
   let menu = await openHeader(tableView, "Name");
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Group" }),
-  );
+  await tableView.user.click(menu.item("Group"));
   await waitFor(() => {
     expect(screen.getAllByRole("group", { name: /^Group / })).not.toHaveLength(
       0,
     );
   });
-  menu = await reopenHeader(tableView, "Name");
-  expect(within(menu).getByRole("menuitem", { name: "Ungroup" })).toBeVisible();
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Ungroup" }),
-  );
+  menu = await openHeader(tableView, "Name");
+  expect(menu.item("Ungroup")).toBeVisible();
+  await tableView.user.click(menu.item("Ungroup"));
   await waitFor(() =>
     expect(screen.queryAllByRole("group", { name: /^Group / })).toHaveLength(0),
   );
@@ -229,11 +215,11 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
   const onViewChange = vi.fn();
   const plugin: CellPlugin<"rank-code", string, undefined> = {
     id: "rank-code",
-    meta: { name: "Rank code", desc: "Rank code", icon: null },
-    default: { name: "Rank code", icon: null, config: undefined, data: "" },
+    default: { config: undefined, data: "" },
     fromValue: (value) => String(value ?? ""),
     toValue: (value) => value,
     toTextValue: (value) => value,
+    isEmpty: (value) => value.trim() === "",
     sorting: {
       defaultMethod: "length",
       methods: [
@@ -255,10 +241,9 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
         },
       ],
     },
-    renderCellValue: ({ data }) => <span>{data}</span>,
   };
   const tableView = renderTableView({
-    plugins: [...DEFAULT_PLUGINS, plugin],
+    plugins: extendDefaultPlugins([plugin], [createTestUiPlugin(plugin)]),
     properties: [
       { id: "name", name: "Name", type: "title", config: { showIcon: true } },
       { id: "rank", name: "Rank", type: "rank-code" },
@@ -271,9 +256,7 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
     onViewChange,
   });
   const menu = await openHeader(tableView, "Rank");
-  await tableView.user.hover(
-    within(menu).getByRole("menuitem", { name: "Sort" }),
-  );
+  await tableView.user.hover(menu.item("Sort"));
 
   expect(
     await screen.findByRole("menuitem", { name: "Short first" }),
@@ -316,9 +299,7 @@ it("PropMenu_Duplicate_ReportsExactPropertyAction", async () => {
   const menu = await openHeader(tableView, "Name");
 
   // Act
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Duplicate property" }),
-  );
+  await tableView.user.click(menu.item("Duplicate property"));
 
   // Assert
   const change = lastResourceChange<ColumnInfo[]>(onPropertiesChange);
@@ -352,9 +333,7 @@ it("PropMenu_Hide_UpdatesVisibilityAndCanBeRestored", async () => {
   const menu = await openHeader(tableView, "Name");
 
   // Act
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Hide in view" }),
-  );
+  await tableView.user.click(menu.item("Hide in view"));
 
   // Assert
   expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
@@ -375,12 +354,11 @@ it("PropMenu_Hide_UpdatesVisibilityAndCanBeRestored", async () => {
   await tableView.user.click(
     await screen.findByRole("menuitem", { name: "Edit properties" }),
   );
-  const propertiesMenu = await findMenuByHeading("Properties");
-  await tableView.user.click(
-    within(propertiesMenu).getByRole("button", {
-      name: "Toggle Name visibility",
-    }),
+  const propertiesMenu = await MenuSurfaceObject.findByHeading(
+    tableView.user,
+    "Properties",
   );
+  await tableView.user.click(propertiesMenu.button("Toggle Name visibility"));
   expect(screen.getByRole("button", { name: "Name" })).toBeVisible();
 });
 
@@ -392,9 +370,7 @@ it("PropMenu_Delete_ReportsExactPropertyAction", async () => {
   const menu = await openHeader(tableView, "Name");
 
   // Act
-  await tableView.user.click(
-    within(menu).getByRole("menuitem", { name: "Delete property" }),
-  );
+  await tableView.user.click(menu.item("Delete property"));
 
   // Assert
   expect(lastResourceChange(onPropertiesChange)?.action).toEqual({
@@ -416,13 +392,12 @@ it.each([
     const menu = await openHeader(tableView, "Name");
 
     // Act
-    await tableView.user.click(
-      within(menu).getByRole("menuitem", { name: `Insert ${side}` }),
+    await tableView.user.click(menu.item(`Insert ${side}`));
+    const create = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "New property",
     );
-    const create = await findMenuByHeading("New property");
-    await tableView.user.click(
-      within(create).getByRole("option", { name: "Number" }),
-    );
+    await tableView.user.click(create.option("Number"));
 
     // Assert
     const change = lastResourceChange<ColumnInfo[]>(onPropertiesChange);
@@ -473,16 +448,18 @@ it("PropertyMenu_ChangeType_ReportsExactTypeAndCellBoundary", async () => {
   const settings = await tableView.openViewSettings();
   const properties = await settings.openProperties();
   await tableView.user.click(properties.property("Name"));
-  const edit = await findMenuByHeading("Edit property");
+  const edit = await MenuSurfaceObject.findByHeading(
+    tableView.user,
+    "Edit property",
+  );
 
   // Act
-  await tableView.user.click(
-    within(edit).getByRole("menuitem", { name: "Type" }),
+  await tableView.user.click(edit.item("Type"));
+  const types = await MenuSurfaceObject.findByHeading(
+    tableView.user,
+    "Change property type",
   );
-  const types = await findMenuByHeading("Change property type");
-  await tableView.user.click(
-    within(types).getByRole("option", { name: "Checkbox" }),
-  );
+  await tableView.user.click(types.option("Checkbox"));
 
   // Assert
   const propertiesChange = lastResourceChange(onPropertiesChange);
@@ -519,7 +496,7 @@ it("PropMenu_TitleConfigToggle_ReportsExactPropertyPayload", async () => {
 
   // Act
   await tableView.user.click(
-    within(menu).getByRole("switch", { name: "Show page icon" }),
+    within(menu.root).getByRole("switch", { name: "Show page icon" }),
   );
 
   // Assert
@@ -564,16 +541,8 @@ it("PropMenu_TitleColumn_HidesDestructiveTypeActions", async () => {
   const tableView = renderTableView({ properties, data });
   const menu = await openHeader(tableView, "Name");
 
-  expect(
-    within(menu).queryByRole("menuitem", { name: "Change type" }),
-  ).not.toBeInTheDocument();
-  expect(
-    within(menu).queryByRole("menuitem", { name: "Hide in view" }),
-  ).not.toBeInTheDocument();
-  expect(
-    within(menu).queryByRole("menuitem", { name: "Duplicate property" }),
-  ).not.toBeInTheDocument();
-  expect(
-    within(menu).queryByRole("menuitem", { name: "Delete property" }),
-  ).not.toBeInTheDocument();
+  expect(menu.queryItem("Change type")).not.toBeInTheDocument();
+  expect(menu.queryItem("Hide in view")).not.toBeInTheDocument();
+  expect(menu.queryItem("Duplicate property")).not.toBeInTheDocument();
+  expect(menu.queryItem("Delete property")).not.toBeInTheDocument();
 });

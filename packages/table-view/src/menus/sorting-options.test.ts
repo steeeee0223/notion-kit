@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
-
-import { text } from "@/plugins";
+import { text } from "@notion-kit/table-hook/plugins";
 
 import {
   getDefaultSortingMethod,

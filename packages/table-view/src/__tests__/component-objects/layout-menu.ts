@@ -1,14 +1,15 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
-import { findMenuByHeading, MenuSurfaceObject } from "./menu-surface";
+import { MenuSurfaceObject } from "./menu-surface";
 
 type Layout = "Table" | "Board" | "Timeline" | "List";
 type RowView = "Side peek" | "Center peek" | "Full page";
 
 export class LayoutMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new LayoutMenuObject(user, await findMenuByHeading("Layout"));
+    const menu = await MenuSurfaceObject.findByHeading(user, "Layout");
+    return new LayoutMenuObject(user, menu.root);
   }
 
   heading() {
@@ -74,9 +75,6 @@ export class LayoutMenuObject extends MenuSurfaceObject {
 
   async backToViewSettings() {
     await this.back();
-    return new MenuSurfaceObject(
-      this.user,
-      await findMenuByHeading("View Settings"),
-    );
+    return MenuSurfaceObject.findByHeading(this.user, "View Settings");
   }
 }

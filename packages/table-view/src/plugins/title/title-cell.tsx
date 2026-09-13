@@ -1,14 +1,11 @@
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
 import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
 import type { Row } from "@notion-kit/table-hook";
-import type {
-  CellEditorProps,
-  TitleConfig,
-} from "@notion-kit/table-hook/plugins";
+import type { TitleConfig } from "@notion-kit/table-hook/plugins";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -19,44 +16,26 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { CellTrigger, RowViewIcon, TextInputPopover } from "@/common";
+import { CellTrigger } from "@/common/cell-trigger";
+import { RowViewIcon } from "@/common/default-icon";
+import { TextInputPopover } from "@/common/text-input-popover";
+import type { CellRendererProps } from "@/plugins/renderers";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TitleCellProps extends CellEditorProps<string, TitleConfig> {
+export interface TitleCellSlotProps {
+  value: ReactNode;
+  props: CellRendererProps<string, TitleConfig>;
   row: Row;
   icon?: IconData;
 }
 
-export function TitleCell({ layout, ...props }: TitleCellProps) {
-  switch (layout) {
-    case "table":
-      return <TitleTableCell {...props} />;
-    case "list":
-      return <TitleListCell {...props} />;
-    case "timeline":
-      return <TitleTimelineCell {...props} />;
-    default:
-      return null;
-  }
-}
-
-function TitleTimelineCell({ icon, data }: Omit<TitleCellProps, "layout">) {
-  return (
-    <>
-      {icon && <IconBlock icon={icon} className="contents" />}
-      <span className="truncate">{data || "New page"}</span>
-    </>
-  );
-}
-
-function TitleTableCell({
-  icon,
-  data,
+export function TitleTableSlot({
+  value,
+  props,
   row,
-  wrapped,
-  disabled,
-  onChange,
-}: Omit<TitleCellProps, "layout">) {
+  icon,
+}: TitleCellSlotProps) {
+  const { data, disabled, onChange, wrapped } = props;
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
 
@@ -65,12 +44,7 @@ function TitleTableCell({
       value={data}
       onUpdate={onChange}
       renderTrigger={({ width }) => (
-        <CellTrigger
-          wrapped={wrapped}
-          layout="table"
-          aria-disabled={disabled}
-          aria-label={data}
-        >
+        <CellTrigger disabled={disabled}>
           <div className="pointer-events-none absolute inset-x-0 top-1.5 z-20 mx-1 my-0 hidden justify-end group-hover/row:flex">
             <div
               id="quick-action-container"
@@ -104,7 +78,7 @@ function TitleTableCell({
                 wrappedClassName(wrapped),
               )}
             >
-              {data}
+              {value}
             </span>
           </div>
         </CellTrigger>
@@ -113,15 +87,15 @@ function TitleTableCell({
   );
 }
 
-function TitleListCell({
+export function TitleCompactSlot({
+  value,
+  props: cellProps,
   icon,
-  data,
-  disabled,
-  onChange,
-}: Omit<TitleCellProps, "layout">) {
+}: TitleCellSlotProps) {
+  const { data, disabled, onChange } = cellProps;
   const [open, setOpen] = useState(false);
   const id = useId();
-  const { props, reset } = useInputField({
+  const { props: inputProps, reset } = useInputField({
     id: `title-list-cell-${id}`,
     initialValue: data,
     onUpdate: (v) => {
@@ -132,10 +106,8 @@ function TitleListCell({
 
   return (
     <CellTrigger
-      className="min-w-30 flex-[1_1_auto] cursor-default hover:bg-transparent"
-      layout="list"
-      aria-disabled={disabled}
-      stopPropagation={false}
+      className="w-full cursor-default hover:bg-transparent"
+      disabled={disabled}
     >
       <div className="pointer-events-none top-1.5 z-20 order-3 mx-1 my-0 hidden justify-end group-hover/row:flex has-aria-expanded:flex">
         <div
@@ -166,7 +138,7 @@ function TitleListCell({
                 spellCheck
                 className="max-h-[771px] min-h-9 border-none bg-transparent wrap-break-word whitespace-pre-wrap caret-primary"
                 variant="flat"
-                {...props}
+                {...inputProps}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") {
                     event.stopPropagation();
@@ -174,7 +146,7 @@ function TitleListCell({
                     setOpen(false);
                     return;
                   }
-                  props.onKeyDown?.(event);
+                  inputProps.onKeyDown?.(event);
                 }}
               />
             </PopoverContent>
@@ -184,7 +156,7 @@ function TitleListCell({
       <div className="contents h-5 items-center">
         {icon && <IconBlock icon={icon} className="contents" />}
         <span className="mr-[5px] ml-1 inline leading-normal font-medium">
-          {data || <span className="text-muted">New page</span>}
+          {data ? value : <span className="text-muted">New page</span>}
         </span>
       </div>
     </CellTrigger>

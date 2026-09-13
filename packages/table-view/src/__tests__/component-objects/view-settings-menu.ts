@@ -2,15 +2,13 @@ import type { UserEvent } from "@testing-library/user-event";
 
 import { SelectGroupingMenuObject } from "./grouping-menu";
 import { LayoutMenuObject } from "./layout-menu";
-import { findMenuByHeading, MenuSurfaceObject } from "./menu-surface";
+import { MenuSurfaceObject } from "./menu-surface";
 import { PropertiesMenuObject } from "./properties-menu";
 
 export class ViewSettingsMenuObject extends MenuSurfaceObject {
   static async find(user: UserEvent) {
-    return new ViewSettingsMenuObject(
-      user,
-      await findMenuByHeading("View Settings"),
-    );
+    const menu = await MenuSurfaceObject.findByHeading(user, "View Settings");
+    return new ViewSettingsMenuObject(user, menu.root);
   }
 
   heading() {
@@ -19,7 +17,7 @@ export class ViewSettingsMenuObject extends MenuSurfaceObject {
 
   async openPage(itemName: string | RegExp, heading: string) {
     await this.user.click(this.item(itemName));
-    return new MenuSurfaceObject(this.user, await findMenuByHeading(heading));
+    return MenuSurfaceObject.findByHeading(this.user, heading);
   }
 
   async toggleLock() {

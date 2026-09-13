@@ -21,6 +21,10 @@ import {
   type FilterGroup,
   type TableFeatures,
 } from "@/features";
+import {
+  canSelectDataCell,
+  useCellSelectionDomain,
+} from "@/features/cell-selection";
 import type { TableViewState } from "@/features/menu";
 import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
@@ -287,7 +291,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           id: property.id,
           enableGlobalFilter: !property.isDeleted,
           accessorFn: (row) => {
-            const value: unknown = row.properties[colId]?.value;
+            const cell = row.properties[colId];
+            const value: unknown = cell ? cell.value : plugin.default.data;
             const comparable = resolveSortingAccessorValue(
               plugin,
               value,
@@ -321,8 +326,11 @@ export function useTableView<TPlugins extends CellPlugin[]>(
               plugin,
               tableGlobalState.pluginMethods?.groupingMethodByColumn?.[colId],
             );
+            const cell = row.properties[colId];
+            const data = (cell ? cell.value : plugin.default.data) as never;
+            if (plugin.isEmpty(data)) return null;
             return groupingMethod.function(
-              row.properties[colId]?.value,
+              data,
               row,
               colId,
               createRuntimePluginMethodContext(
@@ -409,6 +417,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       columnResizeMode: "onChange",
       groupedColumnMode: false,
       autoResetExpanded: false,
+      autoResetCellSelection: false,
+      enableCellSelection: canSelectDataCell,
       getRowId: (row) => row.id,
       state: tableState,
       onColumnInfoChange: handleColumnChange,
@@ -421,6 +431,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => null,
   );
   tableRef.current = table as _TableInstance;
+  useCellSelectionDomain(table);
 
   const sortingMethods = tableGlobalState.pluginMethods?.sortingMethodByColumn;
   const previousSortingMethods = useRef(sortingMethods);
@@ -429,7 +440,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       return;
     }
     previousSortingMethods.current = sortingMethods;
-    table.setSorting((sorting) =>
+    table.baseAtoms.sorting.set((sorting) =>
       sorting.length === 0 ? sorting : [...sorting],
     );
   }, [sortingMethods, table]);

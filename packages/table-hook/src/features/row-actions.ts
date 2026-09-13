@@ -70,10 +70,15 @@ export interface RowActionsTableApi {
 export interface RowActionsColumnApi {
   // Cell updater
   getCell: <TPlugin extends CellPlugin>(rowId: string) => Cell<TPlugin>;
+  getSelectedRowIds: () => string[];
   updateCell: <TPlugin extends CellPlugin>(
     rowId: string,
     updater: Updater<InferData<TPlugin>>,
     originalGroupId?: string,
+  ) => void;
+  updateCells: <TPlugin extends CellPlugin>(
+    rowIds: string[],
+    value: InferData<TPlugin>,
   ) => void;
 }
 
@@ -758,12 +763,14 @@ export const RowActionsFeature: TableFeature = {
     prototype.getCell = function (this: { id: string }, rowId: string) {
       return table.getCell(this.id, rowId);
     };
+    prototype.getSelectedRowIds = () => table.getSelectedRowIds();
     prototype.updateCell = function <TPlugin extends CellPlugin>(
       this: { id: string },
       rowId: string,
       updater: Updater<InferData<TPlugin>>,
       originalGroupId?: string,
     ) {
+      if (table.getTableGlobalState().locked) return;
       table.updateCell<TPlugin>(
         rowId,
         this.id,
@@ -773,6 +780,14 @@ export const RowActionsFeature: TableFeature = {
         }),
         originalGroupId,
       );
+    };
+    prototype.updateCells = function <TPlugin extends CellPlugin>(
+      this: { id: string },
+      rowIds: string[],
+      value: InferData<TPlugin>,
+    ) {
+      if (table.getTableGlobalState().locked) return;
+      table.updateCells<TPlugin>(rowIds, this.id, value);
     };
   },
   assignRowPrototype: (prototype, _table) => {

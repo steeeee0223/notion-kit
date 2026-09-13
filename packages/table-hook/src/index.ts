@@ -1,5 +1,12 @@
 export { useTableView } from "@/table-contexts/use-table-view";
 export * from "@/table-contexts";
+export type {
+  CellInstance,
+  ColumnInstance,
+  HeaderInstance,
+  RowInstance,
+  TableInstance,
+} from "@/table-contexts/types";
 export * from "@/lib/types";
 export * from "@/lib/utils";
 export {

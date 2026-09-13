@@ -126,12 +126,6 @@ function DataUpdateControls() {
       </button>
       <button
         type="button"
-        onClick={() => table.setColumnPinning({ start: ["col1"], end: [] })}
-      >
-        Pin name column
-      </button>
-      <button
-        type="button"
         onClick={() => table.setColumnSizing({ col1: 320 })}
       >
         Resize name column
@@ -160,9 +154,6 @@ describe("TableViewReactivity", () => {
     await layout.selectLayout("Board");
 
     expect(screen.getByText("Select a grouping property")).toBeVisible();
-    expect(
-      document.querySelector('[data-slot="notion-board-view"]'),
-    ).toBeInTheDocument();
   });
 
   it("TableViewReactivity_LockToggle_HidesTableAddRow", async () => {
@@ -707,23 +698,6 @@ describe("TableViewReactivity", () => {
 
     await waitFor(() => {
       expect(tableLayout?.style.getPropertyValue("--col-col2-size")).toBe("");
-    });
-  });
-
-  it("TableViewReactivity_ColumnPinning_RefreshesPinnedHeaders", async () => {
-    const tableView = renderTableView({ children: <DataUpdateControls /> });
-    expect(
-      document.querySelector("#draggable-ghost-section-left"),
-    ).not.toBeInTheDocument();
-
-    await tableView.clickButton("Pin name column");
-
-    await waitFor(() => {
-      const pinned = document.querySelector<HTMLElement>(
-        "#draggable-ghost-section-left",
-      );
-      expect(pinned).toBeInTheDocument();
-      expect(pinned).toHaveTextContent("Name");
     });
   });
 

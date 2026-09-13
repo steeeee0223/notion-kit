@@ -17,8 +17,6 @@ import type {
 } from "@/features/types";
 import {
   aggregateCountAll,
-  aggregateCountEmpty,
-  aggregateCountNonEmpty,
   aggregateCountUnique,
   aggregateCountValues,
   compareBooleans as compareBooleanValues,
@@ -155,11 +153,6 @@ function capValue(num: number, capped?: boolean) {
   return capped && num > 99 ? "99+" : num.toString();
 }
 
-function getPercentage(a: number, b: number) {
-  if (b === 0) return "0.0%";
-  return ((a * 100) / b).toFixed(1) + "%";
-}
-
 function getCellData(row: Row, colId: string): unknown {
   const value: unknown = row.properties[colId]?.value;
   return value;
@@ -170,8 +163,8 @@ function createNullableCompareFn<T extends ComparableValue>(
 ): CompareFn<T> {
   return (a, b) => {
     if (a === null || typeof a === "undefined")
-      return b === null || typeof b === "undefined" ? 0 : -1;
-    if (b === null || typeof b === "undefined") return 1;
+      return b === null || typeof b === "undefined" ? 0 : 1;
+    if (b === null || typeof b === "undefined") return -1;
     return compare(a as T, b as T);
   };
 }
@@ -254,64 +247,6 @@ export const countUnique: CountingMethod = {
   formatResult: (result, { isCapped }) => capValue(Number(result), isCapped),
 };
 
-export const countEmpty: CountingMethod = {
-  id: CountMethod.EMPTY,
-  name: "Empty",
-  aggregationFn: aggregateCountEmpty,
-  formatResult: (result, { isCapped }) => capValue(Number(result), isCapped),
-};
-
-export const countNonEmpty: CountingMethod = {
-  id: CountMethod.NONEMPTY,
-  name: "Not empty",
-  aggregationFn: aggregateCountNonEmpty,
-  formatResult: (result, { isCapped }) => capValue(Number(result), isCapped),
-};
-
-export const countChecked: CountingMethod = {
-  id: CountMethod.CHECKED,
-  name: "Checked",
-  aggregationFn: aggregateCountNonEmpty,
-  formatResult: countNonEmpty.formatResult,
-};
-
-export const countUnchecked: CountingMethod = {
-  id: CountMethod.UNCHECKED,
-  name: "Unchecked",
-  aggregationFn: aggregateCountEmpty,
-  formatResult: countEmpty.formatResult,
-};
-
-export const percentageChecked: CountingMethod = {
-  id: CountMethod.PERCENTAGE_CHECKED,
-  name: "Checked",
-  aggregationFn: aggregateCountNonEmpty,
-  formatResult: (result, { rows }) =>
-    getPercentage(Number(result), rows.length),
-};
-
-export const percentageUnchecked: CountingMethod = {
-  id: CountMethod.PERCENTAGE_UNCHECKED,
-  name: "Unchecked",
-  aggregationFn: aggregateCountEmpty,
-  formatResult: (result, { rows }) =>
-    getPercentage(Number(result), rows.length),
-};
-
-export const percentageEmpty: CountingMethod = {
-  id: CountMethod.PERCENTAGE_EMPTY,
-  name: "Empty",
-  aggregationFn: aggregateCountEmpty,
-  formatResult: percentageUnchecked.formatResult,
-};
-
-export const percentageNonEmpty: CountingMethod = {
-  id: CountMethod.PERCENTAGE_NONEMPTY,
-  name: "Not empty",
-  aggregationFn: aggregateCountNonEmpty,
-  formatResult: percentageChecked.formatResult,
-};
-
 function resolveRegisteredMethod<T extends { id: string }>(
   methods: T[],
   selectedMethodId: string | undefined,
@@ -349,10 +284,16 @@ function createValueComparatorRowFunction<Key extends string, Data, Config>(
 
   return (rowA: Row, rowB: Row, colId: string) => {
     const methodContext = createPluginMethodContext(plugin, colId, context);
-    const dataA: unknown = rowA.properties[colId]?.value ?? null;
-    const dataB: unknown = rowB.properties[colId]?.value ?? null;
-    const valueA = method.toComparable(dataA as Data, rowA, methodContext);
-    const valueB = method.toComparable(dataB as Data, rowB, methodContext);
+    const propertyA = rowA.properties[colId];
+    const propertyB = rowB.properties[colId];
+    const dataA = (propertyA ? propertyA.value : plugin.default.data) as Data;
+    const dataB = (propertyB ? propertyB.value : plugin.default.data) as Data;
+    const valueA = plugin.isEmpty(dataA)
+      ? null
+      : method.toComparable(dataA, rowA, methodContext);
+    const valueB = plugin.isEmpty(dataB)
+      ? null
+      : method.toComparable(dataB, rowB, methodContext);
     return compareValues(valueA, valueB);
   };
 }
@@ -420,9 +361,10 @@ export function resolveSortingAccessorValue<Key extends string, Data, Config>(
     selectedMethodId,
     plugin.sorting?.defaultMethod,
   );
+  if (plugin.isEmpty(data)) return null;
   if (method && isValueSortingMethod(method)) {
     return method.toComparable(
-      (data ?? null) as Data,
+      data,
       row,
       createPluginMethodContext(plugin, colId, context),
     );
@@ -483,8 +425,6 @@ export function resolveCountingMethod(plugin: CellPlugin, methodId: string) {
 
 export const COMMON_AGGREGATION_FNS = {
   countAll: aggregateCountAll,
-  countEmpty: aggregateCountEmpty,
-  countNonEmpty: aggregateCountNonEmpty,
   countUnique: aggregateCountUnique,
   countValues: aggregateCountValues,
 } as const;
@@ -512,11 +452,11 @@ export function createCountingAggregation(
       const result: unknown = aggregation?.aggregate({
         ...context,
         getValue: (row: _RowInstance) => {
-          const value: unknown =
-            row.original.properties[context.columnId]?.value;
+          const property = row.original.properties[context.columnId];
+          const data: unknown = property ? property.value : plugin.default.data;
           return method?.toAggregationValue
-            ? method.toAggregationValue(value, row.original)
-            : plugin.toValue(value, row.original);
+            ? method.toAggregationValue(data, row.original)
+            : plugin.toValue(data, row.original);
         },
       });
       return result;

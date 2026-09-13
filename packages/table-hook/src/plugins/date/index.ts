@@ -7,11 +7,6 @@ export {
   lastEditedTime,
   withDateCalculations,
 } from "./plugin";
-export type {
-  CreatedTimePluginConfig,
-  DatePluginConfig,
-  LastEditedTimePluginConfig,
-} from "./plugin";
 export type * from "./types";
 export {
   calendarDateToTs,

@@ -9,7 +9,7 @@ import type {
 
 import { renderTableView } from "./component-objects/render-table-view";
 import type { TableViewObject } from "./component-objects/table-view";
-import { mockResizeObserver } from "./mock";
+import { mockData, mockResizeObserver } from "./mock";
 
 const rowDragEndEvent = vi.hoisted(() => ({
   canceled: false,
@@ -87,9 +87,14 @@ describe.each(["table", "list", "timeline"] as const)(
                   id: "due",
                   name: "Due",
                   type: "date" as const,
-                  config: {},
+                  config: {
+                    dateFormat: "full",
+                    timeFormat: "24-hour",
+                    tz: "UTC",
+                  },
                 },
               ],
+              data: mockTimelineData,
             }
           : {}),
       });
@@ -149,9 +154,14 @@ describe.each(["table", "list", "timeline"] as const)(
                   id: "due",
                   name: "Due",
                   type: "date" as const,
-                  config: {},
+                  config: {
+                    dateFormat: "full",
+                    timeFormat: "24-hour",
+                    tz: "UTC",
+                  },
                 },
               ],
+              data: mockTimelineData,
             }
           : {}),
       });
@@ -201,3 +211,11 @@ const mockTimelineProperties = [
     config: undefined,
   },
 ];
+
+const mockTimelineData = mockData.map((row) => ({
+  ...row,
+  properties: {
+    ...row.properties,
+    due: { id: `${row.id}-due`, value: { start: 1_735_689_600_000 } },
+  },
+}));

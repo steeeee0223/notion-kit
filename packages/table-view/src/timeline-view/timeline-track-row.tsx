@@ -1,3 +1,4 @@
+import { cn } from "@notion-kit/cn";
 import type { RowInstance } from "@notion-kit/table-hook";
 import {
   ContextMenu,
@@ -6,7 +7,7 @@ import {
 } from "@notion-kit/ui/primitives";
 import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
-import { TableCell } from "@/common";
+import { Cell } from "@/common";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -39,8 +40,13 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
   const feature = toTimelineFeature(row.original, propertyId, title);
 
   return (
-    <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-      {(locked) => {
+    <table.Subscribe
+      selector={(state) => ({
+        locked: state.tableGlobal.locked,
+        rowSelection: state.rowSelection,
+      })}
+    >
+      {({ locked, rowSelection }) => {
         const updateRange = (
           _rowId: string,
           start: number,
@@ -62,7 +68,11 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
         };
 
         return (
-          <div data-slot="timeline-track-row" data-row-id={row.id}>
+          <div
+            data-slot="timeline-track-row"
+            data-row-id={row.id}
+            className={cn(rowSelection[row.id] && "bg-blue/10")}
+          >
             {feature ? (
               <TimelineRow.Root
                 item={feature}
@@ -124,13 +134,17 @@ function TimelineBarContent({ rowId }: { rowId: string }) {
   const { table } = useTableViewCtx();
   const row = table.getRow(rowId) as RowInstance;
   const { colId } = row.getTitleCell();
-  const titleColumn = table.getColumn(colId);
+  const titleCell = row
+    .getAllCells()
+    .find((candidate) => candidate.column.id === colId);
 
-  if (!titleColumn) return null;
+  if (!titleCell) return null;
 
   return (
     <span className="me-2.5 flex min-w-0 items-center gap-1.5 overflow-hidden text-sm font-normal">
-      <TableCell row={row} column={titleColumn} table={table} view="timeline" />
+      <Cell.Root cell={titleCell} table={table} surface="timeline">
+        <Cell.Content />
+      </Cell.Root>
     </span>
   );
 }
