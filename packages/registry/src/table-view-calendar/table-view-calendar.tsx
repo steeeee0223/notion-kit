@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import type { DateData } from "@notion-kit/table-hook/plugins";
 import {
   TableView,
   type ColumnDefs,
@@ -38,7 +39,44 @@ export default function TableViewCalendar() {
       now.getUTCMonth(),
       now.getUTCDate(),
     );
-    return ["Design review", "Release"].map((name, index) => ({
+    const hour = 60 * 60 * 1000;
+    const day = 24 * hour;
+    const scheduled: { name: string; date: DateData }[] = [
+      {
+        name: "Launch week",
+        // Table Date values include the end day for all-day events.
+        date: {
+          start: start - day,
+          end: start + day,
+          endDate: true,
+          includeTime: false,
+        },
+      },
+      {
+        name: "Design review",
+        date: {
+          start: start + 10 * hour,
+          end: start + 12 * hour,
+          endDate: true,
+          includeTime: true,
+        },
+      },
+      {
+        name: "Sprint planning",
+        date: {
+          start: start + 11 * hour,
+          end: start + 13 * hour,
+          endDate: true,
+          includeTime: true,
+        },
+      },
+      {
+        name: "Write release notes",
+        date: { start, endDate: false, includeTime: false },
+      },
+      { name: "Unscheduled task", date: {} },
+    ];
+    return scheduled.map(({ name, date }, index) => ({
       id: `event-${index}`,
       createdAt: start,
       lastEditedAt: start,
@@ -46,12 +84,7 @@ export default function TableViewCalendar() {
         title: { id: `title-${index}`, value: name },
         date: {
           id: `date-${index}`,
-          value: {
-            start: start + index * 86400000,
-            end: start + (index + 1) * 86400000,
-            endDate: true,
-            includeTime: false,
-          },
+          value: date,
         },
       },
     }));
@@ -59,7 +92,9 @@ export default function TableViewCalendar() {
   return (
     <div className="w-full min-w-0">
       <p className="mb-3 text-sm text-secondary">
-        Use Layout in the view settings to switch between Calendar and Timeline.
+        Times are in UTC. Choose Week or Day to see timed events. Use Layout in
+        the view settings to switch to Timeline or Table, where the unscheduled
+        task is also visible.
       </p>
       <TableView
         defaultProperties={properties}

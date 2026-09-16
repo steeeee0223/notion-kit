@@ -3,14 +3,14 @@ title: Calendar
 description: Compose a month, week, or day calendar with editable events and timezone-aware dates.
 ---
 
-<ComponentPreview name="calendar-demo" hideCode />
+<ComponentPreview name="calendar-demo" />
 
 ## Installation
 
 <Installation packages="@notion-kit/ui" registryName="calendar-demo" />
 
-Calendar uses `@notion-kit/ui/calendar`. The `Calendar` export from
-`@notion-kit/ui/primitives` remains the date picker.
+Import these components from `@notion-kit/ui/calendar`. For a date picker,
+use `Calendar` from `@notion-kit/ui/primitives`.
 
 ## Anatomy
 
@@ -40,6 +40,93 @@ apply changes from `onCreate` and `onEventChange` to save them. Ignoring a
 change leaves the original event in place. Omitting a write callback disables
 its operation. `readOnly` disables creation, moving, resizing, and conversion;
 navigation and event opening remain available.
+
+## Examples
+
+### Week
+
+The week view separates all-day events from timed events. Overlapping events
+appear in adjacent columns, and events that cross midnight occupy each day
+they cover. This example uses UTC and saves creation, movement, resizing, and
+conversion in local React state.
+
+<ComponentPreview
+  name="calendar-week"
+  preview={`<CalendarProvider
+  events={events}
+  defaultRange="weekly"
+  timeZone="UTC"
+  onCreate={createEvent}
+  onEventChange={changeEvent}
+  className="h-[560px]"
+>
+  <CalendarHeaderToolbar />
+  <CalendarContent />
+</CalendarProvider>`}
+/>
+
+### Day with controlled navigation
+
+Control `range` and `anchorDate` to keep the selected period and viewed date
+in your application. Apply each navigation callback to update the calendar.
+
+<ComponentPreview
+  name="calendar-day"
+  preview={`const [range, setRange] = useState<CalendarRange>("daily");
+const [anchorDate, setAnchorDate] = useState(() => Date.now());
+
+<CalendarProvider
+  events={events}
+  range={range}
+  onRangeChange={setRange}
+  anchorDate={anchorDate}
+  onAnchorDateChange={setAnchorDate}
+  timeZone="UTC"
+  className="h-[560px]"
+>
+  <CalendarHeaderToolbar />
+  <CalendarContent />
+</CalendarProvider>
+`} />
+
+### Read-only events
+
+Set `readOnly` to disable event mutations. Users can still change the range,
+navigate dates, and open events through `onEventClick`.
+
+<ComponentPreview
+  name="calendar-readonly"
+  preview={`<CalendarProvider
+  events={events}
+  defaultRange="weekly"
+  readOnly
+  onEventClick={openEvent}
+  className="h-[560px]"
+>
+  <CalendarHeaderToolbar />
+  <CalendarContent />
+</CalendarProvider>`}
+/>
+
+### Custom event cards
+
+Pass `renderEvent` to replace the default card. Compose `CalendarEvent.Root`,
+`CalendarEvent.Item`, and `CalendarEvent.Resize` to retain event opening,
+dragging, and resizing. The layout positions each segment and shows resize
+handles only at the event's actual boundaries.
+
+<ComponentPreview
+  name="calendar-custom-events"
+  preview={`<CalendarContent
+  renderEvent={({ event, segment }) => (
+    <CalendarEvent.Root event={event} segment={segment}>
+      <CalendarEvent.Item>{event.name}</CalendarEvent.Item>
+      <CalendarEvent.Resize edge="start" />
+      <CalendarEvent.Resize edge="end" />
+    </CalendarEvent.Root>
+  )}
+/>`}
+/>
 
 ## Event dates
 
@@ -93,22 +180,22 @@ the hidden time portion. A completed gesture sends one callback.
 
 ### CalendarProvider
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `events` | `readonly CalendarEventData[]` | Required | Authoritative event values. |
-| `range` | `CalendarRange` | — | Controlled period. |
-| `defaultRange` | `CalendarRange` | `monthly` | Initial uncontrolled period. |
-| `onRangeChange` | `(range: CalendarRange) => void` | — | Requests a period change. |
-| `anchorDate` | `number` | — | Controlled viewed timestamp. |
-| `defaultAnchorDate` | `number` | Today | Initial viewed timestamp. |
-| `onAnchorDateChange` | `(date: number) => void` | — | Requests a viewed date. |
-| `timeZone` | `string` | Browser zone | IANA display timezone. |
-| `weekStartsOn` | `0` through `6` | `1` | First weekday, with Sunday as zero. |
-| `readOnly` | `boolean` | `false` | Disables event mutations. |
-| `onCreate` | `(value: CalendarEventValue) => void` | — | Receives start, end, and all-day values without an ID. |
-| `onEventClick` | `(event: CalendarEventData) => void` | — | Opens an event. |
-| `onEventChange` | `(change: CalendarEventChange) => void` | — | Receives ID, full date values, and operation reason. |
-| `className` | `string` | — | Sets container size and local styles. |
+| Prop                 | Type                                    | Default      | Description                                            |
+| -------------------- | --------------------------------------- | ------------ | ------------------------------------------------------ |
+| `events`             | `readonly CalendarEventData[]`          | Required     | Authoritative event values.                            |
+| `range`              | `CalendarRange`                         | —            | Controlled period.                                     |
+| `defaultRange`       | `CalendarRange`                         | `monthly`    | Initial uncontrolled period.                           |
+| `onRangeChange`      | `(range: CalendarRange) => void`        | —            | Requests a period change.                              |
+| `anchorDate`         | `number`                                | —            | Controlled viewed timestamp.                           |
+| `defaultAnchorDate`  | `number`                                | Today        | Initial viewed timestamp.                              |
+| `onAnchorDateChange` | `(date: number) => void`                | —            | Requests a viewed date.                                |
+| `timeZone`           | `string`                                | Browser zone | IANA display timezone.                                 |
+| `weekStartsOn`       | `0` through `6`                         | `1`          | First weekday, with Sunday as zero.                    |
+| `readOnly`           | `boolean`                               | `false`      | Disables event mutations.                              |
+| `onCreate`           | `(value: CalendarEventValue) => void`   | —            | Receives start, end, and all-day values without an ID. |
+| `onEventClick`       | `(event: CalendarEventData) => void`    | —            | Opens an event.                                        |
+| `onEventChange`      | `(change: CalendarEventChange) => void` | —            | Receives ID, full date values, and operation reason.   |
+| `className`          | `string`                                | —            | Sets container size and local styles.                  |
 
 `CalendarEventValue` contains `startAt`, `endAt`, and `allDay`.
 `CalendarEventChange` adds `id` and `reason`, where reason is `move`,
@@ -116,32 +203,43 @@ the hidden time portion. A completed gesture sends one callback.
 
 ### Content and controls
 
-`CalendarContent` combines the date header with `CalendarMonth` or
-`CalendarTimeGrid`. Both layouts accept `renderEvent` for custom cards.
-`CalendarRangeHeader`, `CalendarToolbar`, `CalendarRangeSelect`, and
-`CalendarJumpTo` can also be composed separately. `CalendarHeaderToolbar`
-combines the title, range select, and navigation; `rangeDisabled` locks its
-range select without disabling browsing.
+| Component             | Description                                                                                              |
+| --------------------- | -------------------------------------------------------------------------------------------------------- |
+| `CalendarContent`     | Renders `CalendarRangeHeader` and the layout for the current range. Accepts `renderEvent` and div props. |
+| `CalendarMonth`       | Renders the month grid. Accepts `renderEvent` and div props.                                             |
+| `CalendarTimeGrid`    | Renders the all-day area and time slots for Week or Day. Accepts `renderEvent` and div props.            |
+| `CalendarRangeHeader` | Renders weekday or date labels for the current range.                                                    |
+| `CalendarToolbar`     | Container for custom controls. Accepts div props.                                                        |
+| `CalendarJumpTo`      | Renders Previous, Today, and Next buttons.                                                               |
 
-### Custom event cards
+### CalendarHeaderToolbar
 
-```tsx
-import { CalendarContent, CalendarEvent } from "@notion-kit/ui/calendar";
+Combines the period title, range select, and navigation. Also accepts div
+props; `children` appear before the range select.
 
-<CalendarContent
-  renderEvent={({ event, segment }) => (
-    <CalendarEvent.Root event={event} segment={segment}>
-      <CalendarEvent.Item>{event.name}</CalendarEvent.Item>
-      <CalendarEvent.Resize edge="start" />
-      <CalendarEvent.Resize edge="end" />
-    </CalendarEvent.Root>
-  )}
-/>;
-```
+| Prop            | Type                             | Description                                                        |
+| --------------- | -------------------------------- | ------------------------------------------------------------------ |
+| `rangeDisabled` | `boolean`                        | Disables the range select while keeping date navigation available. |
+| `onRangeChange` | `(range: CalendarRange) => void` | Overrides the provider's range-change handler for this toolbar.    |
 
-The layout positions each segment. `Root` provides its event and interaction
-state, `Item` opens or moves it, and `Resize` edits one real boundary. You do
-not need to calculate grid coordinates. Keep the compound parts inside
-`Root` to retain interaction behavior.
+### CalendarRangeSelect
 
-For rows backed by table resources, see [Table View](/docs/blocks/table-view).
+| Prop       | Type                             | Description                                       |
+| ---------- | -------------------------------- | ------------------------------------------------- |
+| `value`    | `CalendarRange`                  | Selected range. Defaults to the provider's range. |
+| `onChange` | `(range: CalendarRange) => void` | Overrides the provider's range-change handler.    |
+| `disabled` | `boolean`                        | Disables selection.                               |
+
+### CalendarEvent
+
+| Part     | Props                                                  | Description                                                              |
+| -------- | ------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `Root`   | `event`, `segment`, div props                          | Provides event and segment data to the card's compound parts.            |
+| `Item`   | Button props except `render`                           | Opens or moves the event. `children` replace the default time and title. |
+| `Resize` | `edge: "start" \| "end"`, button props except `render` | Edits one actual event boundary when changes are enabled.                |
+
+`renderEvent` receives `CalendarEventRenderProps`: the source `event` and its
+visible `segment`. Pass both to `Root`; keep `Item` and `Resize` inside it.
+
+For events backed by table rows and Date properties, see the
+[Table View calendar layout](/docs/blocks/table-view#calendar-layout).

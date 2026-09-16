@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
+import CalendarCustomEvents from "@notion-kit/registry/calendar-custom-events";
+import CalendarDay from "@notion-kit/registry/calendar-day";
 import CalendarDemo from "@notion-kit/registry/calendar-demo";
+import CalendarReadonly from "@notion-kit/registry/calendar-readonly";
+import CalendarWeek from "@notion-kit/registry/calendar-week";
 
 const meta = {
   title: "blocks/Calendar",
@@ -15,8 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Month: Story = { args: { defaultRange: "monthly" } };
-export const Week: Story = { args: { defaultRange: "weekly" } };
-export const Day: Story = { args: { defaultRange: "daily" } };
-export const ReadOnly: Story = {
-  args: { defaultRange: "weekly", readOnly: true },
-};
+export const Week: Story = { render: () => <CalendarWeek /> };
+export const Day: Story = { render: () => <CalendarDay /> };
+export const ReadOnly: Story = { render: () => <CalendarReadonly /> };
+export const CustomEvents: Story = { render: () => <CalendarCustomEvents /> };
