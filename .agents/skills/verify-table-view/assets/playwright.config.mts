@@ -13,8 +13,7 @@ const artifacts = z
 
 export default defineConfig({
   ...base,
-  testDir: import.meta.dirname,
-  testMatch: "source-journeys.spec.mts",
+  testDir: path.join(app, "tests"),
   globalSetup: path.join(app, "tests/global-setup.ts"),
   globalTeardown: path.join(app, "tests/global-teardown.ts"),
   // Launch and check an owned server using SKILL.md before driving it.

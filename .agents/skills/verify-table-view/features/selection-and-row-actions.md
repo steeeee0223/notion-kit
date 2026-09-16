@@ -10,7 +10,7 @@ Users select cell ranges for navigation or select row identities for bulk mutati
 - `row-lifecycle`: add below or Alt-add above, append New page, duplicate with new row/cell IDs, and delete. Batch duplicates follow their sources. Single-row deletion is immediate; bulk/group deletion requires confirmation. [Row controls](../../../../packages/table-view/src/common/row-action-group.tsx), [row actions](../../../../packages/table-hook/src/features/row-actions.ts), [bulk actions](../../../../packages/table-view/src/common/bulk-edit/bulk-action-menu.tsx).
 - `row-menu`: search actions; edit/remove/upload an icon; configured open, full-page/new-tab open, Copy link, Duplicate, Delete. Menu-scoped shortcuts are Meta+Shift+Enter, Meta+D, and Backspace. [Row menu](../../../../packages/table-view/src/menus/row-action-menu.tsx).
 - `row-move`: drag ordering and cross-group moves update row position and grouping value. Table/List/Timeline sorted drag asks whether to remove sorting; cancellation retains the previous state. Board drag-over can make provisional moves and roll back a canceled drag. [Table drag](../../../../packages/table-view/src/table-body/table-body.tsx), [Board drag](../../../../packages/table-view/src/board-view/use-board-dnd.ts), [move semantics](../../../../packages/table-hook/src/features/row-actions.ts).
-- `group-actions`: add a row with that group's value, hide/show aggregation, hide group, and confirm/cancel deleting only its rows. [Group controls](../../../../packages/table-view/src/common/group-actions.tsx).
+- `group-actions`: add a row using the first encountered member's raw grouping-property value, hide/show aggregation, hide group, and confirm/cancel deleting only its rows. Bucket labels do not become cell data: interval groups copy a numeric value, date groups copy a date object, and multi-select groups can copy trailing tags. Generated timestamps remain derived from row metadata. [Group controls](../../../../packages/table-view/src/common/group-actions.tsx), [group representatives](../../../../packages/table-hook/src/features/grouping.ts), [row creation/movement](../../../../packages/table-hook/src/features/row-actions.ts).
 
 ## How to get to it (user POV)
 
@@ -36,6 +36,9 @@ Capture user actions and visible state alongside the targeted row IDs and untouc
 
 - Cell ranges and selected rows are separate systems. A cell rectangle does not select bulk-edit rows.
 - The bulk bar is suppressed in Board even when selected IDs exist. Table/List/Timeline expose it; do not promise visibility in every layout.
+- Bulk drafts start at plugin defaults, not a common selected value; checkbox considers the selected set. Select/date bulk controls can also change property configuration, so distinguish those effects from row-value updates. [Plugin matrix](plugin-behaviors.md).
+- Verify edited rows' last-edited time and resulting sort/filter/group/calculation changes. New/duplicated rows receive fresh created and last-edited timestamps; generated-time group membership cannot be assigned by copying a null cell.
+- Status-group movement does not prove interval/date/alphabetical-group movement. Verify the selected grouping method, copied raw value, and final boundary together when those methods are affected.
 - Cell selection remains available while locked. Row selection is cleared/blocked; editing and action restrictions must be checked per surface, including Board.
 - Board drag-over can emit provisional updates. Exactly one callback is not a cross-layout drag guarantee.
 - Row-menu Move to, Edit property, and Comment are unimplemented menu capabilities; pointer movement exists.

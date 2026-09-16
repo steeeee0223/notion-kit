@@ -1,13 +1,15 @@
 ---
 name: verify-table-view
-description: Verify implemented table-view and table-hook capabilities from their source-based feature map, using real browser interactions and observable resource effects. Use for table editing, property configuration, filters, grouping, selection, layouts, and consumer contracts.
+description: Verify implemented table-view and table-hook capabilities from their source-based feature map, using real browser interactions and observable resource effects. Use for plugin behavior, editing, property configuration, sorting, grouping, filtering, calculations, selection, layouts, and consumer contracts.
 ---
 
 # Verify table-view and table-hook
 
 Read [the feature map](features/README.md) and the linked product implementation before choosing a journey. `packages/table-view/src` and `packages/table-hook/src` define the capabilities and entry points. Existing tests are supporting evidence, not the feature inventory.
 
-Drive the real `TableView` consumer in `apps/e2e`. It imports built `packages/table-view/dist` and `packages/table-hook/dist`. The skill owns representative browser journeys derived from the map; they reuse existing page objects for interaction, without importing or invoking existing E2E specs.
+The [plugin matrix](features/plugin-behaviors.md) maps all 12 built-ins to their sorting, grouping, filtering, calculation, and UI behavior. For a plugin change, cover its affected interactions and layouts; an editor round-trip alone does not verify its organizing semantics.
+
+Drive the real `TableView` consumer in `apps/e2e`. It imports built `packages/table-view/dist` and `packages/table-hook/dist`. Reuse the existing E2E specs, fixtures, and page objects in `apps/e2e/tests`. The feature map determines what to verify; those tests provide reusable execution paths.
 
 The primary surface is Chromium at `/table-view/controlled` or `/table-view/uncontrolled`. The hook also has a library API; use its focused unit tests for contracts with no browser entry point. Storybook is a secondary development surface, not the build verification target.
 
@@ -80,22 +82,30 @@ If installation, build, or tests fail, first capture `node --version`, `"$NVM_BI
 
 ## Drive
 
-The shipped [Playwright config](assets/playwright.config.mts) runs [the skill-owned journeys](assets/source-journeys.spec.mts), preserves the repository's coverage fixture, and retains successful traces, screenshots, accessibility snapshots, and resource JSON. The `.mts` modules work outside the E2E package's module boundary. The config uses the owned server and does not launch or stop one.
+The [Playwright config](assets/playwright.config.mts) extends `apps/e2e/playwright.config.ts` and points at the existing `apps/e2e/tests` directory. It only adapts server ownership, serial execution, and evidence output. It does not contain test scenarios or replace the repository's fixtures.
 
 Do not run the normal `test:e2e` script while this server is running: it rebuilds and its default config tries to own the same port.
 
-Run one representative journey per feature file, serially, stopping at the first failure so Doctor and triage happen before further driving:
+Choose an affected capability from the source-based map, then inspect the existing specs for a matching user path. List candidates without driving the app:
+
+```bash
+nvm use 24.11.1 --silent && CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e exec playwright test --config "$VERIFY_CONFIG" --list
+```
+
+Run the matching existing specs or cases serially. For example, this existing case exercises a numeric filter through the toolbar and checks its view resource effect:
 
 ```bash
 set -o pipefail
-nvm use 24.11.1 --silent && CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e exec playwright test --config "$VERIFY_CONFIG" --max-failures=1 2>&1 | tee "$VERIFY_ARTIFACTS/drive.log"
+nvm use 24.11.1 --silent && CI=true pnpm --config.store-dir=/Users/awen/Documents/Codex/.pnpm-store -F @notion-kit/e2e exec playwright test filtering.spec.ts --config "$VERIFY_CONFIG" --grep 'Filtering_NumericRuleLifecycle' --max-failures=1 2>&1 | tee "$VERIFY_ARTIFACTS/drive.log"
 ```
 
-Require five passed journeys and exit 0. They cover cancel/commit and List title editing; real Number configuration through header and row-detail menus; nested And/Or filters through Settings and the active badge; row selection/bulk overwrite/lock; and Timeline opening through sidebar and bar. This is representative feature coverage, not proof of every sub-feature or consumer configuration.
+Require the selected cases to pass with exit 0. Stop on the first failure, run Doctor, and triage before further driving. Allocate a fresh evidence directory for each invocation because Playwright clears its `tests` output directory.
 
-For a targeted run, append `--grep 'editing-and-resources'`, `properties`, `finding-and-organizing`, `selection-and-row-actions`, or `layouts-and-row-views`. Allocate a fresh evidence directory for every invocation because Playwright clears its `tests` output directory. Use the map's other user paths when a change affects an entry not covered by the representative journey.
+During maintenance, exercise every feature file at least once. Existing cases may cover those paths. Where coverage is missing, drive the map's recipe in a live browser and retain the action log, screenshots, and observable effects. A single numeric-filter test does not prove the nested-filter recipe or every filtering entry point.
 
-During skill maintenance, keep new journeys and harness corrections inside this skill. Import `test` and `expect` from its local `./fixtures.mts`, which extends the repository fixture. Reuse `TableViewObject` from `apps/e2e/tests/component-objects/table-view.ts` and its existing methods directly. Scope controls by row/property/menu/group; use real pointer/keyboard actions and derive drag coordinates from located elements. Do not edit product code or existing E2E tests during a maintenance pass.
+Keep this skill focused on the source map, operation recipes, and harness instructions. Do not add another spec suite or fixture layer under the skill. Temporary probes belong in run scratch space and are removed after their evidence is saved. Lasting regression tests belong in `apps/e2e/tests` through a separate change; maintenance does not edit that suite or product code.
+
+Reuse `TableViewObject` and the other existing component objects when driving with Playwright. Scope controls by row, property, menu, or group. Use real pointer and keyboard actions; derive drag coordinates from located elements. Read the current UI when an existing locator is stale and report the harness gap.
 
 For hook-only logic, supplement the browser proof with the relevant package test. For example:
 
@@ -107,9 +117,9 @@ Hook tests can supplement the source contract, especially owner rejection, custo
 
 ## Evidence
 
-Preserve the absolute `VERIFY_ARTIFACTS` directory. It contains build/server/doctor/drive logs, the Git revision and working-tree status, `results.json`, `report/index.html`, and per-test `tests/**/trace.zip` and screenshots. The trace records actions, assertions, DOM snapshots, and network activity; a final screenshot alone is insufficient.
+Preserve the absolute `VERIFY_ARTIFACTS` directory. An E2E run retains `results.json`, `report/index.html`, and per-test `tests/**/trace.zip` and screenshots alongside the launch and drive logs. The trace records actions, assertions, DOM snapshots, and network activity; a final screenshot alone is insufficient. Additional attachments depend on the existing test.
 
-For custom journeys, attach before/after `page.locator("main").ariaSnapshot()` text and `table.controlledSnapshot()` or `table.renderedResourceSnapshot()` JSON with `testInfo.attach`. Capture screenshots at the relevant state, especially before closing an editor or clearing a selection. Read diagnostics only; never mutate them, call internal setters, or inject state to substitute for the user action being proved.
+For a live browser recipe, save before/after accessibility snapshots and the visible parent/rendered resource diagnostics. In a temporary Playwright probe, reuse `apps/e2e/tests/fixtures.ts` and attach this evidence with `testInfo.attach`. Capture screenshots at the relevant state, especially before closing an editor or clearing a selection. Read diagnostics only; never mutate them, call internal setters, or inject state to substitute for the user action being proved.
 
 Verify the visible outcome and the applicable side effect: resource change, clipboard value, popup URL, or uploaded blob URL. After edits, compare parent/rendered resources or reopen the value through another surface. Search, basic grouping, and calculations use internal state; grouping methods and group ordering can write view resources. Use the source contract for the exact action.
 
@@ -125,7 +135,7 @@ After success or failure, send Ctrl-C to the retained server PTY and wait for it
 
 Run `lsof -nP -iTCP:3001 -sTCP:LISTEN` again. No listener is expected; investigate a remaining listener without killing unrelated processes. Keep shared build outputs and all evidence. Remove only scratch specs or state that this run created.
 
-Confirm that cleanup preserved the proof:
+For an E2E run, confirm that cleanup preserved the proof:
 
 ```bash
 test -s "$VERIFY_ARTIFACTS/results.json"
@@ -133,11 +143,11 @@ test -s "$VERIFY_ARTIFACTS/report/index.html"
 rg --files "$VERIFY_ARTIFACTS/tests" | rg '(trace\.zip|\.png)$'
 ```
 
-Report the absolute evidence path and which mapped paths passed. A failed or skipped drive is not a completed verification.
+For direct browser driving, check the saved action log, snapshots, and screenshots instead. Report the absolute evidence path and which mapped paths passed. A failed or skipped drive is not a completed verification.
 
 ## Helpers
 
-- `assets/playwright.config.mts`, `assets/source-journeys.spec.mts`, and `assets/fixtures.mts` are runner-loaded modules. Invoke them through the Drive command; the config requires absolute `VERIFY_ARTIFACTS`.
+- `assets/playwright.config.mts` is a runner-loaded override for the existing E2E suite. Invoke it through the Drive command; it requires absolute `VERIFY_ARTIFACTS`.
 - Existing executable harness: the pinned Playwright runner, using the Node/store bootstrap above. No standalone helper scripts are shipped.
-- Existing page objects: `apps/e2e/tests/component-objects/`. Reuse them; any maintenance-specific extension stays in this skill's directory.
+- Existing specs, fixtures, and page objects: `apps/e2e/tests/`. Reuse them; this skill does not own a second test suite.
 - To refresh these recipes after product changes, use `/maintain-verification-skill` with this directory and its feature map.

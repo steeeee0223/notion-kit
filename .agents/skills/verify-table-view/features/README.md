@@ -11,14 +11,17 @@ This map describes capabilities implemented by `packages/table-view/src` and `pa
 | [Find and organize rows](finding-and-organizing.md)       | Search, nested typed filters, ordered sorting, grouping methods, group order, calculations                    | [filter editor](../../../../packages/table-view/src/menus/filter-menu/filter-group-editor.tsx), [group editor](../../../../packages/table-view/src/menus/edit-group-menu.tsx), [hook methods](../../../../packages/table-hook/src/methods.ts) |
 | [Select and act on rows](selection-and-row-actions.md)    | Cell ranges, row/group selection, bulk edits, row operations and movement                                     | [cell selection](../../../../packages/table-view/src/table-contexts/cell-selection-provider.tsx), [row actions](../../../../packages/table-hook/src/features/row-actions.ts)                                                                  |
 | [Change layouts and open rows](layouts-and-row-views.md)  | Table/List/Board/Timeline, date tracks, peek modes, navigation, lock                                          | [layout menu](../../../../packages/table-view/src/menus/layout-menu.tsx), [view state](../../../../packages/table-hook/src/features/menu.ts)                                                                                                  |
+| [Plugin behavior across table views](plugin-behaviors.md) | All 12 built-ins: value semantics, sorting/grouping, filters, calculations, configuration and layout effects  | [hook plugins](../../../../packages/table-hook/src/plugins/index.ts), [method resolution](../../../../packages/table-hook/src/methods.ts), [UI plugin pairs](../../../../packages/table-view/src/plugins/index.ts)                            |
 
 Each feature file separates product capabilities and entry points from one reproducible browser recipe. Related capabilities link to their owning feature to avoid duplicate definitions.
+
+For changes to a property type, start with the plugin matrix and follow its links to the affected interaction features. A generic sorting/grouping journey does not establish the distinct behavior of every plugin.
 
 ## Execution surface
 
 Follow [Launch and Doctor](../SKILL.md). The built-package app is an execution host: `/table-view/controlled` accepts resource proposals; `/table-view/uncontrolled` uses defaults. Both initialize Alpha/Empty/Omega with scores 10/empty/90 and statuses Active/empty/Done. These records and diagnostic panels are fixture data, not library features.
 
-Use the skill-owned journeys for a representative live pass, or drive the listed controls with a browser. Existing page objects may provide locators and actions. Existing E2E specs are supplemental coverage only; a missing test is not evidence that a product capability is missing.
+Reuse matching cases in `apps/e2e/tests`, or drive the listed controls with a browser. Existing page objects provide reusable locators and actions. Existing E2E specs supply execution and evidence; a missing test is not evidence that a product capability is missing. Keep the skill's map and recipes independent of the suite's test inventory.
 
 ## Coverage and evidence
 

@@ -12,6 +12,7 @@ Users change the schema shared by their rows: metadata, type, plugin configurati
 - `number-config`: Number/commas/Percent/Currency, decimal places, Number/Bar/Ring, meter color/divisor/show-number. Formatting changes presentation rather than the stored numeric value. [Number configuration](../../../../packages/table-view/src/plugins/number/number-config-menu/number-config-menu.tsx).
 - `option-config`: add, rename, describe, recolor, delete, reorder, and sort options manually/alphabetically/reverse. Rename/delete updates referring row values, including multi-select arrays. Duplicate names are rejected. [Option configuration](../../../../packages/table-view/src/plugins/select/select-config-menu/select-config-menu.tsx), [option reducer](../../../../packages/table-view/src/plugins/select/select-config-reducer.ts).
 - `date-title-config`: date/time formats and title Show page icon; date cells also expose timezone. [Date configuration](../../../../packages/table-view/src/plugins/date/date-config-menu.tsx), [title configuration](../../../../packages/table-view/src/plugins/title/title-config.tsx).
+- `config-derived-behavior`: Number formatting also affects interval headings and numeric aggregates; date configuration affects group/calculation labels and timezone-sensitive filters; option renames affect group membership and lexical ordering. Type conversion can invalidate selected method IDs, which follow the plugin resolver's fallback rules. See [plugin behavior](plugin-behaviors.md) for these contracts and source owners.
 
 ## How to get to it (user POV)
 
@@ -38,5 +39,6 @@ For lifecycle changes, create a temporary property through New property, edit me
 - Scope display buttons to the **Edit property** menu. The meter contributes accessible text, so match `/Bar$/` rather than the exact name `Bar`. Wait for dismissed menus to unmount before reopening them.
 - Property duplication and row duplication have different value semantics: property duplication starts default cells; row duplication copies row values.
 - Title restrictions are specific UI guards. Check the actual entry point instead of assuming every low-level hook API enforces them.
+- Select option order controls the option menu, not row sorting or group sorting. Rename/delete propagates cell values, but does not rewrite filter operands that still refer to the old option name.
 - Lock verification must include alternate entries and resize handles, not just the disabled header button. Treat a successful locked mutation as a product issue to report.
 - Icon upload currently stores a browser blob URL; it does not upload to durable storage.
