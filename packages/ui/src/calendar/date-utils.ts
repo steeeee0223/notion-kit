@@ -35,14 +35,6 @@ export function validEvents(events: readonly CalendarEventData[]) {
     return parsed.success ? [parsed.data] : [];
   });
 }
-export function resolveTimeZone(timeZone?: string) {
-  try {
-    return new Intl.DateTimeFormat("en-US", { timeZone }).resolvedOptions()
-      .timeZone;
-  } catch {
-    return "UTC";
-  }
-}
 export const zonedDate = (value: number, timeZone: string) =>
   new TZDate(value, timeZone);
 export const calendarDay = (value: number, timeZone: string) =>

@@ -71,6 +71,26 @@ test("CalendarMonth_CrossWeekSegmentMove_PreservesTheGrabbedDayOffset", async ({
   expect((await calendar.snapshot()).openCount).toBe(0);
 });
 
+test("CalendarTimeGrid_HorizontalDragFromCardMiddle_PreservesStartAndDuration", async ({
+  page,
+}) => {
+  const calendar = await CalendarObject.open(page, "Week");
+  await calendar.moveHorizontally(meeting, "2026-09-17");
+  await expect
+    .poll(async () => (await calendar.snapshot()).lastChange)
+    .toEqual({
+      id: "meeting",
+      startAt: Date.parse("2026-09-17T09:00Z"),
+      endAt: Date.parse("2026-09-17T10:00Z"),
+      allDay: false,
+      reason: "move",
+    });
+  expect(await calendar.snapshot()).toMatchObject({
+    changeCount: 1,
+    openCount: 0,
+  });
+});
+
 test("CalendarTimeGrid_MoveResizeAndConvert_CommitOncePerGesture", async ({
   page,
 }) => {

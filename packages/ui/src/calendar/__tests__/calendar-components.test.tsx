@@ -131,3 +131,29 @@ it("CalendarReadOnly_MissingWriteCapabilities_AllowsOpenAndNavigationWithoutCrea
     screen.getByRole("combobox", { name: "Calendar range" }),
   ).toBeDisabled();
 });
+
+it("CalendarTimeGrid_LateShortEvent_KeepsReadableMinimumHeight", () => {
+  const startAt = Date.parse("2026-09-16T23:59:00Z");
+  render(
+    <CalendarProvider
+      events={[
+        {
+          id: "late",
+          name: "Late event",
+          startAt,
+          endAt: startAt,
+          allDay: false,
+        },
+      ]}
+      defaultRange="daily"
+      defaultAnchorDate={startAt}
+      timeZone="UTC"
+    >
+      <CalendarContent />
+    </CalendarProvider>,
+  );
+  const placement = screen
+    .getByRole("button", { name: "Late event" })
+    .closest<HTMLElement>('[data-slot="calendar-event"]')!.parentElement!;
+  expect(Number.parseFloat(placement.style.height)).toBeGreaterThanOrEqual(30);
+});

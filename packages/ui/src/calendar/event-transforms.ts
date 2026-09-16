@@ -18,6 +18,7 @@ import type {
 
 export interface CalendarTarget {
   day: number;
+  /** Local minute within the target day. */
   minute?: number;
   area: CalendarArea;
 }
@@ -40,7 +41,7 @@ export function transformEvent(
     1,
     dayDifference(occupiedEndDay(event, timeZone), startDay, timeZone),
   );
-  const minute = Math.round((target.minute ?? 0) / 15) * 15;
+  const minute = target.minute ?? 0;
   let startAt = event.startAt,
     endAt = event.endAt,
     allDay = event.allDay;

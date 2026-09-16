@@ -19,7 +19,7 @@ import type {
 } from "@dnd-kit/react";
 import { z } from "zod";
 
-import { dayDifference } from "./date-utils";
+import { dayDifference, minuteOfDay } from "./date-utils";
 import { transformEvent, type CalendarTarget } from "./event-transforms";
 import type {
   CalendarEventChange,
@@ -67,6 +67,7 @@ interface Gesture {
   event: CalendarEventData;
   reason: "move" | "resize-start" | "resize-end";
   dayOffset: number;
+  grabbedMinute: number | undefined;
   signature: string;
   change: CalendarEventChange | null;
   point: { x: number; y: number };
@@ -132,13 +133,7 @@ export function useCalendarDrag(options: DragOptions) {
       if (!parsed.success) continue;
       return {
         ...parsed.data,
-        minute:
-          parsed.data.area === "time"
-            ? Math.min(
-                1440,
-                Math.max(0, Math.round((point.y - box.top) / 15) * 15),
-              )
-            : undefined,
+        minute: parsed.data.area === "time" ? point.y - box.top : undefined,
       };
     }
     return null;
@@ -158,6 +153,16 @@ export function useCalendarDrag(options: DragOptions) {
       active.change = null;
       setDraftState(null);
       return;
+    }
+    if (target.minute !== undefined) {
+      // Snap movement relative to the grab point so a horizontal drag keeps the exact start time.
+      target.minute =
+        active.reason === "move" &&
+        !active.event.allDay &&
+        active.grabbedMinute !== undefined
+          ? minuteOfDay(active.event.startAt, timeZone) +
+            Math.round((target.minute - active.grabbedMinute) / 15) * 15
+          : Math.round(target.minute / 15) * 15;
     }
     active.change = transformEvent(
       active.event,
@@ -225,6 +230,7 @@ export function useCalendarDrag(options: DragOptions) {
         source.startAt,
         timeZone,
       ),
+      grabbedMinute: target?.minute,
       signature,
       change: null,
       point: event.operation.position.current,

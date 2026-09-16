@@ -8,7 +8,7 @@ import { useCalendarContext } from "./calendar-context";
 import { CalendarEventContent, DefaultCalendarEvent } from "./calendar-event";
 import { HOUR, localTime, periodDays, zonedDate } from "./date-utils";
 import { layoutDayEvents } from "./month-layout";
-import { layoutTimedEvents, MIN_VISUAL_MINUTES } from "./time-grid-layout";
+import { layoutTimedEvents } from "./time-grid-layout";
 import type { CalendarEventRenderer } from "./types";
 
 export interface CalendarTimeGridProps extends React.ComponentProps<"div"> {
@@ -151,14 +151,8 @@ export function CalendarTimeGrid({
             key={`${segment.event === calendar.draft ? "draft:" : ""}${segment.key}`}
             className="absolute min-w-0 px-px"
             style={{
-              top: segment.startMinute,
-              height: Math.min(
-                1440 - segment.startMinute,
-                Math.max(
-                  MIN_VISUAL_MINUTES,
-                  segment.endMinute - segment.startMinute,
-                ),
-              ),
+              top: segment.visualStart,
+              height: segment.visualEnd - segment.visualStart,
               left: `${((segment.lane + segment.column / segment.columnCount) / days.length) * 100}%`,
               width: `${100 / days.length / segment.columnCount}%`,
             }}

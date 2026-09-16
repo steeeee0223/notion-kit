@@ -16,12 +16,11 @@ import type { TimelineData, TimelineRange } from "./types";
 import { resolveColumnWidth } from "./utils";
 
 interface AnchorOptions {
-  enabled: boolean;
   ref: React.RefObject<HTMLDivElement | null>;
   anchorDate?: number;
   defaultAnchorDate?: number;
   onAnchorDateChange?: (date: number) => void;
-  timeZone?: string;
+  timeZone: string;
   range: TimelineRange;
   zoom: number;
   sidebarWidth: number;
@@ -30,24 +29,13 @@ interface AnchorOptions {
   setScrollX: (position: number) => void;
 }
 
-export function resolveTimelineTimeZone(timeZone?: string) {
-  if (timeZone === undefined) return undefined;
-  try {
-    new Intl.DateTimeFormat("en", { timeZone }).format();
-    return timeZone;
-  } catch {
-    return "UTC";
-  }
-}
-
 export function useAnchorDate(options: AnchorOptions) {
   const {
-    enabled,
     ref,
     anchorDate,
     defaultAnchorDate,
     onAnchorDateChange,
-    timeZone,
+    timeZone: zone,
     range,
     zoom,
     sidebarWidth,
@@ -65,10 +53,8 @@ export function useAnchorDate(options: AnchorOptions) {
   useLayoutEffect(() => {
     latestChange.current = onAnchorDateChange;
   }, [onAnchorDateChange]);
-  const zone = resolveTimelineTimeZone(timeZone);
 
   useLayoutEffect(() => {
-    if (!enabled) return;
     const element = ref.current;
     if (!element) return;
     const geometry = [
@@ -88,8 +74,7 @@ export function useAnchorDate(options: AnchorOptions) {
     previousGeometry.current = geometry;
     // An owner accepting our scroll report must not interrupt the browser's ongoing scroll.
     if (acceptedScroll) return;
-    const zoned = (value: number | Date) =>
-      zone ? new TZDate(Number(value), zone) : new Date(Number(value));
+    const zoned = (value: number | Date) => new TZDate(Number(value), zone);
     const startOf =
       range === "daily"
         ? startOfDay
@@ -140,7 +125,6 @@ export function useAnchorDate(options: AnchorOptions) {
       }
     }
   }, [
-    enabled,
     ref,
     anchorDate,
     zone,
@@ -153,12 +137,9 @@ export function useAnchorDate(options: AnchorOptions) {
   ]);
 
   useEffect(() => {
-    if (!enabled) return;
     const element = ref.current;
     if (!element) return;
-    const start = zone
-      ? new TZDate(timelineData.start.getTime(), zone)
-      : timelineData.start;
+    const start = new TZDate(timelineData.start.getTime(), zone);
     const origin =
       range === "daily"
         ? startOfDay(start)
@@ -187,7 +168,7 @@ export function useAnchorDate(options: AnchorOptions) {
     // Navigation reports synchronously: throttled rendering must not lose the last scroll before a layout unmount.
     element.addEventListener("scroll", onScroll, { passive: true });
     return () => element.removeEventListener("scroll", onScroll);
-  }, [enabled, ref, range, zoom, sidebarWidth, timelineData, zone]);
+  }, [ref, range, zoom, sidebarWidth, timelineData, zone]);
 }
 
 function dateAtPosition(

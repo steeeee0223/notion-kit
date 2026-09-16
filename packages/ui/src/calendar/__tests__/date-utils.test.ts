@@ -1,12 +1,13 @@
 import { expect, it } from "vitest";
 
+import { resolveTimeZone } from "@notion-kit/utils";
+
 import {
   addCalendarDays,
   calendarDay,
   effectiveEnd,
   localTime,
   navigateDate,
-  resolveTimeZone,
   validEvents,
 } from "../date-utils";
 

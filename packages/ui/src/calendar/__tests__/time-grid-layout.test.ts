@@ -72,3 +72,35 @@ it("CalendarTimeGrid_RepeatedHour_SeparatesVisuallyCoincidentActualIntervals", (
     ],
   );
 });
+
+it("CalendarTimeGrid_NearMidnight_KeepsMinimumHeightAndSeparatesVisualCollisions", () => {
+  const segments = layoutTimedEvents(
+    [
+      {
+        id: "earlier",
+        name: "Earlier",
+        startAt: ts("2026-09-16T23:20Z"),
+        endAt: ts("2026-09-16T23:45Z"),
+        allDay: false,
+      },
+      {
+        id: "late",
+        name: "Late",
+        startAt: ts("2026-09-16T23:59Z"),
+        endAt: ts("2026-09-16T23:59Z"),
+        allDay: false,
+      },
+    ],
+    [ts("2026-09-16T00:00Z")],
+    "UTC",
+  );
+  expect(segments[1]).toMatchObject({
+    startMinute: 1439,
+    endMinute: 1439,
+    visualStart: 1410,
+    visualEnd: 1440,
+    column: 1,
+    columnCount: 2,
+  });
+  expect(segments[0]).toMatchObject({ column: 0, columnCount: 2 });
+});

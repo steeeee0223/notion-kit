@@ -16,18 +16,8 @@ const dateSchema = z.object({
   includeTime: z.boolean().optional(),
 });
 
-function dayBoundary(
-  timestamp: number,
-  timeZone: string | undefined,
-  offset = 0,
-) {
-  let zone = timeZone;
-  try {
-    new Intl.DateTimeFormat("en", { timeZone: zone }).format(timestamp);
-  } catch {
-    zone = "UTC";
-  }
-  const date = new TZDate(timestamp, zone);
+function dayBoundary(timestamp: number, timeZone: string, offset = 0) {
+  const date = new TZDate(timestamp, timeZone);
   date.setHours(0, 0, 0, 0);
   if (offset) date.setDate(date.getDate() + offset);
   return date.getTime();
@@ -37,7 +27,7 @@ export function toCalendarEvent(
   row: Row,
   propertyId: string,
   name: string,
-  timeZone?: string,
+  timeZone: string,
 ): CalendarEventData | null {
   const parsed = dateSchema.safeParse(row.properties[propertyId]?.value);
   if (!parsed.success) return null;
@@ -63,7 +53,7 @@ export function toCalendarEvent(
 
 export function calendarValueToDate(
   value: CalendarEventValue,
-  timeZone?: string,
+  timeZone: string,
 ): DateData {
   return {
     start: value.allDay ? dayBoundary(value.startAt, timeZone) : value.startAt,
@@ -80,7 +70,7 @@ export function calendarValueToDate(
 
 export function createCalendarCellUpdater(
   value: CalendarEventValue,
-  timeZone?: string,
+  timeZone: string,
 ) {
   return (cell: Cell<DatePlugin>): Cell<DatePlugin> => ({
     ...cell,

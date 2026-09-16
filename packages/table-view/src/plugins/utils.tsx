@@ -1,15 +1,7 @@
 import { cva } from "@notion-kit/cn";
 import { getDefaultGroupingValue } from "@notion-kit/table-hook/plugins";
 
-import type { GroupingValueProps } from "./registry";
-
-export type CellSurface =
-  | "table"
-  | "list"
-  | "board"
-  | "row-view"
-  | "timeline"
-  | "calendar";
+import type { CellSurface, GroupingValueProps } from "./registry";
 
 export type CellStyleKind =
   | "text"

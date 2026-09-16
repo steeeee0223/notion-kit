@@ -177,7 +177,7 @@ export class CalendarObject {
     const point = await this.timePoint(date, minute);
     await this.page.mouse.click(point.x, point.y + 2);
   }
-  private async beginDrag(source: Locator) {
+  private async beginDrag(source: Locator, grabFraction?: number) {
     await source.scrollIntoViewIfNeeded();
     const box = await source.boundingBox();
     if (!box) throw new Error("Calendar drag source is missing");
@@ -193,10 +193,31 @@ export class CalendarObject {
       container.y + container.height,
     );
     const x = box.x + Math.min(14, box.width / 2);
-    const y = visibleTop + Math.min(12, (visibleBottom - visibleTop) / 2);
+    const y =
+      visibleTop +
+      (grabFraction === undefined
+        ? Math.min(12, (visibleBottom - visibleTop) / 2)
+        : (visibleBottom - visibleTop) * grabFraction);
+    const eventTop = await source.evaluate((element) =>
+      element.closest('[data-slot="calendar-time-grid"]')
+        ? element
+            .closest('[data-slot="calendar-event"]')!
+            .getBoundingClientRect().top
+        : null,
+    );
     await this.page.mouse.move(x, y);
     await this.page.mouse.down();
     await this.page.mouse.move(x + 8, y + 2, { steps: 2 });
+    return { y, offset: eventTop === null ? 0 : y - eventTop };
+  }
+  async moveHorizontally(reference: CalendarEventReference, date: string) {
+    const grabbed = await this.beginDrag(this.card(reference), 0.75);
+    const target = await this.timeColumn(date).boundingBox();
+    if (!target) throw new Error("Calendar time target is missing");
+    await this.page.mouse.move(target.x + target.width / 2, grabbed.y, {
+      steps: 12,
+    });
+    await this.page.mouse.up();
   }
   async moveToDay(
     reference: CalendarEventReference,
@@ -219,9 +240,10 @@ export class CalendarObject {
     minute: number,
     options: { cancel?: boolean } = {},
   ) {
-    await this.beginDrag(this.card(reference));
-    await this.revealTime(minute);
-    const point = await this.timePoint(date, minute);
+    const grabbed = await this.beginDrag(this.card(reference));
+    const targetMinute = minute + grabbed.offset;
+    await this.revealTime(targetMinute);
+    const point = await this.timePoint(date, targetMinute);
     await this.page.mouse.move(point.x, point.y, { steps: 12 });
     if (options.cancel) await this.page.keyboard.press("Escape");
     await this.page.mouse.up();

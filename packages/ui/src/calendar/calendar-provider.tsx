@@ -11,9 +11,10 @@ import {
 import { DragDropProvider } from "@dnd-kit/react";
 
 import { cn } from "@notion-kit/cn";
+import { resolveTimeZone } from "@notion-kit/utils";
 
 import { CalendarContext } from "./calendar-context";
-import { minuteOfDay, resolveTimeZone, validEvents } from "./date-utils";
+import { minuteOfDay, validEvents } from "./date-utils";
 import type { CalendarProviderProps } from "./types";
 import {
   calendarPlugins,

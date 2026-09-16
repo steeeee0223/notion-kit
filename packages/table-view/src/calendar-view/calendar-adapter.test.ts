@@ -114,11 +114,4 @@ describe("Calendar date adapter", () => {
     });
     expect(cell.value.start).toBe(0);
   });
-
-  it("ToCalendarEvent_InvalidTimeZone_UsesUTC", () => {
-    expect(
-      toCalendarEvent(row({ start: 1 }), "due", "Task", "invalid-zone")
-        ?.startAt,
-    ).toBe(0);
-  });
 });

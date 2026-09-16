@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import type { ColumnInfo } from "@notion-kit/table-hook";
+import { resolveTimeZone } from "@notion-kit/utils";
 
 export function isUsableDateProperty(property: ColumnInfo) {
   return property.type === "date" && !property.hidden && !property.isDeleted;
@@ -24,11 +25,5 @@ const timeZoneConfig = z.object({ tz: z.string().optional() });
 
 export function getDatePropertyTimeZone(property: ColumnInfo) {
   const config = timeZoneConfig.safeParse(property.config);
-  const timeZone = config.success ? config.data.tz : undefined;
-  try {
-    return new Intl.DateTimeFormat("en", { timeZone }).resolvedOptions()
-      .timeZone;
-  } catch {
-    return "UTC";
-  }
+  return resolveTimeZone(config.success ? config.data.tz : undefined);
 }

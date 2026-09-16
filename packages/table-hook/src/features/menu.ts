@@ -320,10 +320,11 @@ export const TableMenuFeature: TableFeature = {
       const actionId = v4();
       instance.setTableGlobalState(
         (view) => {
-          if (view.dateView!.range === range) return view;
+          const nextRange = resolveDateViewRange(view.layout, range);
+          if (view.dateView!.range === nextRange) return view;
           return {
             ...view,
-            dateView: { ...view.dateView!, range },
+            dateView: { ...view.dateView!, range: nextRange },
           };
         },
         (previous, next) => ({

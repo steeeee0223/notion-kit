@@ -278,6 +278,7 @@ describe("TimelineProvider", () => {
       '[data-slot="timeline-view"]',
     )!;
     view.scrollLeft = 450;
+    fireEvent.scroll(view);
 
     rerender(
       <TimelineProvider range="quarterly" startDate={start} endDate={end}>
@@ -408,6 +409,36 @@ describe("TimelineProvider", () => {
     expect(view.scrollLeft).toBe(714 * 50 - 200);
     fireEvent.scroll(view);
     expect(onAnchorDateChange).not.toHaveBeenCalled();
+  });
+
+  it("TestTimelineProvider_StandaloneScroll_PreservesCenterAcrossZoomAndRangeChanges", () => {
+    const props = {
+      startDate: new Date(2025, 0, 1).getTime(),
+      endDate: new Date(2027, 11, 31).getTime(),
+      sidebarWidth: 200,
+    };
+    const { container, rerender } = render(
+      <TimelineProvider {...props} range="monthly">
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    const view = container.querySelector<HTMLDivElement>(
+      '[data-slot="timeline-view"]',
+    )!;
+    view.scrollLeft = (23 + 15 / 31) * 150 - 200;
+    fireEvent.scroll(view);
+    rerender(
+      <TimelineProvider {...props} range="monthly" zoom={200}>
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    expect(view.scrollLeft).toBeCloseTo((23 + 15 / 31) * 300 - 200);
+    rerender(
+      <TimelineProvider {...props} range="daily">
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    expect(view.scrollLeft).toBe(714 * 50 - 200);
   });
 
   it("TestTimelineProvider_DisplayTimeZone_UsesLocalDateAcrossUtcMidnight", () => {

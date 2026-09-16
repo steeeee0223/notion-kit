@@ -838,6 +838,43 @@ describe("useTableView resource API", () => {
     },
   );
 
+  it.each([
+    ["calendar", "quarterly"],
+    ["timeline", "weekly"],
+  ] as const)(
+    "ResourceApi_%sRangeSetter_Normalizes%sBeforeEmittingAndSkipsNoOps",
+    (layout, range) => {
+      const onViewChange = vi.fn();
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins,
+          defaultData: mockData,
+          defaultProperties: mockProperties,
+          defaultView: {
+            layout,
+            dateView: { range: "daily", datePropertyId: "date-property" },
+          },
+          onViewChange,
+        }),
+      );
+      act(() => result.current.table.setDateViewRange(range));
+      expect(result.current.table.getTableGlobalState().dateView).toEqual({
+        range: "monthly",
+        datePropertyId: "date-property",
+      });
+      expect(onViewChange).toHaveBeenCalledTimes(1);
+      expect(
+        getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+          ?.action,
+      ).toMatchObject({
+        type: "view.date_view_range.change",
+        payload: { previousRange: "daily", nextRange: "monthly" },
+      });
+      act(() => result.current.table.setDateViewRange(range));
+      expect(onViewChange).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it("ResourceApi_ControlledViewRejectedUpdate_RebasesBeforeDifferentMethod", () => {
     const onViewChange = vi.fn();
     const view = {

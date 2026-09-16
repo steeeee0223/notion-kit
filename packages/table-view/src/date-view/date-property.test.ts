@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { ColumnInfo } from "@notion-kit/table-hook";
 
-import { resolveDateProperty } from "./date-property";
+import { getDatePropertyTimeZone, resolveDateProperty } from "./date-property";
 
 const dateProperty = {
   id: "due",
@@ -41,6 +41,18 @@ describe("shared date property selection", () => {
   it("ResolveDateProperty_UsablePersistedLastProperty_ReturnsPersistedProperty", () => {
     expect(resolveDateProperty(properties, "later")?.id).toBe("later");
   });
+
+  it.each([
+    ["America/New_York", "America/New_York"],
+    ["invalid-zone", "UTC"],
+  ])(
+    "DatePropertyTimeZone_%s_ResolvesAtThePropertyBoundary",
+    (tz, expected) => {
+      expect(getDatePropertyTimeZone({ ...dateProperty, config: { tz } })).toBe(
+        expected,
+      );
+    },
+  );
 
   it("ResolveDateProperty_NoUsableDate_ReturnsNull", () => {
     expect(
