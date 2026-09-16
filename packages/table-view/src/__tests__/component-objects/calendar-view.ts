@@ -28,6 +28,12 @@ export class CalendarViewObject {
   open(name: string) {
     fireEvent.click(this.event(name));
   }
+  rightClickTitle(name: string) {
+    fireEvent.contextMenu(within(this.event(name)).getByText(name), {
+      clientX: 40,
+      clientY: 20,
+    });
+  }
   next() {
     fireEvent.click(within(this.root()).getByRole("button", { name: "Next" }));
   }

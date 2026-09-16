@@ -7,6 +7,11 @@ import {
   type CalendarEventData,
   type CalendarEventRenderProps,
 } from "@notion-kit/ui/calendar";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+} from "@notion-kit/ui/primitives";
 
 import { Cell, Table } from "@/common";
 import { getDatePropertyTimeZone } from "@/date-view/date-property";
@@ -15,6 +20,7 @@ import {
   useDateViewProperty,
   type DateViewResources,
 } from "@/date-view/use-date-view-property";
+import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { getCalendarRows, toCalendarEvent } from "./calendar-adapter";
@@ -131,7 +137,11 @@ function CalendarViewReady({
         <CalendarHeaderToolbar rangeDisabled={resources.locked} />
         <CalendarContent
           renderEvent={(props) => (
-            <CalendarRowEvent {...props} timeZone={timeZone} />
+            <CalendarRowEvent
+              {...props}
+              timeZone={timeZone}
+              locked={resources.locked}
+            />
           )}
         />
       </CalendarProvider>
@@ -143,12 +153,24 @@ function CalendarRowEvent({
   event,
   segment,
   timeZone,
-}: CalendarEventRenderProps & { timeZone: string }) {
+  locked,
+}: CalendarEventRenderProps & { timeZone: string; locked: boolean }) {
   return (
     <CalendarEvent.Root event={event} segment={segment}>
-      <CalendarEvent.Item>
-        <CalendarRowTitle event={event} timeZone={timeZone} />
-      </CalendarEvent.Item>
+      {locked ? (
+        <CalendarEvent.Item>
+          <CalendarRowTitle event={event} timeZone={timeZone} />
+        </CalendarEvent.Item>
+      ) : (
+        <ContextMenu>
+          <ContextMenuTrigger render={<CalendarEvent.Item />}>
+            <CalendarRowTitle event={event} timeZone={timeZone} />
+          </ContextMenuTrigger>
+          <ContextMenuContent className="w-[265px]">
+            <RowActionMenu rowId={event.id} />
+          </ContextMenuContent>
+        </ContextMenu>
+      )}
       <CalendarEvent.Resize edge="start" />
       <CalendarEvent.Resize edge="end" />
     </CalendarEvent.Root>

@@ -12,6 +12,7 @@ import type { Row } from "@notion-kit/table-hook";
 
 import { CalendarViewObject } from "@/__tests__/component-objects/calendar-view";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
+import { RowActionsObject } from "@/__tests__/component-objects/row-actions";
 import { mockResizeObserver } from "@/__tests__/mock";
 import { TableView, useTableViewCtx } from "@/table-contexts";
 
@@ -97,20 +98,74 @@ it("CalendarProjection_FilteredCollapsedGroups_StillRendersSortedRealRows", asyn
   expect(calendar.queryEvent("Keep B")).not.toBeInTheDocument();
 });
 
-it("CalendarEvent_LockedView_OpensConfiguredRowWithoutWritingData", async () => {
-  const onDataChange = vi.fn();
+it.each(["monthly", "weekly", "daily"] as const)(
+  "CalendarEvent_%sTitleContextMenu_DeletesOnlyTheMatchingRow",
+  async (range) => {
+    const tableView = renderTableView({
+      data: data.map((row) => ({
+        ...row,
+        properties: {
+          ...row.properties,
+          due: {
+            id: `due-${row.id}`,
+            value: { start: now, includeTime: range !== "monthly" },
+          },
+        },
+      })),
+      properties,
+      view: { ...view, dateView: { ...view.dateView, range } },
+    });
+    await calendar.findReady();
+
+    calendar.rightClickTitle("Keep B");
+    const menu = new RowActionsObject(
+      tableView,
+      await screen.findByRole("menu"),
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    menu.choose("Delete");
+
+    await waitFor(() =>
+      expect(calendar.queryEvent("Keep B")).not.toBeInTheDocument(),
+    );
+    expect(calendar.event("Keep A")).toBeVisible();
+    expect(calendar.event("Other")).toBeVisible();
+  },
+);
+
+it("CalendarEvent_LockedView_DoesNotOpenRowActions", async () => {
   renderTableView({
     data,
     properties,
-    view: { ...view, locked: true, rowView: "center" },
-    onDataChange,
+    view: { ...view, locked: true },
   });
   await calendar.findReady();
-  calendar.create("September 16, 2026");
-  calendar.open("Keep A");
-  expect(await screen.findByRole("heading", { name: "Keep A" })).toBeVisible();
-  expect(onDataChange).not.toHaveBeenCalled();
+
+  calendar.rightClickTitle("Keep B");
+
+  expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  expect(calendar.event("Keep B")).toBeVisible();
 });
+
+it.each([false, true])(
+  "CalendarEvent_Locked=%s_OpensConfiguredRowWithoutWritingData",
+  async (locked) => {
+    const onDataChange = vi.fn();
+    renderTableView({
+      data,
+      properties,
+      view: { ...view, locked, rowView: "center" },
+      onDataChange,
+    });
+    await calendar.findReady();
+    if (locked) calendar.create("September 16, 2026");
+    calendar.open("Keep A");
+    expect(
+      await screen.findByRole("heading", { name: "Keep A" }),
+    ).toBeVisible();
+    expect(onDataChange).not.toHaveBeenCalled();
+  },
+);
 
 it("CalendarProperty_ExternalSelection_RendersChosenDates", async () => {
   const { rerender } = render(

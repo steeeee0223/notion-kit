@@ -450,6 +450,50 @@ describe("TableViewReactivity", () => {
   });
 
   it.each([
+    ["Side", "Open first row side peek", "dialog"],
+    ["Center", "Open first row center peek", "dialog"],
+    ["Full", "Open first row full page", "section"],
+  ] as const)(
+    "RowView_%sEmptyTitle_RendersNewPageWithoutChangingData",
+    async (_mode, openButtonName, containerType) => {
+      const onDataChange = vi.fn();
+      const tableView = renderTableView({
+        data: mockData.map((row) => ({
+          ...row,
+          properties: {
+            ...row.properties,
+            col1: { ...row.properties.col1!, value: "" },
+          },
+        })),
+        properties: [
+          {
+            ...mockProperties[0]!,
+            type: "title",
+            config: { showIcon: true },
+          },
+          ...mockProperties.slice(1),
+        ],
+        onDataChange,
+        children: <DataUpdateControls />,
+      });
+
+      fireEvent.click(tableView.button(openButtonName));
+
+      if (containerType === "dialog") {
+        const dialog = await screen.findByRole("dialog");
+        expect(
+          within(dialog).getByRole("heading", { name: "New page" }),
+        ).toBeVisible();
+        expect(dialog).toHaveAccessibleName("New page");
+      } else {
+        const fullView = document.querySelector<HTMLElement>("section#row1")!;
+        expect(within(fullView).getByText("New page")).toBeVisible();
+      }
+      expect(onDataChange).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
     ["Side", "Open first row center peek", "dialog"],
     ["Center", "Open first row center peek", "dialog"],
     ["Full", "Open first row full page", "section"],

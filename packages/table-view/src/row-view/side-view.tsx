@@ -19,9 +19,9 @@ export function SideView({ children }: React.PropsWithChildren) {
           openedRowId && table.getCoreRowModel().rowsById[openedRowId]
             ? openedRowId
             : null;
-        const titleCell = visibleRowId
-          ? table.getTitleCell(visibleRowId)
-          : null;
+        const title = visibleRowId
+          ? table.getTitleCell(visibleRowId).cell.value
+          : "";
 
         return (
           <Sheet
@@ -39,7 +39,7 @@ export function SideView({ children }: React.PropsWithChildren) {
                   <ViewNav rowId={visibleRowId} />
                   <div className={cn(rowViewContentVariants({ mode: "side" }))}>
                     <SheetTitle typography="h1" className="col-start-2 mb-2">
-                      {titleCell?.cell.value}
+                      {title || "New page"}
                     </SheetTitle>
                     <div className="col-start-2 mb-3 min-w-0">
                       <ViewProps rowId={visibleRowId} />
