@@ -1,12 +1,16 @@
 # Calendar view 實作計畫
 
-日期：2026-09-16。狀態：文件已撰寫，尚未開始實作。
+日期：2026-09-16。狀態：已完成實作與驗證；證據見 [todo](todo.md)。
 
 設計來源：[Calendar view 設計](../docs/superpowers/specs/2026-09-16-calendar-view-design.md)。執行狀態集中於 [todo](todo.md)，本文描述任務順序、涉及檔案與驗收方式，不另維護第二份勾選狀態。
 
+## 實作時的測試分工
+
+[測試設計](calendar-test-design.md) 在程式修改前完成。實作沿用既有 Timeline regressions，不為私有控制項的簡單轉送另開重複測試。日期純函式、UI 手勢、Table resource 和 browser geometry 各自負責不同的失敗模式。原子新增與操作串接抽到 `use-calendar-actions.ts`，讓 resource acceptance 與 UI layout 分離。Docs demo manifest 由 repository 現有 registry generator 產生。
+
 ## 交付邊界
 
-本次文件整理與實作是兩個階段。本次交付規格、plan 與 todo；下列任務均是後續實作工作。使用者要求一併撰寫這三份文件，不代表本次已執行測試或修改產品程式。
+規格、plan 與 todo 已先完成。使用者接著要求在 local branch 由 subagents 實作，並先設計測試；已依下列任務完成，實際完成狀態與驗證證據集中於 todo。
 
 實作完成後，外部應用可使用 `@notion-kit/ui/calendar` 的 Month、Week、Day 與完整事件操作。Table Calendar 接上既有 rows、日期欄位與資料頁，和 Timeline 共用 `dateView` 設定及暫存瀏覽日期。
 
@@ -708,7 +712,7 @@ C01 的 lockfile 更新只由既有 pnpm 工具鏈產生。C30 原則上只更�
 
 ## 驗證命令與證據
 
-以下命令供實作階段使用，本次寫文件不執行產品測試。所有 package-scoped pnpm 檢查在 sandbox 外執行。每次 pnpm 前都先成功執行 `nvm use 24.11.1 --silent`，使用指定的共用 store。
+以下命令用於實作與最終驗收，實際執行結果見 todo。所有 package-scoped pnpm 檢查在 sandbox 外執行。每次 pnpm 前都先成功執行 `nvm use 24.11.1 --silent`，使用指定的共用 store。
 
 ### V1：相關行為測試
 

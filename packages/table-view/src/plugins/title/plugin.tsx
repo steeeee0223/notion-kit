@@ -60,6 +60,7 @@ export function title(): TableUiPlugin<TitlePlugin> {
           </div>
         );
       case "timeline":
+      case "calendar":
         return (
           <>
             {icon && <IconBlock icon={icon} className="contents" />}

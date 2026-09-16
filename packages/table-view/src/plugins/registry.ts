@@ -11,7 +11,13 @@ import type {
   InferKey,
 } from "@notion-kit/table-hook/plugins";
 
-export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
+export type CellSurface =
+  | "table"
+  | "list"
+  | "board"
+  | "row-view"
+  | "timeline"
+  | "calendar";
 
 export interface CellProps {
   cell: CellInstance;

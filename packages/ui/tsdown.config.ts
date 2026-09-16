@@ -12,6 +12,7 @@ const THIRD_PARTY = [
   /^@tanstack\//,
   /^@uidotdev\//,
   "date-fns",
+  /^@date-fns\//,
   "jotai",
   /^lodash\./,
   "lucide-react",
@@ -30,6 +31,7 @@ export default defineConfig((opts) => ({
   ...withReactCompiler(opts),
   entry: {
     "alert-modal/index": "./src/alert-modal/index.tsx",
+    "calendar/index": "./src/calendar/index.ts",
     "cover/index": "./src/cover/index.ts",
     "icon-block/index": "./src/icon-block/index.ts",
     "icon-menu/index": "./src/icon-menu/index.ts",

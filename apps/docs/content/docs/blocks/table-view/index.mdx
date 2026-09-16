@@ -10,7 +10,7 @@ description: A composable, editable data table with multiple layouts.
 - Controlled or uncontrolled resources for rows, properties, and view state
 - Create, edit, duplicate, reorder, hide, and resize properties and rows
 - Search rows, build nested AND/OR filters, sort, group, calculate, and bulk-edit selected rows
-- Table, List, Board, and Timeline layouts
+- Table, List, Board, Timeline, and Calendar layouts
 - Open rows in a center dialog, side pane, or full page
 - Built-in plugins for title, text, number, checkbox, select, multi-select, links, and dates
 
@@ -70,7 +70,7 @@ The range can be daily, monthly, or quarterly.
 ```tsx
 const view = {
   layout: "timeline",
-  timeline: {
+  dateView: {
     range: "monthly",
     datePropertyId: "due-date",
   },
@@ -82,6 +82,41 @@ const view = {
   defaultView={view}
 />;
 ```
+
+### Calendar layout
+
+Calendar displays rows with valid dates in Month, Week, or Day. Click an event
+to open its row. Click an empty date or time to create a row and its initial
+date in one data update. Drag events to move them, resize their true edges,
+or move between the all-day area and time grid.
+
+<ComponentPreview name="table-view-calendar" hideCode />
+
+Calendar and Timeline share `dateView.datePropertyId` and `dateView.range`.
+Switching to Calendar replaces `quarterly` with `monthly`; switching to
+Timeline replaces `weekly` with `monthly`. Supported ranges stay selected.
+The viewed date survives layout changes within a mounted table, including a
+visit to Table or Board. Scrolling does not call `onViewChange`.
+
+Calendar creates an empty Date property when none is available. Timeline
+retains its metadata initialization behavior. Locked tables allow navigation
+and opening rows but prevent date edits and creation.
+
+### Migrate Timeline settings
+
+| Previous API | Current API |
+| --- | --- |
+| `view.timeline` | `view.dateView` |
+| `TimelineViewState` | `DateViewState` |
+| `setTimelineRange` | `setDateViewRange` |
+| `setTimelineDateProperty` | `setDateViewDateProperty` |
+| `view.timeline_range.change` | `view.date_view_range.change` |
+| `view.timeline_property.change` | `view.date_view_property.change` |
+
+Migrate persisted settings and controlled resources to the current names.
+The standalone `@notion-kit/ui/timeline` exports remain available.
+`addRow({ initialValues: { [propertyId]: value } })` returns the proposed row
+ID. A controlled owner must accept the data before the row can be opened.
 
 ## Custom cell plugins
 
@@ -120,10 +155,10 @@ bulk editing.
 
 | Field           | Description                                                                                                                         |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `layout`        | The active layout. Table, List, Board, and Timeline have dedicated renderers; other layout values currently use the table renderer. |
+| `layout`        | The active layout. Table, List, Board, Timeline, and Calendar have dedicated renderers; other layout values currently use the table renderer. |
 | `locked`        | Prevents table edits while leaving existing rows navigable.                                                                         |
 | `rowView`       | Where an opened row appears: `center`, `side`, or `full`.                                                                           |
 | `openedRowId`   | The currently opened row, or `null`.                                                                                                |
-| `timeline`      | Optional Timeline configuration containing `range` and `datePropertyId`.                                                            |
+| `dateView`      | Shared Calendar and Timeline configuration containing `range` and `datePropertyId`.                                                            |
 | `pluginMethods` | Persisted sorting, grouping, and group-sort choices for plugins.                                                                    |
 | `filters`       | Persisted advanced filter tree (`TableFilterState`); use `null` to clear all filters.                                               |

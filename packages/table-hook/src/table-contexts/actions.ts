@@ -131,6 +131,8 @@ export type ViewResourceAction =
       {
         previousLayout: TableViewState["layout"];
         nextLayout: TableViewState["layout"];
+        previousRange?: NonNullable<TableViewState["dateView"]>["range"];
+        nextRange?: NonNullable<TableViewState["dateView"]>["range"];
       }
     >
   | TableAction<
@@ -154,14 +156,14 @@ export type ViewResourceAction =
       }
     >
   | TableAction<
-      "view.timeline_range.change",
+      "view.date_view_range.change",
       {
-        previousRange: NonNullable<TableViewState["timeline"]>["range"];
-        nextRange: NonNullable<TableViewState["timeline"]>["range"];
+        previousRange: NonNullable<TableViewState["dateView"]>["range"];
+        nextRange: NonNullable<TableViewState["dateView"]>["range"];
       }
     >
   | TableAction<
-      "view.timeline_property.change",
+      "view.date_view_property.change",
       {
         previousDatePropertyId: string | null;
         nextDatePropertyId: string | null;

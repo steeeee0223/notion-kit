@@ -167,7 +167,7 @@ it.each(["table", "list", "timeline"] as const)(
       view: {
         ...fixture.view,
         layout,
-        timeline: { range: "monthly", datePropertyId: "due" },
+        dateView: { range: "monthly", datePropertyId: "due" },
       },
       children: <SelectFirstRow />,
     });

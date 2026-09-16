@@ -1,8 +1,8 @@
 # Calendar view 設計
 
-日期：2026-09-16。狀態：對話中的設計已確認，本文待最後檢閱。本文定義預期行為與架構，尚未實作。
+日期：2026-09-16。狀態：設計、實作與驗證完成；實際證據見執行清單。
 
-配套文件：[實作計畫](../../../tasks/plan.md)、[執行清單](../../../tasks/todo.md)。使用者另行要求一併撰寫 plan 與 todo，因此本次交付三份文件，不等待規格單獨檢閱後才編寫計畫。
+配套文件：[實作計畫](../../../tasks/plan.md)、[執行清單](../../../tasks/todo.md)、[測試設計](../../../tasks/calendar-test-design.md)。
 
 ## 目標與範圍
 
@@ -45,7 +45,7 @@ Calendar 和 Timeline 共用 range 選單、日期導覽按鈕與標題樣式。
 - `CalendarEvent` 組合元件：`Root`、`Item`、`Resize`，讓外部替換卡片內容與組合操作。
 - 上述元件所需的公開 props、事件型別與 `CalendarRange`。
 
-以上是本次規劃的 API 名稱，不是已存在的匯出。排版元件負責事件位置，並提供事件與分段資訊給卡片呈現介面；外部使用者不必計算欄位、top 或 height。
+排版元件負責事件位置，並提供事件與分段資訊給卡片呈現介面；外部使用者不必計算欄位、top 或 height。
 
 Provider 接收唯讀的 `events` 與操作 callbacks：`onCreate` 接收不含 ID 的起訖及全天設定，`onEventClick` 接收事件，`onEventChange` 接收事件 ID、完整的新起訖值、`allDay` 與操作原因。原因區分 move、resize-start、resize-end 及 convert。省略更新或新增 callback 時，停用對應操作；`readOnly` 一次停用所有資料修改。
 

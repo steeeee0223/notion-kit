@@ -8,6 +8,8 @@ import {
   PopoverTrigger,
 } from "@notion-kit/ui/primitives";
 
+import type { CellSurface } from "@/plugins/registry";
+
 import { CellTrigger } from "./cell-trigger";
 import { CopyButton } from "./copy-button";
 import { useCellEditorSelection } from "./use-cell-editor-selection";
@@ -70,7 +72,7 @@ interface CellRendererProps {
   onClick?: () => void;
   popover?: CellPopoverOptions;
   renderEditor?: (close: () => void) => ReactNode;
-  surface: "table" | "list" | "board" | "row-view" | "timeline";
+  surface: CellSurface;
   triggerClassName: string;
   value: ReactNode;
 }

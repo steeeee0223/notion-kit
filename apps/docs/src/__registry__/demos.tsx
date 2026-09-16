@@ -11,6 +11,16 @@ export const Index: Record<
     component: React.LazyExoticComponent<React.ComponentType<object>>;
   }
 > = {
+  "calendar-demo": {
+    files: ["registry/src/calendar-demo/calendar-demo.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/calendar-demo")),
+  },
+  "table-view-calendar": {
+    files: ["registry/src/table-view-calendar/table-view-calendar.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/table-view-calendar"),
+    ),
+  },
   "autocomplete-default": {
     files: ["registry/src/autocomplete-default/autocomplete-default.tsx"],
     component: React.lazy(

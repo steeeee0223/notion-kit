@@ -1819,6 +1819,9 @@ importers:
 
   packages/table-view:
     dependencies:
+      '@date-fns/tz':
+        specifier: catalog:fns
+        version: 1.4.1
       '@dnd-kit/react':
         specifier: catalog:ui
         version: 0.5.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1928,6 +1931,9 @@ importers:
       '@better-fetch/fetch':
         specifier: 'catalog:'
         version: 1.1.21
+      '@date-fns/tz':
+        specifier: catalog:fns
+        version: 1.4.1
       '@dnd-kit/abstract':
         specifier: catalog:ui
         version: 0.5.0

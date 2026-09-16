@@ -1,0 +1,147 @@
+---
+title: Calendar
+description: Compose a month, week, or day calendar with editable events and timezone-aware dates.
+---
+
+<ComponentPreview name="calendar-demo" hideCode />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="calendar-demo" />
+
+Calendar uses `@notion-kit/ui/calendar`. The `Calendar` export from
+`@notion-kit/ui/primitives` remains the date picker.
+
+## Anatomy
+
+```tsx
+import {
+  CalendarContent,
+  CalendarHeaderToolbar,
+  CalendarProvider,
+} from "@notion-kit/ui/calendar";
+
+<CalendarProvider
+  events={events}
+  defaultRange="monthly"
+  timeZone="America/New_York"
+  onCreate={createEvent}
+  onEventClick={openEvent}
+  onEventChange={changeEvent}
+  className="h-[600px]"
+>
+  <CalendarHeaderToolbar />
+  <CalendarContent />
+</CalendarProvider>;
+```
+
+The provider owns navigation and temporary gesture state. You own `events`:
+apply changes from `onCreate` and `onEventChange` to save them. Ignoring a
+change leaves the original event in place. Omitting a write callback disables
+its operation. `readOnly` disables creation, moving, resizing, and conversion;
+navigation and event opening remain available.
+
+## Event dates
+
+```ts
+interface CalendarEventData {
+  id: string;
+  name: string;
+  startAt: number;
+  endAt: number | null;
+  allDay: boolean;
+}
+```
+
+Timestamps are milliseconds. `endAt` is exclusive: an all-day event from
+September 16 through September 18 ends at local midnight on September 19.
+Use calendar-day arithmetic in the display timezone; a DST day can have 23
+or 25 hours. Invalid events are omitted individually. Invalid timezone names
+fall back to UTC.
+
+A null end displays one local day for all-day events or one hour for timed
+events. Moving preserves null; resizing creates a real end. Timed events
+ending exactly at midnight do not occupy the next day. Existing zero-length
+or short events keep their values and receive a readable minimum height.
+
+The grid shows local 00:00–24:00. New time slots snap to 15 minutes. A missing
+DST wall time moves forward to a valid time; a repeated wall time selects the
+earlier offset. Existing timestamps retain their original offset.
+
+## Navigation and editing
+
+`range` supports `monthly`, `weekly`, and `daily`. Use `range` with
+`onRangeChange`, or set `defaultRange`. The same pattern applies to
+`anchorDate`, `onAnchorDateChange`, and `defaultAnchorDate`.
+
+Changing range retains the viewed date. Previous and Next move one period;
+month navigation clamps dates to the last day when needed. Today uses the
+display timezone. Week and Day initially scroll to 08:00.
+
+Click an empty date or all-day slot to request a one-day event. Click a time
+slot to request a one-hour event. Enter and Space also activate focused
+slots and events. Drag any visible event segment to move the whole event;
+only real start and end boundaries show resize handles. Escape cancels a
+gesture. Changing period or external event values also cancels it.
+
+Drag between the all-day area and the time grid to convert an event. A
+three-day all-day event dropped at 10:00 ends at 11:00 on its third day.
+Timed events converted to all-day retain the dates they cover and discard
+the hidden time portion. A completed gesture sends one callback.
+
+## API reference
+
+### CalendarProvider
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `events` | `readonly CalendarEventData[]` | Required | Authoritative event values. |
+| `range` | `CalendarRange` | — | Controlled period. |
+| `defaultRange` | `CalendarRange` | `monthly` | Initial uncontrolled period. |
+| `onRangeChange` | `(range: CalendarRange) => void` | — | Requests a period change. |
+| `anchorDate` | `number` | — | Controlled viewed timestamp. |
+| `defaultAnchorDate` | `number` | Today | Initial viewed timestamp. |
+| `onAnchorDateChange` | `(date: number) => void` | — | Requests a viewed date. |
+| `timeZone` | `string` | Browser zone | IANA display timezone. |
+| `weekStartsOn` | `0` through `6` | `1` | First weekday, with Sunday as zero. |
+| `readOnly` | `boolean` | `false` | Disables event mutations. |
+| `onCreate` | `(value: CalendarEventValue) => void` | — | Receives start, end, and all-day values without an ID. |
+| `onEventClick` | `(event: CalendarEventData) => void` | — | Opens an event. |
+| `onEventChange` | `(change: CalendarEventChange) => void` | — | Receives ID, full date values, and operation reason. |
+| `className` | `string` | — | Sets container size and local styles. |
+
+`CalendarEventValue` contains `startAt`, `endAt`, and `allDay`.
+`CalendarEventChange` adds `id` and `reason`, where reason is `move`,
+`resize-start`, `resize-end`, or `convert`.
+
+### Content and controls
+
+`CalendarContent` combines the date header with `CalendarMonth` or
+`CalendarTimeGrid`. Both layouts accept `renderEvent` for custom cards.
+`CalendarRangeHeader`, `CalendarToolbar`, `CalendarRangeSelect`, and
+`CalendarJumpTo` can also be composed separately. `CalendarHeaderToolbar`
+combines the title, range select, and navigation; `rangeDisabled` locks its
+range select without disabling browsing.
+
+### Custom event cards
+
+```tsx
+import { CalendarContent, CalendarEvent } from "@notion-kit/ui/calendar";
+
+<CalendarContent
+  renderEvent={({ event, segment }) => (
+    <CalendarEvent.Root event={event} segment={segment}>
+      <CalendarEvent.Item>{event.name}</CalendarEvent.Item>
+      <CalendarEvent.Resize edge="start" />
+      <CalendarEvent.Resize edge="end" />
+    </CalendarEvent.Root>
+  )}
+/>;
+```
+
+The layout positions each segment. `Root` provides its event and interaction
+state, `Item` opens or moves it, and `Resize` edits one real boundary. You do
+not need to calculate grid coordinates. Keep the compound parts inside
+`Root` to retain interaction behavior.
+
+For rows backed by table resources, see [Table View](/docs/blocks/table-view).

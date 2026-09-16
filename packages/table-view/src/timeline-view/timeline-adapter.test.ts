@@ -1,65 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import type { Cell, ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { Cell, Row } from "@notion-kit/table-hook";
 import type { DatePlugin } from "@notion-kit/table-hook/plugins";
 
 import {
   createEmptyTrackDate,
   createInitialTimelineDate,
   createTimelineCellUpdater,
-  resolveTimelineDateProperty,
   toTimelineFeature,
 } from "./timeline-adapter";
 
-const dateProperty = {
-  id: "due",
-  name: "Due",
-  type: "date",
-  config: {},
-} satisfies ColumnInfo;
-
-const properties = [
-  { id: "title", name: "Name", type: "title", config: {} },
-  dateProperty,
-  { ...dateProperty, id: "later", name: "Later" },
-] satisfies ColumnInfo[];
-
 describe("timeline adapter", () => {
-  it.each([
-    ["null", null],
-    ["missing", "missing"],
-    ["hidden", "hidden"],
-    ["deleted", "deleted"],
-    ["wrong type", "title"],
-  ])(
-    "ResolveTimelineDateProperty_%sPersistedId_ReturnsFirstUsableDate",
-    (_scenario, persistedId) => {
-      const candidates: ColumnInfo[] = [
-        properties[0]!,
-        { ...dateProperty, id: "hidden", hidden: true },
-        { ...dateProperty, id: "deleted", isDeleted: true },
-        ...properties.slice(1),
-      ];
-
-      expect(resolveTimelineDateProperty(candidates, persistedId)?.id).toBe(
-        "due",
-      );
-    },
-  );
-
-  it("ResolveTimelineDateProperty_UsablePersistedLastProperty_ReturnsPersistedProperty", () => {
-    expect(resolveTimelineDateProperty(properties, "later")?.id).toBe("later");
-  });
-
-  it("ResolveTimelineDateProperty_NoUsableDate_ReturnsNull", () => {
-    expect(
-      resolveTimelineDateProperty(
-        [properties[0]!, { ...dateProperty, hidden: true }],
-        null,
-      ),
-    ).toBeNull();
-  });
-
   it.each([
     ["zero", { start: 0, end: 0 }, { startAt: 0, endAt: 0 }],
     ["equal", { start: 100, end: 100 }, { startAt: 100, endAt: 100 }],

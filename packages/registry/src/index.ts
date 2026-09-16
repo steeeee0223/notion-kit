@@ -1,4 +1,6 @@
 export const registryIndex = [
+  "calendar-demo",
+  "table-view-calendar",
   "autocomplete-default",
   "autocomplete-popover",
   "autocomplete-grid-menu",

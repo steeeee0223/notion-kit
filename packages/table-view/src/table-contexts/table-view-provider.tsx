@@ -9,7 +9,9 @@ import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import { TooltipProvider } from "@notion-kit/ui/primitives";
 
 import { BoardViewContent } from "@/board-view";
+import { CalendarViewContent } from "@/calendar-view";
 import { Table } from "@/common";
+import { DateViewNavigationProvider } from "@/date-view/date-view-navigation-provider";
 import { ListViewContent } from "@/list-view";
 import {
   createPluginRegistry,
@@ -75,7 +77,9 @@ export function TableViewWrapper<
 
   return (
     <TableViewContext value={contextValue}>
-      <TooltipProvider>{children}</TooltipProvider>
+      <DateViewNavigationProvider>
+        <TooltipProvider>{children}</TooltipProvider>
+      </DateViewNavigationProvider>
     </TableViewContext>
   );
 }
@@ -126,6 +130,8 @@ function Content() {
                 <BoardViewContent />
               </ScrollableContent>
             );
+          case "calendar":
+            return <CalendarViewContent />;
           case "timeline":
             return (
               <ScrollableContent>

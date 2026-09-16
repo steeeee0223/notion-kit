@@ -33,6 +33,12 @@ export interface RowDragEndOptions {
   reorder?: boolean;
 }
 
+export interface AddRowOptions {
+  id?: string;
+  at?: "prev" | "next";
+  initialValues?: Record<string, unknown>;
+}
+
 export interface RowActionsTableApi {
   setTableData: ResourceChangeFn<Row[], DataResourceAction>;
   // Cell API
@@ -54,7 +60,7 @@ export interface RowActionsTableApi {
     value: InferData<TPlugin>,
   ) => void;
   // Row API
-  addRow: (payload?: { id: string; at?: "prev" | "next" }) => void;
+  addRow: (options?: AddRowOptions) => string;
   duplicateRow: (id: string) => void;
   duplicateRows: (ids: string[]) => void;
   deleteRow: (id: string) => void;
@@ -389,9 +395,16 @@ export const RowActionsFeature: TableFeature = {
           };
           table.atoms.columnOrder.get().forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
-            row.properties[colId] = getDefaultCell(plugin);
+            const cell = getDefaultCell(plugin);
+            if (
+              payload?.initialValues &&
+              Object.hasOwn(payload.initialValues, colId)
+            ) {
+              cell.value = payload.initialValues[colId];
+            }
+            row.properties[colId] = cell;
           });
-          if (payload === undefined) {
+          if (payload?.id === undefined) {
             const next = [...prev, row];
             scheduleGroupingStateSync(next);
             return next;
@@ -413,6 +426,7 @@ export const RowActionsFeature: TableFeature = {
           },
         }),
       );
+      return rowId;
     };
     table.duplicateRow = (id) => {
       const rowId = v4();

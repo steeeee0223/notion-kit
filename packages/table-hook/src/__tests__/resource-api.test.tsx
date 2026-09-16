@@ -16,11 +16,14 @@ import { arrayToEntity } from "@/lib/utils";
 import {
   serializeResourceAction,
   type DataResourceAction,
+  type PartialTableViewState,
   type PropertiesResourceAction,
   type ResourceChange,
   type ViewResourceAction,
 } from "@/table-contexts";
 import { useTableView } from "@/table-contexts/use-table-view";
+
+const anyString: unknown = expect.any(String);
 
 interface MockWithLastCall {
   mock: {
@@ -128,7 +131,7 @@ describe("useTableView resource API", () => {
     },
   );
 
-  it("ResourceActions_TimelineRange_NormalizesDefaultsAndEmitsPreviousAndNextRanges", () => {
+  it("ResourceActions_DateViewRange_NormalizesDefaultsAndEmitsPreviousAndNextRanges", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>
       useTableView({
@@ -139,23 +142,23 @@ describe("useTableView resource API", () => {
       }),
     );
 
-    expect(result.current.table.getTableGlobalState().timeline).toEqual({
+    expect(result.current.table.getTableGlobalState().dateView).toEqual({
       range: "monthly",
       datePropertyId: null,
     });
 
     act(() => {
-      result.current.table.setTimelineRange("quarterly");
+      result.current.table.setDateViewRange("quarterly");
     });
 
     const change = getLastResourceChange<TableViewState, ViewResourceAction>(
       onViewChange,
     );
-    expect(change?.next.timeline).toEqual({
+    expect(change?.next.dateView).toEqual({
       range: "quarterly",
       datePropertyId: null,
     });
-    expect(change?.action.type).toBe("view.timeline_range.change");
+    expect(change?.action.type).toBe("view.date_view_range.change");
     expect(change?.action.payload).toEqual({
       previousRange: "monthly",
       nextRange: "quarterly",
@@ -163,7 +166,7 @@ describe("useTableView resource API", () => {
     expect(typeof change?.action.id).toBe("string");
   });
 
-  it("ResourceActions_SelectedTimelineRange_DoesNotEmitViewChange", () => {
+  it("ResourceActions_SelectedDateViewRange_DoesNotEmitViewChange", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>
       useTableView({
@@ -175,13 +178,13 @@ describe("useTableView resource API", () => {
     );
 
     act(() => {
-      result.current.table.setTimelineRange("monthly");
+      result.current.table.setDateViewRange("monthly");
     });
 
     expect(onViewChange).not.toHaveBeenCalled();
   });
 
-  it("ResourceActions_ControlledTimelineProperty_ComposesPendingRangeAndUsesProvidedOperationId", () => {
+  it("ResourceActions_ControlledDateViewProperty_ComposesPendingRangeAndUsesProvidedOperationId", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>
       useTableView({
@@ -194,8 +197,8 @@ describe("useTableView resource API", () => {
     );
 
     act(() => {
-      result.current.table.setTimelineRange("daily");
-      result.current.table.setTimelineDateProperty(
+      result.current.table.setDateViewRange("daily");
+      result.current.table.setDateViewDateProperty(
         "date-property",
         "timeline-operation",
       );
@@ -204,13 +207,13 @@ describe("useTableView resource API", () => {
     const change = getLastResourceChange<TableViewState, ViewResourceAction>(
       onViewChange,
     );
-    expect(change?.next.timeline).toEqual({
+    expect(change?.next.dateView).toEqual({
       range: "daily",
       datePropertyId: "date-property",
     });
     expect(change?.action).toEqual({
       id: "timeline-operation",
-      type: "view.timeline_property.change",
+      type: "view.date_view_property.change",
       payload: {
         previousDatePropertyId: null,
         nextDatePropertyId: "date-property",
@@ -218,7 +221,7 @@ describe("useTableView resource API", () => {
     });
   });
 
-  it("ResourceActions_TimelineProperty_GeneratesAnOperationIdWhenOmitted", () => {
+  it("ResourceActions_DateViewProperty_GeneratesAnOperationIdWhenOmitted", () => {
     const onViewChange = vi.fn();
     const { result } = renderHook(() =>
       useTableView({
@@ -229,14 +232,14 @@ describe("useTableView resource API", () => {
       }),
     );
 
-    act(() => result.current.table.setTimelineDateProperty("date-property"));
+    act(() => result.current.table.setDateViewDateProperty("date-property"));
 
     expect(
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.action,
     ).toMatchObject({
       id: expect.any(String) as unknown as string,
-      type: "view.timeline_property.change",
+      type: "view.date_view_property.change",
     });
   });
 
@@ -531,38 +534,136 @@ describe("useTableView resource API", () => {
     expect(JSON.stringify(serialized)).not.toContain('"next"');
   });
 
-  it("ResourceApi_ControlledData_EmitsReplacementWithoutCommittingUntilPropsChange", () => {
+  it("ResourceApi_ControlledRowCreation_ProposesInitialDateBeforeOwnerAcceptance", () => {
     const onDataChange = vi.fn();
+    const dateValue = { start: 1_789_516_800_000, includeTime: false };
     const { result, rerender } = renderHook(
       ({ data }: { data: Row[] }) =>
         useTableView({
           plugins,
           data,
-          defaultProperties: mockProperties,
+          defaultProperties: [
+            ...mockProperties,
+            { id: "date", name: "Date", type: "date" },
+          ],
           onDataChange,
         }),
       { initialProps: { data: mockData } },
     );
+    let rowId = "";
 
     act(() => {
-      result.current.table.addRow();
+      rowId = result.current.table.addRow({
+        initialValues: { date: dateValue, missing: "ignored" },
+      });
     });
 
-    const dataChange = getLastResourceChange<Row[], DataResourceAction>(
+    expect(onDataChange).toHaveBeenCalledOnce();
+    const change = getLastResourceChange<Row[], DataResourceAction>(
       onDataChange,
+    )!;
+    expect(change.next).toHaveLength(mockData.length + 1);
+    expect(change.action).toEqual({
+      id: anyString,
+      type: "data.row.create",
+      payload: { rowId, nextPosition: mockData.length },
+    });
+    expect(change.next.at(-1)).toMatchObject({
+      id: rowId,
+      properties: {
+        col1: { id: anyString, value: "" },
+        col2: { id: anyString, value: false },
+        date: { id: anyString, value: dateValue },
+      },
+    });
+    expect(change.next.at(-1)?.properties).not.toHaveProperty("missing");
+    expect(
+      result.current.table.getCoreRowModel().rowsById[rowId],
+    ).toBeUndefined();
+
+    rerender({ data: change.next });
+
+    expect(
+      result.current.table.getRow(rowId).original.properties.date?.value,
+    ).toEqual(dateValue);
+    expect(onDataChange).toHaveBeenCalledOnce();
+  });
+
+  it("ResourceApi_ControlledRowCreation_SameRenderCallsComposeDistinctRows", () => {
+    const onDataChange = vi.fn();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        data: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+      }),
     );
-    expect(dataChange).toBeDefined();
-    const nextData = dataChange!.next;
-    expect(nextData).toHaveLength(mockData.length + 1);
-    expect(result.current.table.getRowModel().rows).toHaveLength(
+    let firstId = "";
+    let secondId = "";
+
+    act(() => {
+      firstId = result.current.table.addRow({
+        initialValues: { col1: "First" },
+      });
+      secondId = result.current.table.addRow({
+        id: firstId,
+        at: "next",
+        initialValues: { col1: "Second" },
+      });
+    });
+
+    expect(firstId).not.toBe(secondId);
+    expect(onDataChange).toHaveBeenCalledTimes(2);
+    const change = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    )!;
+    expect(change.next).toHaveLength(mockData.length + 2);
+    expect(change.next.slice(-2)).toMatchObject([
+      { id: firstId, properties: { col1: { value: "First" } } },
+      { id: secondId, properties: { col1: { value: "Second" } } },
+    ]);
+    expect(result.current.table.getCoreRowModel().rows).toHaveLength(
       mockData.length,
     );
+  });
 
-    rerender({ data: nextData });
-
-    expect(result.current.table.getRowModel().rows).toHaveLength(
-      mockData.length + 1,
+  it("ResourceApi_ControlledRowCreation_RejectedProposalRebasesBeforeNextCreation", () => {
+    const onDataChange = vi.fn();
+    const { result, rerender } = renderHook(() =>
+      useTableView({
+        plugins,
+        data: mockData,
+        defaultProperties: mockProperties,
+        onDataChange,
+      }),
     );
+    let rejectedId = "";
+    let nextId = "";
+
+    act(() => {
+      rejectedId = result.current.table.addRow({
+        initialValues: { col1: "Rejected" },
+      });
+    });
+    rerender();
+    expect(
+      result.current.table.getCoreRowModel().rowsById[rejectedId],
+    ).toBeUndefined();
+    act(() => {
+      nextId = result.current.table.addRow({ initialValues: { col1: "Next" } });
+    });
+
+    const change = getLastResourceChange<Row[], DataResourceAction>(
+      onDataChange,
+    )!;
+    expect(change.next).toHaveLength(mockData.length + 1);
+    expect(change.next.some((row) => row.id === rejectedId)).toBe(false);
+    expect(change.next.at(-1)).toMatchObject({
+      id: nextId,
+      properties: { col1: { value: "Next" } },
+    });
+    expect(onDataChange).toHaveBeenCalledTimes(2);
   });
 
   it("ResourceApi_ControlledProperties_EmitsReplacementWithoutCommittingUntilPropsChange", () => {
@@ -609,51 +710,139 @@ describe("useTableView resource API", () => {
     ]);
   });
 
-  it("ResourceApi_ControlledView_EmitsReplacementWithoutCommittingUntilPropsChange", () => {
-    const onViewChange = vi.fn();
-    const { result, rerender } = renderHook(
-      ({
-        view,
-      }: {
-        view: { layout: "table" | "list"; rowView: "side"; openedRowId: null };
-      }) =>
+  it.each([
+    {
+      layout: "timeline",
+      range: "quarterly",
+      nextLayout: "calendar",
+      expectedRange: "monthly",
+    },
+    {
+      layout: "calendar",
+      range: "weekly",
+      nextLayout: "timeline",
+      expectedRange: "monthly",
+    },
+    {
+      layout: "timeline",
+      range: "daily",
+      nextLayout: "calendar",
+      expectedRange: "daily",
+    },
+    {
+      layout: "calendar",
+      range: "monthly",
+      nextLayout: "timeline",
+      expectedRange: "monthly",
+    },
+    {
+      layout: "calendar",
+      range: "weekly",
+      nextLayout: "table",
+      expectedRange: "weekly",
+    },
+    {
+      layout: "timeline",
+      range: "quarterly",
+      nextLayout: "board",
+      expectedRange: "quarterly",
+    },
+  ] as const)(
+    "ResourceApi_ControlledLayoutChange_ProposesOneCompleteTransition ($layout $range to $nextLayout)",
+    ({ layout, range, nextLayout, expectedRange }) => {
+      const onViewChange = vi.fn();
+      const initialProps: { view: PartialTableViewState } = {
+        view: { layout, dateView: { range, datePropertyId: "date-property" } },
+      };
+      const { result, rerender } = renderHook(
+        ({ view }: { view: PartialTableViewState }) =>
+          useTableView({
+            plugins,
+            defaultData: mockData,
+            defaultProperties: mockProperties,
+            view,
+            onViewChange,
+          }),
+        { initialProps },
+      );
+
+      act(() => result.current.table.setTableLayout(nextLayout));
+
+      expect(onViewChange).toHaveBeenCalledOnce();
+      const change = getLastResourceChange<TableViewState, ViewResourceAction>(
+        onViewChange,
+      )!;
+      expect(change.next).toMatchObject({
+        layout: nextLayout,
+        dateView: { range: expectedRange, datePropertyId: "date-property" },
+      });
+      expect(change.action).toEqual({
+        id: anyString,
+        type: "view.layout.change",
+        payload: {
+          previousLayout: layout,
+          nextLayout,
+          ...(range !== expectedRange
+            ? { previousRange: range, nextRange: expectedRange }
+            : {}),
+        },
+      });
+      expect(result.current.table.getTableGlobalState()).toMatchObject({
+        layout,
+        dateView: { range },
+      });
+
+      rerender({ view: change.next });
+      expect(result.current.table.getTableGlobalState()).toMatchObject({
+        layout: nextLayout,
+        dateView: { range: expectedRange },
+      });
+
+      act(() => result.current.table.setTableLayout(layout));
+      expect(
+        getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
+          ?.next.dateView?.range,
+      ).toBe(expectedRange);
+    },
+  );
+
+  it.each([
+    { mode: "controlled", layout: "calendar", range: "quarterly" },
+    { mode: "controlled", layout: "timeline", range: "weekly" },
+    { mode: "default", layout: "calendar", range: "quarterly" },
+    { mode: "default", layout: "timeline", range: "weekly" },
+  ] as const)(
+    "ResourceApi_UnsupportedDateViewRange_ResolvesWithoutProposals ($mode $layout)",
+    ({ mode, layout, range }) => {
+      const onViewChange = vi.fn();
+      const view = {
+        layout,
+        dateView: { range, datePropertyId: "date-property" },
+      };
+      const { result, rerender } = renderHook(() =>
         useTableView({
           plugins,
           defaultData: mockData,
           defaultProperties: mockProperties,
-          view,
+          ...(mode === "controlled" ? { view } : { defaultView: view }),
           onViewChange,
         }),
-      {
-        initialProps: {
-          view: { layout: "table", rowView: "side", openedRowId: null },
-        },
-      },
-    );
+      );
 
-    act(() => {
-      result.current.table.setTableLayout("list");
-    });
-
-    const nextView = getLastResourceChange<TableViewState, ViewResourceAction>(
-      onViewChange,
-    )?.next as {
-      layout: "list";
-      rowView: "side";
-      openedRowId: null;
-    };
-    expect(nextView.layout).toBe("list");
-    expect(result.current.table.getTableGlobalState().layout).toBe("table");
-
-    rerender({ view: nextView });
-
-    expect(result.current.table.getTableGlobalState().layout).toBe("list");
-  });
+      expect(result.current.table.getTableGlobalState().dateView).toEqual({
+        range: "monthly",
+        datePropertyId: "date-property",
+      });
+      rerender();
+      expect(onViewChange).not.toHaveBeenCalled();
+    },
+  );
 
   it("ResourceApi_ControlledViewRejectedUpdate_RebasesBeforeDifferentMethod", () => {
     const onViewChange = vi.fn();
     const view = {
-      layout: "table",
+      layout: "timeline",
+      dateView: { range: "quarterly", datePropertyId: "date-property" },
       rowView: "side",
       openedRowId: null,
     } as const;
@@ -672,7 +861,7 @@ describe("useTableView resource API", () => {
     );
 
     act(() => {
-      result.current.table.setTableLayout("list");
+      result.current.table.setTableLayout("calendar");
     });
     rerender({ renderCount: 1 });
     act(() => {
@@ -683,7 +872,8 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.next,
     ).toMatchObject({
-      layout: "table",
+      layout: "timeline",
+      dateView: { range: "quarterly", datePropertyId: "date-property" },
       openedRowId: "row1",
     });
   });
@@ -706,15 +896,24 @@ describe("useTableView resource API", () => {
     );
 
     act(() => {
-      result.current.table.setTableLayout("list");
+      result.current.table.setDateViewRange("weekly");
+      result.current.table.setTableLayout("timeline");
       result.current.table.openRow("row1");
     });
 
+    expect(onViewChange).toHaveBeenCalledTimes(3);
+    expect(onViewChange.mock.calls[1]?.[0]).toMatchObject({
+      action: {
+        type: "view.layout.change",
+        payload: { previousRange: "weekly", nextRange: "monthly" },
+      },
+    });
     expect(
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.next,
     ).toMatchObject({
-      layout: "list",
+      layout: "timeline",
+      dateView: { range: "monthly" },
       openedRowId: "row1",
     });
   });
@@ -758,7 +957,7 @@ describe("useTableView resource API", () => {
       next: {
         ...initialView,
         locked: false,
-        timeline: { range: "monthly", datePropertyId: null },
+        dateView: { range: "monthly", datePropertyId: null },
         pluginMethods: {
           ...initialView.pluginMethods,
           sortingMethodByColumn: { col1: "alternate" },
@@ -991,21 +1190,21 @@ describe("useTableView resource API", () => {
     });
   });
 
-  it("ResourceApi_PartialNestedViews_KeepTimelineAndPluginMethodDefaults", () => {
+  it("ResourceApi_PartialNestedViews_KeepDateViewAndPluginMethodDefaults", () => {
     const { result } = renderHook(() =>
       useTableView({
         plugins: methodPlugins,
         defaultData: mockData,
         defaultProperties: methodProperties,
         defaultView: {
-          timeline: { datePropertyId: "date-property" },
+          dateView: { datePropertyId: "date-property" },
           pluginMethods: { sortingMethodByColumn: { col1: "text" } },
         },
       }),
     );
 
     expect(result.current.table.getTableGlobalState()).toMatchObject({
-      timeline: { range: "monthly", datePropertyId: "date-property" },
+      dateView: { range: "monthly", datePropertyId: "date-property" },
       pluginMethods: {
         sortingMethodByColumn: { col1: "text" },
         groupingMethodByColumn: {},

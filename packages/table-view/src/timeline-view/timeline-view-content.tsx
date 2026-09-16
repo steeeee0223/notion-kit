@@ -14,6 +14,8 @@ import {
 } from "@notion-kit/ui/timeline";
 
 import { Table } from "@/common";
+import { getDatePropertyTimeZone } from "@/date-view/date-property";
+import { useDateViewNavigation } from "@/date-view/date-view-navigation-provider";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TimelineSidebar } from "./timeline-sidebar";
@@ -27,7 +29,7 @@ type TimelineViewResolutionResources = Parameters<
 interface TimelineViewReadyResources {
   sorting: SortingState;
   locked: boolean;
-  timeline: TimelineViewResolutionResources["timeline"];
+  dateView: TimelineViewResolutionResources["dateView"];
 }
 
 export function TimelineViewContent() {
@@ -39,7 +41,7 @@ export function TimelineViewContent() {
         columnOrder: state.columnOrder,
         columnsInfo: state.columnsInfo,
         locked: Boolean(state.tableGlobal.locked),
-        timeline: state.tableGlobal.timeline!,
+        dateView: state.tableGlobal.dateView!,
       })}
     >
       {(resources) => <TimelineViewContentInner resources={resources} />}
@@ -90,7 +92,7 @@ function TimelineViewReady({ propertyId }: { propertyId: string }) {
         expanded: state.expanded,
         columnVisibility: state.columnVisibility,
         locked: Boolean(state.tableGlobal.locked),
-        timeline: state.tableGlobal.timeline!,
+        dateView: state.tableGlobal.dateView!,
       })}
     >
       {(resources) => (
@@ -111,6 +113,8 @@ function TimelineViewReadyContent({
   resources: TimelineViewReadyResources;
 }) {
   const { table } = useTableViewCtx();
+  const { anchorDate, setAnchorDate } = useDateViewNavigation();
+  const timeZone = getDatePropertyTimeZone(table.getColumnInfo(propertyId));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pendingDragEndEvent, setPendingDragEndEvent] =
     useState<DragEndEvent | null>(null);
@@ -144,14 +148,21 @@ function TimelineViewReadyContent({
     <Table.Content>
       <TimelineProvider
         className="min-h-80"
-        range={resources.timeline.range}
+        range={
+          resources.dateView.range === "weekly"
+            ? "monthly"
+            : resources.dateView.range
+        }
+        anchorDate={anchorDate}
+        onAnchorDateChange={setAnchorDate}
+        timeZone={timeZone}
         sidebarWidth={sidebarOpen ? titleHeader.column.getSize() : 0}
       >
         <TimelineContent
           data-testid="timeline-view-ready"
           data-slot="timeline-view-content"
           data-property-id={propertyId}
-          data-range={resources.timeline.range}
+          data-range={resources.dateView.range}
         >
           <TimelineRangeHeader />
           <TimelineList>
@@ -165,7 +176,7 @@ function TimelineViewReadyContent({
           </TimelineList>
           <TimelineToday />
           <TimelineHeaderToolbar
-            onRangeChange={table.setTimelineRange}
+            onRangeChange={table.setDateViewRange}
             rangeDisabled={resources.locked}
             onSidebarOpen={sidebarOpen ? undefined : () => setSidebarOpen(true)}
           />

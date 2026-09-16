@@ -145,23 +145,30 @@ describe("useTableView - Row Custom APIs", () => {
       expect(newRow?.original.properties.col2).toBeDefined();
     });
 
-    it("should add row after specified row (next)", () => {
+    it("AddRow_InitialValuesWithPosition_ReturnsTheInsertedRowId", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
       });
+      let rowId = "";
 
       act(() => {
-        table.addRow({ id: "row1", at: "next" });
+        rowId = table.addRow({
+          id: "row1",
+          at: "next",
+          initialValues: { col1: "New row", col2: 0 },
+        });
       });
 
-      const rows = table.getRowModel().rows;
-      const row1Index = rows.findIndex((r) => r.id === "row1");
-      const newRowId = rows[row1Index + 1]?.id;
-
-      expect(newRowId).toBeDefined();
-      expect(newRowId).not.toBe("row1");
-      expect(newRowId).not.toBe("row2");
+      expect(table.getCoreRowModel().rows.map((row) => row.id)).toEqual([
+        "row1",
+        rowId,
+        "row2",
+      ]);
+      expect(table.getRow(rowId).original.properties).toEqual({
+        col1: { id: anyString, value: "New row" },
+        col2: { id: anyString, value: 0 },
+      });
     });
 
     it("should add row before specified row (prev)", () => {

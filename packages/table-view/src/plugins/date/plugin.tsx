@@ -11,7 +11,7 @@ import type {
 import { CellRenderer, DefaultIcon } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
-import type { ConfigMenuProps, TableUiPlugin } from "../registry";
+import type { CellSurface, ConfigMenuProps, TableUiPlugin } from "../registry";
 import {
   createBulkEditorRenderer,
   createCellRenderer,
@@ -158,7 +158,7 @@ function renderDateCell(
   props: {
     data: DateData;
     disabled?: boolean;
-    surface: "table" | "list" | "board" | "row-view" | "timeline";
+    surface: CellSurface;
     textValue: string;
     wrapped?: boolean;
   },

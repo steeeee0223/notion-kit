@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   act,
   fireEvent,
@@ -310,5 +310,155 @@ describe("TimelineProvider", () => {
     render(<DefaultProbe />);
 
     expect(screen.getByText("monthly")).toBeInTheDocument();
+  });
+  it("TestTimelineProvider_ControlledAnchor_PositionsWithoutCallbackEcho", () => {
+    const onAnchorDateChange = vi.fn<(date: number) => void>();
+    const startDate = new Date(2026, 0, 1).getTime();
+    const endDate = new Date(2026, 11, 31).getTime();
+    const props = {
+      range: "daily" as const,
+      startDate,
+      endDate,
+      sidebarWidth: 200,
+      onAnchorDateChange,
+    };
+    const { container, rerender } = render(
+      <TimelineProvider {...props} anchorDate={new Date(2026, 0, 10).getTime()}>
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    const view = container.querySelector<HTMLDivElement>(
+      '[data-slot="timeline-view"]',
+    )!;
+    expect(view.scrollLeft).toBe(250);
+    fireEvent.scroll(view);
+    expect(onAnchorDateChange).not.toHaveBeenCalled();
+    rerender(
+      <TimelineProvider {...props} anchorDate={new Date(2026, 0, 20).getTime()}>
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    expect(view.scrollLeft).toBe(750);
+    fireEvent.scroll(view);
+    expect(onAnchorDateChange).not.toHaveBeenCalled();
+    rerender(
+      <TimelineProvider
+        {...props}
+        sidebarWidth={300}
+        anchorDate={new Date(2026, 0, 20).getTime()}
+      >
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    expect(view.scrollLeft).toBe(800);
+    expect(onAnchorDateChange).not.toHaveBeenCalled();
+  });
+
+  it("TestTimelineProvider_RapidScrollThenUnmount_ReportsLatestCenterImmediately", () => {
+    const onAnchorDateChange = vi.fn<(date: number) => void>();
+    const { container, unmount } = render(
+      <TimelineProvider
+        range="daily"
+        sidebarWidth={200}
+        startDate={new Date(2026, 0, 1).getTime()}
+        endDate={new Date(2026, 11, 31).getTime()}
+        defaultAnchorDate={new Date(2026, 0, 10).getTime()}
+        onAnchorDateChange={onAnchorDateChange}
+      >
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    const view = container.querySelector<HTMLDivElement>(
+      '[data-slot="timeline-view"]',
+    )!;
+    view.scrollLeft = 400;
+    fireEvent.scroll(view);
+    view.scrollLeft = 500;
+    fireEvent.scroll(view);
+    unmount();
+    expect(onAnchorDateChange.mock.calls.map(([date]) => date)).toEqual([
+      new Date(2026, 0, 13).getTime(),
+      new Date(2026, 0, 15).getTime(),
+    ]);
+  });
+
+  it("TestTimelineProvider_RangeChange_PreservesExactDayWithoutRoundedPixelDrift", () => {
+    const onAnchorDateChange = vi.fn<(date: number) => void>();
+    const props = {
+      startDate: new Date(2025, 0, 1).getTime(),
+      endDate: new Date(2027, 11, 31).getTime(),
+      sidebarWidth: 200,
+      anchorDate: new Date(2026, 11, 16).getTime(),
+      onAnchorDateChange,
+    };
+    const { container, rerender } = render(
+      <TimelineProvider {...props} range="monthly">
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    const view = container.querySelector<HTMLDivElement>(
+      '[data-slot="timeline-view"]',
+    )!;
+    expect(view.scrollLeft).toBeCloseTo(23 * 150 + (15 / 31) * 150 - 200);
+    rerender(
+      <TimelineProvider {...props} range="daily">
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    expect(view.scrollLeft).toBe(714 * 50 - 200);
+    fireEvent.scroll(view);
+    expect(onAnchorDateChange).not.toHaveBeenCalled();
+  });
+
+  it("TestTimelineProvider_DisplayTimeZone_UsesLocalDateAcrossUtcMidnight", () => {
+    const onAnchorDateChange = vi.fn<(date: number) => void>();
+    const { container } = render(
+      <TimelineProvider
+        range="daily"
+        sidebarWidth={200}
+        timeZone="America/New_York"
+        startDate={Date.parse("2026-01-01T05:00:00Z")}
+        endDate={Date.parse("2026-12-31T05:00:00Z")}
+        anchorDate={Date.parse("2026-01-11T02:00:00Z")}
+        onAnchorDateChange={onAnchorDateChange}
+      >
+        <TimelineProbe />
+      </TimelineProvider>,
+    );
+    const view = container.querySelector<HTMLDivElement>(
+      '[data-slot="timeline-view"]',
+    )!;
+    expect(view.scrollLeft).toBe(250);
+    view.scrollLeft = 400;
+    fireEvent.scroll(view);
+    expect(onAnchorDateChange).toHaveBeenLastCalledWith(
+      Date.parse("2026-01-13T05:00:00Z"),
+    );
+  });
+  it("TestTimelineProvider_OwnerAcceptsScrolledAnchor_DoesNotSnapOrInterruptScrolling", () => {
+    function ControlledTimeline() {
+      const [anchorDate, setAnchorDate] = useState(
+        new Date(2026, 0, 10).getTime(),
+      );
+      return (
+        <TimelineProvider
+          range="daily"
+          sidebarWidth={200}
+          startDate={new Date(2026, 0, 1).getTime()}
+          endDate={new Date(2026, 11, 31).getTime()}
+          anchorDate={anchorDate}
+          onAnchorDateChange={setAnchorDate}
+        >
+          <TimelineProbe />
+        </TimelineProvider>
+      );
+    }
+    const { container } = render(<ControlledTimeline />);
+    const view = container.querySelector<HTMLDivElement>(
+      '[data-slot="timeline-view"]',
+    )!;
+    view.scrollLeft = 427;
+    fireEvent.scroll(view);
+    expect(view.scrollLeft).toBe(427);
   });
 });

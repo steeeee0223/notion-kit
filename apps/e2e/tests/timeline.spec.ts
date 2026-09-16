@@ -60,7 +60,7 @@ test("TimelineInitialization_NoDateProperty_CreatesAndSeedsExactlyOneProperty", 
   });
   expect(controlled.lastViewAction).toEqual({
     id: initializationOperationId,
-    type: "view.timeline_property.change",
+    type: "view.date_view_property.change",
     payload: {
       previousDatePropertyId: null,
       nextDatePropertyId: created.id,
@@ -138,7 +138,7 @@ test("TimelineDragResize_ControlledResource_PersistsExactDateCellChanges", async
       },
       nextValue: {
         start: originalStart + 2 * DAY,
-        end: new Date(2025, 0, 5).getTime(),
+        end: Date.UTC(2025, 0, 5),
         endDate: true,
       },
     },

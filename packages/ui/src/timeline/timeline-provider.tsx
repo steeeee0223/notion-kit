@@ -21,6 +21,7 @@ import type {
   TimelineFeature,
   TimelineRange,
 } from "./types";
+import { resolveTimelineTimeZone, useAnchorDate } from "./use-anchor-date";
 import {
   createTimelineData,
   DEFAULT_END_DATE,
@@ -57,7 +58,11 @@ const TimelineContext = createContext<TimelineContextProps>({
 
 export const useTimelineContext = () => use(TimelineContext);
 
-interface TimelineProviderProps {
+export interface TimelineProviderProps {
+  anchorDate?: number;
+  defaultAnchorDate?: number;
+  onAnchorDateChange?: (date: number) => void;
+  timeZone?: string;
   range?: TimelineRange;
   zoom?: number;
   startDate?: number | null;
@@ -77,6 +82,10 @@ export function TimelineProvider(props: TimelineProviderProps) {
 }
 
 function TimelineProviderInner({
+  anchorDate,
+  defaultAnchorDate,
+  onAnchorDateChange,
+  timeZone,
   zoom = 100,
   range = "monthly",
   sidebarWidth: controlledSidebarWidth,
@@ -89,7 +98,7 @@ function TimelineProviderInner({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [, setScrollX] = useTimelineScrollX();
   const [sidebarWidth, setSidebarWidth] = useTimelineSidebarWidth();
-  const [, setContainerWidth] = useTimelineContainerWidth();
+  const [containerWidth, setContainerWidth] = useTimelineContainerWidth();
 
   // Controlled: sync prop → atom
   useEffect(() => {
@@ -143,8 +152,14 @@ function TimelineProviderInner({
   const isPending = deferredRange !== range;
 
   const timelineData = useMemo(
-    () => createTimelineData(deferredRange, startDate, endDate),
-    [deferredRange, startDate, endDate],
+    () =>
+      createTimelineData(
+        deferredRange,
+        startDate,
+        endDate,
+        resolveTimelineTimeZone(timeZone),
+      ),
+    [deferredRange, startDate, endDate, timeZone],
   );
 
   // Memoize CSS variables to prevent unnecessary re-renders
@@ -163,9 +178,29 @@ function TimelineProviderInner({
     [zoom, deferredRange, sidebarWidth],
   );
 
+  const navigationEnabled =
+    anchorDate !== undefined ||
+    defaultAnchorDate !== undefined ||
+    onAnchorDateChange !== undefined;
+  useAnchorDate({
+    enabled: navigationEnabled,
+    ref: scrollRef,
+    anchorDate,
+    defaultAnchorDate,
+    onAnchorDateChange,
+    timeZone,
+    range: deferredRange,
+    zoom,
+    sidebarWidth: controlledSidebarWidth ?? sidebarWidth,
+    containerWidth,
+    timelineData,
+    setScrollX,
+  });
+
   const hasInitializedRef = useRef(false);
   useEffect(() => {
-    if (hasInitializedRef.current || !scrollRef.current) return;
+    if (navigationEnabled || hasInitializedRef.current || !scrollRef.current)
+      return;
     hasInitializedRef.current = true;
 
     const today = new Date();
@@ -177,7 +212,14 @@ function TimelineProviderInner({
     const visibleWidth = scrollRef.current.clientWidth - sidebarWidth;
     scrollRef.current.scrollLeft = offset - visibleWidth / 2;
     setScrollX(scrollRef.current.scrollLeft);
-  }, [deferredRange, zoom, sidebarWidth, timelineData, setScrollX]);
+  }, [
+    deferredRange,
+    zoom,
+    sidebarWidth,
+    timelineData,
+    setScrollX,
+    navigationEnabled,
+  ]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleScroll = useCallback(
@@ -208,7 +250,7 @@ function TimelineProviderInner({
 
   // Phase 1: Capture center date when range prop changes
   useEffect(() => {
-    if (prevRangeRef.current === range) return;
+    if (navigationEnabled || prevRangeRef.current === range) return;
     prevRangeRef.current = range;
 
     const scrollEl = scrollRef.current;
@@ -227,10 +269,18 @@ function TimelineProviderInner({
       },
       centerX,
     );
-  }, [deferredRange, zoom, sidebarWidth, timelineData, range]);
+  }, [
+    deferredRange,
+    zoom,
+    sidebarWidth,
+    timelineData,
+    range,
+    navigationEnabled,
+  ]);
 
   // Phase 2: Restore scroll when deferred range catches up
   useLayoutEffect(() => {
+    if (navigationEnabled) return;
     const savedDate = centerDateRef.current;
     if (!savedDate) return;
 
@@ -245,7 +295,14 @@ function TimelineProviderInner({
     scrollEl.scrollLeft = newOffset - (scrollEl.clientWidth - sidebarWidth) / 2;
     setScrollX(scrollEl.scrollLeft);
     centerDateRef.current = null;
-  }, [deferredRange, zoom, sidebarWidth, timelineData, setScrollX]);
+  }, [
+    deferredRange,
+    zoom,
+    sidebarWidth,
+    timelineData,
+    setScrollX,
+    navigationEnabled,
+  ]);
 
   const scrollToFeature = useCallback(
     (feature: TimelineFeature) => {
@@ -274,13 +331,22 @@ function TimelineProviderInner({
     () => ({
       zoom,
       range: deferredRange,
+      timeZone: resolveTimelineTimeZone(timeZone),
       onAddItem,
       timelineData,
       ref: scrollRef,
       scrollToFeature,
       isPending,
     }),
-    [deferredRange, isPending, onAddItem, scrollToFeature, timelineData, zoom],
+    [
+      deferredRange,
+      isPending,
+      onAddItem,
+      scrollToFeature,
+      timelineData,
+      zoom,
+      timeZone,
+    ],
   );
 
   return (
