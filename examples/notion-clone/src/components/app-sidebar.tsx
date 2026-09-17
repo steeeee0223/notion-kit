@@ -20,6 +20,7 @@ import { DocList, WorkspaceSwitcher } from "@notion-kit/ui/sidebar/presets";
 
 import { useSettings } from "@/hooks/use-settings";
 import { useWorkspaceList } from "@/hooks/use-workspace-list";
+import { routes } from "@/lib/routes";
 
 import { SettingsModal } from "./settings-modal";
 
@@ -64,7 +65,7 @@ export function AppSidebar() {
             }}
             activeWorkspace={activeWorkspace}
             workspaces={workspaceList}
-            onCreateWorkspace={() => router.push("/onboarding")}
+            onCreateWorkspace={() => router.push(routes.onboarding)}
             onSelect={selectWorkspace}
             onLogout={signOut}
             onOpenSettings={() => setSettingsOpen(true)}

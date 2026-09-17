@@ -7,6 +7,7 @@ import { cn } from "@notion-kit/cn";
 import { ThemeProvider, Toaster } from "@notion-kit/ui/primitives";
 
 import { env } from "@/env";
+import { APP_BASE_PATH } from "@/lib/routes";
 
 import "./global.css";
 
@@ -30,7 +31,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">
-        <AuthProvider authURL={env.NEXT_PUBLIC_AUTH_URL}>
+        <AuthProvider appURL={APP_BASE_PATH} authURL={env.NEXT_PUBLIC_AUTH_URL}>
           <ThemeProvider attribute="class" disableTransitionOnChange>
             {children}
             <Toaster className="font-mono" />
