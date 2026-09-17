@@ -13,9 +13,9 @@ export function RowEditLogItem({ record }: { record: RowEditLog }) {
     (candidate) => candidate.id === record.property.type,
   );
   return (
-    <li className="flex min-w-0 flex-col gap-2 border-b border-border py-3 last:border-b-0">
+    <li className="flex min-w-0 items-center gap-4 border-b border-border py-3 last:border-b-0">
       <EditLogTime editedAt={record.editedAt} />
-      <div className="flex min-w-0 items-start gap-2">
+      <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
         <span
           aria-hidden="true"
           className="shrink-0 [&_svg]:size-4 [&_svg]:fill-icon"
@@ -26,12 +26,10 @@ export function RowEditLogItem({ record }: { record: RowEditLog }) {
             (plugin?.default.icon ?? <Icon.TypesText />)
           )}
         </span>
-        <div className="min-w-0 flex-1 text-sm wrap-anywhere whitespace-pre-wrap">
+        <div className="flex shrink-0 items-center gap-1 text-sm whitespace-nowrap">
           <span className="font-medium">{record.property.name}</span>
-          <span aria-hidden="true"> → </span>
-          <div className="min-w-0">
-            <ReadOnlyValue record={record} />
-          </div>
+          <span aria-hidden="true">→</span>
+          <ReadOnlyValue record={record} />
         </div>
       </div>
     </li>

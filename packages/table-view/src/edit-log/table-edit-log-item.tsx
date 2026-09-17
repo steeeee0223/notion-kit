@@ -4,7 +4,10 @@ import type { TableEditLog } from "./types";
 export function EditLogTime({ editedAt }: { editedAt: number }) {
   const date = new Date(editedAt);
   return (
-    <time dateTime={date.toISOString()} className="text-xs text-secondary">
+    <time
+      dateTime={date.toISOString()}
+      className="shrink-0 text-xs whitespace-nowrap text-secondary"
+    >
       {date.toLocaleString(undefined, {
         dateStyle: "medium",
         timeStyle: "short",

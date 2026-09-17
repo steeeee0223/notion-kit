@@ -50,9 +50,11 @@ export function EditLogDialog({
         >
           <Icon.Close aria-hidden="true" className="size-3.5 fill-secondary" />
         </DialogClose>
-        <DialogHeader>
-          <DialogTitle>Edit log</DialogTitle>
-          <DialogDescription>
+        <DialogHeader className="items-start pr-8 text-left">
+          <DialogTitle typography="h2" className="text-left">
+            Edit log
+          </DialogTitle>
+          <DialogDescription className="text-left text-base">
             {state.target?.type === "row"
               ? state.target.title?.trim()
                 ? state.target.title
@@ -95,6 +97,8 @@ export function EditLogDialog({
             ) : (
               state.nextCursor !== null && (
                 <Button
+                  variant="hint"
+                  size="sm"
                   className="my-3"
                   onClick={onLoadMore}
                   disabled={state.status === "loading"}
