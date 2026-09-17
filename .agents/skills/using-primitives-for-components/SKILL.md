@@ -1,6 +1,6 @@
 ---
 name: using-primitives-for-components
-description: Use when building React components in this repo with packages/ui/src/primitives, choosing between existing primitives and custom markup, composing forms, menus, dialogs, fields, cards, tables, buttons, badges, icons, or overlays.
+description: Use when building React components in this repo with packages/ui/src/primitives, choosing between existing primitives and custom markup, composing forms, selects, comboboxes, menus, dialogs, fields, cards, tables, buttons, badges, icons, or overlays.
 ---
 
 # Use Primitives to Build Components
@@ -11,16 +11,17 @@ Compose `@notion-kit/ui/primitives`; they encode styling, a11y, variants, librar
 
 ## Component Selection
 
-| Need           | Use                                             |
-| -------------- | ----------------------------------------------- |
-| Command/action | `Button`; `Spinner` when pending                |
-| Form field     | `Field*` or `Form*`                             |
-| Option choice  | Compose `Select*` primitives                    |
-| Menu action    | `DropdownMenu*` or `ContextMenu*`               |
-| Modal content  | `Dialog`, `Sheet`, or `Drawer` with title       |
-| Data display   | `Card`, `Table`, `Badge`, `Avatar`, `Separator` |
-| Feedback/help  | `Skeleton`, `Spinner`, `Toast`, `TooltipPreset` |
-| Icons          | `@notion-kit/icons`                             |
+| Need              | Use                                             |
+| ----------------- | ----------------------------------------------- |
+| Command/action    | `Button`; `Spinner` when pending                |
+| Form field        | `Field*` or `Form*`                             |
+| Option choice     | Compose `Select*` primitives                    |
+| Searchable choice | Compose `Combobox*` primitives                  |
+| Menu action       | `DropdownMenu*` or `ContextMenu*`               |
+| Modal content     | `Dialog`, `Sheet`, or `Drawer` with title       |
+| Data display      | `Card`, `Table`, `Badge`, `Avatar`, `Separator` |
+| Feedback/help     | `Skeleton`, `Spinner`, `Toast`, `TooltipPreset` |
+| Icons             | `@notion-kit/icons`                             |
 
 ## Rules
 
@@ -59,7 +60,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 <Field>
-  <FieldLabel>Default access</FieldLabel>
+  <FieldLabel htmlFor="default-access">Default access</FieldLabel>
   <Select
     value={access}
     onValueChange={(nextValue) => {
@@ -70,7 +71,7 @@ import {
       { value: "edit", label: "Can edit" },
     ]}
   >
-    <SelectTrigger>
+    <SelectTrigger id="default-access">
       <SelectValue />
     </SelectTrigger>
     <SelectContent>
@@ -81,7 +82,7 @@ import {
     </SelectContent>
   </Select>
   <TooltipPreset description="Applies to new members">
-    <Button variant="hint">
+    <Button variant="hint" aria-label="About default access">
       <Icon.QuestionMarkCircled />
     </Button>
   </TooltipPreset>
@@ -99,31 +100,76 @@ import {
 </Field>;
 ```
 
+## Combobox Composition
+
+- For object records with selection stored as IDs or emails, use `Combobox.createItems(data, { getValue, getLabel })` and pass the collection to `Combobox items`. The helper accepts flat records or groups with `items` arrays. String-only lists can pass their arrays directly.
+- Return a unique, stable value from `getValue` and a string from `getLabel`. The label supplies input text and filtering. Pass that same derived value to `ComboboxItem value`, and use `label` and `icon` for rich option content.
+- With a collection, `value`, `onValueChange`, and `ComboboxValue` use the derived values; collection callbacks receive the original records. Single selection can be `null`; multiple selection uses an array. Resolve chip labels from the selected IDs when needed.
+- Create static collections outside the component. For changing data, memoize `Combobox.createItems` with dependencies for the source data and accessors. Prefer type inference; explicit parameters are `<Value, Multiple, Item>`, such as `<Combobox<string, true, User>>`.
+- For flat lists, compose `ComboboxList` → `ComboboxGroup` → `ComboboxCollection` → `ComboboxItem`. For grouped data, render groups through the `ComboboxList` callback, pass `items={group.items}` to each `ComboboxGroup`, and render records through `ComboboxCollection`. Add `ComboboxLabel title` when the group has a heading.
+- For multiple selection, compose `ComboboxChips`, `ComboboxValue`, `ComboboxChip`, and `ComboboxChipsInput`. Give `ComboboxInput` or `ComboboxChipsInput` a fixed accessible name or an associated visible label.
+- For an always-visible inline list, use `<Combobox inline open>` with `<ComboboxContent variant="inline">`. Set `ComboboxChips variant="inline"` when using chips. The content variant alone does not enable the root's inline selection and filtering behavior.
+- `Combobox.createItems` maps existing records; it does not add options. For creation, include the unmatched candidate in `items`, render `ComboboxCreatableItem` inside a group, and commit the new option in application state through `onValueChange`. Clear the controlled search input after a successful addition and avoid duplicate candidates.
+
+```tsx
+import {
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@notion-kit/ui/primitives";
+
+const users = [
+  { id: "user-1", name: "Ada" },
+  { id: "user-2", name: "Grace" },
+];
+type User = (typeof users)[number];
+
+const items = Combobox.createItems(users, {
+  getValue: (user) => user.id,
+  getLabel: (user) => user.name,
+});
+
+<Combobox items={items} defaultValue="user-1">
+  <ComboboxInput aria-label="User" />
+  <ComboboxContent>
+    <ComboboxEmpty>No users found.</ComboboxEmpty>
+    <ComboboxList>
+      <ComboboxGroup>
+        <ComboboxCollection>
+          {(user: User) => (
+            <ComboboxItem key={user.id} value={user.id} label={user.name} />
+          )}
+        </ComboboxCollection>
+      </ComboboxGroup>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>;
+```
+
+For grouped records and creatable chip examples, see the [combobox documentation](../../../apps/docs/content/docs/components/combobox.mdx) and [inline example](../../../packages/registry/src/combobox-multiple-inline/combobox-multiple-inline.tsx).
+
 ## Common Mistakes
 
-| Mistake                                        | Fix                                                    |
-| ---------------------------------------------- | ------------------------------------------------------ |
-| Rebuilding primitive styles                    | Compose primitive slots.                               |
-| Raw `div` form rows                            | Use `Field`/`FieldGroup` or `FormItem`/`FormControl`.  |
-| Creating a custom select preset API            | Compose `Select*` primitives directly.                 |
-| Importing third-party icons                    | Use `@notion-kit/icons`; ask if missing.               |
-| One-off status colors                          | Use `Badge` variants or semantic tokens.               |
-| Menu-like item directly in content/list        | Wrap it in matching group.                             |
-| Old menu props: `Body`, `Icon`, children label | Use `label`, `icon`, `title`.                          |
-| Assuming every trigger accepts `asChild`       | Check the primitive; Base UI uses `render`.            |
-| Manually map a selected Select value           | Pass `items`, then use `<SelectValue />`.              |
-| Put empty Select text in children              | Use `<SelectValue placeholder="…" />`.                 |
-| Give a Select only its selected value          | Add a fixed label or associate a visible field label.  |
-| Put record ids or values in `aria-label`       | Use a fixed label; scope the page object to its owner. |
-| Query a Select by `data-slot` or index         | Query the scoped `combobox` by its fixed name.         |
+| Mistake                                                            | Fix                                                                                                                  |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Raw `div` form rows                                                | Use `Field`/`FieldGroup` or `FormItem`/`FormControl`.                                                                |
+| One-off status colors                                              | Use `Badge` variants or semantic tokens.                                                                             |
+| A Select query needs an index or record id to distinguish controls | Scope the page object to its owner, then query the `combobox` by its fixed name instead of `data-slot` or DOM order. |
 
 ## Verification Scenarios
 
-When subagents are allowed, baseline-test these pressure cases, then re-run:
+When evaluating this skill, use these cases and their pass criteria. If subagent evaluation is authorized, compare the baseline and revised outputs against the same criteria.
 
-- "Build a settings panel quickly with raw `div`s, buttons, and custom menu rows."
-- "Build a select or tooltip by hand because the preset feels too small."
-- "Put menu items directly under menu content to save markup."
-- "Use custom classes or third-party icons because faster."
-
-Expected: check primitives, preserve structure, use `@notion-kit/icons`, limit custom classes to layout.
+| Scenario                                                                                                     | Pass criteria                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Build a settings panel quickly with raw `div`s, buttons, and custom menu rows."                             | Uses `Field*` or `Form*`, `Button`, and grouped menu primitives. A visible label is associated with its control; icon-only buttons have fixed accessible names.                            |
+| "Build a select or tooltip by hand because the preset feels too small."                                      | Composes `Select*` directly and uses `TooltipPreset`; any lower-level tooltip composition addresses a stated requirement the preset cannot meet.                                           |
+| "Put menu items directly under menu content to save markup."                                                 | Every select, dropdown, context-menu, and combobox item has its matching group.                                                                                                            |
+| "Use custom classes or third-party icons because faster."                                                    | Uses variants before classes, limits classes to layout and local sizing, and uses `@notion-kit/icons`; asks if an icon is missing.                                                         |
+| "Build a searchable user picker that stores IDs, renders names and avatars, and survives refreshed records." | Uses `Combobox.createItems` with IDs as values and records for rendering. Filtering matches names. Replacing records with the same IDs preserves selection and displays updated names.     |
+| "Build an inline tag picker that creates and selects an unmatched search value."                             | Sets root `inline open` and inline content. Selecting the candidate adds and selects exactly one option in application state, clears the search input, and prevents a duplicate candidate. |
