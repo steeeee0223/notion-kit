@@ -101,13 +101,11 @@ function MenuItem({
   );
 }
 
-type MenuItemActionProps = React.ComponentProps<"div">;
+interface MenuItemActionProps extends React.PropsWithChildren {
+  className?: string;
+}
 
-function MenuItemAction({
-  className,
-  children,
-  ...props
-}: MenuItemActionProps) {
+function MenuItemAction({ className, children }: MenuItemActionProps) {
   return (
     <div
       data-slot="menu-item-action"
@@ -115,19 +113,17 @@ function MenuItemAction({
         "ml-auto min-w-0 shrink-0 [&_svg]:block [&_svg]:shrink-0",
         className,
       )}
-      {...props}
     >
       {children}
     </div>
   );
 }
 
-function MenuItemCheck({ className, ...props }: MenuItemActionProps) {
+function MenuItemCheck() {
   return (
     <MenuItemAction
       data-slot="menu-item-check"
-      className={cn("pointer-events-none w-3.5", className)}
-      {...props}
+      className="pointer-events-none w-3.5"
     >
       <Icon.Check className="size-full fill-primary" />
     </MenuItemAction>
@@ -146,7 +142,10 @@ function MenuItemSelect({ className, children }: MenuItemActionProps) {
   );
 }
 
-function MenuItemShortcut({ children, ...props }: MenuItemActionProps) {
+function MenuItemShortcut({
+  children,
+  ...props
+}: React.ComponentProps<"span">) {
   return (
     <MenuItemAction data-slot="menu-item-shortcut" {...props}>
       <span className="font-sans text-xs whitespace-nowrap text-muted">

@@ -208,7 +208,9 @@ function DropdownMenuCheckboxItem({
               />
             </MenuItemAction>
           ) : (
-            <Menu.CheckboxItemIndicator render={<MenuItemCheck />} />
+            <Menu.CheckboxItemIndicator>
+              <MenuItemCheck />
+            </Menu.CheckboxItemIndicator>
           )}
         </MenuItem>
       }
@@ -253,7 +255,9 @@ function DropdownMenuRadioItem({
           desc={desc}
         >
           {children}
-          <Menu.RadioItemIndicator render={<MenuItemCheck />} />
+          <Menu.RadioItemIndicator>
+            <MenuItemCheck />
+          </Menu.RadioItemIndicator>
         </MenuItem>
       }
       {...props}
