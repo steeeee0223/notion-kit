@@ -1,21 +1,6 @@
-import type { Cell, ColumnInfo, Row } from "@notion-kit/table-hook";
+import type { Cell, Row } from "@notion-kit/table-hook";
 import type { DateData, DatePlugin } from "@notion-kit/table-hook/plugins";
 import type { TimelineFeature } from "@notion-kit/ui/timeline";
-
-export function isUsableTimelineDateProperty(property: ColumnInfo) {
-  return property.type === "date" && !property.hidden && !property.isDeleted;
-}
-
-export function resolveTimelineDateProperty(
-  properties: ColumnInfo[],
-  persistedId: string | null,
-) {
-  const persisted = properties.find(
-    (property) =>
-      property.id === persistedId && isUsableTimelineDateProperty(property),
-  );
-  return persisted ?? properties.find(isUsableTimelineDateProperty) ?? null;
-}
 
 function addCalendarDay(timestamp: number) {
   const date = new Date(timestamp);

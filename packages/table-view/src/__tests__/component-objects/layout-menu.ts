@@ -3,7 +3,7 @@ import type { UserEvent } from "@testing-library/user-event";
 
 import { MenuSurfaceObject } from "./menu-surface";
 
-type Layout = "Table" | "Board" | "Timeline" | "List";
+type Layout = "Table" | "Board" | "Timeline" | "Calendar" | "List";
 type RowView = "Side peek" | "Center peek" | "Full page";
 
 export class LayoutMenuObject extends MenuSurfaceObject {
@@ -32,15 +32,17 @@ export class LayoutMenuObject extends MenuSurfaceObject {
     return screen.queryByRole("menuitemradio", { name });
   }
 
-  timelinePropertyTrigger() {
-    return within(this.root).getByRole("menuitem", { name: /Timeline by/i });
+  datePropertyTrigger() {
+    return within(this.root).getByRole("menuitem", {
+      name: /(Timeline|Calendar) by/i,
+    });
   }
 
-  timelinePropertyOption(name: string) {
+  datePropertyOption(name: string) {
     return screen.getByRole("menuitemradio", { name });
   }
 
-  queryTimelinePropertyOption(name: string) {
+  queryDatePropertyOption(name: string) {
     return screen.queryByRole("menuitemradio", { name });
   }
 
@@ -53,14 +55,14 @@ export class LayoutMenuObject extends MenuSurfaceObject {
     await screen.findByRole("menuitemradio", { name: "Side peek" });
   }
 
-  async openTimelinePropertyOptions() {
-    await this.user.hover(this.timelinePropertyTrigger());
+  async openDatePropertyOptions() {
+    await this.user.hover(this.datePropertyTrigger());
     await screen.findByRole("menuitemradio", { name: "Due" });
   }
 
-  async selectTimelineProperty(name: string) {
-    await this.openTimelinePropertyOptions();
-    fireEvent.click(this.timelinePropertyOption(name));
+  async selectDateProperty(name: string) {
+    await this.openDatePropertyOptions();
+    fireEvent.click(this.datePropertyOption(name));
   }
 
   async selectRowView(name: RowView) {

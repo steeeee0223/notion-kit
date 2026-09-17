@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import { MenuSurfaceObject, type AccessibleName } from "./menu-surface";
 
@@ -37,6 +37,7 @@ export class SortMenuObject extends MenuSurfaceObject {
     await this.item("Add sort").click();
     await this.searchInput().fill(propertyName);
     await this.page.getByRole("option", { name: propertyName }).click();
+    await expect(this.page.getByRole("listbox")).toBeHidden();
   }
 
   async setDirection(propertyId: string, next: AccessibleName) {

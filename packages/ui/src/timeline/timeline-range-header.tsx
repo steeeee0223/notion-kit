@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 
 import { cn } from "@notion-kit/cn";
 
+import { DateTitle } from "../date-view/date-title";
 import { TimelineColumns } from "./timeline-columns";
 import {
   useTimelineContext,
@@ -37,12 +38,12 @@ function TimelineRange({ range, colWidth }: TimelineRangeProps) {
       className="shrink-0"
       style={{ width: range.columnCount * colWidth }}
     >
-      <div
-        className="sticky inline-flex h-8 items-center px-3 pt-[13px] text-sm font-medium text-primary"
+      <DateTitle
+        className="sticky px-3 pt-[13px]"
         style={{ insetInlineStart: sidebarWidth > 0 ? sidebarWidth : 40 }}
       >
         {range.label}
-      </div>
+      </DateTitle>
     </div>
   );
 }

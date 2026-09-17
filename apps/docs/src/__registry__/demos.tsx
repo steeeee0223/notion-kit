@@ -75,6 +75,30 @@ export const Index: Record<
     files: ["registry/src/button-warning/button-warning.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/button-warning")),
   },
+  "calendar-custom-events": {
+    files: ["registry/src/calendar-custom-events/calendar-custom-events.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/calendar-custom-events"),
+    ),
+  },
+  "calendar-day": {
+    files: ["registry/src/calendar-day/calendar-day.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/calendar-day")),
+  },
+  "calendar-demo": {
+    files: ["registry/src/calendar-demo/calendar-demo.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/calendar-demo")),
+  },
+  "calendar-readonly": {
+    files: ["registry/src/calendar-readonly/calendar-readonly.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/calendar-readonly"),
+    ),
+  },
+  "calendar-week": {
+    files: ["registry/src/calendar-week/calendar-week.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/calendar-week")),
+  },
   "checkbox-default": {
     files: ["registry/src/checkbox-default/checkbox-default.tsx"],
     component: React.lazy(
@@ -457,6 +481,12 @@ export const Index: Record<
   "switch-sizes": {
     files: ["registry/src/switch-sizes/switch-sizes.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/switch-sizes")),
+  },
+  "table-view-calendar": {
+    files: ["registry/src/table-view-calendar/table-view-calendar.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/table-view-calendar"),
+    ),
   },
   "table-view-controlled": {
     files: ["registry/src/table-view-controlled/table-view-controlled.tsx"],

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
+import TableViewCalendar from "@notion-kit/registry/table-view-calendar";
 import { TableView } from "@notion-kit/table-view";
 import type { ColumnDefs, DefaultPlugins, Row } from "@notion-kit/table-view";
 
@@ -71,7 +72,7 @@ export const TimelineView: Story = {
     <TableView
       defaultView={{
         layout: "timeline",
-        timeline: {
+        dateView: {
           range: "monthly",
         },
       }}
@@ -80,3 +81,5 @@ export const TimelineView: Story = {
     />
   ),
 };
+
+export const CalendarView: Story = { render: () => <TableViewCalendar /> };

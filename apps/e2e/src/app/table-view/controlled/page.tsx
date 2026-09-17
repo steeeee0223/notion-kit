@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   TableView,
@@ -8,8 +8,10 @@ import {
   type PropertiesResourceAction,
   type ViewResourceAction,
 } from "@notion-kit/table-view";
+import { Button } from "@notion-kit/ui/primitives";
 
 import { TableViewStateDiagnostic } from "../_components/table-view-state-diagnostic";
+import { createCalendarTableScenario } from "../../../test-fixtures/calendar";
 import {
   createPluginConfigurationScenario,
   createTableViewFixture,
@@ -18,6 +20,12 @@ import {
 export default function ControlledTableViewPage() {
   const initial = createTableViewFixture();
   const [data, setData] = useState(initial.data);
+  const [rejectData, setRejectData] = useState(false);
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    return () => document.documentElement.classList.remove("dark");
+  }, [dark]);
   const [properties, setProperties] = useState(initial.properties);
   const [view, setView] = useState(initial.view);
   const [dataCount, setDataCount] = useState(0);
@@ -35,6 +43,7 @@ export default function ControlledTableViewPage() {
     setData(next.data);
     setProperties(next.properties);
     setView(next.view);
+    setRejectData(false);
     setDataCount(0);
     setPropertiesCount(0);
     setViewCount(0);
@@ -71,6 +80,26 @@ export default function ControlledTableViewPage() {
         <button type="button" onClick={openLockedAlphaRow}>
           Open locked Alpha row
         </button>
+        <Button
+          onClick={() => {
+            const scenario = createCalendarTableScenario();
+            setData(scenario.data);
+            setProperties(scenario.properties);
+            setView(scenario.view);
+            setRejectData(false);
+          }}
+        >
+          Apply Calendar scenario
+        </Button>
+        <Button
+          aria-pressed={rejectData}
+          onClick={() => setRejectData((current) => !current)}
+        >
+          Reject data changes
+        </Button>
+        <Button aria-pressed={dark} onClick={() => setDark((value) => !value)}>
+          Dark mode
+        </Button>
       </header>
       <TableView
         data={data}
@@ -78,7 +107,7 @@ export default function ControlledTableViewPage() {
         view={view}
         getRowUrl={(rowId) => `/table-view/rows/${rowId}`}
         onDataChange={(change) => {
-          setData(change.next);
+          if (!rejectData) setData(change.next);
           setDataCount((count) => count + 1);
           setLastDataAction(change.action);
         }}

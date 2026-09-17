@@ -25,7 +25,7 @@ import {
   canSelectDataCell,
   useCellSelectionDomain,
 } from "@/features/cell-selection";
-import type { TableViewState } from "@/features/menu";
+import { resolveDateViewRange, type TableViewState } from "@/features/menu";
 import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
 import type { ColumnDefs, ColumnInfo, Row } from "@/lib/types";
@@ -67,7 +67,7 @@ const DEFAULT_VIEW_STATE = {
   layout: "table",
   rowView: "side",
   openedRowId: null,
-  timeline: {
+  dateView: {
     range: "monthly",
     datePropertyId: null,
   },
@@ -75,10 +75,15 @@ const DEFAULT_VIEW_STATE = {
 
 function resolveViewState(view?: PartialTableViewState): TableViewState {
   const pluginMethods = createPluginMethodState();
+  const layout = view?.layout ?? DEFAULT_VIEW_STATE.layout;
+  const dateView = { ...DEFAULT_VIEW_STATE.dateView, ...view?.dateView };
   return {
     ...DEFAULT_VIEW_STATE,
     ...view,
-    timeline: { ...DEFAULT_VIEW_STATE.timeline, ...view?.timeline },
+    dateView: {
+      ...dateView,
+      range: resolveDateViewRange(layout, dateView.range),
+    },
     pluginMethods: {
       ...pluginMethods,
       ...view?.pluginMethods,

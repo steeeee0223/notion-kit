@@ -32,6 +32,7 @@ export {
   validateTableFilterState,
 } from "@/features";
 export type {
+  AddRowOptions,
   AdvancedFilteringTableApi,
   ColumnsInfoTableState,
   CountingTableState,
@@ -75,6 +76,7 @@ export type { PluginMethodState } from "@/features";
 export { ROW_VIEW_OPTIONS } from "@/features";
 export { LAYOUT_OPTIONS } from "@/features/menu";
 export type {
+  DateViewState,
   TableGlobalState,
   TableViewState,
   RowViewType,

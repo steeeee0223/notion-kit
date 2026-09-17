@@ -1,5 +1,6 @@
 import { StrictMode, useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import type {
@@ -15,6 +16,7 @@ import type {
 import type { DefaultPlugins } from "@/plugins";
 import { TableView } from "@/table-contexts";
 
+import { TableViewObject } from "../__tests__/component-objects/table-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
@@ -51,7 +53,7 @@ function timelineView(overrides: Partial<TableViewState> = {}): TableViewState {
     rowView: "side",
     openedRowId: null,
     locked: false,
-    timeline: { range: "monthly", datePropertyId: null },
+    dateView: { range: "monthly", datePropertyId: null },
     ...overrides,
   };
 }
@@ -67,7 +69,7 @@ describe("useTimelineViewState", () => {
         data={[row]}
         properties={[titleProperty, dateProperty]}
         view={timelineView({
-          timeline: { range: "monthly", datePropertyId: "due" },
+          dateView: { range: "monthly", datePropertyId: "due" },
         })}
         onPropertiesChange={onPropertiesChange}
         onDataChange={onDataChange}
@@ -92,7 +94,7 @@ describe("useTimelineViewState", () => {
         data={[row]}
         properties={[titleProperty, dateProperty]}
         initialView={timelineView({
-          timeline: { range: "monthly", datePropertyId: "missing" },
+          dateView: { range: "monthly", datePropertyId: "missing" },
         })}
         onViewChange={onViewChange}
       />,
@@ -105,7 +107,7 @@ describe("useTimelineViewState", () => {
     expect(onViewChange).toHaveBeenCalledTimes(1);
     expect(onViewChange.mock.calls[0]?.[0]).toMatchObject({
       action: {
-        type: "view.timeline_property.change",
+        type: "view.date_view_property.change",
         payload: { nextDatePropertyId: "due" },
       },
     });
@@ -138,7 +140,7 @@ describe("useTimelineViewState", () => {
     expect(events.map((event) => event.type)).toEqual([
       "properties.create",
       "data.cell.update",
-      "view.timeline_property.change",
+      "view.date_view_property.change",
     ]);
     expect(new Set(events.map((event) => event.id)).size).toBe(1);
     expect(seededData?.[0]?.properties[propertyId!]?.value).toEqual({
@@ -183,7 +185,7 @@ describe("useTimelineViewState", () => {
         properties={[titleProperty, dateProperty]}
         view={timelineView({
           locked: true,
-          timeline: { range: "monthly", datePropertyId: "missing" },
+          dateView: { range: "monthly", datePropertyId: "missing" },
         })}
         onPropertiesChange={onPropertiesChange}
         onDataChange={onDataChange}
@@ -243,13 +245,67 @@ describe("useTimelineViewState", () => {
     expect(onViewChange).toHaveBeenCalledTimes(1);
   });
 
+  it("CalendarInitialization_NoDateProperty_CreatesUniqueEmptyPropertyThatTimelineReuses", async () => {
+    const events: { id: string; type: string }[] = [];
+    let initializedData: DefaultRow[] | undefined;
+    let createdName: string | undefined;
+    const tableView = new TableViewObject(userEvent.setup());
+    render(
+      <AcceptingHarness
+        data={[row]}
+        properties={[
+          titleProperty,
+          {
+            ...titleProperty,
+            id: "other",
+            name: "Date",
+            type: "text",
+            config: undefined,
+          },
+        ]}
+        initialView={timelineView({ layout: "calendar" })}
+        onPropertiesChange={(change) => {
+          events.push(change.action);
+          createdName = change.next.at(-1)?.name;
+        }}
+        onDataChange={(change) => {
+          events.push(change.action);
+          initializedData = change.next;
+        }}
+        onViewChange={(change) => events.push(change.action)}
+      />,
+    );
+    const ready = await screen.findByTestId("calendar-view-ready");
+    const id = ready.getAttribute("data-property-id")!;
+    expect(initializedData?.[0]?.properties[id]?.value).toEqual({});
+    expect(events.map((event) => event.type)).toEqual([
+      "properties.create",
+      "data.cell.update",
+      "view.date_view_property.change",
+    ]);
+    expect(new Set(events.map((event) => event.id)).size).toBe(1);
+    expect(createdName).not.toBe("Date");
+    expect(createdName).toMatch(/^Date/);
+    const layout = await (await tableView.openViewSettings()).openLayout();
+    await layout.selectLayout("Timeline");
+    await tableView.clickOutside();
+    expect(await screen.findByTestId("timeline-view-ready")).toHaveAttribute(
+      "data-property-id",
+      id,
+    );
+    expect(
+      events.filter((event) => event.type === "data.cell.update"),
+    ).toHaveLength(1);
+    expect(initializedData?.[0]?.properties[id]?.value).toEqual({});
+  });
+
   it("TimelineRouting_DefaultTimelineView_RendersTimelineBoundary", async () => {
     render(
       <TableView<DefaultPlugins>
         defaultData={[row]}
         defaultProperties={[titleProperty, dateProperty]}
         defaultView={timelineView({
-          timeline: { range: "daily", datePropertyId: "due" },
+          dateView: { range: "daily", datePropertyId: "due" },
         })}
       />,
     );

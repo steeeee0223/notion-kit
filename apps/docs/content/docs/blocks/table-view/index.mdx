@@ -5,21 +5,21 @@ description: A composable, editable data table with multiple layouts.
 
 <ComponentPreview name="table-view-uncontrolled" hideCode />
 
+## Installation
+
+<Installation
+  packages="@notion-kit/table-view"
+  registryName="table-view-uncontrolled"
+/>
+
 ## Features
 
 - Controlled or uncontrolled resources for rows, properties, and view state
 - Create, edit, duplicate, reorder, hide, and resize properties and rows
 - Search rows, build nested AND/OR filters, sort, group, calculate, and bulk-edit selected rows
-- Table, List, Board, and Timeline layouts
+- Table, List, Board, Timeline, and Calendar layouts
 - Open rows in a center dialog, side pane, or full page
 - Built-in plugins for title, text, number, checkbox, select, multi-select, links, and dates
-
-## Installation
-
-<Installation
-  packages="@notion-kit/table-view"
-  registryName="table-view-controlled"
-/>
 
 ## Requirements
 
@@ -68,9 +68,9 @@ Set the layout to `"timeline"` and select a Date property for the timeline.
 The range can be daily, monthly, or quarterly.
 
 ```tsx
-const view = {
+const view: PartialTableViewState = {
   layout: "timeline",
-  timeline: {
+  dateView: {
     range: "monthly",
     datePropertyId: "due-date",
   },
@@ -82,6 +82,103 @@ const view = {
   defaultView={view}
 />;
 ```
+
+### Calendar layout
+
+Calendar displays rows with valid dates in Month, Week, or Day. Click an event
+to open its row. Click an empty date or time to create a row and its initial
+date in one data update. Drag events to move them, resize their true edges,
+or move between the all-day area and time grid.
+
+<ComponentPreview
+  name="table-view-calendar"
+  preview={`<TableView
+  defaultProperties={properties}
+  defaultData={data}
+  defaultView={{
+    layout: "calendar",
+    dateView: { range: "monthly", datePropertyId: "date" },
+  }}
+/>`}
+/>
+
+Set `dateView.datePropertyId` to the ID of a property whose type is `"date"`.
+The calendar uses that property's `config.tz` as the display timezone and
+the table's `weekStartsOn` setting for week boundaries. The title property
+supplies event labels.
+
+Calendar respects row search, filters, and sorting. Rows without a valid
+start date are omitted from the calendar but remain in the data resource.
+The example includes an unscheduled task that appears in Table layout.
+
+#### Date values
+
+Store dates in the selected property's `value` using `DateData` from
+`@notion-kit/table-hook/plugins`:
+
+```ts
+import type { DateData } from "@notion-kit/table-hook/plugins";
+
+const allDay: DateData = {
+  start: Date.UTC(2026, 8, 16),
+  end: Date.UTC(2026, 8, 18),
+  endDate: true,
+  includeTime: false,
+};
+
+const timed: DateData = {
+  start: Date.UTC(2026, 8, 16, 10),
+  end: Date.UTC(2026, 8, 16, 11),
+  endDate: true,
+  includeTime: true,
+};
+```
+
+With `config.tz: "UTC"`, the all-day value covers September 16 through
+September 18, including the end date. The timed value covers 10:00–11:00 UTC.
+Set `endDate: false` to store a date without an explicit end. Calendar displays
+one day for an all-day value or one hour for a timed value in that case.
+
+The table adapter converts the inclusive all-day end to the exclusive
+`endAt` used by the standalone [Calendar block](/docs/blocks/calendar).
+Event gestures write the result back as `DateData`.
+
+#### Shared date settings
+
+Calendar and Timeline share `dateView.datePropertyId` and `dateView.range`.
+Switching to Calendar replaces `quarterly` with `monthly`; switching to
+Timeline replaces `weekly` with `monthly`. Supported ranges stay selected.
+The viewed date survives layout changes within a mounted table, including a
+visit to Table or Board. Scrolling does not call `onViewChange`.
+
+When the selected property is missing, Calendar selects an existing Date
+property or creates one with empty values. If you control `properties`,
+`data`, or `view`, accept the corresponding resource callbacks so
+initialization and event edits can complete. Timeline initializes a newly
+created Date property from each row's creation and last-edited timestamps.
+
+Set `view.locked` to prevent creation, date edits, and range changes while
+keeping Previous, Today, Next, and row opening available. Locked tables do
+not create a missing Date property.
+
+For a calendar whose events are independent of table rows, use the
+[Calendar block](/docs/blocks/calendar).
+
+### Migrate Timeline settings
+
+| Previous API                    | Current API                      |
+| ------------------------------- | -------------------------------- |
+| `view.timeline`                 | `view.dateView`                  |
+| `TimelineViewState`             | `DateViewState`                  |
+| `setTimelineRange`              | `setDateViewRange`               |
+| `setTimelineDateProperty`       | `setDateViewDateProperty`        |
+| `view.timeline_range.change`    | `view.date_view_range.change`    |
+| `view.timeline_property.change` | `view.date_view_property.change` |
+
+Migrate persisted settings and controlled resources to the current names.
+The standalone `@notion-kit/ui/timeline` exports remain available.
+`addRow({ initialValues: { [propertyId]: value } })` returns the proposed row
+ID. A controlled owner must accept the data before the row can be opened.
 
 ## Custom cell plugins
 
@@ -118,12 +215,25 @@ bulk editing.
 
 ### TableViewState
 
-| Field           | Description                                                                                                                         |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `layout`        | The active layout. Table, List, Board, and Timeline have dedicated renderers; other layout values currently use the table renderer. |
-| `locked`        | Prevents table edits while leaving existing rows navigable.                                                                         |
-| `rowView`       | Where an opened row appears: `center`, `side`, or `full`.                                                                           |
-| `openedRowId`   | The currently opened row, or `null`.                                                                                                |
-| `timeline`      | Optional Timeline configuration containing `range` and `datePropertyId`.                                                            |
-| `pluginMethods` | Persisted sorting, grouping, and group-sort choices for plugins.                                                                    |
-| `filters`       | Persisted advanced filter tree (`TableFilterState`); use `null` to clear all filters.                                               |
+| Field           | Description                                                                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `layout`        | The active layout. Table, List, Board, Timeline, and Calendar have dedicated renderers; other layout values currently use the table renderer. |
+| `locked`        | Prevents table edits while leaving existing rows navigable.                                                                                   |
+| `rowView`       | Where an opened row appears: `center`, `side`, or `full`.                                                                                     |
+| `openedRowId`   | The currently opened row, or `null`.                                                                                                          |
+| `dateView`      | Shared Calendar and Timeline configuration containing `range` and `datePropertyId`.                                                           |
+| `pluginMethods` | Persisted sorting, grouping, and group-sort choices for plugins.                                                                              |
+| `filters`       | Persisted advanced filter tree (`TableFilterState`); use `null` to clear all filters.                                                         |
+
+### DateViewState
+
+Shared by Calendar and Timeline through `view.dateView` or
+`defaultView.dateView`. Both fields can be omitted in `PartialTableViewState`.
+
+| Field            | Type                                              | Default     | Description                                                                                                                          |
+| ---------------- | ------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `range`          | `"daily" \| "weekly" \| "monthly" \| "quarterly"` | `"monthly"` | Calendar supports daily, weekly, and monthly. Timeline supports daily, monthly, and quarterly. An unsupported range becomes monthly. |
+| `datePropertyId` | `string \| null`                                  | `null`      | ID of the Date property used for event values. Resolves to an existing or newly created Date property when editable.                 |
+
+The viewed date is navigation state within the mounted table. It is not a
+field in `DateViewState` and is not persisted by `onViewChange`.

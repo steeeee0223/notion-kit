@@ -41,6 +41,7 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
+    "@date-fns/tz": "catalog:fns",
     "@dnd-kit/react": "catalog:ui",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",

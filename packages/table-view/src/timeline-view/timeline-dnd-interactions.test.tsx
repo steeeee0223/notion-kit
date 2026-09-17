@@ -88,7 +88,7 @@ it("TimelineCardSurface_CrossThresholdAndReturn_CommitsExactMoveWithoutOpening",
       layout: "timeline",
       rowView: "side",
       openedRowId: null,
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
     onViewChange,
@@ -128,7 +128,7 @@ it("TimelineCardSurface_ActivatedDragThenReset_NextClickOpensExactRow", async ()
         layout: "timeline",
         rowView: "side",
         openedRowId: null,
-        timeline: { range: "monthly", datePropertyId: "due" },
+        dateView: { range: "monthly", datePropertyId: "due" },
       }}
       onDataChange={onDataChange}
       onViewChange={onViewChange}
@@ -161,7 +161,7 @@ it("TimelineCardSurface_PointerCancel_DoesNotCommitAndNextClickOpensExactRow", a
       layout: "timeline",
       rowView: "side",
       openedRowId: null,
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
     onViewChange,
@@ -189,7 +189,7 @@ it("TimelineCardSurface_RejectedControlledMove_NextDragUsesAuthoritativeRange", 
     layout: "timeline" as const,
     rowView: "side" as const,
     openedRowId: null,
-    timeline: { range: "monthly" as const, datePropertyId: "due" },
+    dateView: { range: "monthly" as const, datePropertyId: "due" },
   };
   const { rerender } = render(
     <TableView
@@ -243,7 +243,7 @@ it("TimelineLockedCard_PointerGestureDoesNotWriteAndNextClickOpensExactRow", asy
       rowView: "side",
       openedRowId: null,
       locked: true,
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
     onViewChange,
@@ -280,7 +280,7 @@ it("TimelineCardSurface_EqualEpochRange_CommitsExactMove", async () => {
     properties,
     view: {
       layout: "timeline",
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
   });
@@ -320,7 +320,7 @@ it("TimelineLeftResizer_EqualEpochRange_DoesNotCommitAnUnchangedRange", async ()
     properties,
     view: {
       layout: "timeline",
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
   });
@@ -338,7 +338,7 @@ it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
     properties,
     view: {
       layout: "timeline",
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
   });
@@ -352,7 +352,7 @@ it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
   await dragPointer(resizers[1]!, [25, 45, 50]);
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
-  const januaryEleventhAtLocalMidnight = new Date(1970, 0, 11).getTime();
+  const januaryEleventhAtUtcMidnight = Date.UTC(1970, 0, 11);
   const action = onDataChange.mock.lastCall?.[0].action;
   expect(typeof action?.id).toBe("string");
   expect(action).toEqual({
@@ -364,7 +364,7 @@ it("TimelineRightResizer_PointerDrag_CommitsExactCellEnvelope", async () => {
       previousValue: { start: 0, end: 86_400_000 },
       nextValue: {
         start: 0,
-        end: januaryEleventhAtLocalMidnight,
+        end: januaryEleventhAtUtcMidnight,
         endDate: true,
       },
     },
@@ -379,7 +379,7 @@ it("TimelineSidebarHandle_SortedPointerDrag_ConfirmsThenCommitsExactMove", async
     properties,
     view: {
       layout: "timeline",
-      timeline: { range: "monthly", datePropertyId: "due" },
+      dateView: { range: "monthly", datePropertyId: "due" },
     },
     onDataChange,
   });

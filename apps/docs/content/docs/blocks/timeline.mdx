@@ -163,6 +163,18 @@ A timeline with an attached sidebar panel listing all items, plus a header toolb
 </TimelineProvider>`}
 />
 
+## Controlled navigation
+
+Pass `anchorDate` and `onAnchorDateChange` to keep the currently viewed date
+outside the timeline, or use `defaultAnchorDate` for an initial position.
+The timestamp describes the center of the viewport after the sidebar width
+is removed. Scroll updates are reported before a layout can unmount; they
+can be stored separately from persisted view settings.
+
+`timeZone` controls date boundaries and labels. Invalid zones fall back to
+UTC. `startDate` and `endDate` still bound the timeline data. An anchor outside
+the scrollable range is clamped and its actual visible date is reported.
+
 ## API Reference
 
 ### TimelineProvider
@@ -172,6 +184,10 @@ Root provider that manages timeline state, scroll position, and CSS variables.
 | Prop           | Type                   | Default     | Description                                                   |
 | -------------- | ---------------------- | ----------- | ------------------------------------------------------------- |
 | `range`        | `TimelineRange`        | `"monthly"` | The active range granularity.                                 |
+| `anchorDate` | `number` | - | Controlled center timestamp. |
+| `defaultAnchorDate` | `number` | Today | Initial center timestamp. |
+| `onAnchorDateChange` | `(date: number) => void` | - | Receives the viewed timestamp after user scrolling. |
+| `timeZone` | `string` | Browser zone | IANA timezone used to display dates. |
 | `zoom`         | `number`               | `100`       | Zoom level as a percentage.                                   |
 | `startDate`    | `number \| null`       | -           | Override the timeline start date (timestamp).                 |
 | `endDate`      | `number \| null`       | -           | Override the timeline end date (timestamp).                   |

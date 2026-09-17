@@ -20,9 +20,9 @@ export interface TableState<TPlugins extends CellPlugin[]> {
 
 export type PartialTableViewState = Omit<
   Partial<TableViewState>,
-  "timeline" | "pluginMethods"
+  "dateView" | "pluginMethods"
 > & {
-  timeline?: Partial<NonNullable<TableViewState["timeline"]>>;
+  dateView?: Partial<NonNullable<TableViewState["dateView"]>>;
   pluginMethods?: Partial<NonNullable<TableViewState["pluginMethods"]>>;
 };
 

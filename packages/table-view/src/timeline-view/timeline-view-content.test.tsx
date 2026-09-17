@@ -78,7 +78,7 @@ function timelineView(overrides: Partial<TableViewState> = {}): TableViewState {
     rowView: "side",
     openedRowId: null,
     locked: false,
-    timeline: { range: "monthly", datePropertyId: "due" },
+    dateView: { range: "monthly", datePropertyId: "due" },
     ...overrides,
   };
 }
@@ -232,7 +232,7 @@ it("TimelineRangeSelect_Change_WritesExactViewResource", async () => {
   );
 
   expect(onViewChange.mock.lastCall?.[0].action).toMatchObject({
-    type: "view.timeline_range.change",
+    type: "view.date_view_range.change",
     payload: { previousRange: "monthly", nextRange: "daily" },
   });
 });
@@ -281,15 +281,15 @@ it("TimelineDatePropertySwitch_TwoPopulatedProperties_UpdatesBarCoordinates", as
         due: {
           id: "due-valid",
           value: {
-            start: new Date(2026, 0, 1).getTime(),
-            end: new Date(2026, 1, 1).getTime(),
+            start: Date.UTC(2026, 0, 1),
+            end: Date.UTC(2026, 1, 1),
           },
         },
         later: {
           id: "later-valid",
           value: {
-            start: new Date(2026, 2, 1).getTime(),
-            end: new Date(2026, 3, 1).getTime(),
+            start: Date.UTC(2026, 2, 1),
+            end: Date.UTC(2026, 3, 1),
           },
         },
       },
@@ -305,7 +305,7 @@ it("TimelineDatePropertySwitch_TwoPopulatedProperties_UpdatesBarCoordinates", as
 
   const settings = await tableView.openViewSettings();
   const layout = await settings.openLayout();
-  await layout.selectTimelineProperty("Later");
+  await layout.selectDateProperty("Later");
 
   expect(bar).toHaveStyle({ insetInlineStart: "101100px", width: "150px" });
 });
@@ -319,8 +319,8 @@ it("TimelineControlledDateCellReplacement_UpdatesBarCoordinates", async () => {
         due: {
           id: "due-valid",
           value: {
-            start: new Date(2026, 0, 1).getTime(),
-            end: new Date(2026, 1, 1).getTime(),
+            start: Date.UTC(2026, 0, 1),
+            end: Date.UTC(2026, 1, 1),
           },
         },
       },
@@ -334,8 +334,8 @@ it("TimelineControlledDateCellReplacement_UpdatesBarCoordinates", async () => {
         due: {
           id: "due-valid-replacement",
           value: {
-            start: new Date(2026, 4, 1).getTime(),
-            end: new Date(2026, 5, 1).getTime(),
+            start: Date.UTC(2026, 4, 1),
+            end: Date.UTC(2026, 5, 1),
           },
         },
       },

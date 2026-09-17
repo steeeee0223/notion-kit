@@ -59,9 +59,22 @@ export const LAYOUT_OPTIONS: {
 
 export type RowViewType = "center" | "side" | "full";
 
-export interface TimelineViewState {
-  range: "daily" | "monthly" | "quarterly";
+export interface DateViewState {
+  range: "daily" | "weekly" | "monthly" | "quarterly";
   datePropertyId: string | null;
+}
+
+export function resolveDateViewRange(
+  layout: LayoutType,
+  range: DateViewState["range"],
+): DateViewState["range"] {
+  if (
+    (layout === "calendar" && range === "quarterly") ||
+    (layout === "timeline" && range === "weekly")
+  ) {
+    return "monthly";
+  }
+  return range;
 }
 
 export interface TableViewState {
@@ -69,7 +82,7 @@ export interface TableViewState {
   layout: LayoutType;
   rowView: RowViewType;
   openedRowId: string | null;
-  timeline?: TimelineViewState;
+  dateView?: DateViewState;
   pluginMethods?: Partial<PluginMethodState>;
   filters?: TableFilterState;
 }
@@ -106,8 +119,8 @@ export interface TableMenuTableApi {
   setGroupSort: (groupSort: PluginMethodState["groupSort"]) => void;
   toggleTableLocked: () => void;
   setTableLayout: (layout: LayoutType) => void;
-  setTimelineRange: (range: TimelineViewState["range"]) => void;
-  setTimelineDateProperty: (
+  setDateViewRange: (range: DateViewState["range"]) => void;
+  setDateViewDateProperty: (
     datePropertyId: string | null,
     operationId?: string,
   ) => void;
@@ -125,7 +138,7 @@ export const TableMenuFeature: TableFeature = {
         layout: "table",
         rowView: "side",
         openedRowId: null,
-        timeline: { range: "monthly", datePropertyId: null },
+        dateView: { range: "monthly", datePropertyId: null },
       },
       ...state,
     };
@@ -279,50 +292,64 @@ export const TableMenuFeature: TableFeature = {
     instance.setTableLayout = (layout) => {
       const actionId = v4();
       instance.setTableGlobalState(
-        (v) => ({ ...v, layout }),
+        (view) => ({
+          ...view,
+          layout,
+          dateView: {
+            ...view.dateView!,
+            range: resolveDateViewRange(layout, view.dateView!.range),
+          },
+        }),
         (previous, next) => ({
           id: actionId,
           type: "view.layout.change",
           payload: {
             previousLayout: previous.layout,
             nextLayout: next.layout,
+            ...(previous.dateView!.range !== next.dateView!.range
+              ? {
+                  previousRange: previous.dateView!.range,
+                  nextRange: next.dateView!.range,
+                }
+              : {}),
           },
         }),
       );
     };
-    instance.setTimelineRange = (range) => {
+    instance.setDateViewRange = (range) => {
       const actionId = v4();
       instance.setTableGlobalState(
         (view) => {
-          if (view.timeline!.range === range) return view;
+          const nextRange = resolveDateViewRange(view.layout, range);
+          if (view.dateView!.range === nextRange) return view;
           return {
             ...view,
-            timeline: { ...view.timeline!, range },
+            dateView: { ...view.dateView!, range: nextRange },
           };
         },
         (previous, next) => ({
           id: actionId,
-          type: "view.timeline_range.change",
+          type: "view.date_view_range.change",
           payload: {
-            previousRange: previous.timeline!.range,
-            nextRange: next.timeline!.range,
+            previousRange: previous.dateView!.range,
+            nextRange: next.dateView!.range,
           },
         }),
       );
     };
-    instance.setTimelineDateProperty = (datePropertyId, operationId) => {
+    instance.setDateViewDateProperty = (datePropertyId, operationId) => {
       const actionId = operationId ?? v4();
       instance.setTableGlobalState(
         (view) => ({
           ...view,
-          timeline: { ...view.timeline!, datePropertyId },
+          dateView: { ...view.dateView!, datePropertyId },
         }),
         (previous, next) => ({
           id: actionId,
-          type: "view.timeline_property.change",
+          type: "view.date_view_property.change",
           payload: {
-            previousDatePropertyId: previous.timeline!.datePropertyId,
-            nextDatePropertyId: next.timeline!.datePropertyId,
+            previousDatePropertyId: previous.dateView!.datePropertyId,
+            nextDatePropertyId: next.dateView!.datePropertyId,
           },
         }),
       );

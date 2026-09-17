@@ -38,7 +38,7 @@ export function FullView({ children }: React.PropsWithChildren) {
               <div
                 className={cn(typography("h1"), "col-start-2 mb-2 text-left")}
               >
-                {titleCell.cell.value}
+                {titleCell.cell.value || "New page"}
               </div>
               <div className="col-start-2 mb-3 min-w-0">
                 <ViewProps rowId={openedRowId} />

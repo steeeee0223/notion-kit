@@ -183,4 +183,15 @@ describe("timeline date utilities", () => {
     expect(innerDifferenceInFn.monthly(addDays(value, 2), value)).toBe(2);
     expect(innerDifferenceInFn.quarterly(addDays(value, 2), value)).toBe(2);
   });
+  it("TestCreateTimelineData_DisplayTimeZone_DefaultOriginUsesLocalJanuaryFirst", () => {
+    const result = createTimelineData(
+      "monthly",
+      undefined,
+      undefined,
+      "America/New_York",
+    );
+    expect(result.start.getTime()).toBe(Date.parse("1970-01-01T05:00:00Z"));
+    expect(result.end.getTime()).toBe(Date.parse("2099-12-31T05:00:00Z"));
+    expect(result.subRanges[0]?.label).toBe("Jan");
+  });
 });

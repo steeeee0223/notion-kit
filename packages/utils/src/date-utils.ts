@@ -121,3 +121,13 @@ export function isoToTs(
 export function trimTs(ts: number, _by: "date") {
   return startOfDay(ts).getTime();
 }
+
+/** Resolve a configured time zone, falling back to UTC when it is invalid. */
+export function resolveTimeZone(timeZone?: string) {
+  try {
+    return new Intl.DateTimeFormat("en-US", { timeZone }).resolvedOptions()
+      .timeZone;
+  } catch {
+    return "UTC";
+  }
+}

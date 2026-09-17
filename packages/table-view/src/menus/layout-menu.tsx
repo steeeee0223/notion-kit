@@ -21,8 +21,8 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
+import { isUsableDateProperty } from "@/date-view/date-property";
 import { useTableViewCtx } from "@/table-contexts";
-import { isUsableTimelineDateProperty } from "@/timeline-view";
 
 export function LayoutMenu() {
   const { table } = useTableViewCtx();
@@ -31,7 +31,8 @@ export function LayoutMenu() {
     <table.Subscribe
       selector={(state) => ({
         currentLayout: state.tableGlobal.layout,
-        datePropertyId: state.tableGlobal.timeline!.datePropertyId,
+        locked: Boolean(state.tableGlobal.locked),
+        datePropertyId: state.tableGlobal.dateView!.datePropertyId,
         columnOrder: state.columnOrder,
         columnsInfo: state.columnsInfo,
       })}
@@ -42,11 +43,13 @@ export function LayoutMenu() {
 }
 
 function LayoutMenuContent({
+  locked,
   currentLayout,
   datePropertyId,
   columnOrder,
   columnsInfo,
 }: {
+  locked: boolean;
   currentLayout: LayoutType;
   datePropertyId: string | null;
   columnOrder: string[];
@@ -55,7 +58,7 @@ function LayoutMenuContent({
   const { table } = useTableViewCtx();
   const dateProperties = columnOrder.flatMap((id) => {
     const property = columnsInfo[id];
-    return property && isUsableTimelineDateProperty(property) ? [property] : [];
+    return property && isUsableDateProperty(property) ? [property] : [];
   });
 
   return (
@@ -77,10 +80,12 @@ function LayoutMenuContent({
               )}
               // TODO Not all layouts are implemented yet
               disabled={
-                layout.value !== "table" &&
-                layout.value !== "list" &&
-                layout.value !== "board" &&
-                layout.value !== "timeline"
+                locked ||
+                (layout.value !== "table" &&
+                  layout.value !== "list" &&
+                  layout.value !== "board" &&
+                  layout.value !== "timeline" &&
+                  layout.value !== "calendar")
               }
             >
               <LayoutIcon layout={layout.value} />
@@ -90,22 +95,29 @@ function LayoutMenuContent({
         </div>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
-        {currentLayout === "timeline" && dateProperties.length > 0 && (
-          <TimelineDatePropertyMenu
-            current={datePropertyId}
-            properties={dateProperties}
-          />
-        )}
-        <RowViewMenu />
+        {(currentLayout === "timeline" || currentLayout === "calendar") &&
+          dateProperties.length > 0 && (
+            <DatePropertyMenu
+              locked={locked}
+              layout={currentLayout}
+              current={datePropertyId}
+              properties={dateProperties}
+            />
+          )}
+        <RowViewMenu locked={locked} />
       </DropdownMenuGroup>
     </>
   );
 }
 
-function TimelineDatePropertyMenu({
+function DatePropertyMenu({
+  locked,
+  layout,
   current,
   properties,
 }: {
+  locked: boolean;
+  layout: "calendar" | "timeline";
   current: string | null;
   properties: ColumnInfo[];
 }) {
@@ -115,7 +127,10 @@ function TimelineDatePropertyMenu({
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger label="Timeline by">
+      <DropdownMenuSubTrigger
+        disabled={locked}
+        label={layout === "calendar" ? "Calendar by" : "Timeline by"}
+      >
         <MenuItemAction className="flex items-center text-muted">
           {currentProperty.name}
         </MenuItemAction>
@@ -124,8 +139,8 @@ function TimelineDatePropertyMenu({
         <DropdownMenuRadioGroup
           value={currentProperty.id}
           onValueChange={(propertyId: string) => {
-            if (propertyId === currentProperty.id) return;
-            table.setTimelineDateProperty(propertyId);
+            if (locked || propertyId === currentProperty.id) return;
+            table.setDateViewDateProperty(propertyId);
           }}
         >
           {properties.map((property) => (
@@ -142,14 +157,14 @@ function TimelineDatePropertyMenu({
   );
 }
 
-function RowViewMenu() {
+function RowViewMenu({ locked }: { locked: boolean }) {
   const { table } = useTableViewCtx();
 
   return (
     <table.Subscribe selector={(state) => state.tableGlobal.rowView}>
       {(current) => (
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger label="Open pages in">
+          <DropdownMenuSubTrigger disabled={locked} label="Open pages in">
             <MenuItemAction className="flex items-center text-muted">
               {ROW_VIEW_OPTIONS[current].label}
             </MenuItemAction>
@@ -158,7 +173,7 @@ function RowViewMenu() {
             <DropdownMenuRadioGroup
               value={current}
               onValueChange={(rowView: RowViewType) => {
-                if (rowView === current) return;
+                if (locked || rowView === current) return;
                 const actionId = v4();
                 table.setTableGlobalState(
                   (v) => ({ ...v, rowView }),

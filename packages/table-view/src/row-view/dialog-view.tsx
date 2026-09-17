@@ -19,9 +19,9 @@ export function DialogView({ children }: React.PropsWithChildren) {
           openedRowId && table.getCoreRowModel().rowsById[openedRowId]
             ? openedRowId
             : null;
-        const titleCell = visibleRowId
-          ? table.getTitleCell(visibleRowId)
-          : null;
+        const title = visibleRowId
+          ? table.getTitleCell(visibleRowId).cell.value
+          : "";
 
         return (
           <Dialog
@@ -43,7 +43,7 @@ export function DialogView({ children }: React.PropsWithChildren) {
                       typography="h1"
                       className="col-start-2 mb-2 text-left"
                     >
-                      {titleCell?.cell.value}
+                      {title || "New page"}
                     </DialogTitle>
                     <div className="col-start-2 mb-3 min-w-0">
                       <ViewProps rowId={visibleRowId} />

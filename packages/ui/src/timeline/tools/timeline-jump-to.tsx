@@ -6,10 +6,7 @@ import {
   startOfYear,
 } from "date-fns";
 
-import { Icon } from "@notion-kit/icons";
-
-import { Button } from "@/primitives";
-
+import { DateNavigation } from "../../date-view/date-navigation";
 import {
   useTimelineContext,
   useTimelineSidebarWidth,
@@ -52,31 +49,11 @@ export function TimelineJumpTo() {
   };
 
   return (
-    <div data-slot="timeline-jump-to" className="flex items-center">
-      <Button
-        variant="hint"
-        size="xs"
-        aria-label="Previous"
-        onClick={() => jumpByGroup(-1)}
-      >
-        <Icon.Chevron side="left" className="fill-icon" />
-      </Button>
-      <Button
-        variant="hint"
-        size="xs"
-        className="text-primary"
-        onClick={jumpToToday}
-      >
-        Today
-      </Button>
-      <Button
-        variant="hint"
-        size="xs"
-        aria-label="Next"
-        onClick={() => jumpByGroup(1)}
-      >
-        <Icon.Chevron side="right" className="fill-icon" />
-      </Button>
-    </div>
+    <DateNavigation
+      slot="timeline-jump-to"
+      onPrevious={() => jumpByGroup(-1)}
+      onToday={jumpToToday}
+      onNext={() => jumpByGroup(1)}
+    />
   );
 }

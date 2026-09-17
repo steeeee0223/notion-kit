@@ -17,7 +17,7 @@ import { IconBlock } from "@notion-kit/ui/icon-block";
 import { useCellContext } from "@/common/cell";
 import { useTableViewCtx } from "@/table-contexts";
 
-import type { TableUiPlugin } from "./registry";
+import type { CellSurface, TableUiPlugin } from "./registry";
 
 export interface CellRendererProps<Data, Config = undefined> {
   propId: string;
@@ -25,7 +25,7 @@ export interface CellRendererProps<Data, Config = undefined> {
   data: Data;
   config: Config;
   property: Pick<ColumnInfo, "description" | "icon" | "name">;
-  surface: "table" | "list" | "board" | "row-view" | "timeline";
+  surface: CellSurface;
   textValue: string;
   wrapped?: boolean;
   disabled?: boolean;

@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
+import { CalendarObject } from "./calendar";
 import { CellEditorsObject } from "./cell-editors";
 import { FilterMenuObject } from "./filter-menu";
 import { GroupActionsObject } from "./group-actions";
@@ -10,7 +11,7 @@ import { SortMenuObject } from "./sort-menu";
 import { ViewSettingsMenuObject } from "./view-settings-menu";
 
 type TableMode = "controlled" | "uncontrolled";
-export type TableLayout = "table" | "list" | "board" | "timeline";
+export type TableLayout = "table" | "list" | "board" | "timeline" | "calendar";
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -38,7 +39,7 @@ interface ControlledSnapshot {
   data: {
     id: string;
     icon?: { type: string; src: string };
-    properties: Record<string, { value: unknown }>;
+    properties: Record<string, { id: string; value: unknown }>;
   }[];
   lastDataAction: {
     id: string;
@@ -62,8 +63,8 @@ interface ControlledSnapshot {
     locked: boolean;
     openedRowId: string | null;
     rowView: string;
-    timeline: {
-      range: "daily" | "monthly" | "quarterly";
+    dateView: {
+      range: "daily" | "weekly" | "monthly" | "quarterly";
       datePropertyId: string | null;
     };
   };
@@ -155,6 +156,10 @@ export class TableViewObject {
     }
     if (layout === "board") {
       await this.rowBlock(row.id).getByText(row.name, { exact: true }).click();
+      return;
+    }
+    if (layout === "calendar") {
+      await this.calendar().card({ id: row.id, name: row.name }).click();
       return;
     }
     await this.timelineSidebarRow(row.id)
@@ -300,6 +305,27 @@ export class TableViewObject {
     ) as RenderedResourceSnapshot;
   }
 
+  calendar() {
+    return new CalendarObject(this.page);
+  }
+
+  async applyCalendarScenario() {
+    await this.page
+      .getByRole("button", { name: "Apply Calendar scenario", exact: true })
+      .click();
+    await expect(this.calendar().root).toBeVisible();
+  }
+
+  async toggleRejectedData() {
+    await this.page
+      .getByRole("button", { name: "Reject data changes", exact: true })
+      .click();
+  }
+
+  rowDialog() {
+    return this.page.getByRole("dialog");
+  }
+
   timeline() {
     return this.page.locator('[data-slot="timeline-view"]');
   }
@@ -358,7 +384,9 @@ export class TableViewObject {
       )
       .click();
     await this.page.getByRole("option", { name: range, exact: true }).click();
-    const columnWidth = range === "Day" ? "50px" : "150px";
+    const columnWidth = { Day: "50px", Month: "150px", Quarter: "100px" }[
+      range
+    ];
     await expect
       .poll(() =>
         this.timeline().evaluate((element) =>

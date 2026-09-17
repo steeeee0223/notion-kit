@@ -26,6 +26,7 @@ export interface TimelineFeature {
 }
 
 export interface TimelineContextProps {
+  timeZone?: string;
   zoom: number;
   range: TimelineRange;
   onAddItem?: (ts: number) => void;

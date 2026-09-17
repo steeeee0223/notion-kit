@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import {
   addDays,
   addMonths,
@@ -155,9 +156,18 @@ export function createTimelineData(
   range: TimelineRange,
   startTs?: number | null,
   endTs?: number | null,
+  timeZone?: string,
 ): TimelineData {
-  const start = startTs ? new Date(startTs) : DEFAULT_START_DATE;
-  const end = endTs ? new Date(endTs) : DEFAULT_END_DATE;
+  const start = timeZone
+    ? startTs == null
+      ? new TZDate(1970, 0, 1, timeZone)
+      : new TZDate(startTs, timeZone)
+    : new Date(startTs ?? DEFAULT_START_DATE);
+  const end = timeZone
+    ? endTs == null
+      ? new TZDate(2099, 11, 31, timeZone)
+      : new TZDate(endTs, timeZone)
+    : new Date(endTs ?? DEFAULT_END_DATE);
   switch (range) {
     case "daily":
       return {
@@ -232,8 +242,17 @@ export function snapDays(days: number, range: TimelineRange) {
 
 export function getOffset(
   ts: number | Date,
-  ctx: Pick<TimelineContextProps, "range" | "zoom" | "timelineData">,
+  ctx: Pick<
+    TimelineContextProps,
+    "range" | "zoom" | "timelineData" | "timeZone"
+  >,
 ) {
+  const timeZone =
+    ctx.timeZone ??
+    (ctx.timelineData.start instanceof TZDate
+      ? ctx.timelineData.start.timeZone
+      : undefined);
+  if (timeZone) ts = new TZDate(Number(ts), timeZone);
   const columnWidth = resolveColumnWidth(ctx.range, ctx.zoom);
   const differenceIn = differenceInFn[ctx.range];
   const startOf = startOfFn[ctx.range];

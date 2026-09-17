@@ -1,9 +1,7 @@
 import { cva } from "@notion-kit/cn";
 import { getDefaultGroupingValue } from "@notion-kit/table-hook/plugins";
 
-import type { GroupingValueProps } from "./registry";
-
-export type CellSurface = "table" | "list" | "board" | "row-view" | "timeline";
+import type { CellSurface, GroupingValueProps } from "./registry";
 
 export type CellStyleKind =
   | "text"
@@ -22,6 +20,7 @@ const triggerVariants = cva("relative px-2 aria-disabled:pointer-events-none", {
       board: "min-h-7 w-fit flex-none overflow-hidden rounded-md px-1",
       "row-view": "min-h-[34px] w-full overflow-hidden rounded-sm p-1.5",
       timeline: "",
+      calendar: "",
     },
     wrapped: {
       true: "whitespace-normal",
