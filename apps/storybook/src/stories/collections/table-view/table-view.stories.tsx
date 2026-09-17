@@ -5,7 +5,7 @@ import TableViewCalendar from "@notion-kit/registry/table-view-calendar";
 import { TableView } from "@notion-kit/table-view";
 import type { ColumnDefs, DefaultPlugins, Row } from "@notion-kit/table-view";
 
-import { Database, mockData, mockProps } from "./database";
+import { Database, mockData, mockEditLogs, mockProps } from "./database";
 
 const meta = {
   title: "collections/Table View",
@@ -14,6 +14,9 @@ const meta = {
   },
   decorators: (Story) => (
     <div className="py-24">
+      <p className="mb-3 px-24 text-sm text-secondary">
+        Edit logs show static sample history. New edits do not add log entries.
+      </p>
       <Story />
     </div>
   ),
@@ -38,6 +41,7 @@ export const Controlled: Story = {
 
     return (
       <TableView
+        {...mockEditLogs}
         properties={properties}
         data={data}
         onDataChange={({ next }) => setData(next)}
@@ -50,6 +54,7 @@ export const Controlled: Story = {
 export const ListView: Story = {
   render: () => (
     <TableView
+      {...mockEditLogs}
       defaultView={{ layout: "list" }}
       defaultProperties={mockProps}
       defaultData={mockData}
@@ -60,6 +65,7 @@ export const ListView: Story = {
 export const BoardView: Story = {
   render: () => (
     <TableView
+      {...mockEditLogs}
       defaultView={{ layout: "board" }}
       defaultProperties={mockProps}
       defaultData={mockData}
@@ -70,6 +76,7 @@ export const BoardView: Story = {
 export const TimelineView: Story = {
   render: () => (
     <TableView
+      {...mockEditLogs}
       defaultView={{
         layout: "timeline",
         dateView: {

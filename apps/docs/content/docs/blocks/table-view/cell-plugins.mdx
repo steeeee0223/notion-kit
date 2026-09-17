@@ -27,15 +27,16 @@ Data plugins do not render React, carry icons, or decide cell presentation.
 
 ## UI adapter definition
 
-| Field                 | Description                                                     |
-| --------------------- | --------------------------------------------------------------- |
-| `id`                  | Must match the data plugin ID.                                  |
-| `meta`                | Type-menu name, description, and icon.                          |
-| `default`             | Default property name, icon, and optional width.                |
-| `renderCell`          | **Required.** Returns the complete React UI for a cell surface. |
-| `renderBulkEditor`    | Optional. Its presence enables bulk editing.                    |
-| `renderConfigMenu`    | Optional property configuration UI.                             |
-| `renderGroupingValue` | **Required.** Returns the grouped label UI.                     |
+| Field                 | Description                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| `id`                  | Must match the data plugin ID.                                                                    |
+| `meta`                | Type-menu name, description, and icon.                                                            |
+| `default`             | Default property name, icon, and optional width.                                                  |
+| `renderCell`          | **Required.** Returns the complete React UI for a cell surface.                                   |
+| `renderReadOnlyValue` | Optional historical value renderer. Receives snapshots without a live cell or mutation callbacks. |
+| `renderBulkEditor`    | Optional. Its presence enables bulk editing.                                                      |
+| `renderConfigMenu`    | Optional property configuration UI.                                                               |
+| `renderGroupingValue` | **Required.** Returns the grouped label UI.                                                       |
 
 `renderCell` receives `CellProps`, containing only a TanStack `cell` instance.
 Use `cell.getInfo()`, `cell.getPlugin()`, `cell.getData()`,
@@ -45,6 +46,51 @@ Use `cell.getInfo()`, `cell.getPlugin()`, `cell.getData()`,
 column exposes `getInfo()`, `getPlugin()`, `getSelectedRowIds()`, `getCell()`,
 `updateCells()`, and `updateConfig()`. Adapters own their triggers, popovers,
 empty states, copy affordances, and layout classes.
+
+## Read-only history renderers
+
+`renderReadOnlyValue` is optional. Existing adapters remain compatible and use
+the record's `textValue` when the renderer is absent. The renderer receives
+`ReadOnlyValueProps`:
+
+| Field       | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| `value`     | Historical cell value, typed as `unknown`.                   |
+| `config`    | Historical property configuration, typed as `unknown`.       |
+| `property`  | Historical ID, name, icon, type, and optional configuration. |
+| `textValue` | Historical plain-text representation used for fallback.      |
+
+Validate the snapshot with Zod before rendering it. Return `textValue` when the
+value or configuration is unsupported. Return **Empty** for an empty value;
+keep false checkboxes and numeric zero visible. A text adapter can provide:
+
+```tsx
+import { z } from "zod";
+
+import type { ReadOnlyValueProps } from "@notion-kit/table-view";
+
+function HistoricalText({ value, textValue }: ReadOnlyValueProps) {
+  const result = z.string().safeParse(value);
+  if (!result.success) return textValue;
+  return (
+    <span className="wrap-anywhere whitespace-pre-wrap">
+      {result.data || "Empty"}
+    </span>
+  );
+}
+
+// In the UI adapter:
+// renderReadOnlyValue: (props) => <HistoricalText {...props} />
+```
+
+A renderer receives no table, cell, editor, or mutation callback. It uses only
+the stored metadata, even after the current property or an option is renamed,
+reconfigured, or removed. Keep it read-only and reuse your value component
+without mounting its editor. Built-in adapters follow this contract for text,
+tags, checkboxes, numbers, links, dates, and resolved timestamps.
+
+Unknown property types use `textValue`. A rendering error is isolated to the
+individual value and also shows `textValue`; other records remain visible.
 
 ## Registration
 
@@ -62,13 +108,14 @@ combined-plugin registration path.
 
 ## Types
 
-| Type                            | Description                                      |
-| ------------------------------- | ------------------------------------------------ |
-| `CellPlugin<Key, Data, Config>` | Pure table-hook data semantics and capabilities. |
-| `TableUiPlugin<TPlugin>`        | React adapter coupled to one data plugin.        |
-| `CellProps`                     | A TanStack cell instance for direct rendering.   |
-| `BulkEditorProps`               | A TanStack column instance for bulk rendering.   |
-| `ConfigMenuProps`               | A TanStack column instance for configuration UI. |
+| Type                            | Description                                                     |
+| ------------------------------- | --------------------------------------------------------------- |
+| `CellPlugin<Key, Data, Config>` | Pure table-hook data semantics and capabilities.                |
+| `TableUiPlugin<TPlugin>`        | React adapter coupled to one data plugin.                       |
+| `CellProps`                     | A TanStack cell instance for direct rendering.                  |
+| `BulkEditorProps`               | A TanStack column instance for bulk rendering.                  |
+| `ReadOnlyValueProps`            | Historical value, config, property metadata, and fallback text. |
+| `ConfigMenuProps`               | A TanStack column instance for configuration UI.                |
 
 <Cards>
   <Card title="Create a Cell Plugin" href="/docs/blocks/table-view/tutorial" />

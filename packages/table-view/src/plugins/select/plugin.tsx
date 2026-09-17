@@ -19,6 +19,7 @@ import {
   type ConfigMenuRendererProps,
 } from "../renderers";
 import { getCellTriggerClass, getCompactWidthClass } from "../utils";
+import { ReadOnlySelectValue } from "./read-only-value";
 import { SelectCellEditor, SelectCellValue } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { SelectGroupingValue } from "./select-grouping-value";
@@ -89,6 +90,7 @@ export function select(): TableUiPlugin<SelectPlugin> {
     },
     default: { name: "Select", icon: <DefaultIcon type="select" /> },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: (props) => <ReadOnlySelectValue {...props} />,
     renderBulkEditor: createBulkEditorRenderer<SelectPlugin>(
       (props: BulkEditorRendererProps<string | null, SelectConfig>) => (
         <BulkEditorPopover {...props} initialData={props.data}>
@@ -181,6 +183,7 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
       icon: <DefaultIcon type="multi-select" />,
     },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: (props) => <ReadOnlySelectValue {...props} />,
     renderBulkEditor: createBulkEditorRenderer<MultiSelectPlugin>(
       (props: BulkEditorRendererProps<string[], SelectConfig>) => (
         <BulkEditorPopover {...props} initialData={props.data}>

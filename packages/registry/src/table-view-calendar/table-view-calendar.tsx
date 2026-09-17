@@ -9,6 +9,7 @@ import {
   type PartialTableViewState,
   type Row,
 } from "@notion-kit/table-view";
+import { createMockEditLogApi } from "@notion-kit/table-view/mock";
 
 const properties: ColumnDefs = [
   {
@@ -89,14 +90,18 @@ export default function TableViewCalendar() {
       },
     }));
   });
+  const [editLogs] = useState(() => createMockEditLogApi({ data, properties }));
+
   return (
     <div className="w-full min-w-0">
       <p className="mb-3 text-sm text-secondary">
         Times are in UTC. Choose Week or Day to see timed events. Use Layout in
         the view settings to switch to Timeline or Table, where the unscheduled
-        task is also visible.
+        task is also visible. Edit logs show static sample history; new edits do
+        not add log entries.
       </p>
       <TableView
+        {...editLogs}
         defaultProperties={properties}
         defaultData={data}
         view={view}

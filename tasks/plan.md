@@ -1,6 +1,6 @@
 # Table-view edit log 實作計畫
 
-狀態：規劃完成，尚未開始實作。使用者已確認設計，這一輪只要求 plan 與 TODO。
+狀態：已完成。已依使用者要求，以 subagents 在目前分支 `feat/update-log` 實作並通過全部驗證；結果見 [todo.md](./todo.md)。
 
 設計依據：[已確認的 spec](../docs/superpowers/specs/2026-09-17-table-view-edit-log-design.md)。
 逐項進度與驗收記錄放在 [todo.md](./todo.md)，這份文件記錄順序、責任邊界與驗證方法。
@@ -62,7 +62,7 @@ Dialog 關閉時不保留歷史快取；重新開啟查第一頁。Fetch callbac
 
 ## 實作順序
 
-依序完成以下工作，詳細 acceptance criteria 見 TODO。這份計畫不要求分派 sub-agent。
+依序完成以下工作，詳細 acceptance criteria 見 TODO。本輪依使用者要求，以 subagents 分工並在目前分支整合。
 
 | 階段             | 任務    | 可驗證的結果                                                            |
 | ---------------- | ------- | ----------------------------------------------------------------------- |

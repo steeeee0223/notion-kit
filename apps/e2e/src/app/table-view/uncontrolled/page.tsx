@@ -1,12 +1,16 @@
 "use client";
 
+import { useState } from "react";
+
 import { TableView } from "@notion-kit/table-view";
+import { createMockEditLogApi } from "@notion-kit/table-view/mock";
 
 import { TableViewStateDiagnostic } from "../_components/table-view-state-diagnostic";
 import { createTableViewFixture } from "../../../test-fixtures/table-view";
 
 export default function UncontrolledTableViewPage() {
-  const initial = createTableViewFixture();
+  const [initial] = useState(createTableViewFixture);
+  const [editLogs] = useState(() => createMockEditLogApi(initial));
 
   return (
     <main className="min-h-screen overflow-auto bg-main py-8">
@@ -14,6 +18,7 @@ export default function UncontrolledTableViewPage() {
         <h1 className="text-2xl font-semibold">Uncontrolled table view</h1>
       </header>
       <TableView
+        {...editLogs}
         defaultData={initial.data}
         defaultProperties={initial.properties}
         defaultView={initial.view}

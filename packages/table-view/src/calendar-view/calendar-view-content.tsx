@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import type { ColumnInfo } from "@notion-kit/table-hook";
 import {
   CalendarContent,
@@ -20,6 +22,7 @@ import {
   useDateViewProperty,
   type DateViewResources,
 } from "@/date-view/use-date-view-property";
+import { useEditLog } from "@/edit-log/edit-log-provider";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -155,6 +158,9 @@ function CalendarRowEvent({
   timeZone,
   locked,
 }: CalendarEventRenderProps & { timeZone: string; locked: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const { isOpen } = useEditLog();
   return (
     <CalendarEvent.Root event={event} segment={segment}>
       {locked ? (
@@ -162,12 +168,19 @@ function CalendarRowEvent({
           <CalendarRowTitle event={event} timeZone={timeZone} />
         </CalendarEvent.Item>
       ) : (
-        <ContextMenu>
-          <ContextMenuTrigger render={<CalendarEvent.Item />}>
+        <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <ContextMenuTrigger ref={triggerRef} render={<CalendarEvent.Item />}>
             <CalendarRowTitle event={event} timeZone={timeZone} />
           </ContextMenuTrigger>
-          <ContextMenuContent className="w-[265px]">
-            <RowActionMenu rowId={event.id} />
+          <ContextMenuContent
+            className="w-[265px]"
+            finalFocus={() => (isOpen() ? false : triggerRef.current)}
+          >
+            <RowActionMenu
+              rowId={event.id}
+              onClose={() => setMenuOpen(false)}
+              getReturnFocus={() => triggerRef.current}
+            />
           </ContextMenuContent>
         </ContextMenu>
       )}

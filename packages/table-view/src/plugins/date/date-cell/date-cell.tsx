@@ -12,7 +12,7 @@ export function DateCell({
   data,
   config,
   wrapped,
-}: CellValueProps<DateData, DateConfig>) {
+}: Pick<CellValueProps<DateData, DateConfig>, "data" | "config" | "wrapped">) {
   const dateStr = toDateString(data, config);
 
   return (

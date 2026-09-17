@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
@@ -20,6 +20,7 @@ import {
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
 
+import { useEditLog } from "@/edit-log/edit-log-provider";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface Action {
@@ -36,6 +37,8 @@ interface ActionGroup {
 
 interface RowActionMenuProps {
   rowId: string;
+  onClose?: () => void;
+  getReturnFocus?: () => HTMLElement | null;
 }
 
 /**
@@ -53,8 +56,14 @@ interface RowActionMenuProps {
  * ---
  * 8. 🚧 Comment
  */
-export function RowActionMenu({ rowId }: RowActionMenuProps) {
+export function RowActionMenu({
+  rowId,
+  onClose,
+  getReturnFocus,
+}: RowActionMenuProps) {
   const { table } = useTableViewCtx();
+  const { canViewRowLogs, openRowLog, isOpen } = useEditLog();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   // 1. Edit icon
   const selectIcon = (icon: IconData) => {
     table.updateRowIcon(rowId, icon);
@@ -119,6 +128,32 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
     {
       value: "Action",
       items: [
+        ...(canViewRowLogs
+          ? [
+              {
+                value: "edit-log",
+                label: "Edit log",
+                icon: <Icon.Clock />,
+                onSelect: () => {
+                  const row = table.getRow(rowId);
+                  const titleColumn = row
+                    .getAllCells()
+                    .find((cell) => cell.column.getInfo().type === "title")
+                    ?.column.id;
+                  const title: unknown = titleColumn
+                    ? row.original.properties[titleColumn]?.value
+                    : undefined;
+                  const returnFocus = getReturnFocus?.();
+                  onClose?.();
+                  openRowLog(
+                    rowId,
+                    typeof title === "string" ? title : undefined,
+                    returnFocus,
+                  );
+                },
+              },
+            ]
+          : []),
         {
           value: "copy-link",
           label: "Copy link",
@@ -145,6 +180,8 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
 
   /** Keyboard shortcut */
   const hotkeyOptions = {
+    ignoreEventWhen: (event: KeyboardEvent) =>
+      isOpen() || event.target !== searchInputRef.current,
     enableOnFormTags: ["INPUT"] as const,
     preventDefault: true,
   };
@@ -160,7 +197,11 @@ export function RowActionMenu({ rowId }: RowActionMenuProps) {
       autoHighlight="always"
       openOnInputClick
     >
-      <AutocompleteInput placeholder="Search actions..." />
+      <AutocompleteInput
+        ref={searchInputRef}
+        aria-label="Search actions"
+        placeholder="Search actions..."
+      />
       <AutocompleteContent variant="inline">
         <AutocompleteList>
           {(group: ActionGroup, index) => {

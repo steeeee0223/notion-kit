@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
@@ -22,6 +24,8 @@ interface RowActionGroupProps {
 }
 
 export function RowActionGroup({ className, row }: RowActionGroupProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const addNextRow = (event: React.MouseEvent) => {
     row.table.addRow({
       id: row.id,
@@ -59,7 +63,7 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
           <Icon.Plus className="size-3.5 fill-icon" />
         </Button>
       </TooltipPreset>
-      <Popover>
+      <Popover open={menuOpen} onOpenChange={setMenuOpen}>
         <TooltipPreset
           description={
             <>
@@ -70,13 +74,18 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
           className="text-center"
         >
           <PopoverTrigger
+            ref={triggerRef}
             render={
               <Sortable.Handle aria-label="Row actions" className="h-6 w-4.5" />
             }
           />
         </TooltipPreset>
         <PopoverContent className="w-[265px]" side="right" align="start">
-          <RowActionMenu rowId={row.id} />
+          <RowActionMenu
+            rowId={row.id}
+            onClose={() => setMenuOpen(false)}
+            getReturnFocus={() => triggerRef.current}
+          />
         </PopoverContent>
       </Popover>
       <Checkbox

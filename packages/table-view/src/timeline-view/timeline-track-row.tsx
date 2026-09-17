@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import type { RowInstance } from "@notion-kit/table-hook";
 import {
@@ -8,6 +10,7 @@ import {
 import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
 import { Cell } from "@/common";
+import { useEditLog } from "@/edit-log/edit-log-provider";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -23,6 +26,9 @@ interface TimelineTrackRowProps {
 }
 
 export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const { isOpen } = useEditLog();
   const { table } = useTableViewCtx();
 
   if (row.getIsGrouped()) {
@@ -90,8 +96,9 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
                   ) : (
                     <>
                       <TimelineRow.Resize direction="start" />
-                      <ContextMenu>
+                      <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
                         <ContextMenuTrigger
+                          ref={triggerRef}
                           render={
                             <TimelineRow.Item
                               aria-label={title}
@@ -101,8 +108,17 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
                         >
                           <TimelineBarContent rowId={row.id} />
                         </ContextMenuTrigger>
-                        <ContextMenuContent className="w-[265px]">
-                          <RowActionMenu rowId={row.id} />
+                        <ContextMenuContent
+                          className="w-[265px]"
+                          finalFocus={() =>
+                            isOpen() ? false : triggerRef.current
+                          }
+                        >
+                          <RowActionMenu
+                            rowId={row.id}
+                            onClose={() => setMenuOpen(false)}
+                            getReturnFocus={() => triggerRef.current}
+                          />
                         </ContextMenuContent>
                       </ContextMenu>
                       <TimelineRow.Resize direction="end" />

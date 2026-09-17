@@ -80,6 +80,7 @@ export type {
   CellProps,
   ConfigMenuProps,
   GroupingValueProps,
+  ReadOnlyValueProps,
   TablePluginPair,
   TablePluginRegistry,
   TableUiPlugin,

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import {
   type EmailPlugin,
   type PhonePlugin,
@@ -7,7 +9,7 @@ import {
 import { CellRenderer, DefaultIcon, TextInputPopoverContent } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
-import type { TableUiPlugin } from "../registry";
+import type { ReadOnlyValueProps, TableUiPlugin } from "../registry";
 import {
   createBulkEditorRenderer,
   createCellRenderer,
@@ -22,6 +24,8 @@ import {
 } from "../utils";
 import { LinkCellValue } from "./link-cell";
 
+const snapshotSchema = z.object({ value: z.string(), config: z.undefined() });
+
 export function email(): TableUiPlugin<EmailPlugin> {
   const renderCell = (props: CellRendererProps<string>) =>
     renderLinkCell("email", props);
@@ -34,6 +38,7 @@ export function email(): TableUiPlugin<EmailPlugin> {
     },
     default: { name: "Email", icon: <DefaultIcon type="email" /> },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: (props) => renderReadOnlyLink("email", props),
     renderBulkEditor: createBulkEditorRenderer<EmailPlugin>((props) => (
       <LinkBulkEditor {...props} />
     )),
@@ -53,6 +58,7 @@ export function phone(): TableUiPlugin<PhonePlugin> {
     },
     default: { name: "Phone", icon: <DefaultIcon type="phone" /> },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: (props) => renderReadOnlyLink("phone", props),
     renderBulkEditor: createBulkEditorRenderer<PhonePlugin>((props) => (
       <LinkBulkEditor {...props} />
     )),
@@ -72,11 +78,23 @@ export function url(): TableUiPlugin<UrlPlugin> {
     },
     default: { name: "URL", icon: <DefaultIcon type="url" /> },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: (props) => renderReadOnlyLink("url", props),
     renderBulkEditor: createBulkEditorRenderer<UrlPlugin>((props) => (
       <LinkBulkEditor {...props} />
     )),
     renderGroupingValue: (props) => <DefaultGroupingValue {...props} />,
   };
+}
+
+function renderReadOnlyLink(
+  type: "email" | "phone" | "url",
+  { value, config, textValue }: ReadOnlyValueProps,
+) {
+  const parsed = snapshotSchema.safeParse({ value, config });
+  if (!parsed.success) return textValue;
+  if (!parsed.data.value.trim())
+    return <span className="text-muted">Empty</span>;
+  return <LinkCellValue type={type} data={parsed.data.value} wrapped />;
 }
 
 function LinkBulkEditor(props: BulkEditorRendererProps<string>) {

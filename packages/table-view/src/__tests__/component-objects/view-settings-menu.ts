@@ -29,6 +29,10 @@ export class ViewSettingsMenuObject extends MenuSurfaceObject {
     return PropertiesMenuObject.find(this.user);
   }
 
+  async openEditLog() {
+    await this.user.click(this.item("Edit log"));
+  }
+
   async openSelectGrouping() {
     await this.user.click(this.item("Group"));
     return SelectGroupingMenuObject.find(this.user);

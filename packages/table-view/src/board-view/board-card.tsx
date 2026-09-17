@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { useInputField } from "@notion-kit/hooks";
@@ -28,6 +28,8 @@ interface BoardCardProps {
  * A BoardCard is displayed as a table row
  */
 export function BoardCard({ groupId, row }: BoardCardProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const actionTriggerRef = useRef<HTMLButtonElement>(null);
   const { table } = useTableViewCtx();
   const titleCell = row.getTitleCell();
 
@@ -106,7 +108,7 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
               </Popover>
               <Separator orientation="vertical" />
               {/* Row action menu */}
-              <Popover>
+              <Popover open={menuOpen} onOpenChange={setMenuOpen}>
                 <TooltipPreset
                   description="Rename, delete, move to and more..."
                   side="top"
@@ -117,6 +119,7 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
                         variant={null}
                         className="flex rounded-none px-1.5 py-1 text-secondary"
                         aria-label="Actions"
+                        ref={actionTriggerRef}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Icon.Dots className="size-4 fill-current" />
@@ -129,7 +132,11 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
                   side="bottom"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <RowActionMenu rowId={row.id} />
+                  <RowActionMenu
+                    rowId={row.id}
+                    onClose={() => setMenuOpen(false)}
+                    getReturnFocus={() => actionTriggerRef.current}
+                  />
                 </PopoverContent>
               </Popover>
             </div>

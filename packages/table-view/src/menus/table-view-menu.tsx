@@ -13,6 +13,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { LayoutIcon, MenuHeader } from "@/common";
+import { useEditLog } from "@/edit-log/edit-log-provider";
 import {
   FILTER_MENU_TOOLBAR_TRIGGER_ID,
   useMenuCoordinator,
@@ -28,7 +29,11 @@ import { SelectGroupMenu } from "./select-group-menu";
 import { SortMenu } from "./sort-menu";
 import { TypesMenu } from "./types-menu";
 
-export function TableViewMenu() {
+interface TableViewMenuProps {
+  getReturnFocus?: () => HTMLElement | null;
+}
+
+export function TableViewMenu(props: TableViewMenuProps) {
   const { table } = useTableViewCtx();
 
   return (
@@ -42,12 +47,12 @@ export function TableViewMenu() {
         columnsInfo: state.columnsInfo,
       })}
     >
-      {() => <TableViewMenuContent />}
+      {() => <TableViewMenuContent {...props} />}
     </table.Subscribe>
   );
 }
 
-function TableViewMenuContent() {
+function TableViewMenuContent(props: TableViewMenuProps) {
   const { table } = useTableViewCtx();
   const menu = table.getTableMenuState();
 
@@ -89,12 +94,13 @@ function TableViewMenuContent() {
     case TableViewMenuPage.EditGroupBy:
       return <EditGroupMenu />;
     default:
-      return <TableMenu />;
+      return <TableMenu {...props} />;
   }
 }
 
-function TableMenu() {
+function TableMenu({ getReturnFocus }: TableViewMenuProps) {
   const { filterMenu } = useMenuCoordinator();
+  const { canViewTableLogs, openTableLog } = useEditLog();
 
   const { table } = useTableViewCtx();
   const { locked, layout } = table.getTableGlobalState();
@@ -108,6 +114,17 @@ function TableMenu() {
     <>
       <MenuHeader id="view-settings" title="View Settings" />
       <DropdownMenuGroup>
+        {canViewTableLogs && (
+          <DropdownMenuItem
+            icon={<Icon.Clock />}
+            label="Edit log"
+            onClick={() => {
+              const returnFocus = getReturnFocus?.();
+              table.setTableMenuState({ open: false, page: null });
+              openTableLog(returnFocus);
+            }}
+          />
+        )}
         <DropdownMenuItem
           closeOnClick={false}
           icon={<LayoutIcon layout={layout} />}

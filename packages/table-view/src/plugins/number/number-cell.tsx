@@ -16,7 +16,10 @@ export function NumberCellValue({
   data,
   config,
   wrapped,
-}: CellValueProps<string | null, NumberConfig>) {
+}: Pick<
+  CellValueProps<string | null, NumberConfig>,
+  "data" | "config" | "wrapped"
+>) {
   if (data === null) return null;
   return (
     <div

@@ -12,6 +12,8 @@ import { BoardViewContent } from "@/board-view";
 import { CalendarViewContent } from "@/calendar-view";
 import { Table } from "@/common";
 import { DateViewNavigationProvider } from "@/date-view/date-view-navigation-provider";
+import { EditLogProvider } from "@/edit-log/edit-log-provider";
+import type { EditLogProps } from "@/edit-log/types";
 import { ListViewContent } from "@/list-view";
 import {
   createPluginRegistry,
@@ -47,10 +49,13 @@ export function TableViewWrapper<
 >({
   plugins = DEFAULT_PLUGINS as unknown as TablePluginPair<TPlugins>,
   children,
+  fetchTableEditLogs,
+  fetchRowEditLogs,
   ...props
-}: Omit<TableProps<TPlugins>, "plugins"> & {
-  plugins?: TablePluginPair<TPlugins>;
-}) {
+}: Omit<TableProps<TPlugins>, "plugins"> &
+  EditLogProps & {
+    plugins?: TablePluginPair<TPlugins>;
+  }) {
   const registry = useMemo(() => createPluginRegistry(plugins), [plugins]);
   const pluginEntity = useMemo(
     () => arrayToEntity(registry.data),
@@ -78,7 +83,14 @@ export function TableViewWrapper<
   return (
     <TableViewContext value={contextValue}>
       <DateViewNavigationProvider>
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <EditLogProvider
+            fetchTableEditLogs={fetchTableEditLogs}
+            fetchRowEditLogs={fetchRowEditLogs}
+          >
+            {children}
+          </EditLogProvider>
+        </TooltipProvider>
       </DateViewNavigationProvider>
     </TableViewContext>
   );
@@ -87,9 +99,10 @@ export function TableViewWrapper<
 export function TableView<TPlugins extends CellPlugin[] = DefaultPlugins>({
   children,
   ...props
-}: Omit<TableProps<TPlugins>, "plugins"> & {
-  plugins?: TablePluginPair<TPlugins>;
-}) {
+}: Omit<TableProps<TPlugins>, "plugins"> &
+  EditLogProps & {
+    plugins?: TablePluginPair<TPlugins>;
+  }) {
   return (
     <TableViewWrapper {...props}>
       <MenuCoordinatorProvider>

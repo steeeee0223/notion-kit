@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { wrappedClassName } from "@notion-kit/table-hook";
 import type {
   TitleConfig as TitleConfigData,
@@ -15,9 +17,15 @@ import {
   type CellRendererProps,
   type ConfigMenuRendererProps,
 } from "../renderers";
+import { TextCellValue } from "../text/text-cell";
 import { DefaultGroupingValue, getCellTriggerClass } from "../utils";
 import { TitleCompactSlot, TitleTableSlot } from "./title-cell";
 import { TitleConfig } from "./title-config";
+
+const snapshotSchema = z.object({
+  value: z.string(),
+  config: z.object({ showIcon: z.boolean().optional() }),
+});
 
 export function title(): TableUiPlugin<TitlePlugin> {
   const renderCell = (props: CellRendererProps<string, TitleConfigData>) => {
@@ -85,6 +93,13 @@ export function title(): TableUiPlugin<TitlePlugin> {
     default: { name: "Title", icon: <DefaultIcon type="title" /> },
     disablePropertyTooltip: true,
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: ({ value, config, textValue }) => {
+      const parsed = snapshotSchema.safeParse({ value, config });
+      if (!parsed.success) return textValue;
+      if (!parsed.data.value.trim())
+        return <span className="text-muted">Empty</span>;
+      return <TextCellValue data={parsed.data.value} wrapped />;
+    },
     renderConfigMenu: createConfigMenuRenderer<TitlePlugin>(
       (props: ConfigMenuRendererProps<TitleConfigData>) => (
         <TitleConfig {...props} />

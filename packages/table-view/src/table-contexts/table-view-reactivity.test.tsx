@@ -15,6 +15,9 @@ import {
   type ViewResourceAction,
 } from "@notion-kit/table-hook";
 
+import { DEFAULT_PLUGINS } from "@/plugins";
+
+import { EditLogDialogObject } from "../__tests__/component-objects/edit-log-dialog";
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import {
   mockData,
@@ -120,6 +123,12 @@ function DataUpdateControls() {
       </button>
       <button
         type="button"
+        onClick={() => table.setColumnInfo("col1", { wrapped: true })}
+      >
+        Wrap name column
+      </button>
+      <button
+        type="button"
         onClick={() => table.setColumnInfo("col2", { hidden: true })}
       >
         Hide done column
@@ -141,6 +150,106 @@ function DataUpdateControls() {
 }
 
 describe("TableViewReactivity", () => {
+  it("EditLog_MountMenusResourceEditsAndLayoutChanges_DoNotFetchHistory", async () => {
+    const fetchTableEditLogs = vi
+      .fn()
+      .mockResolvedValue({ items: [], nextCursor: null });
+    const fetchRowEditLogs = vi
+      .fn()
+      .mockResolvedValue({ items: [], nextCursor: null });
+    const onDataChange = vi.fn();
+    const onPropertiesChange = vi.fn();
+    const onViewChange = vi.fn();
+    const tableView = renderTableView({
+      fetchTableEditLogs,
+      fetchRowEditLogs,
+      onDataChange,
+      onPropertiesChange,
+      onViewChange,
+      children: <DataUpdateControls />,
+    });
+    expect(fetchTableEditLogs).not.toHaveBeenCalled();
+    expect(fetchRowEditLogs).not.toHaveBeenCalled();
+    await tableView.openRowActions("Task 1");
+    await tableView.clickOutside();
+    await tableView.clickButton("Rename first row");
+    expect(await screen.findByText("Renamed task")).toBeVisible();
+    await tableView.clickButton("Wrap name column");
+    const settings = await tableView.openViewSettings();
+    const layout = await settings.openLayout();
+    await layout.selectLayout("List");
+    await tableView.clickOutside();
+
+    expect(onDataChange).toHaveBeenCalledOnce();
+    expect(onPropertiesChange).toHaveBeenCalledOnce();
+    expect(onViewChange).toHaveBeenCalledOnce();
+    expect(fetchTableEditLogs).not.toHaveBeenCalled();
+    expect(fetchRowEditLogs).not.toHaveBeenCalled();
+  });
+
+  it("EditLog_Pagination_DoesNotRenderUnchangedCellsOrMutateResources", async () => {
+    const textPlugin = DEFAULT_PLUGINS.ui.find(
+      (plugin) => plugin.id === "text",
+    )!;
+    const renderCell = vi.fn(textPlugin.renderCell);
+    const fetchTableEditLogs = vi
+      .fn()
+      .mockResolvedValueOnce({
+        items: [
+          {
+            id: "first",
+            editedAt: 1,
+            action: "data.cell.update",
+            target: { name: "Task 1" },
+            summary: "First change",
+          },
+        ],
+        nextCursor: "next",
+      })
+      .mockResolvedValueOnce({
+        items: [
+          {
+            id: "second",
+            editedAt: 2,
+            action: "data.cell.update",
+            target: { name: "Task 2" },
+            summary: "Second change",
+          },
+        ],
+        nextCursor: null,
+      });
+    const onDataChange = vi.fn();
+    const onPropertiesChange = vi.fn();
+    const onViewChange = vi.fn();
+    const tableView = renderTableView({
+      fetchTableEditLogs,
+      onDataChange,
+      onPropertiesChange,
+      onViewChange,
+      plugins: {
+        data: DEFAULT_PLUGINS.data,
+        ui: DEFAULT_PLUGINS.ui.map((plugin) =>
+          plugin.id === "text" ? { ...plugin, renderCell } : plugin,
+        ),
+      },
+    });
+    const settings = await tableView.openViewSettings();
+    await settings.openEditLog();
+    const dialog = await EditLogDialogObject.find(tableView.user);
+    expect(await dialog.findText("First change")).toBeVisible();
+    const initialCellRenderCount = renderCell.mock.calls.length;
+    expect(initialCellRenderCount).toBeGreaterThan(0);
+
+    await dialog.loadMore();
+
+    expect(await dialog.findText("Second change")).toBeVisible();
+    expect(renderCell).toHaveBeenCalledTimes(initialCellRenderCount);
+    expect(fetchTableEditLogs).toHaveBeenCalledTimes(2);
+    expect(onDataChange).not.toHaveBeenCalled();
+    expect(onPropertiesChange).not.toHaveBeenCalled();
+    expect(onViewChange).not.toHaveBeenCalled();
+  });
+
   it("TableViewReactivity_LayoutSwitch_RendersSelectedLayout", async () => {
     const tableView = renderTableView();
     const settings = await tableView.openViewSettings();

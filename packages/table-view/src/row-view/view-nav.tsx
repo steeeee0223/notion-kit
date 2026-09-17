@@ -17,6 +17,7 @@ import {
 import { KEYBOARD } from "@notion-kit/utils";
 
 import { RowViewIcon } from "@/common";
+import { useEditLog } from "@/edit-log/edit-log-provider";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewNavProps {
@@ -24,6 +25,7 @@ interface ViewNavProps {
 }
 
 export function ViewNav({ rowId }: ViewNavProps) {
+  const { isOpen } = useEditLog();
   const { table } = useTableViewCtx();
   const { rowView } = table.getTableGlobalState();
   const rows = table
@@ -37,11 +39,14 @@ export function ViewNav({ rowId }: ViewNavProps) {
       : undefined;
 
   /** Keyboard shortcut */
-  useHotkeys("esc", () => table.openRow(null), { preventDefault: true });
+  useHotkeys("esc", () => table.openRow(null), {
+    ignoreEventWhen: () => isOpen(),
+    preventDefault: true,
+  });
   useHotkeys(
     "meta+enter",
     () => table.openRowInFullPage(rowId),
-    { preventDefault: true },
+    { ignoreEventWhen: () => isOpen(), preventDefault: true },
     [rowId],
   );
 

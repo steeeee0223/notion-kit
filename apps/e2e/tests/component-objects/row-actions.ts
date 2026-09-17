@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import type { AccessibleName } from "./menu-surface";
 
@@ -8,12 +8,27 @@ export class RowActionsObject {
     readonly root: Locator,
   ) {}
 
-  static open(page: Page) {
-    return new RowActionsObject(page, page.getByRole("dialog").last());
+  static async open(page: Page) {
+    const trigger = page.getByRole("button", {
+      name: "Row actions",
+      exact: true,
+      expanded: true,
+    });
+    await expect(trigger).toHaveAttribute("aria-controls", /\S+/);
+    const popupId = await trigger.getAttribute("aria-controls");
+    return new RowActionsObject(
+      page,
+      page
+        .getByRole("dialog")
+        .and(page.locator(`[id=${JSON.stringify(popupId)}]`)),
+    );
   }
 
   searchInput() {
-    return this.root.getByPlaceholder("Search actions...");
+    return this.root.getByRole("combobox", {
+      name: "Search actions",
+      exact: true,
+    });
   }
 
   option(name: AccessibleName) {
