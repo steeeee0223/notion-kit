@@ -8,7 +8,7 @@ import type {
   CalendarEventValue,
 } from "@notion-kit/ui/calendar";
 
-const timestampSchema = z.number().finite().min(-8.64e15).max(8.64e15);
+const timestampSchema = z.number().min(-8.64e15).max(8.64e15);
 const dateSchema = z.object({
   start: timestampSchema,
   end: z.unknown().optional(),

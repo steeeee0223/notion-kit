@@ -69,7 +69,7 @@ export function CalendarMonth({
                 <span
                   className={cn(
                     "flex size-6 items-center justify-center rounded-full",
-                    dayKey(day, timeZone) === today && "bg-red-500 text-white",
+                    dayKey(day, timeZone) === today && "bg-red text-white",
                   )}
                 >
                   {date.getDate()}

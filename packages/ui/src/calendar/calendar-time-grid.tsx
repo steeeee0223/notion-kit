@@ -121,18 +121,18 @@ export function CalendarTimeGrid({
             aria-label={`Create timed event on ${format(zonedDate(day, timeZone), "MMMM d, yyyy")}`}
             aria-disabled={!calendar.canCreate}
             className="h-full min-w-0 rounded-none border-s"
-            onClick={(click) => {
+            onClick={(e) => {
               if (!calendar.canCreate || calendar.suppressClick.current) return;
               const minute =
-                click.detail === 0
+                e.detail === 0
                   ? 480
                   : Math.min(
                       1425,
                       Math.max(
                         0,
                         Math.floor(
-                          (click.clientY -
-                            click.currentTarget.getBoundingClientRect().top) /
+                          (e.clientY -
+                            e.currentTarget.getBoundingClientRect().top) /
                             15,
                         ) * 15,
                       ),

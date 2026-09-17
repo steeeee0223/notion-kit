@@ -27,11 +27,13 @@ export function monthDays(
     addCalendarDays(first, index, timeZone),
   );
 }
+
 export interface CalendarDayRow {
   days: number[];
   segments: CalendarEventSegment[];
   laneCount: number;
 }
+
 export function layoutDayEvents(
   events: readonly CalendarEventData[],
   days: readonly number[],

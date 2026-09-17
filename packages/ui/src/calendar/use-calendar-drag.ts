@@ -35,6 +35,7 @@ export const calendarSensors = [
     ],
   }),
 ];
+
 export const calendarPlugins: React.ComponentProps<
   typeof DragDropProvider
 >["plugins"] = (defaults) => [
@@ -43,15 +44,18 @@ export const calendarPlugins: React.ComponentProps<
   ),
   Feedback.configure({ feedback: "none" }),
 ];
+
 const sourceSchema = z.object({
   eventId: z.string(),
   segmentDay: z.number(),
   reason: z.enum(["move", "resize-start", "resize-end"]),
 });
+
 const targetSchema = z.object({
   area: z.enum(["month", "all-day", "time"]),
   day: z.coerce.number().finite(),
 });
+
 interface DragOptions {
   events: readonly CalendarEventData[];
   range: CalendarRange;
@@ -63,6 +67,7 @@ interface DragOptions {
   suppressClick: React.RefObject<boolean>;
   onEventChange: CalendarProviderProps["onEventChange"];
 }
+
 interface Gesture {
   event: CalendarEventData;
   reason: "move" | "resize-start" | "resize-end";
@@ -72,6 +77,7 @@ interface Gesture {
   change: CalendarEventChange | null;
   point: { x: number; y: number };
 }
+
 export function useCalendarDrag(options: DragOptions) {
   const {
     events,
@@ -265,9 +271,11 @@ export function useCalendarDrag(options: DragOptions) {
       return;
     onEventChange?.(change);
   };
+
   useLayoutEffect(() => {
     if (gesture.current && gesture.current.signature !== signature) reset();
   }, [signature, reset]);
+
   useEffect(() => {
     const cancel = (event: KeyboardEvent) => {
       if (event.key === "Escape" && gesture.current) finish();
@@ -279,6 +287,7 @@ export function useCalendarDrag(options: DragOptions) {
       if (clickTimer.current !== null) clearTimeout(clickTimer.current);
     };
   }, [finish]);
+
   return {
     draft: draftState?.signature === signature ? draftState.event : null,
     onDragStart,

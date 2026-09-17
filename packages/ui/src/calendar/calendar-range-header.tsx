@@ -8,6 +8,7 @@ import { monthDays } from "./month-layout";
 
 export function CalendarRangeHeader({
   className,
+  style,
   ...props
 }: React.ComponentProps<"div">) {
   const calendar = useCalendarContext();
@@ -36,7 +37,7 @@ export function CalendarRangeHeader({
           calendar.range === "monthly"
             ? `repeat(7,minmax(0,1fr))`
             : `56px repeat(${days.length},minmax(0,1fr))`,
-        ...props.style,
+        ...style,
       }}
     >
       {calendar.range !== "monthly" && <div />}
@@ -57,7 +58,7 @@ export function CalendarRangeHeader({
                 className={cn(
                   "flex size-7 items-center justify-center rounded-full text-base text-primary",
                   dayKey(day, calendar.timeZone) === today &&
-                    "bg-red-500 text-white",
+                    "bg-red text-white",
                 )}
               >
                 {date.getDate()}

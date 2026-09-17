@@ -16,6 +16,7 @@ function useEvent() {
   if (!value) throw new Error("CalendarEvent parts require CalendarEvent.Root");
   return value;
 }
+
 export interface CalendarEventRootProps
   extends CalendarEventRenderProps,
     React.ComponentProps<"div"> {}
@@ -47,7 +48,8 @@ function Root({
     </EventContext>
   );
 }
-export type CalendarEventItemProps = Omit<ButtonProps, "render">;
+
+export type CalendarEventItemProps = ButtonProps;
 function Item({
   className,
   children,
@@ -76,14 +78,14 @@ function Item({
         calendar.canChange && "cursor-grab touch-none active:cursor-grabbing",
         className,
       )}
-      onClick={(click) => {
-        click.stopPropagation();
+      onClick={(e) => {
+        e.stopPropagation();
         if (calendar.suppressClick.current) {
-          click.preventDefault();
+          e.preventDefault();
           return;
         }
-        onClick?.(click);
-        if (!click.defaultPrevented) calendar.onEventClick?.(event);
+        onClick?.(e);
+        if (!e.defaultPrevented) calendar.onEventClick?.(event);
       }}
     >
       <span className="min-w-0 truncate">
@@ -101,7 +103,8 @@ function Item({
     </Button>
   );
 }
-export interface CalendarEventResizeProps extends Omit<ButtonProps, "render"> {
+
+export interface CalendarEventResizeProps extends ButtonProps {
   edge: "start" | "end";
 }
 function Resize({ edge, className, ref, ...props }: CalendarEventResizeProps) {
@@ -129,27 +132,44 @@ function Resize({ edge, className, ref, ...props }: CalendarEventResizeProps) {
       data-slot="calendar-event-resize"
       data-edge={edge}
       className={cn(
-        "absolute z-10 touch-none opacity-0 group-hover:opacity-100 focus:opacity-100",
+        "absolute z-10 touch-none opacity-0 transition-opacity hover:bg-transparent hover:opacity-100 focus:opacity-100",
         segment.area === "time"
-          ? "inset-x-1 h-2 cursor-row-resize"
+          ? "inset-x-0 h-2 cursor-row-resize"
           : "inset-y-0 w-2 cursor-col-resize",
         segment.area === "time"
           ? edge === "start"
-            ? "top-0"
-            : "bottom-0"
+            ? "-top-1.5"
+            : "-bottom-1.5"
           : edge === "start"
-            ? "inset-s-0"
-            : "inset-e-0",
+            ? "-inset-s-1.5"
+            : "-inset-e-1.5",
+        draggable.isDragging && "opacity-100",
         className,
       )}
-      onClick={(click) => {
-        click.preventDefault();
-        click.stopPropagation();
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
       }}
-    />
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute rounded-sm bg-primary",
+          segment.area === "time" ? "inset-x-1.5 h-1" : "inset-y-1.5 w-1",
+          segment.area === "time"
+            ? edge === "start"
+              ? "top-1"
+              : "top-0"
+            : edge === "start"
+              ? "inset-s-1"
+              : "inset-s-0",
+        )}
+      />
+    </Button>
   );
 }
 export const CalendarEvent = { Root, Item, Resize };
+
 export function DefaultCalendarEvent(props: CalendarEventRenderProps) {
   return (
     <Root {...props}>
@@ -159,6 +179,7 @@ export function DefaultCalendarEvent(props: CalendarEventRenderProps) {
     </Root>
   );
 }
+
 export function CalendarEventContent({
   renderEvent = DefaultCalendarEvent,
   ...props

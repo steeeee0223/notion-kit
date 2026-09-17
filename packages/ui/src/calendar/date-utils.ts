@@ -29,25 +29,32 @@ const eventSchema = z
     allDay: z.boolean(),
   })
   .refine((event) => event.endAt === null || event.endAt >= event.startAt);
+
 export function validEvents(events: readonly CalendarEventData[]) {
   return events.flatMap((event) => {
     const parsed = eventSchema.safeParse(event);
     return parsed.success ? [parsed.data] : [];
   });
 }
+
 export const zonedDate = (value: number, timeZone: string) =>
   new TZDate(value, timeZone);
+
 export const calendarDay = (value: number, timeZone: string) =>
   +startOfDay(zonedDate(value, timeZone));
+
 export const addCalendarDays = (
   value: number,
   days: number,
   timeZone: string,
 ) => +addDays(zonedDate(value, timeZone), days);
+
 export const dayDifference = (a: number, b: number, timeZone: string) =>
   differenceInCalendarDays(zonedDate(a, timeZone), zonedDate(b, timeZone));
+
 export const dayKey = (value: number, timeZone: string) =>
   format(zonedDate(value, timeZone), "yyyy-MM-dd");
+
 export const minuteOfDay = (value: number, timeZone: string) => {
   const date = zonedDate(value, timeZone);
   return (
@@ -57,6 +64,7 @@ export const minuteOfDay = (value: number, timeZone: string) => {
     date.getMilliseconds() / 60_000
   );
 };
+
 /** Compatible disambiguation: earlier repeated offset, forward through a gap. */
 export function localTime(day: number, minute: number, timeZone: string) {
   const date = zonedDate(day, timeZone);
@@ -91,6 +99,7 @@ export function localTime(day: number, minute: number, timeZone: string) {
     wall
   );
 }
+
 export function effectiveEnd(event: CalendarEventData, timeZone: string) {
   return (
     event.endAt ??
@@ -99,6 +108,7 @@ export function effectiveEnd(event: CalendarEventData, timeZone: string) {
       : event.startAt + HOUR)
   );
 }
+
 export function occupiedEndDay(event: CalendarEventData, timeZone: string) {
   return addCalendarDays(
     calendarDay(
@@ -109,6 +119,7 @@ export function occupiedEndDay(event: CalendarEventData, timeZone: string) {
     timeZone,
   );
 }
+
 export function navigateDate(
   date: number,
   range: CalendarRange,
@@ -119,6 +130,7 @@ export function navigateDate(
     ? +addMonths(zonedDate(date, timeZone), direction)
     : addCalendarDays(date, direction * (range === "weekly" ? 7 : 1), timeZone);
 }
+
 export function periodDays(
   anchor: number,
   range: CalendarRange,
@@ -133,6 +145,7 @@ export function periodDays(
     addCalendarDays(start, index, timeZone),
   );
 }
+
 export function periodTitle(
   anchor: number,
   range: CalendarRange,

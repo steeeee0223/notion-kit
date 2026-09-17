@@ -29,7 +29,9 @@ export interface CalendarContextValue {
   onEventChange?: CalendarProviderProps["onEventChange"];
   suppressClick: React.RefObject<boolean>;
 }
+
 export const CalendarContext = createContext<CalendarContextValue | null>(null);
+
 export function useCalendarContext() {
   const value = use(CalendarContext);
   if (!value)

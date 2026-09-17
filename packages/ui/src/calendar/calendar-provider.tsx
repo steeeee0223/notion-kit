@@ -137,7 +137,7 @@ export function CalendarProvider({
           ref={scrollRef}
           data-slot="calendar-view"
           className={cn(
-            "relative isolate h-full w-full min-w-0 overflow-x-hidden overflow-y-auto rounded-sm bg-main text-primary",
+            "relative isolate size-full min-w-0 overflow-x-hidden overflow-y-auto rounded-sm bg-main text-primary",
             className,
           )}
         >

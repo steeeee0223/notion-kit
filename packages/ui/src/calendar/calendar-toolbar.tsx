@@ -16,6 +16,7 @@ const options = [
   { value: "weekly", label: "Week" },
   { value: "daily", label: "Day" },
 ] as const;
+
 export interface CalendarRangeSelectProps {
   value?: CalendarRange;
   onChange?: (range: CalendarRange) => void;
@@ -38,6 +39,7 @@ export function CalendarRangeSelect({
     />
   );
 }
+
 export function CalendarJumpTo() {
   const calendar = useCalendarContext();
   return (
@@ -67,6 +69,7 @@ export function CalendarJumpTo() {
     />
   );
 }
+
 export function CalendarToolbar({
   className,
   ...props
@@ -79,6 +82,7 @@ export function CalendarToolbar({
     />
   );
 }
+
 export interface CalendarHeaderToolbarProps
   extends React.ComponentProps<"div"> {
   rangeDisabled?: boolean;
@@ -104,6 +108,7 @@ export function CalendarHeaderToolbar({
       element?.style.removeProperty("--calendar-toolbar-height");
     };
   }, []);
+
   return (
     <CalendarToolbar
       {...props}

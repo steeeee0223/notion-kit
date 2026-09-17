@@ -22,6 +22,7 @@ export interface CalendarTarget {
   minute?: number;
   area: CalendarArea;
 }
+
 export function transformEvent(
   event: CalendarEventData,
   target: CalendarTarget,

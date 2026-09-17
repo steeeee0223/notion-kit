@@ -113,7 +113,7 @@ function CalendarViewReady({
       data-testid="calendar-view-ready"
       data-property-id={property.id}
       data-range={resources.dateView.range}
-      className="min-w-0 px-4 md:px-(--table-view-row-action-gutter)"
+      className="min-w-0 max-md:px-4"
     >
       <CalendarProvider
         key={property.id}
