@@ -1,6 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import type { AccessibleName } from "./menu-surface";
+import { SelectOptionMenuObject } from "./select-option-menu";
 
 export class CellEditorsObject {
   constructor(
@@ -34,6 +35,16 @@ export class CellEditorsObject {
   async choose(name: AccessibleName) {
     await this.open();
     await this.option(name).click();
+  }
+
+  async openOptionActions(name: string) {
+    const option = this.option(name);
+    await option.hover();
+    await option
+      .locator('xpath=ancestor::*[@data-slot="sortable-item"]')
+      .getByRole("button", { name: "More" })
+      .click();
+    return SelectOptionMenuObject.open(this.page);
   }
 
   async clearWithBackspace() {

@@ -48,10 +48,13 @@ test("Grouping_StatusVisibilityAndRemoval_UpdatesMembershipWithoutViewWriteback"
   await grouping.toggleGroup("status:Active");
   await expect(table.row("Alpha")).toBeVisible();
 
+  await expect(grouping.allVisibilityButton()).toHaveText("Hide all");
   await grouping.toggleAll();
   await expect(table.rows()).toHaveCount(0);
-  await grouping.toggleAll();
+  await expect(grouping.allVisibilityButton()).toHaveText("Show all");
+  await grouping.allVisibilityButton().press("Enter");
   await expect(table.rows()).toHaveCount(3);
+  await expect(grouping.allVisibilityButton()).toHaveText("Hide all");
 
   await grouping.toggleHideEmptyGroups();
   await expect(table.internalState()).toContainText('"hideEmptyGroups":false');

@@ -34,7 +34,7 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
-    "@base-ui/react": "^1.6.0",
+    "@base-ui/react": "^1.8.0",
     "@better-fetch/fetch": "catalog:",
     "@date-fns/tz": "catalog:fns",
     "@dnd-kit/abstract": "catalog:ui",

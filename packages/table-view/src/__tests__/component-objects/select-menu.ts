@@ -61,9 +61,13 @@ export class SelectMenuObject {
     await this.tableView.user.click(this.option(name));
   }
 
-  async create(name: string) {
+  async create(name: string, interaction: "pointer" | "keyboard" = "pointer") {
     await this.search(name);
-    await this.tableView.user.click(this.createOption(name));
+    if (interaction === "keyboard") {
+      await this.tableView.user.keyboard("{ArrowDown}{Enter}");
+    } else {
+      await this.tableView.user.click(this.createOption(name));
+    }
   }
 
   async close() {

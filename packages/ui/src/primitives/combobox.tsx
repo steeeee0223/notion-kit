@@ -18,9 +18,11 @@ type ComboboxAnchorContextValue = React.RefObject<HTMLElement | null> & {
 const ComboboxAnchorContext =
   React.createContext<ComboboxAnchorContextValue | null>(null);
 
-function Combobox<Value, Multiple extends boolean | undefined = false>(
-  props: ComboboxPrimitive.Root.Props<Value, Multiple>,
-) {
+function Combobox<
+  Value,
+  Multiple extends boolean | undefined = false,
+  Item = Value,
+>(props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>) {
   const anchor = React.useRef<HTMLElement | null>(null);
   const ctx = React.useMemo<ComboboxAnchorContextValue>(
     () =>
@@ -39,6 +41,8 @@ function Combobox<Value, Multiple extends boolean | undefined = false>(
     </ComboboxAnchorContext.Provider>
   );
 }
+
+Combobox.createItems = ComboboxPrimitive.createItems;
 
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />;
