@@ -70,10 +70,12 @@ export function EditGroupMenu() {
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuLabel title="Groups">
+        <div className="flex items-center pr-3.5">
+          <DropdownMenuLabel title="Groups" />
           <div className="ml-auto">
             <Button
               tabIndex={0}
+              aria-label="Toggle all group visibility"
               variant="soft-blue"
               className="h-[initial] min-w-0 shrink bg-transparent px-1.5 py-0.5 text-xs/tight shadow-none"
               onClick={table.toggleAllGroupsVisible}
@@ -81,7 +83,7 @@ export function EditGroupMenu() {
               {table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
             </Button>
           </div>
-        </DropdownMenuLabel>
+        </div>
         <table.Subscribe
           selector={(state) => ({
             groupOrder: state.groupingState.groupOrder,

@@ -134,22 +134,32 @@ test("SelectEditor_DuplicateOption_ShowsValidationWithoutMutation", async ({
   page,
 }) => {
   const table = await TableViewObject.open(page, "controlled");
-  await table.cellEditor("Alpha", "Active").open();
-  const active = page.getByRole("option", { name: "Active" });
-  await active.hover();
-  await active
-    .locator('xpath=ancestor::*[@data-slot="sortable-item"]')
-    .getByRole("button", { name: "More" })
-    .click();
-  const optionEditor = page
-    .getByRole("menu")
-    .filter({ has: page.getByText("Colors", { exact: true }) })
-    .last();
-  const input = optionEditor.getByRole("textbox").first();
+  const editor = await table.cellEditor("Alpha", "Active").open();
+  const optionEditor = await editor.openOptionActions("Active");
+  const input = optionEditor.root.getByRole("textbox");
   await expect(input).toHaveValue("Active");
   await input.fill("Done");
 
-  await expect(optionEditor.getByText("Option already exists.")).toBeVisible();
+  await expect(optionEditor.text("Option already exists.")).toBeVisible();
   await expect(table.controlledState()).toContainText('"propertiesCount":0');
   await expect(table.controlledState()).toContainText('"dataCount":0');
+});
+
+test("SelectEditor_ChangeColor_ShowsOnlyCurrentCheckmark", async ({ page }) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const editor = await table.cellEditor("Alpha", "Active").open();
+  const optionEditor = await editor.openOptionActions("Active");
+  await expect(optionEditor.color("Blue")).toBeChecked();
+  await expect(optionEditor.colorCheckmark("Blue")).toBeVisible();
+
+  for (const color of ["Brown", "Orange", "Yellow", "Green"]) {
+    await optionEditor.color(color).click();
+
+    await expect(optionEditor.color(color)).toBeChecked();
+    await expect(optionEditor.checkmarks()).toHaveCount(1);
+    await expect(optionEditor.colorCheckmark(color)).toBeVisible();
+  }
+  await expect(table.controlledState()).toContainText(
+    '"name":"Active","color":"green"',
+  );
 });
