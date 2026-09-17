@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -141,7 +141,7 @@ describe("CommandDialog", () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
-  it("renders separators through the autocomplete-backed command surface", () => {
+  it("renders decorative separators inside the command listbox", () => {
     render(
       <CommandDialog open>
         <CommandInput aria-label="Search commands" />
@@ -157,9 +157,8 @@ describe("CommandDialog", () => {
       </CommandDialog>,
     );
 
-    expect(screen.getByRole("separator")).toHaveAttribute(
-      "data-slot",
-      "command-separator",
-    );
+    expect(
+      within(screen.getByRole("listbox")).getByRole("presentation"),
+    ).toHaveAttribute("data-slot", "command-separator");
   });
 });

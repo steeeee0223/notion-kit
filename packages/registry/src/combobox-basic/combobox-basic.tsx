@@ -15,32 +15,54 @@ import {
 const OPTIONS = [
   {
     value: "Frameworks",
-    items: ["React", "Vue", "Svelte", "Angular", "Solid"],
+    items: [
+      { id: "react", name: "React" },
+      { id: "vue", name: "Vue" },
+      { id: "svelte", name: "Svelte" },
+      { id: "angular", name: "Angular" },
+      { id: "solid", name: "Solid" },
+    ],
   },
   {
     value: "Packages",
     items: [
-      "Zustand",
-      "Tanstack Query",
-      "React Router",
-      "React Hook Form",
-      "React Query",
+      { id: "zustand", name: "Zustand" },
+      { id: "tanstack-query", name: "Tanstack Query" },
+      { id: "react-router", name: "React Router" },
+      { id: "react-hook-form", name: "React Hook Form" },
+      { id: "react-query", name: "React Query" },
     ],
   },
 ];
 
+type Option = (typeof OPTIONS)[number]["items"][number];
+
+const items = Combobox.createItems(OPTIONS, {
+  getValue: (item: Option) => item.id,
+  getLabel: (item) => item.name,
+});
+
 export default function ComboboxBasic() {
   return (
-    <Combobox items={OPTIONS}>
-      <ComboboxInput placeholder="Select a framework" />
+    <Combobox items={items} defaultValue="react">
+      <ComboboxInput
+        aria-label="Framework or package"
+        placeholder="Select a framework"
+      />
       <ComboboxContent>
         <ComboboxEmpty>No items found.</ComboboxEmpty>
         <ComboboxList>
           {(group: (typeof OPTIONS)[number]) => (
             <ComboboxGroup key={group.value} items={group.items}>
-              <ComboboxLabel>{group.value}</ComboboxLabel>
+              <ComboboxLabel title={group.value} />
               <ComboboxCollection>
-                {(item: string) => <ComboboxItem key={item} value={item} />}
+                {(item: Option) => (
+                  <ComboboxItem
+                    key={item.id}
+                    value={item.id}
+                    label={item.name}
+                  />
+                )}
               </ComboboxCollection>
             </ComboboxGroup>
           )}

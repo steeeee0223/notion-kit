@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
@@ -38,6 +39,14 @@ export function DefaultTeamspace() {
 
   /** form */
   const teamspaceOptions = useTeamspaceOptions();
+  const items = useMemo(
+    () =>
+      Combobox.createItems(teamspaceOptions, {
+        getValue: (option) => option.id,
+        getLabel: (option) => option.name,
+      }),
+    [teamspaceOptions],
+  );
   const form = useForm<DefaultTeamspaceFormSchema>({
     resolver: zodResolver(defaultTeamspaceFormSchema),
     defaultValues: { id: "" },
@@ -59,39 +68,36 @@ export function DefaultTeamspace() {
             <FormItem className="min-w-0 grow">
               <FormControl
                 render={
-                  <Combobox<TeamspaceOption, true>
+                  <Combobox
                     multiple
                     disabled={field.disabled}
-                    value={teamspaceOptions.filter(
-                      (option) => option.id === field.value,
-                    )}
-                    onValueChange={(options) => {
-                      const last = options.at(-1);
-                      field.onChange(last?.id ?? "");
+                    value={field.value ? [field.value] : []}
+                    onValueChange={(ids) => {
+                      field.onChange(ids.at(-1) ?? "");
                     }}
-                    items={teamspaceOptions}
-                    itemToStringLabel={(option) => option.name}
-                    itemToStringValue={(option) => option.name}
-                    isItemEqualToValue={(item, value) =>
-                      item.name === value.name
-                    }
+                    items={items}
                   >
                     <ComboboxChips
                       hideClearButton
                       className="w-full cursor-text py-1 pl-2"
                     >
                       <ComboboxValue>
-                        {(selected: TeamspaceOption[]) => (
+                        {(selected: string[]) => (
                           <>
-                            {selected.map((option) => (
-                              <ComboboxChip
-                                key={option.id}
-                                style={{ backgroundColor: option.color }}
-                              >
-                                {option.name}
-                              </ComboboxChip>
-                            ))}
-                            <ComboboxChipsInput />
+                            {selected.map((id) => {
+                              const option = teamspaceOptions.find(
+                                (item) => item.id === id,
+                              );
+                              return (
+                                <ComboboxChip
+                                  key={id}
+                                  style={{ backgroundColor: option?.color }}
+                                >
+                                  {option?.name ?? id}
+                                </ComboboxChip>
+                              );
+                            })}
+                            <ComboboxChipsInput aria-label={trans.title} />
                           </>
                         )}
                       </ComboboxValue>
@@ -104,7 +110,7 @@ export function DefaultTeamspace() {
                             {(option: TeamspaceOption) => (
                               <ComboboxItem
                                 key={option.id}
-                                value={option}
+                                value={option.id}
                                 icon={<IconBlock icon={option.icon} />}
                                 label={option.name}
                               />

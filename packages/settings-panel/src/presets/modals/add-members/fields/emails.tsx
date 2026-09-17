@@ -50,7 +50,7 @@ export function EmailsField({ invitedMembers }: EmailsFieldProps) {
     name: ["_emailInput", "emails"],
   });
 
-  const multiSelectOptions = useMemo<GroupOption[]>(() => {
+  const multiSelectOptions = useMemo(() => {
     const accounts = invitedMembers.map<DetailedAccount>((account) => ({
       ...account,
       invited: true,
@@ -75,12 +75,16 @@ export function EmailsField({ invitedMembers }: EmailsFieldProps) {
           ]
         : [];
 
-    return [
+    const groups: GroupOption[] = [
       {
         label: isSearchEmail ? t("headings.select") : t("headings.type"),
         items: [...typedAccount, ...accounts],
       },
     ];
+    return Combobox.createItems(groups, {
+      getValue: (account: DetailedAccount) => account.email,
+      getLabel: (account) => account.name,
+    });
   }, [emails, inputValue, invitedMembers, t]);
 
   return (
@@ -91,35 +95,26 @@ export function EmailsField({ invitedMembers }: EmailsFieldProps) {
         <FormItem>
           <FormControl
             render={
-              <Combobox<DetailedAccount, true>
+              <Combobox
                 multiple
-                value={field.value.map((email) => ({
-                  id: email,
-                  email,
-                  name: email,
-                  avatarUrl: "",
-                }))}
+                value={field.value}
                 inputValue={inputValue}
                 onInputValueChange={(value) => setValue("_emailInput", value)}
                 onValueChange={(values) => {
-                  field.onChange(values.map((v) => v.email));
+                  field.onChange(values);
                   setValue("_emailInput", "");
                 }}
                 items={multiSelectOptions}
-                itemToStringLabel={(option) => option.name}
-                itemToStringValue={(option) => option.email}
-                isItemEqualToValue={(item, value) => item.email === value.email}
               >
                 <ComboboxChips hideClearButton className="w-full py-1 pl-2">
                   <ComboboxValue>
-                    {(selectedValue: DetailedAccount[]) => (
+                    {(selectedValue: string[]) => (
                       <>
-                        {selectedValue.map((account) => (
-                          <ComboboxChip key={account.email}>
-                            {account.email}
-                          </ComboboxChip>
+                        {selectedValue.map((email) => (
+                          <ComboboxChip key={email}>{email}</ComboboxChip>
                         ))}
                         <ComboboxChipsInput
+                          aria-label={t("search-placeholder")}
                           type="email"
                           placeholder={
                             selectedValue.length === 0

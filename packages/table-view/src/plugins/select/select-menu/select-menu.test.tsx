@@ -38,18 +38,6 @@ describe("SelectMenu - Single Select", () => {
     await menu.waitForCellNotText("Option A");
   });
 
-  it("SelectMenu_Search_CreatesNewOption", async () => {
-    const tableView = renderSelectTable();
-
-    const menu = await SelectMenuObject.open(tableView, "Row 1", "Status");
-
-    const newName = "Brand New Option";
-    await menu.create(newName);
-
-    expect(menu.combobox()).toBeVisible();
-    expect(menu.option(newName)).toBeInTheDocument();
-  });
-
   it("SelectMenu_Search_FiltersOptions", async () => {
     const tableView = renderSelectTable();
 
@@ -80,6 +68,31 @@ describe("SelectMenu - Single Select", () => {
     await menu.waitForCellText("Option B");
     expect(menu.selectedCell()).not.toHaveTextContent("Option A");
   });
+});
+
+describe("SelectMenu - Creation", () => {
+  it.each([
+    { property: "Status", interaction: "pointer" },
+    { property: "Status", interaction: "keyboard" },
+    { property: "Tags", interaction: "pointer" },
+    { property: "Tags", interaction: "keyboard" },
+  ] as const)(
+    "SelectMenu_Create_RestoresAllOptions ($property, $interaction)",
+    async ({ property, interaction }) => {
+      const tableView = renderSelectTable({ preselected: "both" });
+      const menu = await SelectMenuObject.open(tableView, "Row 1", property);
+
+      await menu.create("Brand New Option", interaction);
+
+      expect(menu.combobox()).toBeVisible();
+      expect(menu.combobox()).toHaveValue("");
+      expect(menu.option("Brand New Option")).toBeVisible();
+      expect(menu.option("Option A")).toBeVisible();
+      expect(menu.option("Option B")).toBeVisible();
+      expect(menu.option("Option C")).toBeVisible();
+      expect(menu.optionGroup()).toHaveTextContent("Brand New Option");
+    },
+  );
 });
 
 describe("SelectMenu - Multi Select", () => {

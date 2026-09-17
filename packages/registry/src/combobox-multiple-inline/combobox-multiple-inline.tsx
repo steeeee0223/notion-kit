@@ -107,6 +107,7 @@ export default function ComboboxMultipleInline({
     <div className="w-90 rounded-md border border-border bg-input shadow-md">
       <Combobox<string, true>
         multiple
+        inline
         open
         value={value}
         onValueChange={commitValue}

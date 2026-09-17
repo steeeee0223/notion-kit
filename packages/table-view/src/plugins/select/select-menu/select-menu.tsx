@@ -65,6 +65,7 @@ export function SelectMenu({ menu, onClose }: SelectMenuProps) {
   return (
     <Combobox<string, true>
       multiple
+      inline
       open
       value={tags.map((tag) => tag.value)}
       inputValue={search}

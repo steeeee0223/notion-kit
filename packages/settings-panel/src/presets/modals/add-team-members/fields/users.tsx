@@ -38,8 +38,8 @@ export function UsersField({ workspaceMembers }: UsersFieldProps) {
     keyPrefix: "modals.add-team-members",
   });
 
-  const multiSelectOptions = useMemo(
-    () => [
+  const multiSelectOptions = useMemo(() => {
+    const groups: GroupOption[] = [
       {
         label: t("headings.select"),
         items: workspaceMembers.map<AddTeamMembersOption>((user) => ({
@@ -50,11 +50,14 @@ export function UsersField({ workspaceMembers }: UsersFieldProps) {
           avatarUrl: user.avatarUrl,
         })),
       },
-    ],
-    [t, workspaceMembers],
-  );
+    ];
+    return Combobox.createItems(groups, {
+      getValue: (user: AddTeamMembersOption) => user.id,
+      getLabel: (user) => user.name,
+    });
+  }, [t, workspaceMembers]);
   const members = useMemo(
-    () => new Map(workspaceMembers.map((user) => [user.name, user])),
+    () => new Map(workspaceMembers.map((user) => [user.id, user])),
     [workspaceMembers],
   );
 
@@ -68,45 +71,38 @@ export function UsersField({ workspaceMembers }: UsersFieldProps) {
         <FormItem className="min-w-0 flex-1 basis-0">
           <FormControl
             render={
-              <Combobox<AddTeamMembersOption, true>
+              <Combobox
                 multiple
                 disabled={field.disabled}
-                value={field.value.map((user) => ({
-                  id: user.id,
-                  name: user.name,
-                  color: idToColor(user.id),
-                  avatarUrl: user.avatarUrl,
-                }))}
+                value={field.value.map((user) => user.id)}
                 onValueChange={(values) => {
                   field.onChange(
-                    values.reduce<User[]>((acc, option) => {
-                      const member = members.get(option.name);
+                    values.reduce<User[]>((acc, id) => {
+                      const member = members.get(id);
                       if (member) acc.push(member);
                       return acc;
                     }, []),
                   );
                 }}
                 items={multiSelectOptions}
-                itemToStringLabel={(option) => option.name}
-                itemToStringValue={(option) => option.name}
-                isItemEqualToValue={(item, value) => item.name === value.name}
               >
                 <ComboboxChips
                   hideClearButton
                   className="min-h-7 cursor-text border-none bg-transparent py-1.5 pl-2 focus-within:shadow-none!"
                 >
                   <ComboboxValue>
-                    {(selected: AddTeamMembersOption[]) => (
+                    {(selected: string[]) => (
                       <>
-                        {selected.map((option) => (
+                        {selected.map((id) => (
                           <ComboboxChip
-                            key={option.id}
-                            style={{ backgroundColor: option.color }}
+                            key={id}
+                            style={{ backgroundColor: idToColor(id) }}
                           >
-                            {option.name}
+                            {members.get(id)?.name ?? id}
                           </ComboboxChip>
                         ))}
                         <ComboboxChipsInput
+                          aria-label={t("search-placeholder")}
                           placeholder={t("search-placeholder")}
                         />
                       </>
@@ -123,7 +119,7 @@ export function UsersField({ workspaceMembers }: UsersFieldProps) {
                           {(option: AddTeamMembersOption) => (
                             <ComboboxItem
                               key={option.id}
-                              value={option}
+                              value={option.id}
                               disabled={option.disabled}
                               label={option.name}
                               icon={

@@ -16,6 +16,36 @@ description: A Base UI combobox with Notion-style chip input, floating and inlin
 
 ---
 
+### Select by ID
+
+Use `Combobox.createItems()` when selection stores an ID and the list renders object records. The basic example above uses grouped records with `id` and `name` fields.
+
+```tsx
+const items = Combobox.createItems(users, {
+  getValue: (user) => user.id,
+  getLabel: (user) => user.name,
+});
+
+<Combobox items={items} defaultValue="user-1">
+  <ComboboxInput aria-label="User" />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxGroup>
+        <ComboboxCollection>
+          {(user: User) => (
+            <ComboboxItem key={user.id} value={user.id} label={user.name} />
+          )}
+        </ComboboxCollection>
+      </ComboboxGroup>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+Pass the derived ID to `ComboboxItem value`. Selection values and `onValueChange` use IDs; list callbacks receive the original records. `getLabel` supplies the text for the input and filtering.
+
+Create static collections outside the component. For changing data, memoize `Combobox.createItems(data, accessors)` with `useMemo` keyed by the data. Each record must have a unique value. String-only lists can still pass their arrays directly.
+
 ### Multiple Floating
 
 Use the floating variant for a positioned popup. This example supports creatable items and a configurable chip limit.
@@ -27,7 +57,7 @@ Use the floating variant for a positioned popup. This example supports creatable
 
 ### Multiple Inline
 
-Use the inline variant when the list is part of the surrounding menu surface. This example supports creatable items and a configurable chip limit.
+Use `<Combobox inline open>` with the inline content variant when the list is part of the surrounding menu surface. The root's `inline` prop keeps selection and filtering in inline mode. This example supports creatable items and a configurable chip limit.
 
 <ComponentPreview
   name="combobox-multiple-inline"
@@ -43,4 +73,12 @@ Use `Combobox` as the Base UI root and compose the lower-level parts directly:
 - `ComboboxInput`, `ComboboxTrigger`, `ComboboxContent`, `ComboboxList`, `ComboboxGroup`, and `ComboboxItem` for a basic floating combobox.
 - `ComboboxChips`, `ComboboxValue`, `ComboboxChip`, and `ComboboxChipsInput` for multiple selection.
 - `ComboboxCreatableItem` for unmatched search values that should become new options.
-- `ComboboxContent variant="inline"` when the popup should render in-flow instead of as a floating overlay.
+- `Combobox inline open` with `ComboboxContent variant="inline"` when the list should render in-flow instead of as a floating overlay.
+
+### Combobox.createItems
+
+Accepts a flat array of records or an array of groups with `items` arrays, plus `getValue` and `getLabel` accessors. Both accessors receive a record. Pass the returned collection to `Combobox items`.
+
+`Combobox` accepts the type parameters `<Value, Multiple, Item = Value>`. With a collection, `Value` is the ID type and `Item` is the source record type. These types are inferred from `items`; when specifying them explicitly, use all three, such as `<Combobox<string, true, User>>`.
+
+This helper maps existing records to selection values. Use `ComboboxCreatableItem` and application state to add new options.
