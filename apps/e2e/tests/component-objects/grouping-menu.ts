@@ -50,8 +50,8 @@ export class GroupingMenuObject extends MenuSurfaceObject {
 
   allVisibilityButton() {
     return this.root
-      .getByRole("group", { name: "Groups", exact: true })
-      .getByRole("button", { name: "Toggle all group visibility" });
+      .getByRole("button", { includeHidden: true })
+      .filter({ hasText: /^(Hide|Show) all$/ });
   }
 
   async toggleGroup(groupId: string) {

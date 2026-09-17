@@ -71,10 +71,8 @@ export class EditGroupingMenuObject extends MenuSurfaceObject {
   }
 
   allVisibilityButton() {
-    return within(
-      within(this.root).getByRole("group", { name: "Groups" }),
-    ).getByRole("button", {
-      name: "Toggle all group visibility",
+    return within(this.root).getByRole("button", {
+      name: /^(Hide|Show) all$/,
     });
   }
 
