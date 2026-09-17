@@ -3,6 +3,37 @@ import { expect, test } from "./fixtures";
 
 const meeting = { id: "meeting", name: "Design review" };
 
+for (const [range, date, area] of [
+  ["Month", "2026-10-04", "month"],
+  ["Week", "2026-09-20", "all-day"],
+  ["Day", "2026-09-16", "all-day"],
+] as const) {
+  test(`CalendarResize_${range}LastDay_KeepsTheEntireHandleWithinTheViewport`, async ({
+    page,
+  }) => {
+    const calendar = await CalendarObject.open(page, range);
+    await calendar.createOnDay(date, area);
+    await expect
+      .poll(async () => (await calendar.snapshot()).createCount)
+      .toBe(1);
+    const event = (await calendar.snapshot()).events.find(
+      (event) => event.name === "New event",
+    )!;
+
+    for (const width of [1100, 360]) {
+      await page.setViewportSize({ width, height: 800 });
+      await calendar.card(event).scrollIntoViewIfNeeded();
+      const viewport = await calendar.root.boundingBox();
+      const handle = await calendar.resize(event, "end").boundingBox();
+      expect(handle!.x + handle!.width).toBeLessThanOrEqual(
+        viewport!.x + viewport!.width,
+      );
+      const geometry = await calendar.geometry();
+      expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
+    }
+  });
+}
+
 test("CalendarLayout_AllRanges_KeepStickyHeadersWithinNarrowAndWideContainers", async ({
   page,
 }, testInfo) => {

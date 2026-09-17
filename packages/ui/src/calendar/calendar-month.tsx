@@ -80,7 +80,7 @@ export function CalendarMonth({
           {row.segments.map((segment) => (
             <div
               key={`${segment.event === calendar.draft ? "draft:" : ""}${segment.key}`}
-              className="absolute min-w-0 px-1"
+              className="absolute min-w-0 px-1.5"
               style={{
                 top: 32 + segment.lane * 30,
                 left: `${(segment.column / 7) * 100}%`,

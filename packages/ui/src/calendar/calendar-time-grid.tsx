@@ -75,7 +75,7 @@ export function CalendarTimeGrid({
           {allDay.segments.map((segment) => (
             <div
               key={`${segment.event === calendar.draft ? "draft:" : ""}${segment.key}`}
-              className="absolute px-1"
+              className="absolute px-1.5"
               style={{
                 top: 6 + segment.lane * 30,
                 left: `${(segment.column / days.length) * 100}%`,
