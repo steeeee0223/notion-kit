@@ -12,7 +12,6 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { useEditLog } from "@/edit-log/edit-log-provider";
 import { TableViewMenu } from "@/menus";
 import {
   FILTER_MENU_TOOLBAR_TRIGGER_ID,
@@ -37,7 +36,6 @@ export function Toolbar({ className }: ToolbarProps) {
 
 function ToolbarContent({ className }: ToolbarProps) {
   const settingsRef = useRef<HTMLButtonElement>(null);
-  const { isOpen } = useEditLog();
   const { table } = useTableViewCtx();
   const { filterMenu, sortMenu } = useMenuCoordinator();
   const tableMenu = table.getTableMenuState();
@@ -102,11 +100,7 @@ function ToolbarContent({ className }: ToolbarProps) {
             </Button>
           }
         />
-        <DropdownMenuContent
-          collisionPadding={12}
-          className="w-72"
-          finalFocus={() => (isOpen() ? false : settingsRef.current)}
-        >
+        <DropdownMenuContent collisionPadding={12} className="w-72">
           <TableViewMenu getReturnFocus={() => settingsRef.current} />
         </DropdownMenuContent>
       </DropdownMenu>

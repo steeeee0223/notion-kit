@@ -22,7 +22,6 @@ import {
   useDateViewProperty,
   type DateViewResources,
 } from "@/date-view/use-date-view-property";
-import { useEditLog } from "@/edit-log/edit-log-provider";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -160,7 +159,6 @@ function CalendarRowEvent({
 }: CalendarEventRenderProps & { timeZone: string; locked: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const { isOpen } = useEditLog();
   return (
     <CalendarEvent.Root event={event} segment={segment}>
       {locked ? (
@@ -172,10 +170,7 @@ function CalendarRowEvent({
           <ContextMenuTrigger ref={triggerRef} render={<CalendarEvent.Item />}>
             <CalendarRowTitle event={event} timeZone={timeZone} />
           </ContextMenuTrigger>
-          <ContextMenuContent
-            className="w-[265px]"
-            finalFocus={() => (isOpen() ? false : triggerRef.current)}
-          >
+          <ContextMenuContent className="w-[265px]">
             <RowActionMenu
               rowId={event.id}
               onClose={() => setMenuOpen(false)}

@@ -15,9 +15,8 @@ function record(id: string): TableEditLog {
   return {
     id,
     editedAt: 1_700_000_000_000,
-    action: "update",
+    action: "update-config",
     target: { name: id },
-    summary: `Changed ${id}`,
   };
 }
 
@@ -32,6 +31,26 @@ function deferred<T>() {
 }
 
 describe("useEditLogRequest", () => {
+  it.each([
+    { action: "imported-action", summary: "Imported change" },
+    { action: "update", summary: "Changed value" },
+  ])("rejects summary-only $action records", async (legacy) => {
+    const fetchTableEditLogs = vi.fn().mockResolvedValue({
+      items: [{ ...record("legacy"), ...legacy }],
+      nextCursor: null,
+    });
+    const { result } = renderHook(() =>
+      useEditLogRequest({ fetchTableEditLogs }),
+    );
+
+    act(() => {
+      result.current.open({ type: "table" });
+    });
+
+    await waitFor(() => expect(result.current.state.status).toBe("error"));
+    expect(result.current.state.items).toEqual([]);
+  });
+
   it("fetches only on opening and manual pagination, deduplicates IDs, and retains first snapshots", async () => {
     const next = deferred<EditLogPage<TableEditLog>>();
     const fetchTableEditLogs = vi
@@ -56,7 +75,7 @@ describe("useEditLogRequest", () => {
     expect(result.current.state.items).toEqual([record("1")]);
     await act(async () => {
       next.resolve({
-        items: [{ ...record("1"), summary: "overlap" }, record("2")],
+        items: [{ ...record("1"), target: { name: "overlap" } }, record("2")],
         nextCursor: null,
       });
       await next.promise;

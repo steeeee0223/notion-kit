@@ -7,7 +7,7 @@ import type { RowEditLog, TableEditLog } from "./types";
 const sampleTime = Date.UTC(2026, 8, 17, 12);
 const actions = [
   "create",
-  "update",
+  "rename",
   "duplicate",
   "delete",
   "restore",
@@ -21,23 +21,8 @@ const actions = [
   "create",
   "update-config",
   "hide",
-  "update",
+  "rename",
 ] as const;
-
-const summaryByAction: Record<(typeof actions)[number], string> = {
-  create: "Created the property",
-  update: "Updated the property name",
-  duplicate: "Duplicated the property",
-  delete: "Deleted the property",
-  restore: "Restored the property",
-  hide: "Hid the property in this view",
-  show: "Made the property visible",
-  move: "Moved the property to another position",
-  resize: "Changed the column width",
-  "update-config": "Changed the property's display settings",
-  "change-type": "Changed the property type",
-  "change-layout": "Changed the layout to Board",
-};
 
 const primitiveText = z.union([z.string(), z.number(), z.boolean()]);
 const textList = z.array(z.string());
@@ -68,22 +53,25 @@ function textValue(value: unknown, type: string): string {
 
 /** These illustrative snapshots are built once, without observing future edits. */
 export function createMockEditLogFixtures(data: Row[], properties: ColumnDefs) {
-  const table: TableEditLog[] = actions.map((action, index) => {
-    const property = properties[index % properties.length];
-    return {
-      id: `sample-table-${index}`,
-      editedAt: sampleTime - index * 60_000,
-      action,
-      target:
-        action === "change-layout"
-          ? { name: "Layout" }
-          : { id: property?.id, name: property?.name ?? "Property" },
-      summary: summaryByAction[action],
-      property:
-        property &&
-        !["create", "duplicate", "delete", "restore", "change-layout"].includes(
-          action,
-        )
+  const table: TableEditLog[] = (properties.length ? actions : []).map(
+    (action, index) => {
+      const property = properties[index % properties.length]!;
+      return {
+        id: `sample-table-${index}`,
+        editedAt: sampleTime - index * 60_000,
+        action,
+        target:
+          action === "change-layout"
+            ? { name: "View" }
+            : { id: property.id, name: property.name },
+        layout: action === "change-layout" ? "board" : undefined,
+        property: ![
+          "create",
+          "duplicate",
+          "delete",
+          "restore",
+          "change-layout",
+        ].includes(action)
           ? {
               id: property.id,
               name: property.name,
@@ -91,8 +79,9 @@ export function createMockEditLogFixtures(data: Row[], properties: ColumnDefs) {
               icon: property.icon,
             }
           : undefined,
-    };
-  });
+      };
+    },
+  );
   const rows = new Map<string, RowEditLog[]>();
   for (const row of data) {
     const records =

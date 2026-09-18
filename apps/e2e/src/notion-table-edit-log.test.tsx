@@ -1,6 +1,12 @@
 import { act, renderHook } from "@testing-library/react";
 import { expect, it } from "vitest";
 
+import {
+  arrayToEntity,
+  DEFAULT_PLUGINS,
+  useTableView,
+} from "@notion-kit/table-view";
+
 import { useTableWithEditLogs } from "../../../examples/notion-table/src/lib/use-table-with-edit-logs";
 
 it("TestNotionTable_CellEdits_PreservesSnapshotsAndSeparatesRowHistory", async () => {
@@ -73,15 +79,19 @@ it("TestNotionTable_CellEdits_PreservesSnapshotsAndSeparatesRowHistory", async (
     (await result.current.fetchRowEditLogs({ rowId: "row-2", signal })).items,
   ).toEqual([]);
   const table = await result.current.fetchTableEditLogs({ signal });
-  expect(table.items.map((record) => record.summary)).toEqual([
-    "Deleted property",
-    "Second edit",
-    "First edit",
+  expect(table.items.map((record) => record.action)).toEqual([
+    "delete",
+    "update",
+    "update",
   ]);
   expect(table.items[0]?.property).toBeUndefined();
-  expect(table.items[1]?.property).toMatchObject({
-    name: "Desc.",
-    type: "text",
+  expect(table.items[1]).toMatchObject({
+    target: { name: "TODO 1" },
+    cell: {
+      property: { name: "Desc.", type: "text" },
+      value: "Second edit",
+      textValue: "Second edit",
+    },
   });
 });
 
@@ -141,15 +151,74 @@ it("TestNotionTable_PropertyOperation_RecordsOneActionWithoutCellInitialization"
   expect(
     history.items.map((record) => ({
       action: record.action,
-      summary: record.summary,
       property: record.property,
     })),
   ).toEqual([
     {
       action: "change-layout",
-      summary: "Changed layout to list",
       property: undefined,
     },
-    { action: "create", summary: "Created property", property: undefined },
+    { action: "create", property: undefined },
+  ]);
+});
+
+it.each([
+  ["col-4", { options: { names: [], items: {} } }],
+  ["col-6", { dateFormat: "relative", timeFormat: "hidden" }],
+])(
+  "TestNotionTable_ConfigUpdateFor%s_RecordsSettingsInsteadOfRename",
+  async (propertyId, config) => {
+    const { result } = renderHook(() => {
+      const model = useTableWithEditLogs();
+      const { table } = useTableView({
+        ...model,
+        plugins: arrayToEntity(DEFAULT_PLUGINS.data),
+      });
+      return { model, table };
+    });
+    act(() => result.current.table.setColumnInfo(propertyId, { config }));
+    const signal = new AbortController().signal;
+    expect(
+      (await result.current.model.fetchTableEditLogs({ signal })).items[0],
+    ).toMatchObject({ action: "update-config" });
+
+    act(() =>
+      result.current.table.setColumnInfo(propertyId, { name: "Renamed" }),
+    );
+    expect(
+      (await result.current.model.fetchTableEditLogs({ signal })).items[0],
+    ).toMatchObject({ action: "rename", target: { name: "Renamed" } });
+  },
+);
+
+it("TestNotionTable_ViewAndPropertyActions_DescribeTheResult", async () => {
+  const { result } = renderHook(() => {
+    const model = useTableWithEditLogs();
+    const { table } = useTableView({
+      ...model,
+      plugins: arrayToEntity(DEFAULT_PLUGINS.data),
+    });
+    return { model, table };
+  });
+  act(() => result.current.table.toggleTableLocked());
+  act(() => result.current.table.toggleTableLocked());
+  act(() => result.current.table.setTableLayout("board"));
+  act(() => result.current.table.setColumnType("col-2", "select"));
+  const history = await result.current.model.fetchTableEditLogs({
+    signal: new AbortController().signal,
+  });
+  expect(history.items).toMatchObject([
+    {
+      action: "change-type",
+      target: { name: "Desc." },
+      property: { type: "select" },
+    },
+    {
+      action: "change-layout",
+      layout: "board",
+      target: { name: "View" },
+    },
+    { action: "unlock" },
+    { action: "lock" },
   ]);
 });

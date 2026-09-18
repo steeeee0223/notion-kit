@@ -1,18 +1,28 @@
+import type { LayoutType } from "@notion-kit/table-hook";
 import type { IconData } from "@notion-kit/ui/icon-block";
+
+import type { tableEditLogActions } from "./messages";
 
 export interface EditLogPage<T> {
   items: T[];
   nextCursor: string | null;
 }
 
+export type TableEditLogAction = (typeof tableEditLogActions)[number];
+
 export interface TableEditLog {
   id: string;
   editedAt: number;
-  action: string;
+  action: TableEditLogAction;
   target: { id?: string; name: string };
   /** Historical property for field edits; omit for table-level actions. */
   property?: RowEditLog["property"];
-  summary: string;
+  /** Required for update actions, rendered with the same adapter as row history. */
+  cell?: Pick<RowEditLog, "property" | "value" | "textValue">;
+  /** Historical grouping property. Omit for removal of grouping. */
+  groupBy?: RowEditLog["property"];
+  /** Destination layout for a change-layout action. */
+  layout?: LayoutType;
 }
 
 export interface RowEditLog {

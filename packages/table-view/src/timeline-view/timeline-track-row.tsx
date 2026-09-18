@@ -10,7 +10,6 @@ import {
 import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
 import { Cell } from "@/common";
-import { useEditLog } from "@/edit-log/edit-log-provider";
 import { RowActionMenu } from "@/menus";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -28,7 +27,6 @@ interface TimelineTrackRowProps {
 export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const { isOpen } = useEditLog();
   const { table } = useTableViewCtx();
 
   if (row.getIsGrouped()) {
@@ -108,12 +106,7 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
                         >
                           <TimelineBarContent rowId={row.id} />
                         </ContextMenuTrigger>
-                        <ContextMenuContent
-                          className="w-[265px]"
-                          finalFocus={() =>
-                            isOpen() ? false : triggerRef.current
-                          }
-                        >
+                        <ContextMenuContent className="w-[265px]">
                           <RowActionMenu
                             rowId={row.id}
                             onClose={() => setMenuOpen(false)}

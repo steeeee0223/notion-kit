@@ -4,7 +4,11 @@ import { useTableViewCtx } from "@/table-contexts";
 
 import type { RowEditLog } from "./types";
 
-export function ReadOnlyValue({ record }: { record: RowEditLog }) {
+export function ReadOnlyValue({
+  record,
+}: {
+  record: Pick<RowEditLog, "id" | "property" | "value" | "textValue">;
+}) {
   const { plugins } = useTableViewCtx();
   const Renderer = plugins.ui.find(
     (plugin) => plugin.id === record.property.type,

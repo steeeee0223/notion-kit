@@ -125,7 +125,6 @@ const tablePage: EditLogPage<TableEditLog> = {
       action: "update-config",
       target: { id: "score", name: "Score" },
       property: { id: "score", name: "Score", type: "number" },
-      summary: "Changed the number format to percent",
     },
   ],
   nextCursor: null,
@@ -185,6 +184,27 @@ The viewer uses its icon, or the default icon for its type. Omit `property`
 for table-level actions such as creating a property or changing the layout
 to display the action icon. Both table and row history display entries on
 one line, with horizontal scrolling for long content.
+
+Table-view generates messages from the record's action and snapshots.
+`TableEditLogAction` defines the supported actions. Unknown actions and records
+missing required snapshots fail page validation. Callers store structured
+records without composing display messages.
+
+For cell edits in table history, use `action: "update"` and include
+`cell: { property, value, textValue }`. Other actions omit `cell`.
+The viewer uses the same read-only renderer as row history. The cell's property
+snapshot supplies the leading icon. Set `target.name` to the historical row name.
+The viewer combines the property and row names, such as **Released · TODO 1**.
+
+The `lock`, `unlock`, `filter`, `sort`, and `group` actions use their corresponding
+icons. For `change-layout`, include `layout` to display the destination view's
+icon. The generated messages are **Locked database**, **Unlocked database**,
+**Changed to Board view**, **Updated filters**, and **Updated sorting rules**.
+For `group`, include `groupBy` with the historical property snapshot. The viewer
+displays **Grouped by** followed by its icon and name. Omit `groupBy` when grouping
+is removed. `change-type` requires a `property` snapshot and displays
+**Changed to &lt;type&gt; type**. `update-config` displays **Updated property settings**,
+while `rename` uses the new historical name in `target.name`.
 
 Row records carry the historical property name, optional `IconData`, type,
 config, value, and `textValue`. Include historical option metadata for select

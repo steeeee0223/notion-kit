@@ -199,9 +199,13 @@ describe("TableViewReactivity", () => {
           {
             id: "first",
             editedAt: 1,
-            action: "data.cell.update",
+            action: "update",
             target: { name: "Task 1" },
-            summary: "First change",
+            cell: {
+              property: { id: "notes", name: "Notes", type: "text" },
+              value: "First change",
+              textValue: "First change",
+            },
           },
         ],
         nextCursor: "next",
@@ -211,9 +215,13 @@ describe("TableViewReactivity", () => {
           {
             id: "second",
             editedAt: 2,
-            action: "data.cell.update",
+            action: "update",
             target: { name: "Task 2" },
-            summary: "Second change",
+            cell: {
+              property: { id: "notes", name: "Notes", type: "text" },
+              value: "Second change",
+              textValue: "Second change",
+            },
           },
         ],
         nextCursor: null,

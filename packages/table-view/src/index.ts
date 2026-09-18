@@ -9,6 +9,7 @@ export type {
   FetchTableEditLogs,
   RowEditLog,
   TableEditLog,
+  TableEditLogAction,
 } from "./edit-log/types";
 
 export {

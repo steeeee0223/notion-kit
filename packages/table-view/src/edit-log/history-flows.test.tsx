@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -13,6 +13,7 @@ import type {
   FetchRowEditLogs,
   FetchTableEditLogs,
   RowEditLog,
+  TableEditLog,
 } from "./types";
 
 mockResizeObserver();
@@ -55,14 +56,75 @@ function Wrapper({
 }
 
 describe("EditLogFlows", () => {
+  it("TestEditLog_TableCellSnapshots_UsesReadOnlyValuesInsteadOfTextSummaries", async () => {
+    const user = userEvent.setup();
+    const snapshots = [
+      {
+        property: {
+          id: "removed-checkbox",
+          name: "Released",
+          type: "checkbox",
+        },
+        value: false,
+        textValue: "Checkbox fallback",
+      },
+      {
+        property: {
+          id: "removed-select",
+          name: "Status",
+          type: "select",
+          config: {
+            sort: "manual",
+            options: {
+              names: ["Done"],
+              items: { Done: { id: "old", name: "Done", color: "blue" } },
+            },
+          },
+        },
+        value: "Done",
+        textValue: "Select fallback",
+      },
+    ];
+    render(
+      <Wrapper
+        fetchTableEditLogs={() =>
+          Promise.resolve({
+            items: snapshots.map((cell, index) => ({
+              id: `cell-${index}`,
+              editedAt: 1_700_000_000_000,
+              action: "update",
+              target: { name: "Historical row" },
+              cell,
+            })),
+            nextCursor: null,
+          })
+        }
+      >
+        <OpenControls />
+      </Wrapper>,
+    );
+    await user.click(screen.getByRole("button", { name: "Table history" }));
+    const dialog = await EditLogDialogObject.find(user);
+    const checkbox = await within(dialog.root).findByRole("checkbox", {
+      name: "Released",
+    });
+    expect(checkbox).toHaveAttribute("aria-checked", "false");
+    expect(checkbox).toHaveAttribute("aria-readonly", "true");
+    expect(dialog.text("Released · Historical row")).toBeVisible();
+    expect(dialog.text("Done")).toBeVisible();
+    expect(within(dialog.root).queryByText(/fallback/)).not.toBeInTheDocument();
+    await user.click(checkbox);
+    expect(checkbox).toHaveAttribute("aria-checked", "false");
+    expect(within(dialog.root).queryByRole("combobox")).not.toBeInTheDocument();
+  });
+
   it("TestEditLog_FailedPages_RetryKeepsLoadedEntries", async () => {
     const user = userEvent.setup();
-    const record = {
+    const record: TableEditLog = {
       id: "first",
       editedAt: 1_700_000_000_000,
       action: "create",
       target: { name: "Notes" },
-      summary: "Created property",
     };
     const fetchTableEditLogs = vi
       .fn<FetchTableEditLogs>()
@@ -70,7 +132,7 @@ describe("EditLogFlows", () => {
       .mockResolvedValueOnce({ items: [record], nextCursor: "next" })
       .mockRejectedValueOnce(new Error("Offline"))
       .mockResolvedValueOnce({
-        items: [{ ...record, id: "second", summary: "Earlier edit" }],
+        items: [{ ...record, id: "second", action: "delete" }],
         nextCursor: null,
       });
     render(
@@ -88,7 +150,7 @@ describe("EditLogFlows", () => {
     expect(await dialog.findText("Could not load edit logs.")).toBeVisible();
     expect(dialog.text("Created property")).toBeVisible();
     await dialog.retry();
-    expect(await dialog.findText("Earlier edit")).toBeVisible();
+    expect(await dialog.findText("Deleted property")).toBeVisible();
     expect(dialog.entries()[0]).toBe(firstEntry);
     expect(dialog.loadMoreButton()).not.toBeInTheDocument();
     expect(
@@ -184,7 +246,7 @@ describe("EditLogFlows", () => {
               {
                 id: "property-edit",
                 editedAt: 1_700_000_000_000,
-                action: "update",
+                action: "update-config",
                 target: { name: "Historical score" },
                 property: {
                   id: "removed",
@@ -192,14 +254,44 @@ describe("EditLogFlows", () => {
                   type: "number",
                   icon: { type: "emoji", src: "🎯" },
                 },
-                summary: "Changed to 10",
               },
               {
                 id: "layout-edit",
                 editedAt: 1_700_000_000_001,
                 action: "change-layout",
                 target: { name: "Layout" },
-                summary: "Changed to Board",
+                layout: "board",
+              },
+              {
+                id: "group-edit",
+                editedAt: 1_700_000_000_002,
+                action: "group",
+                target: { name: "View" },
+                groupBy: {
+                  id: "old-group",
+                  name: "Old group",
+                  type: "select",
+                  icon: { type: "emoji", src: "📦" },
+                },
+              },
+              ...(["lock", "unlock", "filter", "sort"] as const).map(
+                (action) => ({
+                  id: action,
+                  editedAt: 1_700_000_000_003,
+                  action,
+                  target: { name: "View" },
+                }),
+              ),
+              {
+                id: "type-edit",
+                editedAt: 1_700_000_000_004,
+                action: "change-type",
+                target: { name: "Converted score" },
+                property: {
+                  id: "removed",
+                  name: "Converted score",
+                  type: "number",
+                },
               },
             ],
             nextCursor: null,
@@ -213,9 +305,21 @@ describe("EditLogFlows", () => {
     const dialog = await EditLogDialogObject.find(user);
     expect(await dialog.findText("🎯")).toBeVisible();
     expect(dialog.text("Historical score")).toBeVisible();
-    expect(dialog.text("Changed to 10")).toBeVisible();
-    expect(dialog.text("Changed to Board")).toBeVisible();
-    expect(dialog.entries()).toHaveLength(2);
+    expect(dialog.text("Updated property settings")).toBeVisible();
+    expect(dialog.text("Changed to Board view")).toBeVisible();
+    expect(dialog.text("Grouped by")).toBeVisible();
+    expect(dialog.text("📦")).toBeVisible();
+    expect(dialog.text("Old group")).toBeVisible();
+    for (const message of [
+      "Locked database",
+      "Unlocked database",
+      "Updated filters",
+      "Updated sorting rules",
+      "Changed to Number type",
+    ]) {
+      expect(dialog.text(message)).toBeVisible();
+    }
+    expect(dialog.entries()).toHaveLength(8);
   });
 
   it("TestEditLog_RowPagination_KeepsRemovedPropertySnapshots", async () => {

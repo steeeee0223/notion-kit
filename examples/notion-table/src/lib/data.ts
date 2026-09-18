@@ -25,6 +25,7 @@ export const mockProps: ColumnDefs = [
     name: "Tags",
     width: "300px",
     config: {
+      sort: "manual",
       options: {
         names: [
           "Done",

@@ -21,18 +21,6 @@ type StoredRowEditLog = RowEditLog & { target: TableEditLog["target"] };
 type StoredEditLog = TableEditLog | StoredRowEditLog;
 
 const plugins: TablePluginRegistry = DEFAULT_PLUGINS;
-const propertySummaries = {
-  "properties.create": "Created property",
-  "properties.update": "Updated property settings",
-  "properties.delete": "Deleted property",
-  "properties.restore": "Restored property",
-  "properties.duplicate": "Duplicated property",
-  "properties.move": "Moved property",
-  "properties.resize": "Resized property",
-  "properties.visibility.change": "Changed property visibility",
-  "properties.type.change": "Changed property type",
-} satisfies Record<PropertiesResourceAction["type"], string>;
-
 /** This example keeps history in memory for the current page session. */
 export function useTableWithEditLogs() {
   const [data, setData] = useState(mockData);
@@ -73,7 +61,7 @@ export function useTableWithEditLogs() {
           id: `${action.id}:${row.id}`,
           editedAt,
           rowId: row.id,
-          target: { id: row.id, name: `${rowName(row)} · ${property.name}` },
+          target: { id: row.id, name: rowName(row) },
           property: {
             id: property.id,
             name: property.name,
@@ -88,23 +76,22 @@ export function useTableWithEditLogs() {
       append(records);
       return;
     }
-    const summaries = {
-      "data.row.create": "Created row",
-      "data.row.update": "Updated row details",
-      "data.row.delete": "Deleted rows",
-      "data.row.duplicate": "Duplicated row",
-      "data.rows.duplicate": "Duplicated rows",
-      "data.row.move": "Moved row",
-    };
+    const actions = {
+      "data.row.create": "create-row",
+      "data.row.update": "update-row",
+      "data.row.delete": "delete-rows",
+      "data.row.duplicate": "duplicate-row",
+      "data.rows.duplicate": "duplicate-rows",
+      "data.row.move": "move-row",
+    } as const;
     const rowId = "rowId" in action.payload ? action.payload.rowId : undefined;
     const row = next.find((item) => item.id === rowId);
     append([
       {
         id: action.id,
         editedAt,
-        action: action.type.split(".").at(-1)!,
+        action: actions[action.type],
         target: { id: rowId, name: row ? rowName(row) : "Rows" },
-        summary: summaries[action.type],
       },
     ]);
   }
@@ -115,6 +102,17 @@ export function useTableWithEditLogs() {
   }: ResourceChange<ColumnDefs, PropertiesResourceAction>) {
     setProperties(next);
     propertyActionId.current = action.id;
+    const actions = {
+      "properties.create": "create",
+      "properties.update": "update-config",
+      "properties.delete": "delete",
+      "properties.restore": "restore",
+      "properties.duplicate": "duplicate",
+      "properties.move": "move",
+      "properties.resize": "resize",
+      "properties.visibility.change": "show",
+      "properties.type.change": "change-type",
+    } as const;
     const propertyIds =
       action.type === "properties.visibility.change"
         ? action.payload.propertyIds
@@ -134,13 +132,14 @@ export function useTableWithEditLogs() {
           id: `${action.id}:${id}`,
           editedAt,
           action:
-            action.type === "properties.type.change"
-              ? "change-type"
-              : action.type === "properties.visibility.change"
-                ? property.hidden
-                  ? "hide"
-                  : "show"
-                : action.type.split(".").at(-1)!,
+            action.type === "properties.visibility.change"
+              ? property.hidden
+                ? "hide"
+                : "show"
+              : action.type === "properties.update" &&
+                  action.payload.previous.name !== property.name
+                ? "rename"
+                : actions[action.type],
           target: { id, name: property.name },
           property: tableAction
             ? undefined
@@ -150,11 +149,6 @@ export function useTableWithEditLogs() {
                 type: property.type,
                 icon: property.icon,
               },
-          summary:
-            action.type === "properties.update" &&
-            action.payload.next.name !== undefined
-              ? `Renamed to ${property.name}`
-              : propertySummaries[action.type],
         };
       }),
     );
@@ -165,30 +159,71 @@ export function useTableWithEditLogs() {
   }: ResourceChange<TableViewState, ViewResourceAction>) {
     // Opening a row is navigation and does not change the saved table.
     if (action.type === "view.opened_row.change") return;
-    const summaries = {
-      "view.filters.change": "Updated filters",
-      "view.layout.change": "Changed layout",
-      "view.lock.change": "Changed database lock",
-      "view.row_display.change": "Changed row display",
-      "view.date_view_range.change": "Changed date range",
-      "view.date_view_property.change": "Changed date property",
-      "view.plugin_sorting_method.change": "Changed sorting method",
-      "view.plugin_grouping_method.change": "Changed grouping method",
-      "view.group_sort.change": "Changed group order",
-    };
+    if (action.type === "view.plugin_sorting_method.change") {
+      const property = properties.find(
+        (item) => item.id === action.payload.propertyId,
+      )!;
+      const defaultMethod = plugins.data.find(
+        (plugin) => plugin.id === property.type,
+      )!.sorting?.defaultMethod;
+      // Adding a sort rule also saves its default method, without changing the method.
+      if (
+        (action.payload.previousMethodId ?? defaultMethod) ===
+        action.payload.nextMethodId
+      )
+        return;
+    }
+    const actions = {
+      "view.filters.change": "filter",
+      "view.layout.change": "change-layout",
+      "view.lock.change": "lock",
+      "view.row_display.change": "change-row-display",
+      "view.date_view_range.change": "change-date-range",
+      "view.date_view_property.change": "change-date-property",
+      "view.plugin_sorting_method.change": "sort",
+      "view.plugin_grouping_method.change": "update-grouping",
+      "view.group_sort.change": "sort-groups",
+    } as const;
     append([
       {
         id: action.id,
         editedAt: Date.now(),
         action:
-          action.type === "view.layout.change"
-            ? "change-layout"
-            : "update-config",
+          action.type === "view.lock.change"
+            ? action.payload.nextLocked
+              ? "lock"
+              : "unlock"
+            : actions[action.type],
         target: { name: "View" },
-        summary:
+        layout:
           action.type === "view.layout.change"
-            ? `Changed layout to ${action.payload.nextLayout}`
-            : summaries[action.type],
+            ? action.payload.nextLayout
+            : undefined,
+      },
+    ]);
+  }
+
+  function onSortingChange() {
+    append([
+      {
+        id: crypto.randomUUID(),
+        editedAt: Date.now(),
+        action: "sort",
+        target: { name: "View" },
+      },
+    ]);
+  }
+
+  function onGroupingChange(propertyId?: string) {
+    append([
+      {
+        id: crypto.randomUUID(),
+        editedAt: Date.now(),
+        action: "group",
+        target: { name: "View" },
+        groupBy: propertyId
+          ? properties.find((property) => property.id === propertyId)!
+          : undefined,
       },
     ]);
   }
@@ -204,8 +239,11 @@ export function useTableWithEditLogs() {
                   editedAt: record.editedAt,
                   action: "update",
                   target: record.target,
-                  property: record.property,
-                  summary: record.textValue,
+                  cell: {
+                    property: record.property,
+                    value: record.value,
+                    textValue: record.textValue,
+                  },
                 }
               : record,
         ),
@@ -227,6 +265,8 @@ export function useTableWithEditLogs() {
     onDataChange,
     onPropertiesChange,
     onViewChange,
+    onSortingChange,
+    onGroupingChange,
     ...editLogs,
   };
 }

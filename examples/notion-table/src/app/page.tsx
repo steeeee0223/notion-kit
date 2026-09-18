@@ -10,10 +10,12 @@ import {
   TooltipProvider,
 } from "@notion-kit/ui/primitives";
 
+import { ViewHistory } from "@/components/view-history";
 import { useTableWithEditLogs } from "@/lib/use-table-with-edit-logs";
 
 export default function Page() {
-  const table = useTableWithEditLogs();
+  const { onSortingChange, onGroupingChange, ...table } =
+    useTableWithEditLogs();
 
   const openLink = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -48,7 +50,12 @@ export default function Page() {
         <div className="text-3xl text-primary">Notion Clone - Table View</div>
         <div className="relative flex max-h-150 w-screen grow flex-col justify-center">
           <div className="h-full shrink-0 overflow-auto">
-            <TableView {...table} />
+            <TableView {...table}>
+              <ViewHistory
+                onSortingChange={onSortingChange}
+                onGroupingChange={onGroupingChange}
+              />
+            </TableView>
           </div>
         </div>
       </main>
