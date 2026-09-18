@@ -34,10 +34,8 @@ export function useEditLogRequest(callbacks: EditLogProps) {
   latestCallbacks.current = callbacks;
   const [state, setState] = useState(emptyState);
   const currentState = useRef(state);
-  const session = useRef(0);
   const activeRequest = useRef<AbortController | null>(null);
   const requestedCursors = useRef(new Set<string>());
-  const failedCursor = useRef<string | undefined>(undefined);
 
   const update = useCallback((next: EditLogState) => {
     currentState.current = next;
@@ -45,7 +43,6 @@ export function useEditLogRequest(callbacks: EditLogProps) {
   }, []);
 
   const cancel = useCallback(() => {
-    session.current++;
     activeRequest.current?.abort();
     activeRequest.current = null;
     requestedCursors.current.clear();
@@ -62,11 +59,9 @@ export function useEditLogRequest(callbacks: EditLogProps) {
       const { fetchTableEditLogs, fetchRowEditLogs } = latestCallbacks.current;
       if (target.type === "table" ? !fetchTableEditLogs : !fetchRowEditLogs)
         return;
-      const identity = session.current;
       const controller = new AbortController();
       activeRequest.current = controller;
       if (cursor !== undefined) requestedCursors.current.add(cursor);
-      failedCursor.current = cursor;
       update({ ...currentState.current, status: "loading" });
 
       const run = async () => {
@@ -81,7 +76,7 @@ export function useEditLogRequest(callbacks: EditLogProps) {
               : rowEditLogPageSchema(target.rowId).parse(
                   await fetchRowEditLogs!({ ...input, rowId: target.rowId }),
                 );
-          if (controller.signal.aborted || session.current !== identity) return;
+          if (controller.signal.aborted) return;
           if (
             page.nextCursor !== null &&
             requestedCursors.current.has(page.nextCursor)
@@ -102,7 +97,7 @@ export function useEditLogRequest(callbacks: EditLogProps) {
             status: "success",
           });
         } catch {
-          if (!controller.signal.aborted && session.current === identity) {
+          if (!controller.signal.aborted) {
             update({ ...currentState.current, status: "error" });
           }
         } finally {
@@ -144,7 +139,7 @@ export function useEditLogRequest(callbacks: EditLogProps) {
   const retry = useCallback(() => {
     const current = currentState.current;
     if (current.target && current.status === "error")
-      request(current.target, failedCursor.current);
+      request(current.target, current.nextCursor ?? undefined);
   }, [request]);
 
   const hasTableCallback = !!callbacks.fetchTableEditLogs;

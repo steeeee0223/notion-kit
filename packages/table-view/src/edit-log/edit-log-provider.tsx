@@ -16,16 +16,12 @@ interface EditLogActions {
   isOpen: () => boolean;
 }
 
-const EditLogContext = createContext<EditLogActions>({
-  canViewTableLogs: false,
-  canViewRowLogs: false,
-  openTableLog: () => undefined,
-  openRowLog: () => undefined,
-  isOpen: () => false,
-});
+const EditLogContext = createContext<EditLogActions | null>(null);
 
 export function useEditLog() {
-  return use(EditLogContext);
+  const context = use(EditLogContext);
+  if (!context) throw new Error("`useEditLog` must be used within `TableView`");
+  return context;
 }
 
 export function EditLogProvider({
@@ -79,14 +75,11 @@ export function EditLogProvider({
       !returnFocus.current.matches(":disabled")
     )
       return returnFocus.current;
-    const root = scope.current;
-    const control = root?.querySelector<HTMLElement>(
-      'button:not([disabled]), [tabindex="0"], a[href]',
+    return (
+      scope.current?.querySelector<HTMLElement>(
+        'button:not([disabled]), [tabindex="0"], a[href]',
+      ) ?? null
     );
-    if (control) return control;
-    // A permanent tabindex would make blank table space claim cell-editor focus.
-    if (root) root.tabIndex = -1;
-    return root;
   }, []);
   const onOpenChangeComplete = useCallback((isDialogOpen: boolean) => {
     if (isDialogOpen) return;
@@ -99,12 +92,7 @@ export function EditLogProvider({
 
   return (
     <EditLogContext value={actions}>
-      <div
-        ref={scope}
-        data-edit-log-scope=""
-        className="isolate min-w-0"
-        onBlur={(event) => event.currentTarget.removeAttribute("tabindex")}
-      >
+      <div ref={scope} data-edit-log-scope="" className="isolate min-w-0">
         {children}
       </div>
       <EditLogDialog

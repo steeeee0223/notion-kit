@@ -114,17 +114,6 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
     <>
       <MenuHeader id="view-settings" title="View Settings" />
       <DropdownMenuGroup>
-        {canViewTableLogs && (
-          <DropdownMenuItem
-            icon={<Icon.Clock />}
-            label="Edit log"
-            onClick={() => {
-              const returnFocus = getReturnFocus?.();
-              table.setTableMenuState({ open: false, page: null });
-              openTableLog(returnFocus);
-            }}
-          />
-        )}
         <DropdownMenuItem
           closeOnClick={false}
           icon={<LayoutIcon layout={layout} />}
@@ -187,6 +176,17 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
             : { icon: <Icon.Lock />, label: "Lock database" })}
           onClick={table.toggleTableLocked}
         />
+        {canViewTableLogs && (
+          <DropdownMenuItem
+            icon={<Icon.Clock />}
+            label="Edit log"
+            onClick={() => {
+              const returnFocus = getReturnFocus?.();
+              table.setTableMenuState({ open: false, page: null });
+              openTableLog(returnFocus);
+            }}
+          />
+        )}
       </DropdownMenuGroup>
     </>
   );

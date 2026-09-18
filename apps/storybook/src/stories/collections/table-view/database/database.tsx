@@ -43,10 +43,6 @@ export const Database = () => {
       </div>
       <TabsContent value="members" className="mt-0 bg-main">
         <ViewWrapper>
-          <p className="mb-3 text-sm text-secondary">
-            Edit logs show static sample history. New edits do not add log
-            entries.
-          </p>
           <TableView
             {...mockEditLogs}
             defaultProperties={mockProps}

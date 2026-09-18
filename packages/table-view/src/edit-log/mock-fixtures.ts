@@ -25,8 +25,7 @@ const actions = [
 ] as const;
 
 const summaryByAction: Record<(typeof actions)[number], string> = {
-  create:
-    "Created a property for tracking the team's work. This is a static historical example that remains unchanged when the current table is edited.",
+  create: "Created the property",
   update: "Updated the property name",
   duplicate: "Duplicated the property",
   delete: "Deleted the property",
@@ -80,6 +79,18 @@ export function createMockEditLogFixtures(data: Row[], properties: ColumnDefs) {
           ? { name: "Layout" }
           : { id: property?.id, name: property?.name ?? "Property" },
       summary: summaryByAction[action],
+      property:
+        property &&
+        !["create", "duplicate", "delete", "restore", "change-layout"].includes(
+          action,
+        )
+          ? {
+              id: property.id,
+              name: property.name,
+              type: property.type,
+              icon: property.icon,
+            }
+          : undefined,
     };
   });
   const rows = new Map<string, RowEditLog[]>();

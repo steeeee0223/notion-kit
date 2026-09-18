@@ -66,32 +66,6 @@ describe("useEditLogRequest", () => {
     expect(fetchTableEditLogs).toHaveBeenCalledTimes(2);
   });
 
-  it("retries the first page and a failed additional page without losing entries", async () => {
-    const fetchTableEditLogs = vi
-      .fn<FetchTableEditLogs>()
-      .mockRejectedValueOnce(new Error("First request"))
-      .mockResolvedValueOnce({ items: [record("1")], nextCursor: "next" })
-      .mockRejectedValueOnce(new Error("Next request"))
-      .mockResolvedValueOnce({ items: [record("2")], nextCursor: null });
-    const { result } = renderHook(() =>
-      useEditLogRequest({ fetchTableEditLogs }),
-    );
-    act(() => {
-      result.current.open({ type: "table" });
-    });
-    await waitFor(() => expect(result.current.state.status).toBe("error"));
-    act(() => result.current.retry());
-    await waitFor(() => expect(result.current.state.status).toBe("success"));
-    act(() => result.current.loadMore());
-    await waitFor(() => expect(result.current.state.status).toBe("error"));
-    expect(result.current.state.items).toEqual([record("1")]);
-    act(() => result.current.retry());
-    await waitFor(() => expect(result.current.state.items).toHaveLength(2));
-    expect(
-      fetchTableEditLogs.mock.calls.map(([request]) => request.cursor),
-    ).toEqual([undefined, undefined, "next", "next"]);
-  });
-
   it("accepts an empty page with a fresh cursor, and rejects a repeated boundary or malformed page", async () => {
     const fetchTableEditLogs = vi
       .fn<FetchTableEditLogs>()

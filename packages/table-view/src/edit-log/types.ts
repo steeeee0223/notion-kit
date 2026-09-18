@@ -10,6 +10,8 @@ export interface TableEditLog {
   editedAt: number;
   action: string;
   target: { id?: string; name: string };
+  /** Historical property for field edits; omit for table-level actions. */
+  property?: RowEditLog["property"];
   summary: string;
 }
 

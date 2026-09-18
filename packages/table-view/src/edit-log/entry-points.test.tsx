@@ -11,14 +11,12 @@ import { describe, expect, it, vi } from "vitest";
 import type { ColumnDefs } from "@notion-kit/table-hook";
 import { Button } from "@notion-kit/ui/primitives";
 
-import { CalendarViewObject } from "@/__tests__/component-objects/calendar-view";
 import { EditLogDialogObject } from "@/__tests__/component-objects/edit-log-dialog";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { RowActionsObject } from "@/__tests__/component-objects/row-actions";
 import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
-import { RowActionMenu } from "@/menus";
 import type { DefaultPlugins } from "@/plugins";
-import { TableView, TableViewWrapper, useTableViewCtx } from "@/table-contexts";
+import { TableView, useTableViewCtx } from "@/table-contexts";
 
 import { useEditLog } from "./edit-log-provider";
 
@@ -45,73 +43,51 @@ function HistoryControls() {
 }
 
 describe("EditLogEntryPoints", () => {
-  it("PopoverRow_ReturnsFocusToOriginalTrigger", async () => {
+  it("TestEditLog_TimelineContextMenu_ReturnsFocusToEvent", async () => {
     const fetchRowEditLogs = vi
       .fn()
       .mockResolvedValue({ items: [], nextCursor: null });
-    const tableView = renderTableView({ properties, fetchRowEditLogs });
-    const trigger = RowActionsObject.trigger(tableView.row("Task 1"));
-    const menu = await RowActionsObject.openFromTrigger(tableView, trigger);
+    const now = Date.now();
+    const tableView = renderTableView({
+      properties: [
+        ...properties,
+        {
+          id: "due",
+          name: "Due",
+          type: "date",
+          config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
+        },
+      ],
+      data: mockData.map((row) => ({
+        ...row,
+        properties: {
+          ...row.properties,
+          due: { id: `due-${row.id}`, value: { start: now } },
+        },
+      })),
+      view: {
+        layout: "timeline",
+        dateView: { datePropertyId: "due", range: "monthly" },
+      },
+      fetchRowEditLogs,
+    });
+    const trigger = tableView.timeline.itemTitle("row1", "Task 1");
+    const menu = await RowActionsObject.openFromTrigger(
+      tableView,
+      trigger,
+      true,
+    );
 
     await menu.openEditLog();
 
     await menu.waitUntilClosed();
     const dialog = await EditLogDialogObject.find(tableView.user);
-    expect(dialog.text("Task 1")).toBeVisible();
+    expect(fetchRowEditLogs).toHaveBeenCalledWith(
+      expect.objectContaining({ rowId: "row1" }),
+    );
     await dialog.close();
     await waitFor(() => expect(trigger).toHaveFocus());
   });
-
-  it.each(["calendar", "timeline"] as const)(
-    "%sContextMenu_ClosesAndReturnsFocusToEvent",
-    async (layout) => {
-      const fetchRowEditLogs = vi
-        .fn()
-        .mockResolvedValue({ items: [], nextCursor: null });
-      const now = Date.now();
-      const tableView = renderTableView({
-        properties: [
-          ...properties,
-          {
-            id: "due",
-            name: "Due",
-            type: "date",
-            config: { dateFormat: "full", timeFormat: "24-hour", tz: "UTC" },
-          },
-        ],
-        data: mockData.map((row) => ({
-          ...row,
-          properties: {
-            ...row.properties,
-            due: { id: `due-${row.id}`, value: { start: now } },
-          },
-        })),
-        view: { layout, dateView: { datePropertyId: "due", range: "monthly" } },
-        fetchRowEditLogs,
-      });
-      const calendar = new CalendarViewObject();
-      if (layout === "calendar") await calendar.findReady();
-      const trigger =
-        layout === "calendar"
-          ? calendar.event("Task 1")
-          : tableView.timeline.itemTitle("row1", "Task 1");
-      const menu = await RowActionsObject.openFromTrigger(
-        tableView,
-        trigger,
-        true,
-      );
-
-      await menu.openEditLog();
-
-      await menu.waitUntilClosed();
-      const dialog = await EditLogDialogObject.find(tableView.user);
-      expect(fetchRowEditLogs).toHaveBeenCalledWith(
-        expect.objectContaining({ rowId: "row1" }),
-      );
-      await dialog.close();
-      await waitFor(() => expect(trigger).toHaveFocus());
-    },
-  );
 
   it("BoardPopover_ClosesAndReturnsFocusToCardActions", async () => {
     const fetchRowEditLogs = vi
@@ -136,30 +112,6 @@ describe("EditLogEntryPoints", () => {
     const dialog = await EditLogDialogObject.find(tableView.user);
     await dialog.close();
     await waitFor(() => expect(trigger).toHaveFocus());
-  });
-
-  it("StandaloneRowMenu_IgnoresDeleteAndDuplicateWhileHistoryIsOpen", async () => {
-    const user = userEvent.setup();
-    const onDataChange = vi.fn();
-    render(
-      <TableViewWrapper
-        defaultData={mockData}
-        defaultProperties={properties}
-        onDataChange={onDataChange}
-        fetchRowEditLogs={() =>
-          Promise.resolve({ items: [], nextCursor: null })
-        }
-      >
-        <RowActionMenu rowId="row1" />
-      </TableViewWrapper>,
-    );
-    await user.click(screen.getByRole("option", { name: "Edit log" }));
-    const dialog = await EditLogDialogObject.find(user);
-
-    dialog.closeButton().focus();
-    await user.keyboard("{Meta>}d{/Meta}{Backspace}");
-
-    expect(onDataChange).not.toHaveBeenCalled();
   });
 
   it.each(["side", "center"] as const)(

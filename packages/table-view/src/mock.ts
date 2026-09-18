@@ -30,57 +30,27 @@ export function createMockEditLogApi({
     structuredClone(properties),
   );
 
-  async function page<T>(
+  function page<T>(
     items: T[],
-    scope: string,
     signal: AbortSignal,
     cursor?: string,
   ): Promise<EditLogPage<T>> {
     signal.throwIfAborted();
-    let offset = 0;
-    if (cursor !== undefined) {
-      const prefix = `${scope}:`;
-      const boundary = z
-        .string()
-        .startsWith(prefix)
-        .transform((value) => value.slice(prefix.length))
-        .pipe(
-          z
-            .string()
-            .regex(/^[1-9]\d*$/)
-            .transform(Number),
-        )
-        .pipe(
-          z
-            .number()
-            .int()
-            .positive()
-            .safe()
-            .refine(
-              (value) => value % size === 0 && value < items.length,
-              "Invalid pagination boundary",
-            ),
-        );
-      offset = boundary.parse(cursor);
-    }
-    await Promise.resolve();
-    signal.throwIfAborted();
+    const offset =
+      cursor === undefined
+        ? 0
+        : z.coerce.number().int().nonnegative().safe().parse(cursor);
     const end = offset + size;
-    return {
-      items: structuredClone(items.slice(offset, end)),
-      nextCursor: end < items.length ? `${scope}:${end}` : null,
-    };
+    return Promise.resolve({
+      items: items.slice(offset, end),
+      nextCursor: end < items.length ? String(end) : null,
+    });
   }
 
   return {
     fetchTableEditLogs: ({ cursor, signal }) =>
-      page(fixtures.table, "table", signal, cursor),
+      page(fixtures.table, signal, cursor),
     fetchRowEditLogs: ({ rowId, cursor, signal }) =>
-      page(
-        fixtures.rows.get(rowId) ?? [],
-        `row:${encodeURIComponent(rowId)}`,
-        signal,
-        cursor,
-      ),
+      page(fixtures.rows.get(rowId) ?? [], signal, cursor),
   };
 }

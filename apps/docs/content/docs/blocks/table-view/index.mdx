@@ -124,6 +124,7 @@ const tablePage: EditLogPage<TableEditLog> = {
       editedAt: Date.UTC(2026, 8, 17, 9),
       action: "update-config",
       target: { id: "score", name: "Score" },
+      property: { id: "score", name: "Score", type: "number" },
       summary: "Changed the number format to percent",
     },
   ],
@@ -178,6 +179,12 @@ callback reference alone does not refetch; the next action uses the latest
 callback. A failed additional page keeps the visible records and retries the
 same cursor. Repeated IDs are ignored, while a repeated cursor or invalid page
 shows an error.
+
+Table records can include a historical `property` snapshot for field edits.
+The viewer uses its icon, or the default icon for its type. Omit `property`
+for table-level actions such as creating a property or changing the layout
+to display the action icon. Both table and row history display entries on
+one line, with horizontal scrolling for long content.
 
 Row records carry the historical property name, optional `IconData`, type,
 config, value, and `textValue`. Include historical option metadata for select
