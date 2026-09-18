@@ -1,8 +1,6 @@
-import { Icon } from "@notion-kit/icons";
 import {
   Button,
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -40,16 +38,9 @@ export function EditLogDialog({
       onOpenChangeComplete={onOpenChangeComplete}
     >
       <DialogContent
-        hideClose
         className="w-[min(40rem,calc(100vw-2rem))] max-w-none p-5"
         finalFocus={finalFocus}
       >
-        <DialogClose
-          render={<Button aria-label="Close" variant="close" size="circle" />}
-          className="absolute top-4 right-4"
-        >
-          <Icon.Close aria-hidden="true" className="size-3.5 fill-secondary" />
-        </DialogClose>
         <DialogHeader className="items-start pr-8 text-left">
           <DialogTitle typography="h2" className="text-left">
             Edit log
