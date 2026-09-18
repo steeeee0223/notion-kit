@@ -24,7 +24,7 @@ versions:
 ```bash
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 source "$NVM_DIR/nvm.sh"
-nvm use 24.11.1 --silent
+nvm use --silent
 ```
 
 All pnpm commands below use the shared store:

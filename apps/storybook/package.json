@@ -60,6 +60,7 @@
     "@types/node": "catalog:node",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:test",
     "@vitest/browser-playwright": "catalog:test",
     "@vitest/coverage-v8": "catalog:test",
     "dotenv-cli": "catalog:env",
@@ -72,6 +73,7 @@
     "storybook-react-rsbuild": "^3.2.3",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:",
+    "vite": "catalog:test",
     "vitest": "catalog:test"
   },
   "msw": {
