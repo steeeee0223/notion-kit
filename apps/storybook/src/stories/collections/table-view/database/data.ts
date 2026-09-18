@@ -4,11 +4,13 @@ import type {
   NumberConfig,
   SelectConfig,
 } from "@notion-kit/table-hook/plugins";
+import { createMockEditLogApi } from "@notion-kit/table-view/mock";
 
 const fixture = createMockFullTableFixture();
 
 export const mockProps = fixture.properties;
 export const mockData = fixture.data;
+export const mockEditLogs = createMockEditLogApi(fixture);
 
 export const mockDateConfig = mockProps.find(({ type }) => type === "date")!
   .config as DateConfig;

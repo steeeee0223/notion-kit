@@ -10,7 +10,11 @@ import type { CellValueProps } from "@/plugins/renderers";
 import { SelectMenu } from "./select-menu";
 import { useSelectMenu } from "./select-menu/use-select-menu";
 
-interface SelectCellValueProps extends CellValueProps<string[], SelectConfig> {
+interface SelectCellValueProps
+  extends Pick<
+    CellValueProps<string[], SelectConfig>,
+    "data" | "config" | "wrapped"
+  > {
   multi?: boolean;
 }
 

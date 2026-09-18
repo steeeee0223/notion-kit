@@ -1,12 +1,60 @@
-import { screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
+import { EditLogDialogObject } from "../__tests__/component-objects/edit-log-dialog";
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
 mockResizeObserver();
 
 describe("TableViewMenu", () => {
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])(
+    "TableViewMenu_TableCapability=%s_RowCapability=%s_ShowsOnlyTableEntry",
+    async (table, row) => {
+      const fetchTableEditLogs = vi
+        .fn()
+        .mockResolvedValue({ items: [], nextCursor: null });
+      const fetchRowEditLogs = vi
+        .fn()
+        .mockResolvedValue({ items: [], nextCursor: null });
+      const tableView = renderTableView({
+        fetchTableEditLogs: table ? fetchTableEditLogs : undefined,
+        fetchRowEditLogs: row ? fetchRowEditLogs : undefined,
+      });
+
+      const settings = await tableView.openViewSettings();
+
+      expect(Boolean(settings.queryItem("Edit log"))).toBe(table);
+      expect(fetchTableEditLogs).not.toHaveBeenCalled();
+      expect(fetchRowEditLogs).not.toHaveBeenCalled();
+    },
+  );
+
+  it("TableViewMenu_LockedTableLog_ClosesMenuAndReturnsFocusToSettings", async () => {
+    const fetchTableEditLogs = vi
+      .fn()
+      .mockResolvedValue({ items: [], nextCursor: null });
+    const tableView = renderTableView({
+      view: { locked: true },
+      fetchTableEditLogs,
+    });
+    const trigger = tableView.button("Settings");
+    const settings = await tableView.openViewSettings();
+
+    await settings.openEditLog();
+
+    await settings.waitUntilClosed();
+    const dialog = await EditLogDialogObject.find(tableView.user);
+    expect(fetchTableEditLogs).toHaveBeenCalledOnce();
+    await dialog.close();
+    await waitFor(() => expect(trigger).toHaveFocus());
+  });
+
   it.each([
     ["Layout", "Layout"],
     ["Sort", "Sort"],

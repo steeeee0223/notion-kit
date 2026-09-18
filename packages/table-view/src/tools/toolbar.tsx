@@ -35,6 +35,7 @@ export function Toolbar({ className }: ToolbarProps) {
 }
 
 function ToolbarContent({ className }: ToolbarProps) {
+  const settingsRef = useRef<HTMLButtonElement>(null);
   const { table } = useTableViewCtx();
   const { filterMenu, sortMenu } = useMenuCoordinator();
   const tableMenu = table.getTableMenuState();
@@ -92,6 +93,7 @@ function ToolbarContent({ className }: ToolbarProps) {
             <Button
               variant="nav-icon"
               aria-label="Settings"
+              ref={settingsRef}
               className="[&_svg]:fill-current"
             >
               <Icon.SlidersSmall />
@@ -99,7 +101,7 @@ function ToolbarContent({ className }: ToolbarProps) {
           }
         />
         <DropdownMenuContent collisionPadding={12} className="w-72">
-          <TableViewMenu />
+          <TableViewMenu getReturnFocus={() => settingsRef.current} />
         </DropdownMenuContent>
       </DropdownMenu>
       <Button variant="blue" size="sm" className="h-7 px-2">

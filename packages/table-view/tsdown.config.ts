@@ -15,6 +15,7 @@ export default defineConfig((opts) => ({
   entry: {
     index: "./src/index.ts",
     menus: "./src/menus/index.ts",
+    mock: "./src/mock.ts",
   },
   sourcemap: true,
   banner: { js: '"use client";\n"use no memo";' },

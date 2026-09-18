@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import { Icon } from "@notion-kit/icons";
-import { TableViewWrapper, useTableViewCtx } from "@notion-kit/table-view";
+import {
+  MenuCoordinatorProvider,
+  TableViewWrapper,
+  useTableViewCtx,
+} from "@notion-kit/table-view";
 import * as Menu from "@notion-kit/table-view/menus";
 import {
   Button,
@@ -22,6 +26,7 @@ import { Code } from "@/components/code";
 import {
   mockData,
   mockDateConfig,
+  mockEditLogs,
   mockNumberConfig,
   mockProps,
   mockSelectConfig,
@@ -32,8 +37,17 @@ const meta = {
   title: "collections/Table View/Menus",
   parameters: { layout: "fullscreen" },
   decorators: (Story) => (
-    <TableViewWrapper defaultProperties={mockProps} defaultData={mockData}>
-      <Story />
+    <TableViewWrapper
+      {...mockEditLogs}
+      defaultProperties={mockProps}
+      defaultData={mockData}
+    >
+      <p className="px-20 pt-4 text-sm text-secondary">
+        Edit logs show static sample history. New edits do not add log entries.
+      </p>
+      <MenuCoordinatorProvider>
+        <Story />
+      </MenuCoordinatorProvider>
     </TableViewWrapper>
   ),
 } satisfies Meta;
@@ -44,19 +58,29 @@ type Story = StoryObj<typeof meta>;
 export const TableViewMenu: Story = {
   render: () => {
     const { table } = useTableViewCtx();
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const openingLogRef = useRef(false);
 
     return (
       <table.Subscribe
         selector={(state) => ({
+          menu: state.menu,
           tableGlobal: state.tableGlobal,
           grouping: state.grouping,
           groupingState: state.groupingState,
         })}
       >
-        {({ tableGlobal, grouping, groupingState }) => (
+        {({ menu, tableGlobal, grouping, groupingState }) => (
           <div className="grid grid-cols-2 justify-between gap-4 p-20">
-            <DropdownMenu>
+            <DropdownMenu
+              open={menu.open}
+              onOpenChange={(open) => {
+                if (open) openingLogRef.current = false;
+                table.setTableMenuState({ open, page: null });
+              }}
+            >
               <DropdownMenuTrigger
+                ref={triggerRef}
                 render={
                   <Button
                     variant="nav-icon"
@@ -67,8 +91,19 @@ export const TableViewMenu: Story = {
                   </Button>
                 }
               />
-              <DropdownMenuContent collisionPadding={12} className="w-72">
-                <Menu.TableViewMenu />
+              <DropdownMenuContent
+                collisionPadding={12}
+                className="w-72"
+                finalFocus={() =>
+                  openingLogRef.current ? false : triggerRef.current
+                }
+              >
+                <Menu.TableViewMenu
+                  getReturnFocus={() => {
+                    openingLogRef.current = true;
+                    return triggerRef.current;
+                  }}
+                />
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex w-full flex-col gap-3">
@@ -309,11 +344,15 @@ export const ColumnConfigMenus: Story = {
 
 export const RowActionMenu: Story = {
   render: () => {
+    const [open, setOpen] = useState(false);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+
     return (
       <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <TooltipPreset description="Click to open menu">
             <PopoverTrigger
+              ref={triggerRef}
               render={
                 <Button
                   variant="hint"
@@ -326,7 +365,11 @@ export const RowActionMenu: Story = {
             />
           </TooltipPreset>
           <PopoverContent className="w-[265px]" side="right" align="start">
-            <Menu.RowActionMenu rowId={mockData[0]!.id} />
+            <Menu.RowActionMenu
+              rowId={mockData[0]!.id}
+              onClose={() => setOpen(false)}
+              getReturnFocus={() => triggerRef.current}
+            />
           </PopoverContent>
         </Popover>
       </div>

@@ -20,6 +20,7 @@ description: A composable, editable data table with multiple layouts.
 - Table, List, Board, Timeline, and Calendar layouts
 - Open rows in a center dialog, side pane, or full page
 - Built-in plugins for title, text, number, checkbox, select, multi-select, links, and dates
+- Optional table and row edit logs with historical values and manual pagination
 
 ## Requirements
 
@@ -61,6 +62,158 @@ Rows, properties, and view state can be controlled independently.
 />
 
 Do not switch a resource between controlled and uncontrolled during one mount.
+
+### Edit logs
+
+Pass `fetchTableEditLogs` to show **Edit log** in **View Settings**. Pass
+`fetchRowEditLogs` to show it in a row's action menu. Each callback enables its
+own entry, including in accessible menus of locked tables. Both props also
+work with `TableViewWrapper` when you compose your own content.
+
+The examples above show static sample history. To use the same mock API:
+
+```tsx
+import { useState } from "react";
+
+import {
+  TableView,
+  type ColumnDefs,
+  type DefaultPlugins,
+  type Row,
+} from "@notion-kit/table-view";
+import { createMockEditLogApi } from "@notion-kit/table-view/mock";
+
+function Example({
+  data,
+  properties,
+}: {
+  data: Row<DefaultPlugins>[];
+  properties: ColumnDefs<DefaultPlugins>;
+}) {
+  const [editLogs] = useState(() => createMockEditLogApi({ data, properties }));
+
+  return (
+    <TableView
+      defaultData={data}
+      defaultProperties={properties}
+      {...editLogs}
+    />
+  );
+}
+```
+
+The factory copies the initial fixtures and defaults to 10 records per page.
+It returns stable callbacks, supports `AbortSignal`, and returns no history for
+new or unknown rows. Editing a demo never adds log entries.
+
+For a backend, provide callbacks with these exported types:
+
+```ts
+import type {
+  EditLogPage,
+  FetchRowEditLogs,
+  FetchTableEditLogs,
+  RowEditLog,
+  TableEditLog,
+} from "@notion-kit/table-view";
+
+const tablePage: EditLogPage<TableEditLog> = {
+  items: [
+    {
+      id: "log-1",
+      editedAt: Date.UTC(2026, 8, 17, 9),
+      action: "update-config",
+      target: { id: "score", name: "Score" },
+      property: { id: "score", name: "Score", type: "number" },
+    },
+  ],
+  nextCursor: null,
+};
+
+const rowPage: EditLogPage<RowEditLog> = {
+  items: [
+    {
+      id: "log-2",
+      editedAt: Date.UTC(2026, 8, 17, 10),
+      rowId: "row-1",
+      property: { id: "notes", name: "Notes", type: "text" },
+      value: "Ready for review",
+      textValue: "Ready for review",
+    },
+  ],
+  nextCursor: null,
+};
+
+const fetchTableEditLogs: FetchTableEditLogs = async ({ cursor, signal }) => {
+  signal.throwIfAborted();
+  return cursor ? { items: [], nextCursor: null } : tablePage;
+};
+
+const fetchRowEditLogs: FetchRowEditLogs = async ({
+  rowId,
+  cursor,
+  signal,
+}) => {
+  signal.throwIfAborted();
+  return rowId === "row-1" && !cursor
+    ? rowPage
+    : { items: [], nextCursor: null };
+};
+```
+
+Replace these sample responses with your endpoint adapter and pass `signal` to
+its fetch request. Your application owns log storage, authorization, and
+historical snapshots. The viewer does not record edits, restore values, or
+provide undo.
+
+Requests run only when the user opens history, clicks **Load more**, or retries
+a failed request. `cursor` is omitted for the first page. Return records newest
+first, with stable IDs and ordering, and set `nextCursor` to `null` at the end.
+Keep pagination boundaries stable when new records arrive. Scrolling does not
+fetch another page.
+
+Closing history, switching rows, removing a callback, or unmounting cancels the
+request and discards its session. Reopening fetches the first page. Changing a
+callback reference alone does not refetch; the next action uses the latest
+callback. A failed additional page keeps the visible records and retries the
+same cursor. Repeated IDs are ignored, while a repeated cursor or invalid page
+shows an error.
+
+Table records can include a historical `property` snapshot for field edits.
+The viewer uses its icon, or the default icon for its type. Omit `property`
+for table-level actions such as creating a property or changing the layout
+to display the action icon. Both table and row history display entries on
+one line, with horizontal scrolling for long content.
+
+Table-view generates messages from the record's action and snapshots.
+`TableEditLogAction` defines the supported actions. Unknown actions and records
+missing required snapshots fail page validation. Callers store structured
+records without composing display messages.
+
+For cell edits in table history, use `action: "update"` and include
+`cell: { property, value, textValue }`. Other actions omit `cell`.
+The viewer uses the same read-only renderer as row history. The cell's property
+snapshot supplies the leading icon. Set `target.name` to the historical row name.
+The viewer combines the property and row names, such as **Released · TODO 1**.
+
+The `lock`, `unlock`, `filter`, `sort`, and `group` actions use their corresponding
+icons. For `change-layout`, include `layout` to display the destination view's
+icon. The generated messages are **Locked database**, **Unlocked database**,
+**Changed to Board view**, **Updated filters**, and **Updated sorting rules**.
+For `group`, include `groupBy` with the historical property snapshot. The viewer
+displays **Grouped by** followed by its icon and name. Omit `groupBy` when grouping
+is removed. `change-type` requires a `property` snapshot and displays
+**Changed to &lt;type&gt; type**. `update-config` displays **Updated property settings**,
+while `rename` uses the new historical name in `target.name`.
+
+Row records carry the historical property name, optional `IconData`, type,
+config, value, and `textValue`. Include historical option metadata for select
+values and formatting settings for numbers and dates. Created-time and
+last-edited-time values contain resolved Unix timestamps in milliseconds.
+Current columns and row metadata never replace these snapshots. Unknown types,
+invalid values, missing renderers, and renderer errors display `textValue`.
+See [read-only history renderers](/docs/blocks/table-view/cell-plugins#read-only-history-renderers)
+for custom plugins.
 
 ### Timeline layout
 
@@ -196,22 +349,24 @@ bulk editing.
 
 ### TableView
 
-| Prop                 | Type                        | Description                                                        |
-| -------------------- | --------------------------- | ------------------------------------------------------------------ |
-| `plugins`            | `TablePluginPair`           | Paired data/UI plugin registration. Defaults to `DEFAULT_PLUGINS`. |
-| `data`               | `Row[]`                     | Controlled rows resource.                                          |
-| `defaultData`        | `Row[]`                     | Initial rows for an uncontrolled table.                            |
-| `properties`         | `ColumnDefs`                | Controlled properties resource.                                    |
-| `defaultProperties`  | `ColumnDefs`                | Initial properties for an uncontrolled table.                      |
-| `view`               | `PartialTableViewState`     | Controlled layout and presentation state.                          |
-| `defaultView`        | `PartialTableViewState`     | Initial view state for an uncontrolled table.                      |
-| `onDataChange`       | `(change) => void`          | Receives the next rows resource and its action.                    |
-| `onPropertiesChange` | `(change) => void`          | Receives the next properties resource and its action.              |
-| `onViewChange`       | `(change) => void`          | Receives the next view resource and its action.                    |
-| `getRowUrl`          | `(rowId: string) => string` | Returns the URL used when opening a row in a new tab.              |
-| `weekStartsOn`       | `Weekday`                   | Sets the first day of the week for date-based features.            |
-| `defaultColumn`      | `Partial<ColumnDef>`        | Overrides the default TanStack Table column options.               |
-| `children`           | `ReactNode`                 | Content rendered inside the Table View provider.                   |
+| Prop                 | Type                        | Description                                                                  |
+| -------------------- | --------------------------- | ---------------------------------------------------------------------------- |
+| `plugins`            | `TablePluginPair`           | Paired data/UI plugin registration. Defaults to `DEFAULT_PLUGINS`.           |
+| `data`               | `Row[]`                     | Controlled rows resource.                                                    |
+| `defaultData`        | `Row[]`                     | Initial rows for an uncontrolled table.                                      |
+| `properties`         | `ColumnDefs`                | Controlled properties resource.                                              |
+| `defaultProperties`  | `ColumnDefs`                | Initial properties for an uncontrolled table.                                |
+| `view`               | `PartialTableViewState`     | Controlled layout and presentation state.                                    |
+| `defaultView`        | `PartialTableViewState`     | Initial view state for an uncontrolled table.                                |
+| `onDataChange`       | `(change) => void`          | Receives the next rows resource and its action.                              |
+| `onPropertiesChange` | `(change) => void`          | Receives the next properties resource and its action.                        |
+| `onViewChange`       | `(change) => void`          | Receives the next view resource and its action.                              |
+| `fetchTableEditLogs` | `FetchTableEditLogs`        | Optional paginated table history callback. Enables the table Edit log entry. |
+| `fetchRowEditLogs`   | `FetchRowEditLogs`          | Optional paginated row history callback. Enables row Edit log entries.       |
+| `getRowUrl`          | `(rowId: string) => string` | Returns the URL used when opening a row in a new tab.                        |
+| `weekStartsOn`       | `Weekday`                   | Sets the first day of the week for date-based features.                      |
+| `defaultColumn`      | `Partial<ColumnDef>`        | Overrides the default TanStack Table column options.                         |
+| `children`           | `ReactNode`                 | Content rendered inside the Table View provider.                             |
 
 ### TableViewState
 

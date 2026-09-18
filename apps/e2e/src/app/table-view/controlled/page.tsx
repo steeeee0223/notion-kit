@@ -8,6 +8,7 @@ import {
   type PropertiesResourceAction,
   type ViewResourceAction,
 } from "@notion-kit/table-view";
+import { createMockEditLogApi } from "@notion-kit/table-view/mock";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { TableViewStateDiagnostic } from "../_components/table-view-state-diagnostic";
@@ -18,7 +19,8 @@ import {
 } from "../../../test-fixtures/table-view";
 
 export default function ControlledTableViewPage() {
-  const initial = createTableViewFixture();
+  const [initial] = useState(createTableViewFixture);
+  const [editLogs] = useState(() => createMockEditLogApi(initial));
   const [data, setData] = useState(initial.data);
   const [rejectData, setRejectData] = useState(false);
   const [dark, setDark] = useState(false);
@@ -102,6 +104,7 @@ export default function ControlledTableViewPage() {
         </Button>
       </header>
       <TableView
+        {...editLogs}
         data={data}
         properties={properties}
         view={view}

@@ -9,7 +9,7 @@ import {
   TabsTrigger,
 } from "@notion-kit/ui/primitives";
 
-import { mockData, mockProps } from "./data";
+import { mockData, mockEditLogs, mockProps } from "./data";
 import { ViewWrapper } from "./view-wrapper";
 
 export const Database = () => {
@@ -43,7 +43,11 @@ export const Database = () => {
       </div>
       <TabsContent value="members" className="mt-0 bg-main">
         <ViewWrapper>
-          <TableView defaultProperties={mockProps} defaultData={mockData} />
+          <TableView
+            {...mockEditLogs}
+            defaultProperties={mockProps}
+            defaultData={mockData}
+          />
         </ViewWrapper>
       </TabsContent>
     </Tabs>

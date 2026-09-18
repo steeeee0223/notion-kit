@@ -2,9 +2,25 @@
 
 import { createMockTableFixture } from "@notion-kit/table-hook/mock";
 import { TableView } from "@notion-kit/table-view";
+import { createMockEditLogApi } from "@notion-kit/table-view/mock";
 
 const { properties: mockProps, data: mockData } = createMockTableFixture();
+const editLogs = createMockEditLogApi({
+  data: mockData,
+  properties: mockProps,
+});
 
 export default function Demo() {
-  return <TableView defaultProperties={mockProps} defaultData={mockData} />;
+  return (
+    <div className="w-full min-w-0">
+      <p className="mb-3 text-sm text-secondary">
+        Edit logs show static sample history. New edits do not add log entries.
+      </p>
+      <TableView
+        {...editLogs}
+        defaultProperties={mockProps}
+        defaultData={mockData}
+      />
+    </div>
+  );
 }

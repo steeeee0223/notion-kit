@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import { cn } from "@notion-kit/cn";
 import type { RowInstance } from "@notion-kit/table-hook";
 import {
@@ -23,6 +25,8 @@ interface TimelineTrackRowProps {
 }
 
 export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const { table } = useTableViewCtx();
 
   if (row.getIsGrouped()) {
@@ -90,8 +94,9 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
                   ) : (
                     <>
                       <TimelineRow.Resize direction="start" />
-                      <ContextMenu>
+                      <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
                         <ContextMenuTrigger
+                          ref={triggerRef}
                           render={
                             <TimelineRow.Item
                               aria-label={title}
@@ -102,7 +107,11 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
                           <TimelineBarContent rowId={row.id} />
                         </ContextMenuTrigger>
                         <ContextMenuContent className="w-[265px]">
-                          <RowActionMenu rowId={row.id} />
+                          <RowActionMenu
+                            rowId={row.id}
+                            onClose={() => setMenuOpen(false)}
+                            getReturnFocus={() => triggerRef.current}
+                          />
                         </ContextMenuContent>
                       </ContextMenu>
                       <TimelineRow.Resize direction="end" />

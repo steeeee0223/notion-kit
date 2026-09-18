@@ -2,6 +2,15 @@ export * from "@notion-kit/table-hook";
 export * from "./plugins";
 export * from "./row-view";
 export * from "./table-contexts";
+export type {
+  EditLogPage,
+  EditLogProps,
+  FetchRowEditLogs,
+  FetchTableEditLogs,
+  RowEditLog,
+  TableEditLog,
+  TableEditLogAction,
+} from "./edit-log/types";
 
 export {
   compareBooleans,

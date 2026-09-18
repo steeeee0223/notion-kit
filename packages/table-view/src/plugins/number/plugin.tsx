@@ -23,6 +23,7 @@ import {
 import { NumberCellEditor, NumberCellValue } from "./number-cell";
 import { NumberConfigMenu } from "./number-config-menu";
 import { NumberGroupingValue } from "./number-grouping-value";
+import { ReadOnlyNumberValue } from "./read-only-value";
 
 export function number(): TableUiPlugin<NumberPlugin> {
   const renderCell = (
@@ -87,6 +88,7 @@ export function number(): TableUiPlugin<NumberPlugin> {
     },
     default: { name: "Number", icon: <DefaultIcon type="number" /> },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: (props) => <ReadOnlyNumberValue {...props} />,
     renderBulkEditor: createBulkEditorRenderer<NumberPlugin>(
       (props: BulkEditorRendererProps<string | null, NumberConfig>) => (
         <BulkEditorPopover {...props} initialData={props.data}>

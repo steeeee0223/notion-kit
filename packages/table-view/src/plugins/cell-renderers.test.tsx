@@ -24,13 +24,6 @@ import { NumberCellValue } from "./number/number-cell";
 
 mockResizeObserver();
 
-const row: Row = {
-  id: "row",
-  createdAt: 0,
-  lastEditedAt: 0,
-  properties: {},
-};
-
 const baseNumberConfig: NumberConfig = {
   format: "number",
   round: "default",
@@ -47,8 +40,6 @@ function renderNumber(
     nextOverrides: Partial<React.ComponentProps<typeof NumberCellValue>> = {},
   ) => (
     <NumberCellValue
-      propId="amount"
-      row={row}
       data={data}
       config={config}
       {...overrides}
@@ -289,15 +280,7 @@ describe("LinkCell", () => {
     ["url", "https://example.com", "https://example.com"],
     ["url", "  JAVASCRIPT:alert(1)", ""],
   ] as const)("LinkCell_%s_UsesSafeExpectedHref", (type, data, href) => {
-    render(
-      <LinkCellValue
-        type={type}
-        propId="link"
-        row={row}
-        data={data}
-        config={undefined}
-      />,
-    );
+    render(<LinkCellValue type={type} data={data} />);
     expect(screen.getByText(data.trim()).closest("a")).toHaveAttribute(
       "href",
       href,

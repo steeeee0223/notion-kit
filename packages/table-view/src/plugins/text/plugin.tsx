@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import type { TextPlugin } from "@notion-kit/table-hook/plugins";
 
 import { CellRenderer, DefaultIcon, TextInputPopoverContent } from "@/common";
@@ -17,6 +19,8 @@ import {
   getCopyClasses,
 } from "../utils";
 import { TextCellValue } from "./text-cell";
+
+const snapshotSchema = z.object({ value: z.string(), config: z.undefined() });
 
 export function text(): TableUiPlugin<TextPlugin> {
   const renderCell = (props: CellRendererProps<string>) => {
@@ -76,6 +80,13 @@ export function text(): TableUiPlugin<TextPlugin> {
     },
     default: { name: "Text", icon: <DefaultIcon type="text" /> },
     renderCell: createCellRenderer(renderCell),
+    renderReadOnlyValue: ({ value, config, textValue }) => {
+      const parsed = snapshotSchema.safeParse({ value, config });
+      if (!parsed.success) return textValue;
+      if (!parsed.data.value.trim())
+        return <span className="text-muted">Empty</span>;
+      return <TextCellValue data={parsed.data.value} wrapped />;
+    },
     renderBulkEditor: createBulkEditorRenderer<TextPlugin>(
       (props: BulkEditorRendererProps<string>) => (
         <BulkEditorPopover {...props} initialData={props.data}>

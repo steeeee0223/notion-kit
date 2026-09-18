@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import type { ColumnInfo } from "@notion-kit/table-hook";
 import {
   CalendarContent,
@@ -155,6 +157,8 @@ function CalendarRowEvent({
   timeZone,
   locked,
 }: CalendarEventRenderProps & { timeZone: string; locked: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
   return (
     <CalendarEvent.Root event={event} segment={segment}>
       {locked ? (
@@ -162,12 +166,16 @@ function CalendarRowEvent({
           <CalendarRowTitle event={event} timeZone={timeZone} />
         </CalendarEvent.Item>
       ) : (
-        <ContextMenu>
-          <ContextMenuTrigger render={<CalendarEvent.Item />}>
+        <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <ContextMenuTrigger ref={triggerRef} render={<CalendarEvent.Item />}>
             <CalendarRowTitle event={event} timeZone={timeZone} />
           </ContextMenuTrigger>
           <ContextMenuContent className="w-[265px]">
-            <RowActionMenu rowId={event.id} />
+            <RowActionMenu
+              rowId={event.id}
+              onClose={() => setMenuOpen(false)}
+              getReturnFocus={() => triggerRef.current}
+            />
           </ContextMenuContent>
         </ContextMenu>
       )}

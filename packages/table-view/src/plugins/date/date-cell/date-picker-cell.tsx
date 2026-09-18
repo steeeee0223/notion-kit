@@ -8,9 +8,12 @@ export function DatePickerCellValue({
   wrapped,
   data,
   config,
-}: CellValueProps<
-  DatePlugin["default"]["data"],
-  DatePlugin["default"]["config"]
+}: Pick<
+  CellValueProps<
+    DatePlugin["default"]["data"],
+    DatePlugin["default"]["config"]
+  >,
+  "data" | "config" | "wrapped"
 >) {
   const dateStr = toDateString(data, config);
 

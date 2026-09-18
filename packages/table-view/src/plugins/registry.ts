@@ -11,6 +11,8 @@ import type {
   InferKey,
 } from "@notion-kit/table-hook/plugins";
 
+import type { RowEditLog } from "@/edit-log/types";
+
 export type CellSurface =
   | "table"
   | "list"
@@ -37,6 +39,11 @@ export interface GroupingValueProps {
   table: TableInstance;
 }
 
+export interface ReadOnlyValueProps
+  extends Pick<RowEditLog, "value" | "property" | "textValue"> {
+  config: unknown;
+}
+
 export interface TableUiPlugin<TPlugin extends CellPlugin = CellPlugin> {
   id: InferKey<TPlugin>;
   meta: {
@@ -51,6 +58,7 @@ export interface TableUiPlugin<TPlugin extends CellPlugin = CellPlugin> {
   };
   disablePropertyTooltip?: boolean;
   renderCell: (props: CellProps) => React.ReactNode;
+  renderReadOnlyValue?: (props: ReadOnlyValueProps) => React.ReactNode;
   renderBulkEditor?: (props: BulkEditorProps) => React.ReactNode;
   renderConfigMenu?: (props: ConfigMenuProps) => React.ReactNode;
   renderGroupingValue: (props: GroupingValueProps) => React.ReactNode;

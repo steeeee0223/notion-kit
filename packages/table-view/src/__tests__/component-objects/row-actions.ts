@@ -10,18 +10,41 @@ export class RowActionsObject {
   ) {}
 
   static async open(tableView: TableViewObject, rowName: string) {
-    const row = tableView.row(rowName);
-    await tableView.user.click(
-      within(row).getByRole("button", { name: "Row actions" }),
+    return RowActionsObject.openFromTrigger(
+      tableView,
+      RowActionsObject.trigger(tableView.row(rowName)),
     );
+  }
 
-    return new RowActionsObject(tableView, await screen.findByRole("dialog"));
+  static trigger(row: HTMLElement) {
+    return within(row).getByRole("button", { name: "Row actions" });
+  }
+
+  static boardTrigger(card: HTMLElement) {
+    return within(card).getByRole("button", { name: "Actions" });
+  }
+
+  static async openFromTrigger(
+    tableView: TableViewObject,
+    trigger: HTMLElement,
+    contextMenu = false,
+  ) {
+    if (contextMenu) {
+      fireEvent.contextMenu(trigger, { clientX: 40, clientY: 20 });
+    } else {
+      await tableView.user.click(trigger);
+    }
+
+    return new RowActionsObject(
+      tableView,
+      await screen.findByRole(contextMenu ? "menu" : "dialog"),
+    );
   }
 
   searchInput() {
-    return within(this.root).getByPlaceholderText<HTMLInputElement>(
-      "Search actions...",
-    );
+    return within(this.root).getByRole<HTMLInputElement>("combobox", {
+      name: "Search actions",
+    });
   }
 
   option(name: string | RegExp) {
@@ -50,6 +73,14 @@ export class RowActionsObject {
 
   choose(name: string | RegExp) {
     fireEvent.click(this.option(name));
+  }
+
+  async openEditLog() {
+    await this.tableView.user.click(this.option("Edit log"));
+  }
+
+  async waitUntilClosed() {
+    await waitFor(() => expect(this.root).not.toBeInTheDocument());
   }
 
   async waitForRowCount(rowName: string | RegExp, count: number) {

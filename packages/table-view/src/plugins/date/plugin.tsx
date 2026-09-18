@@ -11,7 +11,12 @@ import type {
 import { CellRenderer, DefaultIcon } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
-import type { CellSurface, ConfigMenuProps, TableUiPlugin } from "../registry";
+import type {
+  CellSurface,
+  ConfigMenuProps,
+  ReadOnlyValueProps,
+  TableUiPlugin,
+} from "../registry";
 import {
   createBulkEditorRenderer,
   createCellRenderer,
@@ -26,6 +31,7 @@ import {
 import { DateCell, DatePickerCellValue, DateTimePicker } from "./date-cell";
 import { DateConfigMenu } from "./date-config-menu";
 import { DateGroupingValue } from "./date-grouping-value";
+import { ReadOnlyDateValue } from "./read-only-value";
 
 function DateConfigRenderer({ column }: ConfigMenuProps) {
   const info = column.getInfo<DatePlugin>();
@@ -40,6 +46,9 @@ function DateConfigRenderer({ column }: ConfigMenuProps) {
 
 function dateRenderers() {
   return {
+    renderReadOnlyValue: (props: ReadOnlyValueProps) => (
+      <ReadOnlyDateValue {...props} />
+    ),
     renderConfigMenu: DateConfigRenderer,
     renderGroupingValue: DateGroupingValue,
   };
@@ -102,7 +111,6 @@ export function createdTime(): TableUiPlugin<CreatedTimePlugin> {
       { ...props, data: { start: row.createdAt, includeTime: true } },
       <DateCell
         data={{ start: row.createdAt, includeTime: true }}
-        row={row}
         {...props}
       />,
       false,
@@ -133,7 +141,6 @@ export function lastEditedTime(): TableUiPlugin<LastEditedTimePlugin> {
       { ...props, data: { start: row.lastEditedAt, includeTime: true } },
       <DateCell
         data={{ start: row.lastEditedAt, includeTime: true }}
-        row={row}
         {...props}
       />,
       false,

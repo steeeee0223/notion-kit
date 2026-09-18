@@ -15,11 +15,15 @@ import {
   vi,
 } from "vitest";
 
+import { EditLogDialogObject } from "@/__tests__/component-objects/edit-log-dialog";
 import {
   renderTableView,
   type TableViewProps,
 } from "@/__tests__/component-objects/render-table-view";
+import { RowActionsObject } from "@/__tests__/component-objects/row-actions";
 import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
+
+import { RowActionMenu } from "./row-action-menu";
 
 mockResizeObserver();
 
@@ -85,6 +89,106 @@ async function openRowActionMenu(props: Partial<TableViewProps> = {}) {
 }
 
 describe("RowActionMenu", () => {
+  it.each([
+    ["duplicate", "{Meta>}d{/Meta}"],
+    ["delete", "{Backspace}"],
+    ["new tab", "{Meta>}{Shift>}{Enter}{/Shift}{/Meta}"],
+  ])(
+    "RowActionMenu_%sShortcut_OnlyHandlesItsOwnSearchInput",
+    async (action, keys) => {
+      const onDataChange = vi.fn();
+      const open = vi.spyOn(window, "open").mockImplementation(() => null);
+      const tableView = renderTableView({
+        onDataChange,
+        getRowUrl: (id) => `/${id}`,
+        children: (
+          <>
+            <section aria-label="First row actions">
+              <RowActionMenu rowId="row1" />
+            </section>
+            <section aria-label="Second row actions">
+              <RowActionMenu rowId="row3" />
+            </section>
+          </>
+        ),
+      });
+      const activeMenu = new RowActionsObject(
+        tableView,
+        screen.getByRole("region", { name: "Second row actions" }),
+      );
+      activeMenu.searchInput().focus();
+
+      await activeMenu.press(keys);
+
+      if (action === "new tab") {
+        expect(open).toHaveBeenCalledExactlyOnceWith(
+          "/row3",
+          "_blank",
+          "noopener,noreferrer",
+        );
+        expect(onDataChange).not.toHaveBeenCalled();
+      } else {
+        expect(onDataChange).toHaveBeenCalledOnce();
+        expect(lastAction(onDataChange)).toMatchObject({
+          type:
+            action === "duplicate" ? "data.row.duplicate" : "data.row.delete",
+          payload:
+            action === "duplicate"
+              ? { sourceRowId: "row3" }
+              : { rowIds: ["row3"] },
+        });
+      }
+    },
+  );
+
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])(
+    "RowActionMenu_TableCapability=%s_RowCapability=%s_ShowsOnlyRowEntry",
+    async (table, row) => {
+      const fetchTableEditLogs = vi
+        .fn()
+        .mockResolvedValue({ items: [], nextCursor: null });
+      const fetchRowEditLogs = vi
+        .fn()
+        .mockResolvedValue({ items: [], nextCursor: null });
+      const { menu } = await openRowActionMenu({
+        fetchTableEditLogs: table ? fetchTableEditLogs : undefined,
+        fetchRowEditLogs: row ? fetchRowEditLogs : undefined,
+      });
+
+      expect(Boolean(menu.queryOption("Edit log"))).toBe(row);
+      expect(fetchTableEditLogs).not.toHaveBeenCalled();
+      expect(fetchRowEditLogs).not.toHaveBeenCalled();
+    },
+  );
+
+  it("RowActionMenu_EditLog_RequestsSelectedRowAndDisablesMutationShortcuts", async () => {
+    const onDataChange = vi.fn();
+    const fetchRowEditLogs = vi
+      .fn()
+      .mockResolvedValue({ items: [], nextCursor: null });
+    const { menu, tableView } = await openRowActionMenu({
+      fetchRowEditLogs,
+      onDataChange,
+      properties: titleProperties,
+    });
+
+    await menu.openEditLog();
+
+    const dialog = await EditLogDialogObject.find(tableView.user);
+    await menu.waitUntilClosed();
+    expect(fetchRowEditLogs).toHaveBeenCalledWith(
+      expect.objectContaining({ rowId: "row1" }),
+    );
+    dialog.closeButton().focus();
+    await tableView.user.keyboard("{Meta>}d{/Meta}{Backspace}");
+    expect(onDataChange).not.toHaveBeenCalled();
+  });
+
   it("RowActionMenu_Search_FiltersActions", async () => {
     // Arrange
     const { menu } = await openRowActionMenu();

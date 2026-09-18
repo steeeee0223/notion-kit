@@ -19,6 +19,10 @@
     "./menus": {
       "types": "./dist/menus.d.mts",
       "default": "./dist/menus.mjs"
+    },
+    "./mock": {
+      "types": "./dist/mock.d.mts",
+      "default": "./dist/mock.mjs"
     }
   },
   "main": "./dist/index.mjs",
