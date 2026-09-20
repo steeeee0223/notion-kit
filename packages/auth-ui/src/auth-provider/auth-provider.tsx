@@ -1,10 +1,14 @@
 import React, { createContext, use, useMemo } from "react";
 
-import { createAuthClient, type AuthClient } from "@notion-kit/auth";
+import { createAuthClient, type AuthClient } from "@notion-kit/auth/client";
+
+import { resolveAppURL } from "../lib/app-url";
 
 interface AuthContextInterface {
   auth: AuthClient;
   appURL: string;
+  resetPasswordURL?: string;
+  billingReturnURL?: string;
   redirect?: (url: string) => void;
 }
 
@@ -41,29 +45,31 @@ function useListWorkspaces() {
 interface AuthProviderProps extends React.PropsWithChildren {
   appURL?: string;
   authURL?: string;
+  resetPasswordURL?: string;
+  billingReturnURL?: string;
   redirect?: (url: string) => void;
-}
-
-function resolveAppURL(appURL: string, url: string) {
-  if (!appURL || /^https?:\/\//.test(url)) return url;
-  const base = appURL.replace(/\/+$/, "");
-  if (url === "/") return base;
-  const path = url.startsWith("/") ? url : `/${url}`;
-  return `${base}${path}`;
 }
 
 function AuthProvider({
   appURL,
   authURL,
+  resetPasswordURL,
+  billingReturnURL,
   children,
   redirect,
 }: AuthProviderProps) {
   const ctx = useMemo<AuthContextInterface>(() => {
-    const auth = createAuthClient(authURL);
+    const auth = createAuthClient({ baseURL: authURL });
     const appBaseURL = appURL ?? "";
     return {
       auth,
       appURL: appBaseURL,
+      resetPasswordURL: resetPasswordURL
+        ? resolveAppURL(appBaseURL, resetPasswordURL)
+        : undefined,
+      billingReturnURL: billingReturnURL
+        ? resolveAppURL(appBaseURL, billingReturnURL)
+        : undefined,
       redirect: (url) => {
         const resolvedURL = resolveAppURL(appBaseURL, url);
         if (redirect) {
@@ -75,7 +81,7 @@ function AuthProvider({
         }
       },
     };
-  }, [appURL, authURL, redirect]);
+  }, [appURL, authURL, resetPasswordURL, billingReturnURL, redirect]);
   return <AuthContext value={ctx}>{children}</AuthContext>;
 }
 

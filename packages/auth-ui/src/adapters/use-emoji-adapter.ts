@@ -5,18 +5,7 @@ import { useMemo } from "react";
 import type { EmojiAdapter, Emojis } from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth } from "../auth-provider";
-
-async function fileToBase64(
-  file: File,
-): Promise<{ imageBase64: string; contentType: string }> {
-  const buffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
-  }
-  return { imageBase64: btoa(binary), contentType: file.type };
-}
+import { fileToBase64 } from "../lib/file";
 
 export function useEmojiAdapter(): EmojiAdapter | undefined {
   const { auth } = useAuth();
@@ -28,10 +17,10 @@ export function useEmojiAdapter(): EmojiAdapter | undefined {
     if (!organizationId) return undefined;
     return {
       getAll: async (): Promise<Emojis> => {
-        const { data } = await emojiApi.list({
+        const { data, error } = await emojiApi.list({
           query: { organizationId },
         });
-        if (!data) return {};
+        if (error) throw new Error(error.message);
         return Object.fromEntries(
           data.map(
             (e: {
@@ -56,19 +45,22 @@ export function useEmojiAdapter(): EmojiAdapter | undefined {
       },
       add: async ({ name, file }) => {
         const { imageBase64, contentType } = await fileToBase64(file);
-        await emojiApi.add({
-          organizationId,
-          name,
-          imageBase64,
-          contentType,
-        });
+        await emojiApi.add(
+          {
+            organizationId,
+            name,
+            imageBase64,
+            contentType,
+          },
+          { throw: true },
+        );
       },
       update: async ({ id, name, file }) => {
         const payload: {
           id: string;
           name?: string;
           imageBase64?: string;
-          contentType?: string;
+          contentType?: Awaited<ReturnType<typeof fileToBase64>>["contentType"];
         } = { id };
         if (name !== undefined) payload.name = name;
         if (file) {
@@ -76,10 +68,10 @@ export function useEmojiAdapter(): EmojiAdapter | undefined {
           payload.imageBase64 = imageBase64;
           payload.contentType = contentType;
         }
-        await emojiApi.update(payload);
+        await emojiApi.update(payload, { throw: true });
       },
       delete: async (id) => {
-        await emojiApi.delete({ id });
+        await emojiApi.delete({ id }, { throw: true });
       },
     };
   }, [emojiApi, organizationId]);

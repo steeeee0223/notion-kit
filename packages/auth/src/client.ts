@@ -12,12 +12,10 @@ import {
 
 import type { Auth } from "@/auth";
 import { roles } from "@/lib/permissions";
-import {
-  emojiClient,
-  fileUploadClient,
-  organizationExtraClient,
-  stripeExtraClient,
-} from "@/lib/plugins";
+import { emojiClient } from "@/lib/plugins/emoji-client";
+import { fileUploadClient } from "@/lib/plugins/file-upload-client";
+import { organizationExtraClient } from "@/lib/plugins/organization-extra-client";
+import { stripeExtraClient } from "@/lib/plugins/stripe-extra-client";
 import { additionalTeamFields, additionalUserFields } from "@/lib/utils";
 
 interface CreateAuthClientOptions {
@@ -64,3 +62,6 @@ export function createAuthClient({
   ];
   return createReactClient({ baseURL, basePath, plugins });
 }
+
+export type * from "./types";
+export type { Session } from "./auth";

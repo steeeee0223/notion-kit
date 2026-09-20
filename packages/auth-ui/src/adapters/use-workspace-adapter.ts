@@ -1,24 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import { v4 } from "uuid";
 
-import type { WorkspaceMetadata } from "@notion-kit/auth";
-import { IconObject, Plan, Role, type IconData } from "@notion-kit/schemas";
+import { IconObject, PlanObject, type IconData } from "@notion-kit/schemas";
 import type { WorkspaceAdapter } from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
-
-function planFromString(plan: string): Plan {
-  const map: Record<string, Plan> = {
-    free: Plan.FREE,
-    education: Plan.EDUCATION,
-    plus: Plan.PLUS,
-    business: Plan.BUSINESS,
-    enterprise: Plan.ENTERPRISE,
-  };
-  return map[plan.toLowerCase()] ?? Plan.FREE;
-}
+import { displayRole } from "./utils";
 
 function parseIcon(logo: string | null | undefined, name: string): IconData {
   try {
@@ -30,21 +18,8 @@ function parseIcon(logo: string | null | undefined, name: string): IconData {
   return { type: "text", src: name };
 }
 
-function parseInviteLink(
-  metadata: string | null | undefined,
-  appURL: string,
-): string {
-  try {
-    const parsed = JSON.parse(metadata ?? "") as WorkspaceMetadata;
-    if (parsed.inviteToken) return `${appURL}/invite/${parsed.inviteToken}`;
-  } catch {
-    // no invite link
-  }
-  return "";
-}
-
 export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
-  const { appURL, auth, redirect } = useAuth();
+  const { auth, redirect } = useAuth();
   const orgApi = auth.organization;
   const orgExtraApi = auth.organizationExtra;
 
@@ -57,28 +32,18 @@ export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
 
     return {
       getAll: async () => {
-        const { data } = await orgExtraApi.getWorkspaceDetail({
+        const { data, error } = await orgExtraApi.getWorkspaceDetail({
           query: { organizationId },
         });
-        if (!data) {
-          return {
-            id: organizationId,
-            name: workspace.name,
-            icon: parseIcon(workspace.logo, workspace.name),
-            slug: workspace.slug,
-            inviteLink: "",
-            role: Role.OWNER,
-            plan: Plan.FREE,
-          };
-        }
+        if (error) throw new Error(error.message);
         return {
           id: data.id,
           name: data.name,
           slug: data.slug,
           icon: parseIcon(data.logo, data.name),
-          inviteLink: parseInviteLink(data.metadata, appURL),
-          role: data.role as Role,
-          plan: planFromString(data.plan),
+          inviteLink: "",
+          role: displayRole(data.role),
+          plan: PlanObject.parse(data.plan.toLowerCase()),
         };
       },
       update: async ({ name, icon }) => {
@@ -111,25 +76,6 @@ export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
           },
         );
       },
-      resetLink: async () => {
-        await orgApi.update(
-          {
-            organizationId,
-            data: {
-              metadata: { inviteToken: v4() } satisfies WorkspaceMetadata,
-            },
-          },
-          { throw: true },
-        );
-      },
     };
-  }, [
-    orgApi,
-    orgExtraApi,
-    organizationId,
-    workspace,
-    session,
-    appURL,
-    redirect,
-  ]);
+  }, [orgApi, orgExtraApi, organizationId, session, redirect]);
 }

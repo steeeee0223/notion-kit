@@ -97,7 +97,12 @@ export function People() {
   const { data: invitations } = useInvitations((res) => Object.values(res));
   const { invite: inviteMember, cancel } = useInvitationsActions();
   /** Handlers */
-  const { isResetting, copyLink, resetLink: updateLink } = useLinkActions();
+  const {
+    hasInviteLink,
+    isResetting,
+    copyLink,
+    resetLink: updateLink,
+  } = useLinkActions();
   const invitedMembers = useInvitedMembers();
   const downloadCsv = useCallback(() => {
     const csv = generateGuestsCsv(guests);
@@ -110,7 +115,7 @@ export function People() {
 
   return (
     <SettingsSection title={title}>
-      {scopes.has(Scope.MemberInvite) && (
+      {scopes.has(Scope.MemberInvite) && hasInviteLink && (
         <>
           <SettingsRule
             title={invite.title}

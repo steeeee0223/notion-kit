@@ -17,7 +17,7 @@ export function WorkspaceSettingsSection() {
   const trans = t("general.workspace", { returnObjects: true });
   /** handlers */
   const { update, updateIcon, isUpdatingIcon } = useWorkspaceActions();
-  const { isUploading, upload } = useFileActions();
+  const { isUploading, upload } = useFileActions("workspace-icon");
   const { props: nameProps } = useInputField({
     id: "workspace-name",
     initialValue: workspace.name,

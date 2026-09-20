@@ -21,6 +21,8 @@ import {
 
 import { useAuth } from "../auth-provider";
 import { handleError } from "../lib";
+import { resolveAppURL } from "../lib/app-url";
+import { TwoFactorForm } from "./two-factor-form";
 import type { LoginMode } from "./types";
 import { useLoginForm } from "./use-login-form";
 
@@ -34,12 +36,14 @@ interface LoginFormProps {
 export function LoginForm({
   className,
   mode,
-  callbackURL,
+  callbackURL: requestedCallbackURL,
   onModeChange,
 }: LoginFormProps) {
-  const { auth, redirect } = useAuth();
+  const { auth, appURL, redirect } = useAuth();
+  const callbackURL = resolveAppURL(appURL, requestedCallbackURL ?? "/");
   const {
     form,
+    twoFactorMethods,
     forgotPasswordStage,
     errorMessage,
     handlePasswordForgot,
@@ -51,18 +55,28 @@ export function LoginForm({
   const disabled = form.formState.disabled || loading;
 
   const loginWithPasskey = async () => {
-    await auth.signIn.passkey(
-      {},
-      {
-        onRequest: () => setLoading(true),
-        onResponse: () => setLoading(false),
-        onSuccess: () => {
-          toast("Logged in with passkey");
-          redirect?.(callbackURL ?? "/");
+    setLoading(true);
+    try {
+      const result = await auth.signIn.passkey();
+      if (result.error) {
+        handleError(result, "Failed to login with passkey");
+        return;
+      }
+      toast("Logged in with passkey");
+      redirect?.(callbackURL);
+    } catch (error) {
+      handleError(
+        {
+          error: {
+            message:
+              error instanceof Error ? error.message : "Passkey sign-in failed",
+          },
         },
-        onError: (e) => handleError(e, "Failed to login with passkey"),
-      },
-    );
+        "Failed to login with passkey",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loginWithOauth = async (provider: "google" | "github") => {
@@ -71,11 +85,15 @@ export function LoginForm({
       {
         onRequest: () => setLoading(true),
         onResponse: () => setLoading(false),
-        onSuccess: () => void toast(`Logged in with ${provider}`),
         onError: (e) => handleError(e, `Failed to login with ${provider}`),
       },
     );
   };
+
+  if (twoFactorMethods)
+    return (
+      <TwoFactorForm methods={twoFactorMethods} callbackURL={callbackURL} />
+    );
 
   return (
     <div
@@ -129,7 +147,8 @@ export function LoginForm({
         <Separator />
         {forgotPasswordStage === "link_sent" ? (
           <div className="text-center text-sm text-secondary">
-            Check your inbox for the link to reset your password.
+            If an account exists for this email, you will receive a password
+            reset link.
           </div>
         ) : (
           <Form {...form}>

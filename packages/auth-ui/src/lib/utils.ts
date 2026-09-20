@@ -1,4 +1,4 @@
-import { ErrorContext } from "@notion-kit/auth";
+import type { ErrorContext } from "@notion-kit/auth/client";
 import { toast } from "@notion-kit/ui/primitives";
 
 export function handleError(

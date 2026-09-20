@@ -1,17 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
+import { z } from "zod/v4";
 
-import type { IconData } from "@notion-kit/schemas";
-import type {
-  TeamspacePermission,
-  TeamspaceRole,
-  Teamspaces,
-  TeamspacesAdapter,
-} from "@notion-kit/settings-panel";
+import { IconObject } from "@notion-kit/schemas";
+import type { Teamspaces, TeamspacesAdapter } from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
-import { handleError } from "../lib";
 
 export function useTeamspacesAdapter(): TeamspacesAdapter | undefined {
   const { auth } = useAuth();
@@ -31,20 +26,21 @@ export function useTeamspacesAdapter(): TeamspacesAdapter | undefined {
           query: { organizationId },
         });
         if (res.error) {
-          handleError(res, "Fetch teamspaces failed");
-          return {};
+          throw new Error(res.error.message);
         }
         return res.data.reduce<Teamspaces>((acc, team) => {
           acc[team.id] = {
             id: team.id,
             name: team.name,
             updatedAt: new Date(team.updatedAt ?? team.createdAt).getTime(),
-            icon: JSON.parse(team.icon) as IconData,
-            permission: team.permission as TeamspacePermission,
+            icon: IconObject.parse(JSON.parse(team.icon)),
+            permission: z
+              .enum(["default", "open", "closed", "private"])
+              .parse(team.permission),
             ownedBy: team.ownedBy,
             members: team.members.map((m) => ({
               userId: m.userId,
-              role: m.role as TeamspaceRole,
+              role: z.enum(["owner", "member"]).parse(m.role),
             })),
           };
           return acc;
@@ -52,10 +48,17 @@ export function useTeamspacesAdapter(): TeamspacesAdapter | undefined {
       },
       add: async ({ icon, ...data }) => {
         const res = await orgApi.createTeam(
-          { ...data, icon: JSON.stringify(icon), ownedBy: userId },
+          { ...data, organizationId, icon: JSON.stringify(icon) },
           { throw: true },
         );
-        await orgApi.addTeamMember({ teamId: res.id, userId });
+        await orgApi.addTeamMember(
+          { organizationId, teamId: res.id, userId },
+          { throw: true },
+        );
+        await orgExtraApi.updateTeamMember(
+          { teamId: res.id, userId, role: "owner" },
+          { throw: true },
+        );
       },
       update: async ({ id, icon, ...data }) => {
         await orgApi.updateTeam(
@@ -70,32 +73,45 @@ export function useTeamspacesAdapter(): TeamspacesAdapter | undefined {
         );
       },
       delete: async (teamId) => {
-        await orgApi.removeTeam({ teamId }, { throw: true });
+        await orgApi.removeTeam({ organizationId, teamId }, { throw: true });
       },
       leave: async (teamId) => {
-        await orgApi.removeTeamMember({ teamId, userId }, { throw: true });
-      },
-      addMembers: async ({ teamspaceId, userIds, role }) => {
-        await Promise.all(
-          userIds.map((userId) =>
-            orgExtraApi.addTeamMemberWithRole({
-              teamId: teamspaceId,
-              userId,
-              role,
-            }),
-          ),
+        await orgApi.removeTeamMember(
+          { organizationId, teamId, userId },
+          { throw: true },
         );
       },
+      addMembers: async ({ teamspaceId, userIds, role }) => {
+        const results = await Promise.allSettled(
+          userIds.map(async (userId) => {
+            await orgApi.addTeamMember(
+              { organizationId, teamId: teamspaceId, userId },
+              { throw: true },
+            );
+            if (role === "owner") {
+              await orgExtraApi.updateTeamMember(
+                { teamId: teamspaceId, userId, role },
+                { throw: true },
+              );
+            }
+          }),
+        );
+        const failure = results.find((result) => result.status === "rejected");
+        if (failure) throw failure.reason;
+      },
       updateMember: async ({ teamspaceId, userId, role }) => {
-        await orgExtraApi.updateTeamMember({
-          teamId: teamspaceId,
-          userId,
-          role,
-        });
+        await orgExtraApi.updateTeamMember(
+          {
+            teamId: teamspaceId,
+            userId,
+            role,
+          },
+          { throw: true },
+        );
       },
       deleteMember: async ({ teamspaceId, userId }) => {
         await orgApi.removeTeamMember(
-          { teamId: teamspaceId, userId },
+          { organizationId, teamId: teamspaceId, userId },
           { throw: true },
         );
       },
