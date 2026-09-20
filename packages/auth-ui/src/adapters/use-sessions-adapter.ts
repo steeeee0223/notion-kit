@@ -5,7 +5,6 @@ import { useMemo } from "react";
 import type { SessionsAdapter } from "@notion-kit/settings-panel";
 
 import { useAuth } from "../auth-provider";
-import { handleError } from "../lib";
 import { transferSessions } from "./utils";
 
 export function useSessionsAdapter(): SessionsAdapter {
@@ -16,8 +15,7 @@ export function useSessionsAdapter(): SessionsAdapter {
       getAll: async () => {
         const result = await auth.listSessions();
         if (result.error) {
-          handleError(result, "Fetch sessions error");
-          return [];
+          throw new Error(result.error.message);
         }
         return transferSessions(result.data);
       },

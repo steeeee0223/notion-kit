@@ -77,13 +77,22 @@ export function useBillingActions() {
   });
 
   const editVat = actions?.editVat;
-  const viewInvoice = actions?.viewInvoice;
+  const { mutate: viewInvoice, isPending: isViewingInvoice } = useMutation({
+    mutationFn: async () => {
+      if (!actions?.viewInvoice) return unsupportedOperation();
+      await actions.viewInvoice();
+    },
+    onError: (error) =>
+      toast.error("View invoice failed", { description: error.message }),
+  });
 
   return {
     isUpgrading,
     isEditingMethod,
     isEditingBilledTo,
     isEditingEmail,
+    isViewingInvoice,
+    canViewInvoice: !!actions?.viewInvoice,
     upgrade,
     changePlan,
     editMethod,

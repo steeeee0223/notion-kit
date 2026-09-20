@@ -1,6 +1,6 @@
 "use client";
 
-import type { Organization } from "@notion-kit/auth";
+import type { Organization } from "@notion-kit/auth/client";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {

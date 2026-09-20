@@ -5,4 +5,5 @@ import { baseConfig } from "@notion-kit/config/tsdown";
 export default defineConfig((opts) => ({
   ...opts,
   ...baseConfig(opts),
+  entry: ["src/index.ts", "src/client.ts"],
 }));

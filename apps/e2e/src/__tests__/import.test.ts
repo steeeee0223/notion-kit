@@ -6,19 +6,19 @@ import { describe, expect, it } from "vitest";
 
 describe("Package Import Tests", () => {
   it("should import @notion-kit/auth without errors", async () => {
-    const { createAuth, createAuthClient } = await import("@notion-kit/auth");
+    const { createAuth } = await import("@notion-kit/auth");
+    const { createAuthClient } = await import("@notion-kit/auth/client");
     const auth = createAuth({
-      POSTGRES_URL: "API_KEY",
-      BETTER_AUTH_URL: "API_KEY",
-      BETTER_AUTH_SECRET: "API_KEY",
-      BETTER_AUTH_ALLOWED_HOSTS: [],
+      POSTGRES_URL: "postgresql://test:test@localhost:5432/test",
+      BETTER_AUTH_URL: "https://auth.example.com",
+      BETTER_AUTH_SECRET: "test-secret-with-at-least-32-characters",
       TRUSTED_ORIGINS: [],
       GOOGLE_CLIENT_ID: "API_KEY",
       GOOGLE_CLIENT_SECRET: "API_KEY",
       GITHUB_CLIENT_ID: "API_KEY",
       GITHUB_CLIENT_SECRET: "API_KEY",
       NODE_ENV: "test",
-      MAILTRAP_API_KEY: "API_KEY",
+      BETTER_AUTH_API_KEY: "API_KEY",
     });
     expect(auth).toBeDefined();
 
