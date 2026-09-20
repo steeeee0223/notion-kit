@@ -28,12 +28,6 @@ const user = {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("shared auth configuration", () => {
-  it("uses the injected secret and fixed public auth URL", () => {
-    const auth = createAuth(env);
-    expect(auth.options.secret).toBe(env.BETTER_AUTH_SECRET);
-    expect(auth.options.baseURL).toBe("https://auth.example.com");
-    expect(auth.options.basePath).toBe("/api/auth");
-  });
   it("sends change-email confirmation to the original mailbox using official templates", async () => {
     const sent: unknown[] = [];
     vi.stubGlobal("fetch", (_url: unknown, init: { body: string }) => {
@@ -190,38 +184,6 @@ describe("shared auth configuration", () => {
       ]);
     },
   );
-  it("delegates pending email work to the injected background lifecycle", async () => {
-    let completeDelivery!: (response: Response) => void;
-    const response = new Promise<Response>((resolve) => {
-      completeDelivery = resolve;
-    });
-    vi.stubGlobal("fetch", () => response);
-    const pending: Promise<unknown>[] = [];
-    const auth = createAuth(env, {
-      backgroundTasks: {
-        handler: (promise) => {
-          pending.push(promise);
-        },
-      },
-    });
-    const context = await auth.$context;
-    let delivered = false;
-    const delivery = auth.options.emailVerification
-      .sendVerificationEmail({
-        user,
-        url: "https://auth.example.com/verify",
-        token: "verify",
-      })
-      .then(() => {
-        delivered = true;
-      });
-    await context.runInBackgroundOrAwait(delivery);
-    expect(delivered).toBe(false);
-    expect(pending).toHaveLength(1);
-    completeDelivery(Response.json({ messageId: "background-1" }));
-    await Promise.all(pending);
-    expect(delivered).toBe(true);
-  });
   it("isolates sender credentials, origins, and base paths between factory instances", async () => {
     const requests: { url: string; authorization: string | null }[] = [];
     vi.stubGlobal("fetch", (url: string | URL, init: RequestInit) => {

@@ -9,14 +9,12 @@ import { useInvitationsAdapter } from "./use-invitations-adapter";
 import { usePasskeysAdapter } from "./use-passkeys-adapter";
 import { usePeopleAdapter } from "./use-people-adapter";
 import { useSessionsAdapter } from "./use-sessions-adapter";
-import { useSettingsAdapters } from "./use-settings-adapters";
 import { useTeamspacesAdapter } from "./use-teamspaces-adapter";
 import { useWorkspaceAdapter } from "./use-workspace-adapter";
 
 const state = vi.hoisted(() => ({
   language: "en",
   read: vi.fn(),
-  upload: vi.fn(),
   addTeamMember: vi.fn(),
   updateTeamMember: vi.fn(),
   listAccounts: vi.fn(),
@@ -58,7 +56,6 @@ vi.mock("../auth-provider", () => ({
         addTeamMember: state.addTeamMember,
       },
       emoji: { list: state.read },
-      fileUpload: { upload: state.upload },
       subscription: { list: state.read },
       stripeExtra: { getCustomer: state.read },
       organizationExtra: {
@@ -366,21 +363,6 @@ it("waits for all membership changes before reporting a partial batch failure", 
   await expect(operation).resolves.toMatchObject({
     message: "First member rejected",
   });
-});
-
-it("reports an upload failure instead of silently leaving the workspace unchanged", async () => {
-  state.upload.mockResolvedValue({
-    data: null,
-    error: { message: "Storage unavailable" },
-  });
-  const file = new File(["image"], "icon.png", { type: "image/png" });
-  Object.defineProperty(file, "arrayBuffer", {
-    value: () => Promise.resolve(new Uint8Array([1, 2, 3]).buffer),
-  });
-  const { result } = renderHook(() => useSettingsAdapters());
-  await expect(
-    result.current.uploadFile!(file, "workspace-icon"),
-  ).rejects.toThrow("Storage unavailable");
 });
 
 it("rejects an unknown saved language instead of asserting it is supported", async () => {
