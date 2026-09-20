@@ -154,15 +154,12 @@ export const ShowingEmptyChild: Story = {
 
     // Expand Folder 3 which has no children
     const folder3 = canvas.getByRole("treeitem", { name: "Folder 3" });
+    await expect(canvas.queryByText("No items")).not.toBeInTheDocument();
 
-    const expandButton = folder3.querySelector('[aria-label="expand"]');
-    if (expandButton) {
-      await userEvent.click(expandButton);
+    await userEvent.click(within(folder3).getByLabelText("expand"));
 
-      // Should show empty indicator
-      const emptyIndicator = canvas.getByRole("group");
-      await expect(emptyIndicator).toHaveTextContent("No items");
-    }
+    await expect(folder3).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByText("No items")).toBeVisible();
   },
 };
 

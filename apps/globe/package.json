@@ -48,6 +48,6 @@
     "prettier": "catalog:",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:",
-    "vite": "^8.0.13"
+    "vite": "catalog:test"
   }
 }
