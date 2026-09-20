@@ -3,6 +3,8 @@ import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import type Stripe from "stripe";
 import { z } from "zod/v4";
 
+import { requireOrganizationAccess, resourceIdSchema } from "./resource-access";
+
 const addressSchema = z.object({
   line1: z.string(),
   line2: z.string().nullable(),
@@ -22,11 +24,17 @@ export function stripeExtra(opts: { stripeClient: Stripe }) {
         "/stripe-extra/get-customer",
         {
           method: "GET",
-          query: z.object({ organizationId: z.string() }),
+          query: z.object({ organizationId: resourceIdSchema }),
           requireHeaders: true,
           use: [sessionMiddleware],
         },
         async (ctx) => {
+          await requireOrganizationAccess(
+            ctx.context,
+            ctx.context.session.user.id,
+            ctx.query.organizationId,
+            true,
+          );
           const org = await ctx.context.adapter.findOne<{
             stripeCustomerId: string | null;
           }>({
@@ -62,7 +70,7 @@ export function stripeExtra(opts: { stripeClient: Stripe }) {
         {
           method: "POST",
           body: z.object({
-            organizationId: z.string(),
+            organizationId: resourceIdSchema,
             email: z.email().optional(),
             name: z.string().optional(),
             address: addressSchema.optional(),
@@ -71,6 +79,12 @@ export function stripeExtra(opts: { stripeClient: Stripe }) {
           use: [sessionMiddleware],
         },
         async (ctx) => {
+          await requireOrganizationAccess(
+            ctx.context,
+            ctx.context.session.user.id,
+            ctx.body.organizationId,
+            true,
+          );
           const org = await ctx.context.adapter.findOne<{
             stripeCustomerId: string | null;
           }>({

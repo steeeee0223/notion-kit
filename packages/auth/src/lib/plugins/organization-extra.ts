@@ -1,55 +1,47 @@
 import type { BetterAuthPlugin } from "better-auth";
-import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
+import {
+  APIError,
+  createAuthEndpoint,
+  sessionMiddleware,
+} from "better-auth/api";
 import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod/v4";
 
 import type { DB } from "@/db/db";
 import { invitation as invitationTable, team as teamTable } from "@/db/schemas";
-import { toSlugLike } from "@/lib/utils";
 
-export function organizationExtra({ db }: { db: DB }) {
+import { roles } from "../permissions";
+import { requireOrganizationAccess, resourceIdSchema } from "./resource-access";
+
+const organizationRoleSchema = z.enum(["owner", "admin", "member", "guest"]);
+
+export function organizationExtra({
+  db,
+  billingEnabled,
+}: {
+  db: DB;
+  billingEnabled: boolean;
+}) {
   return {
     id: "organization-extra",
+    schema: {
+      teamMember: {
+        fields: {
+          role: {
+            type: ["owner", "member"],
+            required: true,
+            defaultValue: "member",
+            input: false,
+          },
+        },
+      },
+    },
     endpoints: {
-      getUniqueSlug: createAuthEndpoint(
-        "/organization/get-unique-slug",
-        {
-          method: "POST",
-          body: z.object({ name: z.string().min(1) }),
-          requireHeaders: true,
-          use: [sessionMiddleware],
-        },
-        async (ctx) => {
-          const baseSlug = toSlugLike(ctx.body.name) || "workspace";
-          const candidates = [
-            baseSlug,
-            ...Array.from(
-              { length: 10 },
-              () => `${baseSlug}-${crypto.randomUUID().slice(0, 8)}`,
-            ),
-          ];
-
-          for (const slug of candidates) {
-            const org = await ctx.context.adapter.findOne<{ id: string }>({
-              model: "organization",
-              where: [{ field: "slug", value: slug }],
-            });
-            if (!org) {
-              return ctx.json({ slug });
-            }
-          }
-
-          return ctx.json({
-            slug: `${baseSlug}-${crypto.randomUUID().replace(/-/g, "")}`,
-          });
-        },
-      ),
-
       getWorkspaceDetail: createAuthEndpoint(
         "/organization-extra/get-workspace-detail",
         {
           method: "GET",
-          query: z.object({ organizationId: z.string() }),
+          query: z.object({ organizationId: resourceIdSchema }),
           requireHeaders: true,
           use: [sessionMiddleware],
         },
@@ -58,6 +50,22 @@ export function organizationExtra({ db }: { db: DB }) {
 
           const userId = session.user.id;
           const orgId = ctx.query.organizationId;
+
+          const member = await ctx.context.adapter.findOne<{
+            role: string;
+          }>({
+            model: "member",
+            where: [
+              { field: "organizationId", value: orgId },
+              { field: "userId", value: userId },
+            ],
+          });
+
+          if (!member) {
+            throw new APIError("FORBIDDEN", {
+              message: "Organization membership required",
+            });
+          }
 
           const org = await ctx.context.adapter.findOne<{
             id: string;
@@ -71,18 +79,8 @@ export function organizationExtra({ db }: { db: DB }) {
           });
           if (!org) return ctx.json(null);
 
-          const member = await ctx.context.adapter.findOne<{
-            role: string;
-          }>({
-            model: "member",
-            where: [
-              { field: "organizationId", value: orgId },
-              { field: "userId", value: userId },
-            ],
-          });
-
           let plan = "free";
-          try {
+          if (billingEnabled) {
             const subscriptions = await ctx.context.adapter.findMany<{
               plan: string;
               status: string | null;
@@ -94,8 +92,6 @@ export function organizationExtra({ db }: { db: DB }) {
               (s) => s.status === "active" || s.status === "trialing",
             );
             if (active) plan = active.plan;
-          } catch {
-            // Stripe plugin not loaded — subscription model unavailable
           }
 
           return ctx.json({
@@ -104,7 +100,7 @@ export function organizationExtra({ db }: { db: DB }) {
             slug: org.slug,
             logo: org.logo,
             metadata: org.metadata,
-            role: member?.role ?? "owner",
+            role: member.role,
             plan,
           });
         },
@@ -114,11 +110,16 @@ export function organizationExtra({ db }: { db: DB }) {
         "/organization-extra/list-teams-with-members",
         {
           method: "GET",
-          query: z.object({ organizationId: z.string() }),
+          query: z.object({ organizationId: resourceIdSchema }),
           requireHeaders: true,
           use: [sessionMiddleware],
         },
         async (ctx) => {
+          await requireOrganizationAccess(
+            ctx.context,
+            ctx.context.session.user.id,
+            ctx.query.organizationId,
+          );
           const teams = await db.query.team.findMany({
             where: eq(teamTable.organizationId, ctx.query.organizationId),
             with: {
@@ -142,36 +143,20 @@ export function organizationExtra({ db }: { db: DB }) {
         },
       ),
 
-      listTeamMembers: createAuthEndpoint(
-        "/organization-extra/list-team-members",
-        {
-          method: "GET",
-          query: z.object({ teamId: z.string() }),
-          requireHeaders: true,
-          use: [sessionMiddleware],
-        },
-        async (ctx) => {
-          const rows = await ctx.context.adapter.findMany<{
-            userId: string;
-            role: string;
-            createdAt: Date | null;
-          }>({
-            model: "teamMember",
-            where: [{ field: "teamId", value: ctx.query.teamId }],
-          });
-          return ctx.json(rows);
-        },
-      ),
-
       listInvitationsWithInviter: createAuthEndpoint(
         "/organization-extra/list-invitations-with-inviter",
         {
           method: "GET",
-          query: z.object({ organizationId: z.string() }),
+          query: z.object({ organizationId: resourceIdSchema }),
           requireHeaders: true,
           use: [sessionMiddleware],
         },
         async (ctx) => {
+          await requireOrganizationAccess(
+            ctx.context,
+            ctx.context.session.user.id,
+            ctx.query.organizationId,
+          );
           const rows = await db.query.invitation.findMany({
             where: and(
               eq(invitationTable.organizationId, ctx.query.organizationId),
@@ -201,63 +186,52 @@ export function organizationExtra({ db }: { db: DB }) {
         },
       ),
 
-      addTeamMemberWithRole: createAuthEndpoint(
-        "/organization-extra/add-team-member-with-role",
-        {
-          method: "POST",
-          body: z.object({
-            teamId: z.string(),
-            userId: z.string(),
-            role: z.string(),
-          }),
-          requireHeaders: true,
-          use: [sessionMiddleware],
-        },
-        async (ctx) => {
-          const existing = await ctx.context.adapter.findOne<{
-            id: string;
-          }>({
-            model: "teamMember",
-            where: [
-              { field: "teamId", value: ctx.body.teamId },
-              { field: "userId", value: ctx.body.userId },
-            ],
-          });
-          if (existing) {
-            await ctx.context.adapter.update({
-              model: "teamMember",
-              where: [{ field: "id", value: existing.id }],
-              update: { role: ctx.body.role },
-            });
-            return ctx.json({ ok: true });
-          }
-          await ctx.context.adapter.create({
-            model: "teamMember",
-            data: {
-              id: crypto.randomUUID(),
-              teamId: ctx.body.teamId,
-              userId: ctx.body.userId,
-              role: ctx.body.role,
-              createdAt: new Date(),
-            },
-          });
-          return ctx.json({ ok: true });
-        },
-      ),
-
       updateTeamMember: createAuthEndpoint(
         "/organization-extra/update-team-member",
         {
           method: "POST",
           body: z.object({
-            teamId: z.string(),
-            userId: z.string(),
-            role: z.string(),
+            teamId: resourceIdSchema,
+            userId: resourceIdSchema,
+            role: z.enum(["owner", "member"]),
           }),
           requireHeaders: true,
           use: [sessionMiddleware],
         },
         async (ctx) => {
+          const team = await ctx.context.adapter.findOne<{
+            organizationId: string;
+          }>({
+            model: "team",
+            where: [{ field: "id", value: ctx.body.teamId }],
+          });
+          if (!team)
+            throw new APIError("NOT_FOUND", { message: "Team not found" });
+          const caller = await ctx.context.adapter.findOne<{ role: string }>({
+            model: "member",
+            where: [
+              { field: "organizationId", value: team.organizationId },
+              { field: "userId", value: ctx.context.session.user.id },
+            ],
+          });
+          if (
+            !caller?.role.split(",").some((role) => {
+              const parsed = organizationRoleSchema.safeParse(role);
+              return (
+                parsed.success &&
+                roles[parsed.data].authorize({ team: ["update"] }).success
+              );
+            })
+          ) {
+            throw new APIError("FORBIDDEN", {
+              message: "Team update permission required",
+            });
+          }
+          await requireOrganizationAccess(
+            ctx.context,
+            ctx.body.userId,
+            team.organizationId,
+          );
           const existing = await ctx.context.adapter.findOne<{
             id: string;
           }>({
@@ -268,7 +242,9 @@ export function organizationExtra({ db }: { db: DB }) {
             ],
           });
           if (!existing) {
-            throw new Error("Team member not found");
+            throw new APIError("NOT_FOUND", {
+              message: "Team member not found",
+            });
           }
           await ctx.context.adapter.update({
             model: "teamMember",

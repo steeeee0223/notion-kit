@@ -5,68 +5,62 @@ import {
   organizationClient,
   twoFactorClient,
 } from "better-auth/client/plugins";
-import { createAuthClient as createReactClient } from "better-auth/react";
+import {
+  createAuthClient as createReactClient,
+  type ReactAuthClient,
+} from "better-auth/react";
 
 import type { Auth } from "@/auth";
-import { ac, roles } from "@/lib/permissions";
+import { roles } from "@/lib/permissions";
 import {
   emojiClient,
   fileUploadClient,
   organizationExtraClient,
   stripeExtraClient,
 } from "@/lib/plugins";
-import {
-  additionalSessionFields,
-  additionalTeamFields,
-  additionalUserFields,
-} from "@/lib/utils";
+import { additionalTeamFields, additionalUserFields } from "@/lib/utils";
 
 interface CreateAuthClientOptions {
   baseURL?: string;
   basePath?: string;
 }
 
-function normalizeOptions(
-  options?: string | CreateAuthClientOptions,
-): CreateAuthClientOptions {
-  if (typeof options === "string") {
-    return options.startsWith("/")
-      ? { basePath: options }
-      : { baseURL: options, basePath: "/api/auth" };
-  }
-  return {
-    baseURL: options?.baseURL,
-    basePath: options?.basePath ?? "/api/auth",
-  };
-}
+const organizationOptions = {
+  roles,
+  teams: { enabled: true },
+  schema: { team: { additionalFields: additionalTeamFields } },
+} as const;
 
-export function createAuthClient(options?: string | CreateAuthClientOptions) {
-  const { baseURL, basePath } = normalizeOptions(options);
-  return createReactClient({
-    /** The base URL of the server (optional if you're using the same domain) */
-    baseURL,
-    basePath,
-    plugins: [
-      inferAdditionalFields<Auth>({
-        user: additionalUserFields,
-        session: additionalSessionFields,
-      }),
-      twoFactorClient(),
-      passkeyClient(),
-      organizationClient({
-        ac,
-        roles,
-        teams: { enabled: true },
-        schema: {
-          team: { additionalFields: additionalTeamFields },
-        },
-      }),
-      stripeClient({ subscription: true }),
-      stripeExtraClient(),
-      organizationExtraClient(),
-      emojiClient(),
-      fileUploadClient(),
-    ],
-  });
+type ClientPlugins = [
+  ReturnType<typeof inferAdditionalFields<Auth>>,
+  ReturnType<typeof twoFactorClient>,
+  ReturnType<typeof passkeyClient>,
+  ReturnType<typeof organizationClient<typeof organizationOptions>>,
+  ReturnType<typeof stripeClient<{ subscription: true }>>,
+  ReturnType<typeof stripeExtraClient>,
+  ReturnType<typeof organizationExtraClient>,
+  ReturnType<typeof emojiClient>,
+  ReturnType<typeof fileUploadClient>,
+];
+
+export type AuthClient = ReactAuthClient<
+  CreateAuthClientOptions & { plugins: ClientPlugins }
+>;
+
+export function createAuthClient({
+  baseURL,
+  basePath = "/api/auth",
+}: CreateAuthClientOptions = {}): AuthClient {
+  const plugins: ClientPlugins = [
+    inferAdditionalFields<Auth>({ user: additionalUserFields }),
+    twoFactorClient(),
+    passkeyClient(),
+    organizationClient(organizationOptions),
+    stripeClient({ subscription: true }),
+    stripeExtraClient(),
+    organizationExtraClient(),
+    emojiClient(),
+    fileUploadClient(),
+  ];
+  return createReactClient({ baseURL, basePath, plugins });
 }
-export type AuthClient = ReturnType<typeof createAuthClient>;

@@ -1,12 +1,12 @@
 import { relations } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   index,
   integer,
   pgTable,
   text,
   timestamp,
-  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -22,11 +22,8 @@ export const user = pgTable("user", {
     .notNull(),
   twoFactorEnabled: boolean("two_factor_enabled").default(false),
   stripeCustomerId: text("stripe_customer_id"),
-  /**
-   * Additional fields can be added here.
-   */
   preferredName: text("preferred_name"),
-  lang: text("lang").default("en"),
+  lang: text("lang").default("en").notNull(),
   tz: text("tz"),
 });
 
@@ -47,13 +44,6 @@ export const session = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     activeOrganizationId: text("active_organization_id"),
     activeTeamId: text("active_team_id"),
-    /**
-     * Additional fields can be added here.
-     */
-    deviceVendor: text("device_vendor"),
-    deviceModel: text("device_model"),
-    deviceType: text("device_type"),
-    location: text("location"),
   },
   (table) => [index("session_userId_idx").on(table.userId)],
 );
@@ -107,6 +97,9 @@ export const twoFactor = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    verified: boolean("verified").default(true),
+    failedVerificationCount: integer("failed_verification_count").default(0),
+    lockedUntil: timestamp("locked_until"),
   },
   (table) => [
     index("twoFactor_secret_idx").on(table.secret),
@@ -137,25 +130,22 @@ export const passkey = pgTable(
   ],
 );
 
-export const organization = pgTable(
-  "organization",
-  {
-    id: text("id").primaryKey(),
-    name: text("name").notNull(),
-    slug: text("slug").notNull().unique(),
-    logo: text("logo"),
-    createdAt: timestamp("created_at").notNull(),
-    metadata: text("metadata"),
-    stripeCustomerId: text("stripe_customer_id"),
-  },
-  (table) => [uniqueIndex("organization_slug_uidx").on(table.slug)],
-);
+export const organization = pgTable("organization", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  logo: text("logo"),
+  createdAt: timestamp("created_at").notNull(),
+  metadata: text("metadata"),
+  stripeCustomerId: text("stripe_customer_id"),
+});
 
 export const team = pgTable(
   "team",
   {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
+    memberCount: integer("member_count").default(0).notNull(),
     organizationId: text("organization_id")
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
@@ -163,12 +153,11 @@ export const team = pgTable(
     updatedAt: timestamp("updated_at").$onUpdate(
       () => /* @__PURE__ */ new Date(),
     ),
-    /**
-     * Additional fields can be added here.
-     */
     icon: text("icon").notNull(),
     description: text("description"),
-    permission: text("permission").default("default").notNull(),
+    permission: text("permission", {
+      enum: ["default", "open", "closed", "private"],
+    }).notNull(),
     ownedBy: text("owned_by")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -186,11 +175,11 @@ export const teamMember = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    membershipKey: text("membership_key").unique(),
     createdAt: timestamp("created_at"),
-    /**
-     * Additional fields can be added here.
-     */
-    role: text("role").default("member").notNull(),
+    role: text("role", { enum: ["owner", "member"] })
+      .default("member")
+      .notNull(),
   },
   (table) => [
     index("teamMember_teamId_idx").on(table.teamId),
@@ -246,7 +235,7 @@ export const subscription = pgTable("subscription", {
   referenceId: text("reference_id").notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
-  status: text("status").default("incomplete"),
+  status: text("status").default("incomplete").notNull(),
   periodStart: timestamp("period_start"),
   periodEnd: timestamp("period_end"),
   trialStart: timestamp("trial_start"),
@@ -275,7 +264,7 @@ export const emoji = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
-      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .$onUpdate(() => new Date())
       .notNull(),
   },
   (table) => [
@@ -284,11 +273,19 @@ export const emoji = pgTable(
   ],
 );
 
+export const rateLimit = pgTable("rate_limit", {
+  id: text("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  count: integer("count").notNull(),
+  lastRequest: bigint("last_request", { mode: "number" }).notNull(),
+});
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   twoFactors: many(twoFactor),
   passkeys: many(passkey),
+  teams: many(team),
   teamMembers: many(teamMember),
   members: many(member),
   invitations: many(invitation),
@@ -334,6 +331,10 @@ export const teamRelations = relations(team, ({ one, many }) => ({
   organization: one(organization, {
     fields: [team.organizationId],
     references: [organization.id],
+  }),
+  user: one(user, {
+    fields: [team.ownedBy],
+    references: [user.id],
   }),
   teamMembers: many(teamMember),
 }));
