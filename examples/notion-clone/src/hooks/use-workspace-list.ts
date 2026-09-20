@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { Organization } from "@notion-kit/auth/client";
 import {
   useActiveWorkspace,
   useAuth,
   useListWorkspaces,
   useSession,
 } from "@notion-kit/auth-ui";
+import type { Organization } from "@notion-kit/auth/client";
 import {
   IconObject,
   Plan,
