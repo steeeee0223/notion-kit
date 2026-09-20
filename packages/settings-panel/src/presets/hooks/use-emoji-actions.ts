@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "@/core";
-import { createDefaultFn, QUERY_KEYS, type Emojis } from "@/lib";
+import { QUERY_KEYS, unsupportedOperation, type Emojis } from "@/lib";
 import { useWorkspace } from "@/presets/hooks";
 
 export function useEmojiActions() {
@@ -13,14 +13,14 @@ export function useEmojiActions() {
   const queryKey = QUERY_KEYS.emoji(workspace.id);
 
   const { mutateAsync: add } = useMutation({
-    mutationFn: actions?.add ?? createDefaultFn(),
+    mutationFn: actions?.add ?? unsupportedOperation,
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
     onSuccess: () => toast.success("Emoji added"),
     onError: (e) => toast.error("Add emoji failed", { description: e.message }),
   });
 
   const { mutateAsync: update } = useMutation({
-    mutationFn: actions?.update ?? createDefaultFn(),
+    mutationFn: actions?.update ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Emojis>(queryKey);
@@ -47,7 +47,7 @@ export function useEmojiActions() {
   });
 
   const { mutateAsync: remove } = useMutation({
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Emojis>(queryKey);

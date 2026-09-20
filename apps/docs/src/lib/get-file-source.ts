@@ -18,10 +18,6 @@ export const getFileSource = (filePath: string) => {
   };
 };
 
-export const getFilePath = (filePath: string) => {
-  return path.join(process.cwd(), "../../packages", filePath);
-};
-
 export const getRegistryPath = (name: string) => {
   return process.env.NODE_ENV === "development"
     ? `http://localhost:3000/registry/${name}.json`

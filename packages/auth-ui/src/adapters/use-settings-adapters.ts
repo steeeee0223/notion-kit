@@ -2,9 +2,13 @@
 
 import { useCallback, useMemo } from "react";
 
-import type { SettingsAdapters } from "@notion-kit/settings-panel";
+import type {
+  FileUploadPurpose,
+  SettingsAdapters,
+} from "@notion-kit/settings-panel";
 
-import { useActiveWorkspace, useAuth } from "../auth-provider";
+import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
+import { fileToBase64 } from "../lib/file";
 import { useAccountAdapter } from "./use-account-adapter";
 import { useBillingAdapter } from "./use-billing-adapter";
 import { useConnectionsAdapter } from "./use-connections-adapter";
@@ -16,20 +20,9 @@ import { useSessionsAdapter } from "./use-sessions-adapter";
 import { useTeamspacesAdapter } from "./use-teamspaces-adapter";
 import { useWorkspaceAdapter } from "./use-workspace-adapter";
 
-async function fileToBase64(
-  file: File,
-): Promise<{ imageBase64: string; contentType: string }> {
-  const buffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
-  }
-  return { imageBase64: btoa(binary), contentType: file.type };
-}
-
 export function useSettingsAdapters() {
   const { auth } = useAuth();
+  const { data: session } = useSession();
   const { data: workspace } = useActiveWorkspace();
   const organizationId = workspace?.id;
 
@@ -45,26 +38,34 @@ export function useSettingsAdapters() {
   const billing = useBillingAdapter();
 
   const uploadFile = useCallback(
-    async (file: File) => {
-      if (!organizationId) return;
+    async (file: File, purpose: FileUploadPurpose) => {
+      if (purpose === "workspace-icon" && !organizationId)
+        throw new Error("Select a workspace before uploading a file.");
       const { imageBase64, contentType } = await fileToBase64(file);
-      const { data } = await auth.fileUpload.upload({
-        organizationId,
-        imageBase64,
-        contentType,
-        purpose: "workspace-icon",
-      });
-      if (data?.url) {
-        await auth.organization.update(
-          {
-            organizationId,
-            data: {
-              logo: JSON.stringify({ type: "url", src: data.url }),
+      const { data, error } = await auth.fileUpload.upload(
+        purpose === "avatar"
+          ? { imageBase64, contentType, purpose }
+          : {
+              organizationId: organizationId!,
+              imageBase64,
+              contentType,
+              purpose,
             },
-          },
-          { throw: true },
-        );
+      );
+      if (error) throw new Error(error.message);
+      if (purpose === "avatar") {
+        await auth.updateUser({ image: data.url }, { throw: true });
+        return;
       }
+      await auth.organization.update(
+        {
+          organizationId,
+          data: {
+            logo: JSON.stringify({ type: "url", src: data.url }),
+          },
+        },
+        { throw: true },
+      );
     },
     [auth, organizationId],
   );
@@ -81,7 +82,7 @@ export function useSettingsAdapters() {
       teamspaces,
       emoji,
       billing,
-      uploadFile: organizationId ? uploadFile : undefined,
+      uploadFile: session ? uploadFile : undefined,
     }),
     [
       account,
@@ -94,7 +95,7 @@ export function useSettingsAdapters() {
       teamspaces,
       emoji,
       billing,
-      organizationId,
+      session,
       uploadFile,
     ],
   );

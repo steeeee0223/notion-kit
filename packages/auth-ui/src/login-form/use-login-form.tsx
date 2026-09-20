@@ -8,6 +8,7 @@ import { z } from "zod/v4";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useAuth } from "../auth-provider";
+import { resolveAppURL } from "../lib/app-url";
 import type { ForgotPasswordStage, LoginMode } from "./types";
 
 const loginSchema = z.object({
@@ -32,8 +33,15 @@ interface UseLoginFormOptions {
   callbackURL?: string;
 }
 
-export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
-  const { auth } = useAuth();
+export function useLoginForm({
+  mode,
+  callbackURL: requestedCallbackURL,
+}: UseLoginFormOptions) {
+  const { auth, appURL, resetPasswordURL, redirect } = useAuth();
+  const callbackURL = resolveAppURL(appURL, requestedCallbackURL ?? "/");
+  const [twoFactorMethods, setTwoFactorMethods] = useState<string[] | null>(
+    null,
+  );
 
   const [forgotPasswordStage, setForgotPasswordStage] =
     useState<ForgotPasswordStage>("none");
@@ -51,45 +59,58 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
     formState.errors.email?.message ??
     formState.errors.password?.message;
 
-  const sendResetLink = async () => {
-    console.log("Sending reset link...");
-    setLoading(true);
-    await Promise.resolve();
-    setLoading(false);
-    setForgotPasswordStage("link_sent");
-  };
-
   const submit = handleSubmit(async ({ email, password, forgotPassword }) => {
-    if (forgotPassword) {
-      return await sendResetLink();
-    }
-    if (mode === "sign_up") {
-      const name = email.split("@")[0]!;
-      await auth.signUp.email(
-        { name, email, password, preferredName: name, callbackURL },
-        {
-          onRequest: () => setLoading(true),
-          onResponse: () => setLoading(false),
-          onSuccess: () => void toast("Sign up success"),
-          onError: ({ error }) => {
-            setError("root", { message: error.message });
-            console.error("Sign up error", error);
-          },
-        },
-      );
-    } else {
-      await auth.signIn.email(
-        { email, password, callbackURL },
-        {
-          onRequest: () => setLoading(true),
-          onResponse: () => setLoading(false),
-          onSuccess: () => void toast("Sign in success"),
-          onError: ({ error }) => {
-            setError("root", { message: error.message });
-            console.error("Sign in error", error);
-          },
-        },
-      );
+    setLoading(true);
+    try {
+      if (forgotPassword) {
+        if (!resetPasswordURL)
+          throw new Error("Password reset is not configured for this app.");
+        const result = await auth.requestPasswordReset({
+          email,
+          redirectTo: resetPasswordURL,
+        });
+        if (result.error) throw new Error(result.error.message);
+        setForgotPasswordStage("link_sent");
+        return;
+      }
+      if (mode === "sign_up") {
+        const name = email.split("@")[0]!;
+        const result = await auth.signUp.email({
+          name,
+          email,
+          password,
+          preferredName: name,
+          callbackURL,
+        });
+        if (result.error) throw new Error(result.error.message);
+        toast("Check your email to verify your account.");
+      } else {
+        const result = await auth.signIn.email({
+          email,
+          password,
+          callbackURL,
+        });
+        if (result.error) throw new Error(result.error.message);
+        const challenge = z
+          .object({
+            twoFactorRedirect: z.literal(true),
+            twoFactorMethods: z.array(z.string()),
+          })
+          .safeParse(result.data);
+        if (challenge.success) {
+          setTwoFactorMethods(challenge.data.twoFactorMethods);
+          return;
+        }
+        toast("Sign in success");
+        redirect?.(callbackURL);
+      }
+    } catch (error) {
+      setError("root", {
+        message:
+          error instanceof Error ? error.message : "Authentication failed",
+      });
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -101,11 +122,13 @@ export function useLoginForm({ mode, callbackURL }: UseLoginFormOptions) {
 
   const resetForm = useCallback(() => {
     setForgotPasswordStage("none");
+    setTwoFactorMethods(null);
     reset({ forgotPassword: false, password: "" });
   }, [reset]);
 
   return {
     form,
+    twoFactorMethods,
     forgotPasswordStage,
     errorMessage,
     handlePasswordForgot,

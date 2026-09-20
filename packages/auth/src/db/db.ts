@@ -1,11 +1,13 @@
-import { sql } from "@vercel/postgres";
-import { drizzle } from "drizzle-orm/vercel-postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 import * as schema from "./schemas";
 
-export const db = drizzle({
-  client: sql,
-  schema,
-  casing: "snake_case",
-});
-export type DB = typeof db;
+export function createDatabase(connectionString: string) {
+  return drizzle({
+    client: new Pool({ connectionString }),
+    schema,
+    casing: "snake_case",
+  });
+}
+export type DB = ReturnType<typeof createDatabase>;

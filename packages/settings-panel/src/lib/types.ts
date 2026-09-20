@@ -196,7 +196,7 @@ export interface WorkspaceAdapter {
   update: (data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>;
   delete: (id: string) => Promise<void>;
   leave: (id: string) => Promise<void>;
-  resetLink: () => Promise<void>;
+  resetLink?: () => Promise<void>;
 }
 
 export interface PeopleAdapter {
@@ -273,8 +273,10 @@ export interface BillingAdapter {
   editEmail: (email: string) => Promise<void>;
   toggleInvoiceEmails?: (checked: boolean) => void;
   editVat?: () => void;
-  viewInvoice?: () => void;
+  viewInvoice?: () => void | Promise<void>;
 }
+
+export type FileUploadPurpose = "avatar" | "workspace-icon";
 
 export interface SettingsAdapters {
   account?: AccountAdapter;
@@ -288,7 +290,7 @@ export interface SettingsAdapters {
   emoji?: EmojiAdapter;
   billing?: BillingAdapter;
   /** Shared utilities */
-  uploadFile?: (file: File) => Promise<void>;
+  uploadFile?: (file: File, purpose: FileUploadPurpose) => Promise<void>;
 }
 
 export interface WorkspaceMemberships {
