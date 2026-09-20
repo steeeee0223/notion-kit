@@ -130,7 +130,7 @@
 - [x] 測試 JSON/form body、原始 webhook bytes、多個 Set-Cookie、status 與 redirect 的完整傳遞，修正必要的 Fastify handler 邊界。
 - [ ] 兩個 app 分別完成登入/session/登出；未登錄 app、偽造 Origin、任意 redirect 與不可信 proxy headers 被拒絕。
 
-驗證：Fastify HTTP integration test，跨來源瀏覽器測試與 Stripe 簽章 fixture。相依：T00、T01。範圍：M。
+驗證：Fastify HTTP integration test（包含 webhook 原始 body 轉送）與跨來源瀏覽器測試。相依：T00、T01。範圍：M。
 
 檔案：`apps/auth-server/src/index.ts`、`apps/auth-server/package.json`、HTTP 測試與測試設定。
 
@@ -191,7 +191,7 @@
 ### T13a：升級 plugin 與 Node SDK
 
 - [x] 與 T01 同批確認 `@better-auth/stripe` 的 published peer range，升級至相容正式版及 `stripe` 22.x 正式版；更新 catalog/lockfile，不依賴忽略 peer 錯誤。
-- [x] 核對 v21/v22 變更、預設 API version 與 webhook event version；以既有訂閱 fixture 驗證簽章及 payload，記錄正式 webhook 設定需另行處理的差異。
+- [x] 核對 v21/v22 變更、預設 API version 與 webhook event version，記錄正式 webhook 設定需另行處理的差異。官方驗章不重測，HTTP 層保留原始 body 轉送測試。
 - [ ] 檢查 Stripe.js/React Stripe.js 的 peer 相容與 Elements；只在有需求時升級，保留內嵌表單並跑回歸測試。
 
 驗證：auth、settings-panel、Storybook 型別與帳務測試；測試模式 subscription 更新、取消及事件重送。相依：T01 的版本盤點；在 T02 產生新版 schema 前完成版本選定與安裝。範圍：M。
