@@ -3,9 +3,59 @@ title: Changelog
 description: Latest updates and improvements to Notion UI.
 ---
 
+<ChangelogBlock version="v1.2.0">
+
+### 🔎 Table search and filters
+
+Find rows with text search and property filters in Table View.
+
+**What's new:**
+
+- **Search:** Search row content and combine search results with property filters.
+- **Advanced filters:** Build nested AND/OR groups with property-specific operators and values. Filter rules are saved in the view state.
+
+### 🖱️ Cell selection and plugin APIs
+
+Select cells with the mouse or keyboard, with clearer boundaries between table data and cell presentation.
+
+**What's new:**
+
+- **Cell selection:** Drag to select a range, extend selections with Shift, and add or remove cells with Ctrl or Command.
+- **Keyboard interaction:** Navigate cells, select all visible cells, and clear the selection with Escape.
+- **Separate data and UI plugins:** Register matching data plugins and React UI adapters through `plugins.data` and `plugins.ui`.
+
+**Upgrade note:** Custom plugins now use separate data and UI registrations. Review the updated [Cell Plugin API](/docs/blocks/table-view/cell-plugins) when upgrading.
+
+### 🗓️ Calendar views
+
+Added a Calendar layout to Table View and a standalone [Calendar block](/docs/blocks/calendar) in `@notion-kit/ui/calendar`.
+
+**What's new:**
+
+- **Month, Week, and Day:** Display all-day and timed events with timezone-aware dates.
+- **Event editing:** Create events, drag to move them, resize their duration, and move them between the all-day area and time grid.
+- **Table integration:** Display rows using a Date property, open rows from events, and apply the table's search, filters, and sorting.
+- **Shared date navigation:** Calendar and Timeline share date settings and preserve the viewed date when switching layouts within a mounted table.
+
+**Upgrade note:** Table View's `view.timeline` settings are now `view.dateView`. Update persisted settings and controlled resources using the [Timeline migration guide](/docs/blocks/table-view#migrate-timeline-settings).
+
+### 📜 Table and row edit logs
+
+Added optional edit history for tables and individual rows.
+
+**What's new:**
+
+- **History dialogs:** Enable table and row history with `fetchTableEditLogs` and `fetchRowEditLogs`, including manual pagination.
+- **Historical values:** Render values using stored property metadata, even after properties or options change or are removed.
+- **Custom history renderers:** UI adapters can provide `renderReadOnlyValue`, with plain-text fallback for unsupported values.
+
+See the [edit log documentation](/docs/blocks/table-view#edit-logs) for callback and record formats.
+
+</ChangelogBlock>
+
 <ChangelogBlock version="v1.1.0">
 
-### 🧮 NK-34 & NK-45: A more capable Table View
+### 🧮 A more capable Table View
 
 Table View is now powered by TanStack Table v9 and includes bulk editing for selected rows.
 
@@ -15,7 +65,7 @@ Table View is now powered by TanStack Table v9 and includes bulk editing for sel
 - **Extensible Editors:** Custom plugins can opt into bulk editing by providing a cell editor, without special-case integration in Table View.
 - **Stronger Table Foundation:** `@notion-kit/table-hook`, `@notion-kit/table-view`, and Settings Panel tables have been migrated to TanStack Table v9 for more reliable sorting, grouping, row actions, and controlled state.
 
-### 🗿 NK-51 & NK-54: Base UI primitives
+### 🗿 Base UI primitives
 
 Notion Kit's UI primitives have been migrated to Base UI, improving their underlying accessibility and interaction behavior while preserving the familiar Notion Kit look and feel.
 
@@ -25,7 +75,7 @@ Notion Kit's UI primitives have been migrated to Base UI, improving their underl
 - **New blocks:** Added a Kanban block to `@notion-kit/ui`.
 - **Updated component APIs:** Several primitives now use the Base UI composition model; review the updated component documentation when upgrading.
 
-### 🕶️ NK-52: Cool Blocks
+### 🕶️ Cool Blocks
 
 Added `@notion-kit/cool-blocks`, a collection of expressive, interactive React blocks for playful product moments.
 
@@ -35,7 +85,7 @@ Added `@notion-kit/cool-blocks`, a collection of expressive, interactive React b
 - **Falling Blocks:** A physics-driven, draggable falling-blocks interaction.
 - **Sling Shot:** A draggable slingshot-style interaction component.
 
-### 🗺️ NK-49 & NK-50: Transit map data and visualization
+### 🗺️ Transit map data and visualization
 
 Expanded the map platform with Transitland-backed transit data, real-time vehicle updates, routes, stops, trip details, and a dedicated interactive globe application.
 
@@ -43,7 +93,7 @@ Expanded the map platform with Transitland-backed transit data, real-time vehicl
 
 <ChangelogBlock version="v1.0.0">
 
-### 🚀 NK-40: Single UI Package
+### 🚀 Single UI Package
 
 We have consolidated all individual UI components into a single unified package: `@notion-kit/ui`.
 
@@ -53,7 +103,7 @@ We have consolidated all individual UI components into a single unified package:
 - **Easier Maintenance:** A single package structure drastically reduces dependency overhead and improves build performance.
 - **Unified Design System:** Ensures a more consistent styling approach across all components using shared core styles.
 
-### 🗺️ NK-47: Map components
+### 🗺️ Map components
 
 Added `@notion-kit/map`, a MapLibre-powered package for building interactive maps with Notion Kit styling.
 
