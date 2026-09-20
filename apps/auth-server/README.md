@@ -40,12 +40,20 @@ Check the built-in Better Auth endpoint `/api/auth/ok` for `{ "ok": true }`. Ope
 1. Point `AuthProvider.authURL` at the public auth service.
 2. Set `appURL` to the consumer's base URL.
 3. Supply `resetPasswordURL` for the consumer's reset-token page.
-4. Supply `billingReturnURL` if the consumer exposes billing.
+4. Supply `billingReturnURL` only when Stripe is configured on the shared server and the consumer exposes billing. Omit it to disable billing controls.
 5. Implement `/accept-invitation/{id}` with the invitation form.
 6. Use the official client to read the session, sign in, sign out, and operate on organizations.
 7. Pass the intended `organizationId` to organization operations that accept it.
 
-The notion-clone example is a browser consumer; it no longer runs its own `/api/auth` handler or loads server credentials. Other apps can use the core auth client without rendering the settings panel.
+For notion-clone, enable billing only after configuring the server's Stripe secrets and `STRIPE_PLANS`:
+
+```dotenv
+NEXT_PUBLIC_AUTH_BILLING_ENABLED=true
+```
+
+This public flag defaults to `false` and accepts only `true` or `false`. Keep it consistent with the shared server's Stripe configuration. The consumer passes `billingReturnURL` only when the flag is `true`; it does not need Stripe secrets. Relative return URLs resolve against the consumer's origin.
+
+The notion-clone example runs on port `3002` and is a browser consumer; it no longer runs its own `/api/auth` handler or loads server credentials. Other apps can use the core auth client without rendering the settings panel.
 
 If the browser blocks cookies on unrelated domains, use a deployment-specific same-origin forwarding arrangement and verify its callback and cookie behavior. Do not recreate auth logic in the consumer. The repository does not provide a general proxy setup or guarantee SSO across arbitrary domains.
 

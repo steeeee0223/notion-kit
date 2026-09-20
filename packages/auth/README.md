@@ -55,7 +55,7 @@ The standalone server supplies `@vercel/functions` `waitUntil` to Better Auth's 
 
 ## Client contract
 
-`createAuthClient({ baseURL, basePath })` creates the React client. `basePath` defaults to `/api/auth`. The former string argument is removed.
+`createAuthClient({ baseURL, basePath })` from `@notion-kit/auth/client` creates the React client. Browser code must use this client entry; the root entry contains the server factory. `basePath` defaults to `/api/auth`. The former string argument is removed.
 
 `AuthProvider` from `@notion-kit/auth-ui` accepts `authURL`, `appURL`, `resetPasswordURL`, and `billingReturnURL`. Reset and billing URLs belong to the consumer app and must use an allowed origin. An absent reset URL makes reset submission fail explicitly. An absent billing return URL leaves the billing adapter unavailable.
 
@@ -67,12 +67,12 @@ CORS and trusted origins do not override browser cookie rules. The current facto
 
 Official APIs own accounts, sessions, organization membership, team membership, invitations, subscriptions, and billing portal navigation. The retained endpoints provide data the settings panel still needs:
 
-- `organization-extra/get-workspace-detail` joins organization identity, caller roles, and active subscription plan. Missing membership is forbidden. Subscription failures propagate when billing is enabled.
+- `organization-extra/get-workspace-detail` joins organization identity, caller roles, and active subscription plan. Missing membership is forbidden. The explicit `billingEnabled` flag skips subscription access when disabled. Subscription failures propagate when enabled.
 - `organization-extra/list-teams-with-members` returns team display fields and all member roles in one database query after membership authorization.
 - `organization-extra/list-invitations-with-inviter` preserves inviter display data even after the inviter leaves the organization.
 - `organization-extra/update-team-member` changes only the product `owner` or `member` role. It requires organization membership, official `team:update` permission, and valid target memberships.
 - `stripe-extra` retains authorized customer display data and embedded billing address and email updates.
-- Emoji and file endpoints retain product storage with organization authorization and validated image types and sizes.
+- Emoji endpoints retain organization authorization. Image uploads require an explicit `avatar` or `workspace-icon` purpose and validate image types and sizes. Avatar paths use the authenticated user ID and require no active organization; workspace icons require organization update permission. The client updates only the corresponding user image or organization logo.
 
 `teamMember.role` defaults to `member` and is not client input. Official membership APIs retain control of membership keys and counts. A teamspace owner role does not grant organization administrator permissions. The UI accepts official comma-separated organization roles and derives the supported display role.
 
