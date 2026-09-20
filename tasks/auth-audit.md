@@ -83,6 +83,8 @@ memory adapter 與假的外部服務回應不證明 PostgreSQL、OAuth provider�
 
 整合提交為 `543f12c2`，前序提交為 `c070a7ae`、`833edd8e`、`5aa44468`。上述 auth 相關套件、server 與 import tests 合計 153 tests 通過，不代表整個 repository 全部測試通過。先前 table-view 全套測試有 timeline selection、sort remove 兩個 timeout；當時也曾因磁碟不足導致 build/docs build 失敗。後續 table-view build 已成功，但全套測試未重跑，docs production build 尚未完成。
 
+後續測試精簡：移除設定值照抄斷言、重複的 URL 轉換與上傳失敗案例，以及直接測試第三方內部背景工作方法的案例，共 6 個；同步刪除不再使用的 mock。重新執行 auth 61 tests、auth-ui 39 tests，全部通過。權限、安全邊界與重要流程回歸測試保留。
+
 ## 尚需部署或現場驗證
 
 | 驗證              | 尚未由本機契約測試證明的部分                                                                                                                     |
