@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "../../core";
-import { createDefaultFn, QUERY_KEYS, type Connection } from "../../lib";
+import { QUERY_KEYS, unsupportedOperation, type Connection } from "../../lib";
 import { useAccount } from "../hooks";
 
 export function useConnectionsActions() {
@@ -15,7 +15,7 @@ export function useConnectionsActions() {
   const queryKey = QUERY_KEYS.connections(account.id);
 
   const { mutateAsync: connect, isPending: isConnecting } = useMutation({
-    mutationFn: actions?.add ?? createDefaultFn(),
+    mutationFn: actions?.add ?? unsupportedOperation,
     onSuccess: async (_, payload) => {
       toast.success(`Connected ${payload} successfully`);
       await queryClient.invalidateQueries({ queryKey });
@@ -25,7 +25,7 @@ export function useConnectionsActions() {
   });
 
   const { mutate: unlink } = useMutation({
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Connection[]>(queryKey);

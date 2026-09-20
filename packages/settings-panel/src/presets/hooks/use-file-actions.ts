@@ -5,13 +5,13 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "../../core";
-import { createDefaultFn } from "../../lib";
+import { unsupportedOperation } from "../../lib";
 
 export function useFileActions() {
   const { uploadFile } = useSettingsApi();
 
   const { mutateAsync: upload, isPending: isUploading } = useMutation({
-    mutationFn: uploadFile ?? createDefaultFn(),
+    mutationFn: uploadFile ?? unsupportedOperation,
     onError: (e) =>
       toast.error("Upload file failed", { description: e.message }),
   });

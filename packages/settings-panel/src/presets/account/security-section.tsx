@@ -8,12 +8,13 @@ import {
   Switch,
 } from "@notion-kit/ui/primitives";
 
-import { SettingsRule, SettingsSection } from "@/core";
+import { SettingsRule, SettingsSection, useSettingsApi } from "@/core";
 import { useAccount, useAccountActions } from "@/presets/hooks";
 import { EmailSettings, PasskeysModal, PasswordForm } from "@/presets/modals";
 
 export function SecuritySection() {
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const adapters = useSettingsApi();
 
   /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "account" });
@@ -28,7 +29,14 @@ export function SecuritySection() {
       <SettingsRule title={trans.email.title} description={account.email}>
         <Dialog>
           <DialogTrigger
-            render={<Button size="sm">{trans.email.button}</Button>}
+            render={
+              <Button
+                size="sm"
+                disabled={!adapters.account?.sendEmailVerification}
+              >
+                {trans.email.button}
+              </Button>
+            }
           />
           <EmailSettings
             email={account.email}
@@ -38,7 +46,11 @@ export function SecuritySection() {
       </SettingsRule>
       <SettingsRule {...trans.password}>
         {account.hasPassword ? (
-          <Button size="sm" onClick={() => setPasswordOpen(true)}>
+          <Button
+            size="sm"
+            disabled={!adapters.account?.changePassword}
+            onClick={() => setPasswordOpen(true)}
+          >
             {trans.password.button}
           </Button>
         ) : (
@@ -46,6 +58,8 @@ export function SecuritySection() {
             size="sm"
             onCheckedChange={() => setPasswordOpen(true)}
             checked={false}
+            disabled={!adapters.account?.setPassword}
+            aria-label={trans.password.title}
           />
         )}
       </SettingsRule>
@@ -69,7 +83,11 @@ export function SecuritySection() {
       <SettingsRule {...trans.passkeys}>
         <Dialog>
           <DialogTrigger
-            render={<Button size="sm">{trans.passkeys.button}</Button>}
+            render={
+              <Button size="sm" disabled={!adapters.passkeys?.add}>
+                {trans.passkeys.button}
+              </Button>
+            }
           />
           <PasskeysModal />
         </Dialog>
