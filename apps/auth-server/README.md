@@ -68,9 +68,12 @@ If the browser blocks cookies on unrelated domains, use a deployment-specific sa
 7. Check background task failures in the hosting platform. The server uses `waitUntil`; API acceptance alone does not establish mail delivery.
 8. If billing is enabled, test subscription changes and webhook event redelivery in Stripe test mode. Check the webhook destination's API version separately from SDK 22.6.2's `2026-08-26.dahlia` request version.
 9. If storage is enabled, test uploads and deletion with the deployed Supabase policies.
+10. Verify constraints and relations against the deployment's PostgreSQL schema.
+11. Test that organization operations still target the intended organization after another tab switches the active organization.
+12. Test expired and canceled invitations, concurrent workspace slug creation, and partial failures in batch member changes.
 
 The service uses Better Auth's database-backed rate limiter. Its transport overwrites `x-auth-client-ip` and trusts forwarded client addresses only through the configured proxy allowlist. The 7 MiB HTTP body limit permits the 5 MiB decoded-image limit after base64 encoding.
 
 The HTTP adapter preserves raw webhook bytes, separate `Set-Cookie` headers, redirects, and error status codes. Its request URL comes from the configured public auth URL rather than an incoming Host or forwarded host. Transport tests do not replace real cookie, proxy, OAuth, email, storage, or Stripe integration checks.
 
-Do not run migrations or `db:push` as part of this upgrade. The target databases are empty, and the change updates the repository's final schema only. See the [audit record](../../tasks/auth-audit.md) for verification boundaries.
+Do not run migrations or `db:push` as part of this upgrade. The target databases are empty, and the change updates the repository's final schema only. The upgrade did not perform the external integration checks above. See the [shared auth service decision](../../docs/adr/0008-shared-auth-service-and-official-better-auth-features.md) for the architecture and test responsibilities.

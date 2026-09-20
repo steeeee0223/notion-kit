@@ -86,4 +86,4 @@ The upgrade targets empty databases and updates the final schema directly. It do
 
 `src/schema-auth.ts` is the generator entrypoint with isolated placeholders and all schema-producing plugins enabled. `pnpm -F @notion-kit/auth generate` writes the generated schema. The final schema must also preserve product fields, the emoji table, and its relations; generation output requires review rather than blind replacement. No `db:push` operation is part of this upgrade.
 
-The [audit record](../../tasks/auth-audit.md) lists feature decisions, request contracts, and remaining external verification.
+The [shared auth service decision](../../docs/adr/0008-shared-auth-service-and-official-better-auth-features.md) explains the architecture, retained extensions, and test responsibilities. External integration checks are in [deployment verification](../../apps/auth-server/README.md#verify-a-deployment).
