@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "../../core";
-import { createDefaultFn, Memberships, QUERY_KEYS } from "../../lib";
+import { Memberships, QUERY_KEYS, unsupportedOperation } from "../../lib";
 import { useWorkspace } from "../hooks";
 
 export function usePeopleActions() {
@@ -15,7 +15,7 @@ export function usePeopleActions() {
   const queryKey = QUERY_KEYS.members(workspace.id);
 
   const { mutateAsync: update } = useMutation({
-    mutationFn: actions?.update ?? createDefaultFn(),
+    mutationFn: actions?.update ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Memberships>(queryKey);
@@ -38,7 +38,7 @@ export function usePeopleActions() {
   });
 
   const { mutateAsync: remove } = useMutation({
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Memberships>(queryKey);

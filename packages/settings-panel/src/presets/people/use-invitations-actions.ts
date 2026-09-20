@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "../../core";
-import { createDefaultFn, QUERY_KEYS, type Invitations } from "../../lib";
+import { QUERY_KEYS, unsupportedOperation, type Invitations } from "../../lib";
 import { useWorkspace } from "../hooks";
 
 export function useInvitationsActions() {
@@ -15,7 +15,7 @@ export function useInvitationsActions() {
   const queryKey = QUERY_KEYS.invitations(workspace.id);
 
   const { mutateAsync: invite } = useMutation({
-    mutationFn: actions?.add ?? createDefaultFn(),
+    mutationFn: actions?.add ?? unsupportedOperation,
     onSuccess: () => toast.success("Member invited"),
     onError: (error) =>
       toast.error("Invite member failed", { description: error.message }),
@@ -23,7 +23,7 @@ export function useInvitationsActions() {
   });
 
   const { mutateAsync: cancel } = useMutation({
-    mutationFn: actions?.cancel ?? createDefaultFn(),
+    mutationFn: actions?.cancel ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<Invitations>(queryKey);

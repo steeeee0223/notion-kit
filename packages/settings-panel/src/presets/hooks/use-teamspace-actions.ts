@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "../../core";
-import { createDefaultFn, QUERY_KEYS, type Teamspaces } from "../../lib";
+import { QUERY_KEYS, unsupportedOperation, type Teamspaces } from "../../lib";
 import { useAccount, useWorkspace } from "./queries";
 
 export function useTeamspaceActions() {
@@ -16,7 +16,7 @@ export function useTeamspaceActions() {
   const queryKey = QUERY_KEYS.teamspaces(workspace.id);
 
   const { mutateAsync: create } = useMutation({
-    mutationFn: actions?.add ?? createDefaultFn(),
+    mutationFn: actions?.add ?? unsupportedOperation,
     onSuccess: () => toast.success("Teamspace created"),
     onError: (e) =>
       toast.error("Create teamspace failed", { description: e.message }),
@@ -24,7 +24,7 @@ export function useTeamspaceActions() {
   });
 
   const { mutateAsync: update } = useMutation({
-    mutationFn: actions?.update ?? createDefaultFn(),
+    mutationFn: actions?.update ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Teamspaces>(queryKey);
@@ -45,7 +45,7 @@ export function useTeamspaceActions() {
   });
 
   const { mutateAsync: remove } = useMutation({
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Teamspaces>(queryKey);
@@ -66,7 +66,7 @@ export function useTeamspaceActions() {
   });
 
   const { mutateAsync: leave } = useMutation({
-    mutationFn: actions?.leave ?? createDefaultFn(),
+    mutationFn: actions?.leave ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Teamspaces>(queryKey);
@@ -92,7 +92,7 @@ export function useTeamspaceActions() {
   });
 
   const { mutateAsync: addMembers } = useMutation({
-    mutationFn: actions?.addMembers ?? createDefaultFn(),
+    mutationFn: actions?.addMembers ?? unsupportedOperation,
     onSuccess: () => toast.success("Teamspace members added"),
     onError: (error) =>
       toast.error("Add teamspace members failed", {
@@ -102,7 +102,7 @@ export function useTeamspaceActions() {
   });
 
   const { mutateAsync: updateMember } = useMutation({
-    mutationFn: actions?.updateMember ?? createDefaultFn(),
+    mutationFn: actions?.updateMember ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Teamspaces>(queryKey);
@@ -134,7 +134,7 @@ export function useTeamspaceActions() {
   });
 
   const { mutateAsync: removeMember } = useMutation({
-    mutationFn: actions?.deleteMember ?? createDefaultFn(),
+    mutationFn: actions?.deleteMember ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData<Teamspaces>(queryKey);

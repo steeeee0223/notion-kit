@@ -9,6 +9,7 @@ import {
   createDefaultFn,
   logError,
   QUERY_KEYS,
+  unsupportedOperation,
   type SessionRow,
 } from "../../lib";
 import { useAccount } from "../hooks";
@@ -28,7 +29,7 @@ export function useSessions() {
 
   const { mutate: revoke } = useMutation({
     mutationKey: queryKey,
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<SessionRow[]>(queryKey);
@@ -50,7 +51,7 @@ export function useSessions() {
 
   const { mutate: revokeOthers } = useMutation({
     mutationKey: queryKey,
-    mutationFn: actions?.deleteAll ?? createDefaultFn(),
+    mutationFn: actions?.deleteAll ?? unsupportedOperation,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<SessionRow[]>(queryKey);

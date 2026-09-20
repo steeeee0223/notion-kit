@@ -6,9 +6,9 @@ import { useLocalStorage } from "usehooks-ts";
 import { toast } from "@notion-kit/ui/primitives";
 
 import {
-  createDefaultFn,
   LOCALSTORAGE_KEYS,
   QUERY_KEYS,
+  unsupportedOperation,
   useSettingsApi,
   type AccountStore,
 } from "../..";
@@ -19,7 +19,7 @@ export function useAccountActions() {
   const queryClient = useQueryClient();
   const { account: actions } = useSettingsApi();
   const { data: account } = useAccount();
-  const queryKey = QUERY_KEYS.account(account.id);
+  const queryKey = QUERY_KEYS.account(initialAccountStore.id);
 
   /** Localstorage */
   const [locale, setLocale] = useLocalStorage(
@@ -32,7 +32,7 @@ export function useAccountActions() {
   );
 
   const { mutateAsync: update, mutate: updateSync } = useMutation({
-    mutationFn: actions?.update ?? createDefaultFn(),
+    mutationFn: actions?.update ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -56,7 +56,7 @@ export function useAccountActions() {
   });
 
   const { mutateAsync: remove } = useMutation({
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -71,7 +71,7 @@ export function useAccountActions() {
   });
 
   const { mutateAsync: sendEmailVerification } = useMutation({
-    mutationFn: actions?.sendEmailVerification ?? createDefaultFn(),
+    mutationFn: actions?.sendEmailVerification ?? unsupportedOperation,
     onError: (e) =>
       toast.error("Send email verification failed", {
         description: e.message,
@@ -79,25 +79,15 @@ export function useAccountActions() {
   });
 
   const { mutateAsync: changePassword } = useMutation({
-    mutationFn: actions?.changePassword ?? createDefaultFn(),
+    mutationFn: actions?.changePassword ?? unsupportedOperation,
     onError: (e) =>
       toast.error("Change password failed", { description: e.message }),
   });
 
   const { mutateAsync: setPassword } = useMutation({
-    mutationFn: actions?.setPassword ?? createDefaultFn(),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey });
-      const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData<AccountStore>(queryKey, (v) => {
-        if (!v) return v;
-        return { ...v, hasPassword: true };
-      });
-      return { prev };
-    },
+    mutationFn: actions?.setPassword ?? unsupportedOperation,
     onSuccess: () => toast.success("Password set successfully"),
-    onError: (e, _, ctx) => {
-      queryClient.setQueryData(queryKey, ctx?.prev);
+    onError: (e) => {
       toast.error("Set password failed", { description: e.message });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
