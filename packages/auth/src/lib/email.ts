@@ -1,71 +1,18 @@
-import axios, { AxiosInstance, isAxiosError } from "axios";
-import { APIError } from "better-auth/api";
+import {
+  createEmailSender,
+  type EmailTemplateId,
+  type SendEmailOptions,
+} from "@better-auth/infra";
 
-export function createMailtrapApi(apiKey: string) {
-  return axios.create({
-    baseURL: "https://sandbox.api.mailtrap.io",
-    headers: {
-      "Content-Type": "application/json",
-      "Api-Token": apiKey,
-    },
+import type { AuthEnv } from "@/env";
+
+export function createAuthEmailSender(env: AuthEnv) {
+  const sender = createEmailSender({
+    apiKey: env.BETTER_AUTH_API_KEY,
+    apiUrl: env.BETTER_AUTH_API_URL,
   });
-}
-
-interface Address {
-  email: string;
-  name?: string;
-}
-
-interface SendEmailPayload {
-  from: Address;
-  to: Address[];
-  cc?: Address[];
-  bcc?: Address[];
-  subject: string;
-  text: string;
-  html?: string;
-}
-
-interface SendEmailResponse {
-  success: boolean;
-  message_ids: string[];
-}
-
-interface ApiResult<T> {
-  ok: boolean;
-  data: T;
-}
-
-export async function sendEmail(
-  api: AxiosInstance,
-  inboxId: string,
-  payload: SendEmailPayload,
-): Promise<ApiResult<string[]>> {
-  try {
-    const res = await api.post<SendEmailResponse>(
-      `/api/send/${inboxId}`,
-      payload,
-    );
-    return {
-      ok: res.data.success,
-      data: res.data.message_ids,
-    };
-  } catch (e) {
-    if (!isAxiosError(e)) {
-      throw new APIError("INTERNAL_SERVER_ERROR", { message: "network_error" });
-    }
-    switch (e.status) {
-      case 400:
-      case 401:
-      case 429:
-      case 500:
-        throw new APIError(e.status, {
-          message: JSON.stringify(e.response?.data ?? ""),
-        });
-      default:
-        throw new APIError("INTERNAL_SERVER_ERROR", {
-          message: "unexpected_error",
-        });
-    }
-  }
+  return async <T extends EmailTemplateId>(email: SendEmailOptions<T>) => {
+    const result = await sender.send(email);
+    if (!result.success) throw new Error("Email delivery failed");
+  };
 }

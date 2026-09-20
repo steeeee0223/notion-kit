@@ -3,19 +3,15 @@ import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { z } from "zod/v4";
 
 import type { SupabaseStorage } from "../../db/supabase";
+import {
+  contentTypeSchema,
+  imageBase64Schema,
+  imageExtensions,
+  requireOrganizationAccess,
+  resourceIdSchema,
+} from "./resource-access";
 
 const BUCKET = "files";
-
-function extFromContentType(contentType: string): string {
-  const map: Record<string, string> = {
-    "image/png": "png",
-    "image/jpeg": "jpg",
-    "image/gif": "gif",
-    "image/webp": "webp",
-    "image/svg+xml": "svg",
-  };
-  return map[contentType] ?? "png";
-}
 
 export function fileUpload({ storage }: { storage: SupabaseStorage }) {
   return {
@@ -26,17 +22,23 @@ export function fileUpload({ storage }: { storage: SupabaseStorage }) {
         {
           method: "POST",
           body: z.object({
-            organizationId: z.string(),
-            imageBase64: z.string(),
-            contentType: z.string(),
-            purpose: z.string(),
+            organizationId: resourceIdSchema,
+            imageBase64: imageBase64Schema,
+            contentType: contentTypeSchema,
+            purpose: z.literal("workspace-icon"),
           }),
           requireHeaders: true,
           use: [sessionMiddleware],
         },
         async (ctx) => {
+          await requireOrganizationAccess(
+            ctx.context,
+            ctx.context.session.user.id,
+            ctx.body.organizationId,
+            true,
+          );
           const fileId = crypto.randomUUID();
-          const ext = extFromContentType(ctx.body.contentType);
+          const ext = imageExtensions[ctx.body.contentType];
           const path = `${ctx.body.organizationId}/${ctx.body.purpose}/${fileId}.${ext}`;
           const buffer = Buffer.from(ctx.body.imageBase64, "base64");
 

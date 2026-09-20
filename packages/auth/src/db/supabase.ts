@@ -23,12 +23,6 @@ export function createSupabaseStorage(url: string, publishableKey: string) {
       const { error } = await client.storage.from(bucket).remove(paths);
       if (error) throw new Error(`Storage remove failed: ${error.message}`);
     },
-    getPublicUrl: (bucket: string, path: string) => {
-      const {
-        data: { publicUrl },
-      } = client.storage.from(bucket).getPublicUrl(path);
-      return publicUrl;
-    },
   };
 }
 

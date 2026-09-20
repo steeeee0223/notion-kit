@@ -29,17 +29,20 @@
     "dev": "tsdown --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "test": "vitest run"
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@hookform/resolvers": "catalog:ui",
     "@notion-kit/auth": "workspace:*",
     "@notion-kit/cn": "workspace:*",
+    "@notion-kit/i18n": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "react-hook-form": "catalog:ui",
+    "ua-parser-js": "^2.0.9",
     "uuid": "catalog:uuid"
   },
   "devDependencies": {
@@ -47,12 +50,17 @@
     "@notion-kit/eslint-config": "workspace:*",
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:rtl",
+    "@testing-library/user-event": "catalog:rtl",
+    "@vitejs/plugin-react": "catalog:test",
     "babel-plugin-react-compiler": "catalog:react-compiler",
     "eslint": "catalog:",
+    "jsdom": "catalog:rtl",
     "prettier": "catalog:",
     "react-compiler-runtime": "catalog:react-compiler",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
   },
   "peerDependencies": {
     "@notion-kit/ui": "workspace:*",

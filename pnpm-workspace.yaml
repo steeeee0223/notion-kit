@@ -10,7 +10,7 @@ catalog:
   prettier: ^3.6.2
   tsdown: ^0.16.6
   typescript: 6.0.3
-  zod: ^4.1.12
+  zod: ^4.6.5
 
 catalogs:
   node:
@@ -81,7 +81,7 @@ catalogs:
   supabase:
     "@supabase/supabase-js": ^2.49.0
   stripe:
-    stripe: ^20.3.1
+    stripe: ^22.6.2
     "@stripe/react-stripe-js": ^5.6.0
     "@stripe/stripe-js": ^8.7.0
   fns:

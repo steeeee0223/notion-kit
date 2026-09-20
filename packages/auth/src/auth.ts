@@ -2,82 +2,46 @@ import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { APIError } from "better-auth/api";
 import { openAPI, organization, twoFactor } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 
-import { authorizeReference, updateSessionData } from "@/db/actions";
-import { db } from "@/db/db";
+import { createDatabase } from "@/db/db";
+import { member } from "@/db/schemas";
 import { createSupabaseStorage } from "@/db/supabase";
 import { stringListSchema, type AuthEnv } from "@/env";
-import { createMailtrapApi, sendEmail } from "@/lib/email";
-import { ac, roles } from "@/lib/permissions";
-import { plans } from "@/lib/plans";
+import { createAuthEmailSender } from "@/lib/email";
+import { roles } from "@/lib/permissions";
 import {
   emoji,
   fileUpload,
   organizationExtra,
   stripeExtra,
 } from "@/lib/plugins";
-import {
-  additionalSessionFields,
-  additionalTeamFields,
-  additionalUserFields,
-} from "@/lib/utils";
-
-function createStripeClient(secretKey?: string) {
-  if (!secretKey) return undefined;
-  return new Stripe(secretKey);
-}
-
-function stripTrailingSlash(url: string) {
-  return url.replace(/\/+$/, "");
-}
-
-function toOrigin(url: string) {
-  try {
-    return new URL(url).origin;
-  } catch {
-    return url;
-  }
-}
-
-function toAllowedHost(value: string) {
-  try {
-    const url = value.includes("://") ? value : `https://${value}`;
-    return new URL(url).host;
-  } catch {
-    return value.replace(/^https?:\/\//, "").split("/")[0] ?? value;
-  }
-}
-
-function uniq(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)));
-}
+import { additionalTeamFields, additionalUserFields } from "@/lib/utils";
 
 interface CreateAuthOptions {
   basePath?: string;
+  backgroundTasks?: NonNullable<
+    BetterAuthOptions["advanced"]
+  >["backgroundTasks"];
 }
 
-export function createAuth(
-  env: AuthEnv,
-  options: CreateAuthOptions = { basePath: "/" },
-) {
-  const appUrl = stripTrailingSlash(env.APP_URL ?? env.BETTER_AUTH_URL);
-  const authAllowedHosts = stringListSchema
-    .parse(env.BETTER_AUTH_ALLOWED_HOSTS)
-    .map(toAllowedHost);
-  const authAllowedOrigins = stringListSchema
-    .parse(env.TRUSTED_ORIGINS)
-    .map(toOrigin);
-  const allowedHosts = uniq([
-    toAllowedHost(env.BETTER_AUTH_URL),
-    "localhost:*",
-    "*.vercel.app",
-    ...authAllowedHosts,
-  ]);
-  const trustedOrigins = uniq([toOrigin(appUrl), ...authAllowedOrigins]);
-  const mailApi = createMailtrapApi(env.MAILTRAP_API_KEY);
-  const stripeClient = createStripeClient(env.STRIPE_SECRET_KEY);
+export function createAuth(env: AuthEnv, options: CreateAuthOptions = {}) {
+  const appUrl = env.APP_URL ?? env.BETTER_AUTH_URL;
+  const trustedOrigins = [
+    ...new Set([
+      new URL(env.BETTER_AUTH_URL).origin,
+      new URL(appUrl).origin,
+      ...stringListSchema.parse(env.TRUSTED_ORIGINS),
+    ]),
+  ];
+  const db = createDatabase(env.POSTGRES_URL);
+  const sendEmail = createAuthEmailSender(env);
+  const stripeClient = env.STRIPE_SECRET_KEY
+    ? new Stripe(env.STRIPE_SECRET_KEY)
+    : undefined;
   const supabaseStorage =
     env.SUPABASE_URL && env.SUPABASE_PUBLISHABLE_KEY
       ? createSupabaseStorage(env.SUPABASE_URL, env.SUPABASE_PUBLISHABLE_KEY)
@@ -85,50 +49,62 @@ export function createAuth(
 
   const config = {
     appName: "Notion Auth",
-    baseURL: {
-      allowedHosts,
-      fallback: env.BETTER_AUTH_URL,
+    secret: env.BETTER_AUTH_SECRET,
+    baseURL: env.BETTER_AUTH_URL,
+    basePath: options.basePath ?? "/api/auth",
+    advanced: {
+      backgroundTasks: options.backgroundTasks,
+      ipAddress: { ipAddressHeaders: ["x-auth-client-ip"] },
     },
-    basePath: options.basePath,
     database: drizzleAdapter(db, { provider: "pg" }),
     trustedOrigins,
+    rateLimit: { storage: "database" },
     user: {
       changeEmail: {
         enabled: true,
-        sendChangeEmailConfirmation: ({ user, url }) => {
-          console.log(
-            `Send change email verification to ${user.email} with URL: ${url}`,
-          );
-          return Promise.resolve();
-        },
+        sendChangeEmailConfirmation: ({ user, newEmail, url }) =>
+          sendEmail({
+            template: "change-email",
+            to: user.email,
+            variables: {
+              confirmationLink: url,
+              currentEmail: user.email,
+              newEmail,
+            },
+          }),
       },
       deleteUser: { enabled: true },
       additionalFields: additionalUserFields,
     },
-    session: {
-      additionalFields: additionalSessionFields,
-    },
     emailVerification: {
       sendOnSignUp: true,
       autoSignInAfterVerification: true,
-      sendVerificationEmail: ({ user, url }) => {
-        console.log(
-          `Send email verification to ${user.email} with URL: ${url}`,
-        );
-        return Promise.resolve();
-      },
+      sendVerificationEmail: ({ user, url }) =>
+        sendEmail({
+          template: "verify-email",
+          to: user.email,
+          variables: {
+            verificationUrl: url,
+            userEmail: user.email,
+            userName: user.name,
+          },
+        }),
     },
     emailAndPassword: {
       enabled: true,
-      /**
-       * @default true
-       */
-      requireEmailVerification: false,
+      requireEmailVerification: true,
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword: ({ user, url }) =>
+        sendEmail({
+          template: "reset-password",
+          to: user.email,
+          variables: { resetLink: url, userEmail: user.email },
+        }),
     },
     account: {
+      encryptOAuthTokens: true,
       accountLinking: {
         enabled: true,
-        allowDifferentEmails: true,
       },
     },
     socialProviders: {
@@ -145,28 +121,62 @@ export function createAuth(
     },
     databaseHooks: {
       session: {
-        create: { after: updateSessionData },
-        update: { after: updateSessionData },
+        create: {
+          before: async (session) => {
+            const membership = await db.query.member.findFirst({
+              where: eq(member.userId, session.userId),
+            });
+            return {
+              data: {
+                ...session,
+                activeOrganizationId: membership?.organizationId,
+              },
+            };
+          },
+        },
       },
     },
     plugins: [
       twoFactor(),
-      passkey({ rpName: "Notion Auth" }),
+      passkey({
+        rpName: "Notion Auth",
+        rpID: env.PASSKEY_RP_ID,
+        origin: trustedOrigins,
+      }),
       organization({
-        ac,
         roles,
         cancelPendingInvitationsOnReInvite: true,
-        sendInvitationEmail: async ({ id, email, inviter, organization }) => {
-          const inviteLink = `${appUrl}/accept-invitation/${id}`;
-          await sendEmail(mailApi, env.MAILTRAP_INBOX_ID ?? "", {
-            from: { email: inviter.user.email, name: inviter.user.name },
-            to: [{ email }],
-            subject: `You're invited to join ${organization.name}`,
-            text: `${inviter.user.name} has invited you to join ${organization.name}. Please click the link below to accept the invitation:\n\n${inviteLink}\n\nBest,\nSteeeee at WorXpace`,
+        sendInvitationEmail: async (
+          { id, email, inviter, organization, role },
+          request,
+        ) => {
+          const origin = request?.headers.get("origin");
+          const destination =
+            origin && trustedOrigins.includes(origin) ? origin : appUrl;
+          await sendEmail({
+            template: "invitation",
+            to: email,
+            variables: {
+              inviteLink: new URL(
+                `/accept-invitation/${encodeURIComponent(id)}`,
+                destination,
+              ).href,
+              inviterName: inviter.user.name,
+              inviterEmail: inviter.user.email,
+              organizationName: organization.name,
+              role,
+            },
           });
+        },
+        organizationHooks: {
+          beforeCreateTeam: ({ user, team }) => {
+            if (!user) throw new APIError("UNAUTHORIZED");
+            return Promise.resolve({ data: { ...team, ownedBy: user.id } });
+          },
         },
         teams: {
           enabled: true,
+          defaultTeam: { enabled: false },
           maximumTeams: 10, // Optional: limit teams per organization
           allowRemovingAllTeams: true, // Optional: prevent removing the last team
         },
@@ -175,7 +185,10 @@ export function createAuth(
         },
       }),
       openAPI(),
-      organizationExtra({ db }),
+      organizationExtra({
+        db,
+        billingEnabled: !!stripeClient && !!env.STRIPE_WEBHOOK_SECRET,
+      }),
       ...(stripeClient && env.STRIPE_WEBHOOK_SECRET
         ? [
             stripe({
@@ -184,8 +197,22 @@ export function createAuth(
               createCustomerOnSignUp: true,
               subscription: {
                 enabled: true,
-                plans,
-                authorizeReference,
+                plans: env.STRIPE_PLANS ?? [],
+                authorizeReference: async ({ user, referenceId }) => {
+                  const membership = await db.query.member.findFirst({
+                    where: (m, { and, eq }) =>
+                      and(
+                        eq(m.organizationId, referenceId),
+                        eq(m.userId, user.id),
+                      ),
+                  });
+                  return (
+                    membership?.role
+                      .split(",")
+                      .some((role) => role === "owner" || role === "admin") ??
+                    false
+                  );
+                },
               },
               organization: { enabled: true },
             }),

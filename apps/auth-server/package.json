@@ -11,11 +11,14 @@
     "lint": "eslint",
     "start": "pnpm with-env node dist/index.mjs",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "test": "vitest run"
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
+    "@fastify/cors": "catalog:fastify",
     "@notion-kit/auth": "workspace:*",
+    "@vercel/functions": "^3.9.8",
     "fastify": "^5.8.5"
   },
   "devDependencies": {
@@ -26,6 +29,7 @@
     "dotenv-cli": "catalog:env",
     "tsdown": "catalog:",
     "tsx": "^4.19.3",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:test"
   }
 }
