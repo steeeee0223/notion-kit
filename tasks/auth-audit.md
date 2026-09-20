@@ -67,10 +67,10 @@ notion-clone 移除自身 auth route、server auth instance 與 server env 依�
 
 ## 自動驗證範圍
 
-- `organization-extra.test.ts` 透過真實 Better Auth HTTP handler 與 memory adapter 驗證跨組織讀取、角色授權、enum、明確 billing 停用、訂閱錯誤，以及官方 memberCount 與預設角色。
+- `organization-extra.test.ts` 透過真實 Better Auth HTTP handler 與 memory adapter 驗證自訂 endpoint 的跨組織讀取、角色授權、enum、明確 billing 停用、訂閱錯誤，以及角色更新不破壞既有會員資料。
 - `resource-authorization.test.ts` 驗證資源所屬組織、管理權限、上傳格式與大小、storage 路徑及外部失敗。
 - `auth.test.ts` 驗證注入設定、官方 email callback 收件者與拒絕寄信結果。
-- `stripe-webhook.test.ts` 的兩個 fixture 測試驗證有效簽章、重送及竄改 payload 拒絕；不涉及 Stripe 網路或 Dashboard 設定。
+- `auth` 不重測官方 Stripe webhook 驗章、重送或官方會員建立與計數；`auth-server` 保留原始 request body 轉送測試。
 - auth-ui tests 驗證帳號與 passkey 錯誤、裝置解析、local account ID、登入 challenge 與 reset-token UI。
 - settings-panel tests 驗證缺少能力不成功、密碼資料刷新、passkey modal error 與停用入口。
 - Fastify tests 包含官方 /ok、覆寫偽造 client IP、影像 body 上限，以及不同 origins、preflight、原始 body、cookies、redirect、status，以及忽略未受信任的 Host 與 forwarded host。
@@ -84,6 +84,12 @@ memory adapter 與假的外部服務回應不證明 PostgreSQL、OAuth provider�
 整合提交為 `543f12c2`，前序提交為 `c070a7ae`、`833edd8e`、`5aa44468`。上述 auth 相關套件、server 與 import tests 合計 153 tests 通過，不代表整個 repository 全部測試通過。先前 table-view 全套測試有 timeline selection、sort remove 兩個 timeout；當時也曾因磁碟不足導致 build/docs build 失敗。後續 table-view build 已成功，但全套測試未重跑，docs production build 尚未完成。
 
 後續測試精簡：移除設定值照抄斷言、重複的 URL 轉換與上傳失敗案例，以及直接測試第三方內部背景工作方法的案例，共 6 個；同步刪除不再使用的 mock。重新執行 auth 61 tests、auth-ui 39 tests，全部通過。權限、安全邊界與重要流程回歸測試保留。
+
+## 測試責任範圍
+
+`auth` 只測自訂授權、資料聚合與驗證、儲存失敗處理，以及寄信收件者與邀請連結等產品決策。不為單純轉送參數的 wrapper、官方 plugin 方法、Stripe 驗章或官方會員建立另寫測試。型別相容由 typecheck 與消費端編譯檢查；HTTP、cookie、CORS 與原始 body 轉送由 `auth-server` 驗證。
+
+本輪再移除 6 個案例及 auth 內重複的 `/ok` 斷言；保留自訂角色更新不破壞會員資料的測試，因為該更新 endpoint 由本專案維護。調整後 auth 的 4 個測試檔、55 個案例全部通過，typecheck 與 lint 通過。上方數量為先前提交的歷史驗證結果。
 
 ## 尚需部署或現場驗證
 

@@ -307,23 +307,4 @@ describe("TestOrganizationDisplayContract", () => {
     ]);
     expect(db.query.invitation.findMany).toHaveBeenCalledTimes(1);
   });
-  it("official membership creation applies the protected role default and count", async () => {
-    const { request, data } = await setup();
-    data.teamMember = [];
-    data.team![0]!.memberCount = 0;
-    const response = await request("/organization/add-team-member", {
-      organizationId: "org-a",
-      teamId: "team-a",
-      userId: "target",
-      role: "owner",
-    });
-    expect(response.status).toBe(200);
-    expect(data.teamMember).toHaveLength(1);
-    expect(data.teamMember[0]).toMatchObject({
-      teamId: "team-a",
-      userId: "target",
-      role: "member",
-    });
-    expect(data.team?.[0]?.memberCount).toBe(1);
-  });
 });

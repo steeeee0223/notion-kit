@@ -53,55 +53,6 @@ describe("shared auth configuration", () => {
       },
     ]);
   });
-  it("sends verification links and recipient variables through the official sender", async () => {
-    const sent: unknown[] = [];
-    vi.stubGlobal("fetch", (_url: unknown, init: { body: string }) => {
-      sent.push(JSON.parse(init.body));
-      return Promise.resolve(Response.json({ messageId: "verify-1" }));
-    });
-    const auth = createAuth(env);
-    await auth.options.emailVerification.sendVerificationEmail({
-      user,
-      url: "https://auth.example.com/api/auth/verify-email?token=verify-token&callbackURL=https%3A%2F%2Fapp.example.com",
-      token: "verify-token",
-    });
-    expect(sent).toEqual([
-      {
-        template: "verify-email",
-        to: "old@example.com",
-        variables: {
-          verificationUrl:
-            "https://auth.example.com/api/auth/verify-email?token=verify-token&callbackURL=https%3A%2F%2Fapp.example.com",
-          userEmail: "old@example.com",
-          userName: "User",
-        },
-      },
-    ]);
-  });
-  it("sends password reset links without replacing the caller callback", async () => {
-    const sent: unknown[] = [];
-    vi.stubGlobal("fetch", (_url: unknown, init: { body: string }) => {
-      sent.push(JSON.parse(init.body));
-      return Promise.resolve(Response.json({ messageId: "reset-1" }));
-    });
-    const auth = createAuth(env);
-    await auth.options.emailAndPassword.sendResetPassword({
-      user,
-      url: "https://auth.example.com/api/auth/reset-password/reset-token?callbackURL=https%3A%2F%2Fsecond.example.com%2Freset",
-      token: "reset-token",
-    });
-    expect(sent).toEqual([
-      {
-        template: "reset-password",
-        to: "old@example.com",
-        variables: {
-          resetLink:
-            "https://auth.example.com/api/auth/reset-password/reset-token?callbackURL=https%3A%2F%2Fsecond.example.com%2Freset",
-          userEmail: "old@example.com",
-        },
-      },
-    ]);
-  });
   it.each([
     [
       "https://app.example.com",
@@ -184,7 +135,7 @@ describe("shared auth configuration", () => {
       ]);
     },
   );
-  it("isolates sender credentials, origins, and base paths between factory instances", async () => {
+  it("isolates sender credentials and trusted origins between factory instances", async () => {
     const requests: { url: string; authorization: string | null }[] = [];
     vi.stubGlobal("fetch", (url: string | URL, init: RequestInit) => {
       requests.push({
@@ -205,14 +156,6 @@ describe("shared auth configuration", () => {
       },
       { basePath: "/identity" },
     );
-    const firstResponse = await first.handler(
-      new Request("https://auth.example.com/api/auth/ok"),
-    );
-    const secondResponse = await second.handler(
-      new Request("https://second-auth.example.com/identity/ok"),
-    );
-    expect(await firstResponse.json()).toEqual({ ok: true });
-    expect(await secondResponse.json()).toEqual({ ok: true });
     expect(second.options.trustedOrigins).toEqual([
       "https://second-auth.example.com",
       "https://second.example.com",
