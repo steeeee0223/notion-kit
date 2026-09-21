@@ -10,6 +10,8 @@ import {
   type LoginMode,
 } from "@notion-kit/auth-ui";
 
+import { appURL, routes } from "@/lib/routes";
+
 export default function Page() {
   const router = useRouter();
   const [mode, setMode] = useState<LoginMode>("sign_in");
@@ -21,14 +23,14 @@ export default function Page() {
   useEffect(() => {
     if (isLoading) return;
     if (!data?.user) {
-      router.replace("/");
+      router.replace(routes.home);
       return;
     }
     if (!data.session.activeOrganizationId || !activeWorkspace) {
-      router.replace("/onboarding");
+      router.replace(routes.onboarding);
       return;
     }
-    router.replace(`/workspace/${activeWorkspace.slug}`);
+    router.replace(routes.workspace(activeWorkspace.slug));
   }, [data, isLoading, router, activeWorkspace]);
 
   return (
@@ -36,7 +38,7 @@ export default function Page() {
       <div className="text-lg text-primary">Home</div>
       <LoginForm
         mode={mode}
-        callbackURL="/"
+        callbackURL={appURL(routes.home)}
         className="w-80"
         onModeChange={setMode}
       />

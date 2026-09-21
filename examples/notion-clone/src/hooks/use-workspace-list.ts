@@ -18,6 +18,8 @@ import {
   type Workspace,
 } from "@notion-kit/schemas";
 
+import { routes } from "@/lib/routes";
+
 const defaultWorkspace: Workspace = {
   id: "",
   name: "",
@@ -74,7 +76,7 @@ export function useWorkspaceList() {
         console.error("Failed to set active workspace");
         return;
       }
-      router.push(`/workspace/${res.data.slug}`);
+      router.push(routes.workspace(res.data.slug));
     },
     [router],
   );
