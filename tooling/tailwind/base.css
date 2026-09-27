@@ -11,6 +11,7 @@
   --color-blue-hover: var(--blue-hover);
   --color-red: var(--red);
   --color-orange: var(--orange);
+  --color-green: var(--green);
   /* Text color */
   --color-default: var(--default);
   --color-primary: var(--primary);
@@ -76,6 +77,7 @@
   --blue-hover: rgb(0, 119, 212);
   --red: rgb(235, 87, 87);
   --orange: rgb(218, 163, 64);
+  --green: rgb(68, 131, 97);
   /* Text color */
   --default: rgb(var(--base));
   --primary: rgb(44, 44, 43);

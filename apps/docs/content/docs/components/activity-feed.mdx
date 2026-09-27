@@ -1,0 +1,41 @@
+---
+title: Activity Feed
+description: A vertical timeline with a tone dot or icon marker and an automatic connecting line.
+---
+
+<ComponentPreview name="activity-feed-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="activity-feed-default" />
+
+## Anatomy
+
+`ActivityFeed` computes each child's `isLast` state automatically, so the
+connecting line is hidden after the final item without any extra props.
+
+```tsx
+<ActivityFeed>
+  <ActivityItem tone="success" title="Invoice captured" timestamp="2m ago" />
+  <ActivityItem tone="warning" title="Amount needs review" timestamp="18m ago" />
+</ActivityFeed>
+```
+
+## API Reference
+
+### ActivityFeed
+
+`ActivityFeed` extends the HTML `<div>` component and renders `role="list"`.
+
+### ActivityItem
+
+`ActivityItem` extends the HTML `<div>` component and renders `role="listitem"`.
+
+| Prop          | Type                                                         | Default     | Description                                                          |
+| ------------- | -------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------ |
+| `icon`        | `ReactNode`                                                     | -           | An icon or avatar rendered in the timeline marker; defaults to a tone dot. |
+| `tone`        | `"neutral" \| "info" \| "warning" \| "danger" \| "success"`    | `"neutral"` | Colors the default tone dot.                                             |
+| `title`       | `ReactNode`                                                     | -           | The event's title. Required.                                             |
+| `description` | `ReactNode`                                                     | -           | Supporting text below the title.                                         |
+| `timestamp`   | `ReactNode`                                                     | -           | A timestamp slot rendered next to the title.                             |
+| `isLast`      | `boolean`                                                       | computed    | Hides the connecting line below this item. Set by `ActivityFeed` unless provided explicitly. |

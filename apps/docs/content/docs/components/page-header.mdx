@@ -1,0 +1,25 @@
+---
+title: Page Header
+description: A page-level header with a breadcrumb, title, description, actions, and a tabs/meta slot.
+---
+
+<ComponentPreview name="page-header-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="page-header-default" />
+
+## API Reference
+
+### PageHeader
+
+`PageHeader` extends the HTML `<header>` component.
+
+| Prop          | Type            | Default | Description                                                             |
+| ------------- | --------------- | ------- | --------------------------------------------------------------------------- |
+| `breadcrumb`  | `ReactNode`     | -       | A breadcrumb trail rendered above the title.                                |
+| `title`       | `ReactNode`     | -       | The page title. Required.                                                    |
+| `as`          | `ElementType`   | `"h1"`  | The element/component used for the title.                                   |
+| `description` | `ReactNode`     | -       | Supporting text below the title.                                            |
+| `actions`     | `ReactNode`     | -       | Buttons rendered next to the title; wraps below it on narrow screens.       |
+| `meta`        | `ReactNode`     | -       | A tabs or metadata slot rendered below the title row.                       |

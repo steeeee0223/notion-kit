@@ -11,6 +11,12 @@ export const Index: Record<
     component: React.LazyExoticComponent<React.ComponentType<object>>;
   }
 > = {
+  "activity-feed-default": {
+    files: ["registry/src/activity-feed-default/activity-feed-default.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/activity-feed-default"),
+    ),
+  },
   "autocomplete-default": {
     files: ["registry/src/autocomplete-default/autocomplete-default.tsx"],
     component: React.lazy(
@@ -149,6 +155,14 @@ export const Index: Record<
     files: ["registry/src/cover-picker/cover-picker.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/cover-picker")),
   },
+  "description-list-default": {
+    files: [
+      "registry/src/description-list-default/description-list-default.tsx",
+    ],
+    component: React.lazy(
+      () => import("@notion-kit/registry/description-list-default"),
+    ),
+  },
   "dropdown-menu": {
     files: ["registry/src/dropdown-menu/dropdown-menu.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/dropdown-menu")),
@@ -163,6 +177,12 @@ export const Index: Record<
     files: ["registry/src/dropdown-menu-radio/dropdown-menu-radio.tsx"],
     component: React.lazy(
       () => import("@notion-kit/registry/dropdown-menu-radio"),
+    ),
+  },
+  "empty-state-default": {
+    files: ["registry/src/empty-state-default/empty-state-default.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/empty-state-default"),
     ),
   },
   "icon-block-emoji": {
@@ -214,6 +234,10 @@ export const Index: Record<
   "kanban-board": {
     files: ["registry/src/kanban-board/kanban-board.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/kanban-board")),
+  },
+  "kbd-default": {
+    files: ["registry/src/kbd-default/kbd-default.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/kbd-default")),
   },
   "input-default": {
     files: ["registry/src/input-default/input-default.tsx"],
@@ -324,6 +348,12 @@ export const Index: Record<
     files: ["registry/src/navbar-title/navbar-title.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/navbar-title")),
   },
+  "page-header-default": {
+    files: ["registry/src/page-header-default/page-header-default.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/page-header-default"),
+    ),
+  },
   "resizable-demo": {
     files: ["registry/src/resizable-demo/resizable-demo.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/resizable-demo")),
@@ -339,6 +369,36 @@ export const Index: Record<
   "separator-demo": {
     files: ["registry/src/separator-demo/separator-demo.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/separator-demo")),
+  },
+  "sparkline-default": {
+    files: ["registry/src/sparkline-default/sparkline-default.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/sparkline-default"),
+    ),
+  },
+  "stat-card-default": {
+    files: ["registry/src/stat-card-default/stat-card-default.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/stat-card-default"),
+    ),
+  },
+  "stat-card-interactive": {
+    files: ["registry/src/stat-card-interactive/stat-card-interactive.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/stat-card-interactive"),
+    ),
+  },
+  "stat-card-loading": {
+    files: ["registry/src/stat-card-loading/stat-card-loading.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/stat-card-loading"),
+    ),
+  },
+  "stat-card-with-chart": {
+    files: ["registry/src/stat-card-with-chart/stat-card-with-chart.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/stat-card-with-chart"),
+    ),
   },
   "settings-panel-connections-table": {
     files: [
@@ -504,6 +564,10 @@ export const Index: Record<
     files: ["registry/src/tabs-demo/tabs-demo.tsx"],
     component: React.lazy(() => import("@notion-kit/registry/tabs-demo")),
   },
+  "tabs-segmented": {
+    files: ["registry/src/tabs-segmented/tabs-segmented.tsx"],
+    component: React.lazy(() => import("@notion-kit/registry/tabs-segmented")),
+  },
   "tags-input-default": {
     files: ["registry/src/tags-input-default/tags-input-default.tsx"],
     component: React.lazy(
@@ -526,6 +590,18 @@ export const Index: Record<
     ],
     component: React.lazy(
       () => import("@notion-kit/registry/timeline-without-sidebar"),
+    ),
+  },
+  "todo-stack-default": {
+    files: ["registry/src/todo-stack-default/todo-stack-default.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/todo-stack-default"),
+    ),
+  },
+  "todo-stack-empty": {
+    files: ["registry/src/todo-stack-empty/todo-stack-empty.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/todo-stack-empty"),
     ),
   },
   "tooltip-demo": {

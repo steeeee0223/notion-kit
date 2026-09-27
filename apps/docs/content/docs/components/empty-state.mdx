@@ -1,0 +1,24 @@
+---
+title: Empty State
+description: A placeholder for a list, panel, or page with nothing to show yet.
+---
+
+<ComponentPreview name="empty-state-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="empty-state-default" />
+
+## API Reference
+
+### EmptyState
+
+`EmptyState` extends the HTML `<div>` component.
+
+| Prop          | Type          | Default | Description                                       |
+| ------------- | ------------- | ------- | --------------------------------------------------- |
+| `icon`        | `ReactNode`   | -       | An icon rendered above the title.                    |
+| `title`       | `ReactNode`   | -       | The heading. Required.                               |
+| `description` | `ReactNode`   | -       | Supporting text below the title.                     |
+| `actions`     | `ReactNode`   | -       | Buttons or links rendered below the description.     |
+| `size`        | `"sm" \| "md"` | `"md"`  | Controls spacing and icon/title sizing.              |

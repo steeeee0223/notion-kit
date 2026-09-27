@@ -11,6 +11,9 @@
   },
   "license": "MIT",
   "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     "./style.css": "./dist/style.css",
     "./*": {

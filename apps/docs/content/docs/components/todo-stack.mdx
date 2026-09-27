@@ -1,0 +1,65 @@
+---
+title: Todo Stack
+description: A Ramp-style action list with tone, a primary action, and an "all done" empty state.
+---
+
+<ComponentPreview name="todo-stack-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="todo-stack-default" />
+
+## Anatomy
+
+```tsx
+<TodoStack title="To-dos" count={2}>
+  <TodoItem
+    tone="warning"
+    icon={<Icon.ExclamationMarkCircled />}
+    title="3 invoices need review"
+    description="Amounts don't match the purchase order."
+    count={3}
+    action={<Button variant="soft-blue" size="sm">Review</Button>}
+    dismissible
+    onDismiss={() => {}}
+  />
+</TodoStack>
+```
+
+## Examples
+
+---
+
+### Empty
+
+When there are no `TodoItem` children, `TodoStack` shows an "all done" state.
+Pass `empty` to replace it.
+
+<ComponentPreview name="todo-stack-empty" />
+
+## API Reference
+
+### TodoStack
+
+`TodoStack` extends the HTML `<div>` component.
+
+| Prop    | Type        | Default | Description                                             |
+| ------- | ----------- | ------- | --------------------------------------------------------- |
+| `title` | `ReactNode` | -       | The list heading.                                          |
+| `count` | `number`    | -       | A count shown next to the title.                            |
+| `empty` | `ReactNode` | -       | Content shown when there are no `TodoItem` children.       |
+
+### TodoItem
+
+`TodoItem` extends the HTML `<div>` component.
+
+| Prop          | Type                                              | Default     | Description                                                     |
+| ------------- | -------------------------------------------------- | ----------- | ------------------------------------------------------------------ |
+| `icon`        | `ReactNode`                                        | -           | An icon rendered before the title.                                  |
+| `title`       | `ReactNode`                                        | -           | The item's title. Required.                                        |
+| `description` | `ReactNode`                                        | -           | Supporting text below the title.                                   |
+| `count`       | `number`                                           | -           | A trailing count rendered as a badge.                               |
+| `tone`        | `"neutral" \| "info" \| "warning" \| "danger"`     | `"neutral"` | Colors the icon.                                                    |
+| `action`      | `ReactNode`                                        | -           | The primary action, e.g. a `Button` with `render` for a link.       |
+| `dismissible` | `boolean`                                          | -           | Shows a dismiss button.                                             |
+| `onDismiss`   | `() => void`                                       | -           | Called when the dismiss button is clicked.                          |

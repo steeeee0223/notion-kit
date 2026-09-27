@@ -1,0 +1,40 @@
+---
+title: Description List
+description: Key/value rows with an optional copy-to-clipboard button and monospace values.
+---
+
+<ComponentPreview name="description-list-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="description-list-default" />
+
+## Anatomy
+
+```tsx
+<DescriptionList layout="horizontal">
+  <DescriptionItem label="Status" value="Active" />
+  <DescriptionItem label="API key" value="sk_live_...9f2" mono copyValue="sk_live_51J8f9a29f2" />
+</DescriptionList>
+```
+
+## API Reference
+
+### DescriptionList
+
+`DescriptionList` extends the HTML `<dl>` component.
+
+| Prop     | Type                        | Default        | Description                                                                          |
+| -------- | --------------------------- | -------------- | --------------------------------------------------------------------------------------- |
+| `layout` | `"horizontal" \| "stacked"` | `"horizontal"` | `"horizontal"` puts the label and value on the same row from `sm` up; `"stacked"` always stacks them. |
+
+### DescriptionItem
+
+`DescriptionItem` extends the HTML `<div>` component.
+
+| Prop        | Type        | Default | Description                                                                 |
+| ----------- | ----------- | ------- | ------------------------------------------------------------------------------ |
+| `label`     | `ReactNode` | -       | The row's label. Required.                                                     |
+| `value`     | `ReactNode` | -       | The row's value. Required.                                                     |
+| `mono`      | `boolean`   | -       | Renders `value` in a monospace font.                                           |
+| `copyValue` | `string`    | -       | The plain-text value to copy. Providing this shows a copy-to-clipboard button.  |

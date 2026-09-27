@@ -1,0 +1,52 @@
+---
+title: Stat Card
+description: A KPI tile with a large tabular value, an optional trend delta, and a chart slot.
+---
+
+<ComponentPreview name="stat-card-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="stat-card-default" />
+
+## Examples
+
+---
+
+### With a chart
+
+Pass a `Sparkline` (or any `ReactNode`) to `chart`.
+
+<ComponentPreview name="stat-card-with-chart" />
+
+### Loading
+
+Set `loading` to show a skeleton in place of the label, value, and delta.
+
+<ComponentPreview name="stat-card-loading" />
+
+### Interactive
+
+Pass `href` to render the card as a link, or `onClick` to render it as a button.
+
+<ComponentPreview name="stat-card-interactive" />
+
+## API Reference
+
+### StatCard
+
+`StatCard` extends the Base UI `render` prop API and renders a `<div>` by default
+(an `<a>` when `href` is set, or a `<button>` when `onClick` is set without `href`).
+
+| Prop      | Type                                                                                  | Default | Description                                                                                                                             |
+| --------- | -------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `label`   | `ReactNode`                                                                             | -       | The KPI label.                                                                                                                            |
+| `value`   | `ReactNode`                                                                             | -       | The KPI value. Combine a `number` with `format` for a display string, or pass any node directly.                                        |
+| `format`  | `(value: number) => string`                                                             | -       | Formats a numeric `value` into a display string.                                                                                         |
+| `delta`   | `{ value: ReactNode; direction: "up" \| "down" \| "flat"; positiveIsGood?: boolean }`   | -       | An up/down/flat delta shown next to the value. `positiveIsGood` (default `true`) controls whether `"up"` is colored as a good outcome.  |
+| `caption` | `ReactNode`                                                                             | -       | Supporting text below the value.                                                                                                          |
+| `period`  | `ReactNode`                                                                             | -       | The period the value covers, shown next to the label.                                                                                     |
+| `chart`   | `ReactNode`                                                                             | -       | A chart slot, typically a `Sparkline`.                                                                                                    |
+| `href`    | `string`                                                                                | -       | Renders the card as an anchor to this URL.                                                                                                |
+| `loading` | `boolean`                                                                               | `false` | Shows a skeleton instead of the label, value, and delta.                                                                                  |
+| `render`  | `ReactElement \| (props, state) => ReactElement`                                       | -       | Overrides the rendered element; see Base UI's `render` prop.                                                                              |

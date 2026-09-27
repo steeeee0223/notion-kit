@@ -1,0 +1,40 @@
+---
+title: Sparkline
+description: A dependency-free SVG line/area chart that fills its container width.
+---
+
+<ComponentPreview name="sparkline-default" />
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="sparkline-default" />
+
+## Anatomy
+
+`Sparkline` renders a single `<svg>` sized by its container (`viewBox` with
+`preserveAspectRatio="none"`, and a non-scaling stroke). It draws with
+`currentColor`, so set a text color utility on the component or an ancestor
+to theme it.
+
+```tsx
+<Sparkline
+  data={[4, 6, 5, 8, 7, 10]}
+  ariaLabel="Revenue trend, up 12% over 7 days"
+  area
+  highlightLast
+  className="text-green"
+/>
+```
+
+## API Reference
+
+### Sparkline
+
+| Prop            | Type       | Default | Description                                                         |
+| --------------- | ---------- | ------- | --------------------------------------------------------------------- |
+| `data`          | `number[]` | -       | The series to plot, oldest first.                                     |
+| `ariaLabel`     | `string`   | -       | A textual summary of the trend for assistive technology. Required.    |
+| `area`          | `boolean`  | `false` | Fills the area under the line with the current text color.            |
+| `highlightLast` | `boolean`  | `false` | Draws a dot over the last data point.                                 |
+| `strokeWidth`   | `number`   | `2`     | The line's stroke width, in viewBox units.                            |
+| `className`     | `string`   | -       | Additional classes, e.g. a text color utility such as `text-green`.   |

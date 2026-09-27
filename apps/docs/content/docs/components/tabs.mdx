@@ -35,6 +35,13 @@ Use `value` and `onValueChange` when the selected tab is owned by parent state.
 
 <ComponentPreview name="tabs-demo" />
 
+### Segmented
+
+Pass `variant="segmented"` to `TabsList` for a pill-in-track look, e.g. for
+switching a date range.
+
+<ComponentPreview name="tabs-segmented" />
+
 ## API Reference
 
 ### Tabs
@@ -53,10 +60,11 @@ props and the controlled value props below.
 
 The container for tab triggers.
 
-| Prop              | Type      | Default | Description                                     |
-| ----------------- | --------- | ------- | ----------------------------------------------- |
-| `activateOnFocus` | `boolean` | `false` | Whether arrow-key focus also activates the tab. |
-| `loopFocus`       | `boolean` | `true`  | Whether keyboard focus loops through the list.  |
+| Prop              | Type                    | Default  | Description                                                                      |
+| ----------------- | ----------------------- | -------- | --------------------------------------------------------------------------------- |
+| `activateOnFocus` | `boolean`               | `false`  | Whether arrow-key focus also activates the tab.                                   |
+| `loopFocus`       | `boolean`               | `true`   | Whether keyboard focus loops through the list.                                    |
+| `variant`         | `"line" \| "segmented"` | `"line"` | `"line"` underlines the active tab; `"segmented"` renders a pill-in-track look.   |
 
 ### TabsTrigger
 
