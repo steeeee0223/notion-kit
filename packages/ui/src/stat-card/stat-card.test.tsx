@@ -27,7 +27,11 @@ describe("StatCard", () => {
     { direction: "up" as const, positiveIsGood: true, expected: "text-green" },
     { direction: "up" as const, positiveIsGood: false, expected: "text-red" },
     { direction: "down" as const, positiveIsGood: true, expected: "text-red" },
-    { direction: "flat" as const, positiveIsGood: true, expected: "text-muted" },
+    {
+      direction: "flat" as const,
+      positiveIsGood: true,
+      expected: "text-muted",
+    },
   ])(
     "StatCard_Delta_$direction_PositiveIsGood_$positiveIsGood_ColorsAccordingly",
     ({ direction, positiveIsGood, expected }) => {
@@ -58,7 +62,9 @@ describe("StatCard", () => {
   it("StatCard_OnClick_RendersAsButtonAndInvokesHandler", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<StatCard label="Monthly revenue" value={128400} onClick={onClick} />);
+    render(
+      <StatCard label="Monthly revenue" value={128400} onClick={onClick} />,
+    );
 
     await user.click(screen.getByRole("button"));
 

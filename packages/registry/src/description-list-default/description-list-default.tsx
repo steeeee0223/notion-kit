@@ -1,4 +1,7 @@
-import { DescriptionItem, DescriptionList } from "@notion-kit/ui/description-list";
+import {
+  DescriptionItem,
+  DescriptionList,
+} from "@notion-kit/ui/description-list";
 
 export default function Default() {
   return (

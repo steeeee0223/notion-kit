@@ -30,7 +30,9 @@ describe("ActivityFeed", () => {
 
     const items = screen.getAllByRole("listitem");
     expect(items[0]!.querySelector('[aria-hidden="true"]')).toBeInTheDocument();
-    expect(items[1]!.querySelector('[aria-hidden="true"]')).not.toBeInTheDocument();
+    expect(
+      items[1]!.querySelector('[aria-hidden="true"]'),
+    ).not.toBeInTheDocument();
   });
 
   it("ActivityFeed_ExplicitIsLast_OverridesComputedValue", () => {
@@ -42,6 +44,8 @@ describe("ActivityFeed", () => {
     );
 
     const items = screen.getAllByRole("listitem");
-    expect(items[0]!.querySelector('[aria-hidden="true"]')).not.toBeInTheDocument();
+    expect(
+      items[0]!.querySelector('[aria-hidden="true"]'),
+    ).not.toBeInTheDocument();
   });
 });

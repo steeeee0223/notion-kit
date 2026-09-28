@@ -1,6 +1,6 @@
 import { Icon } from "@notion-kit/icons";
-import { Button, Tabs, TabsList, TabsTrigger } from "@notion-kit/ui/primitives";
 import { PageHeader } from "@notion-kit/ui/page-header";
+import { Button, Tabs, TabsList, TabsTrigger } from "@notion-kit/ui/primitives";
 
 export default function Default() {
   return (

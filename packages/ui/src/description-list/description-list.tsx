@@ -19,7 +19,11 @@ export interface DescriptionListProps extends React.ComponentProps<"dl"> {
 /**
  * A list of key/value rows. Compose with `DescriptionItem` children.
  */
-function DescriptionList({ layout = "horizontal", className, ...props }: DescriptionListProps) {
+function DescriptionList({
+  layout = "horizontal",
+  className,
+  ...props
+}: DescriptionListProps) {
   return (
     <dl
       data-slot="description-list"
@@ -59,7 +63,9 @@ function DescriptionItem({
   ...props
 }: DescriptionItemProps) {
   const [copied, setCopied] = React.useState(false);
-  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   React.useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
@@ -78,7 +84,12 @@ function DescriptionItem({
       {...props}
     >
       <dt className="text-muted">{label}</dt>
-      <dd className={cn("flex min-w-0 items-center gap-1.5 text-primary", mono && "font-mono text-xs")}>
+      <dd
+        className={cn(
+          "flex min-w-0 items-center gap-1.5 text-primary",
+          mono && "font-mono text-xs",
+        )}
+      >
         <span className="truncate">{value}</span>
         {copyValue && (
           <TooltipPreset description={copied ? "Copied" : "Copy"}>

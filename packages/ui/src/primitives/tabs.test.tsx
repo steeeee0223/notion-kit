@@ -34,7 +34,10 @@ describe("Tabs variant", () => {
       </Tabs>,
     );
 
-    expect(screen.getByRole("tablist")).toHaveAttribute("data-variant", "segmented");
+    expect(screen.getByRole("tablist")).toHaveAttribute(
+      "data-variant",
+      "segmented",
+    );
     expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute(
       "data-variant",
       "segmented",

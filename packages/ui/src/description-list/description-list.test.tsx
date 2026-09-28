@@ -2,7 +2,11 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent, { type UserEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { DescriptionList, DescriptionItem, type DescriptionListProps } from "./description-list";
+import {
+  DescriptionItem,
+  DescriptionList,
+  type DescriptionListProps,
+} from "./description-list";
 
 class DescriptionListObject {
   private constructor(readonly user: UserEvent) {}
@@ -14,7 +18,9 @@ class DescriptionListObject {
   }
 
   row(label: string) {
-    return screen.getByText(label).closest<HTMLElement>("[data-slot=description-item]")!;
+    return screen
+      .getByText(label)
+      .closest<HTMLElement>("[data-slot=description-item]")!;
   }
 
   copyButton(label: string) {
@@ -41,16 +47,26 @@ describe("DescriptionList", () => {
       children: <DescriptionItem label="Status" value="Active" />,
     });
 
-    expect(screen.queryByRole("button", { name: "Copy value" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Copy value" }),
+    ).not.toBeInTheDocument();
   });
 
   it("DescriptionItem_Copy_WritesValueToClipboardAndShowsCopiedTooltip", async () => {
     const page = DescriptionListObject.render({
-      children: <DescriptionItem label="API key" value="sk_live_123" copyValue="sk_live_123" />,
+      children: (
+        <DescriptionItem
+          label="API key"
+          value="sk_live_123"
+          copyValue="sk_live_123"
+        />
+      ),
     });
     // `userEvent.setup()` installs its own clipboard stub, so the spy must
     // be attached after `render` calls it.
-    const writeText = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue(undefined);
+    const writeText = vi
+      .spyOn(navigator.clipboard, "writeText")
+      .mockResolvedValue(undefined);
 
     await page.copy("API key");
 
@@ -60,6 +76,9 @@ describe("DescriptionList", () => {
   it("DescriptionList_Layout_DefaultsToHorizontal", () => {
     render(<DescriptionList data-testid="list" />);
 
-    expect(screen.getByTestId("list")).toHaveAttribute("data-layout", "horizontal");
+    expect(screen.getByTestId("list")).toHaveAttribute(
+      "data-layout",
+      "horizontal",
+    );
   });
 });

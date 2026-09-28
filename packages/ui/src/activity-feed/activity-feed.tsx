@@ -12,7 +12,12 @@ function ActivityFeed({ className, children, ...props }: ActivityFeedProps) {
   const items = React.Children.toArray(children);
 
   return (
-    <div data-slot="activity-feed" role="list" className={cn("flex flex-col", className)} {...props}>
+    <div
+      data-slot="activity-feed"
+      role="list"
+      className={cn("flex flex-col", className)}
+      {...props}
+    >
       {items.map((child, index) =>
         React.isValidElement<ActivityItemProps>(child)
           ? React.cloneElement(child, {
@@ -76,13 +81,18 @@ function ActivityItem({
           {icon ?? <span className={cn(toneDotVariants({ tone }))} />}
         </span>
         {!isLast && (
-          <span aria-hidden="true" className="absolute top-6 bottom-0 w-px bg-border" />
+          <span
+            aria-hidden="true"
+            className="absolute top-6 bottom-0 w-px bg-border"
+          />
         )}
       </div>
       <div className="min-w-0 flex-1 pt-0.5">
         <div className="flex flex-wrap items-baseline justify-between gap-x-2">
           <p className="text-sm font-medium text-primary">{title}</p>
-          {timestamp && <span className="shrink-0 text-xs text-muted">{timestamp}</span>}
+          {timestamp && (
+            <span className="shrink-0 text-xs text-muted">{timestamp}</span>
+          )}
         </div>
         {description && <p className="text-sm text-muted">{description}</p>}
       </div>

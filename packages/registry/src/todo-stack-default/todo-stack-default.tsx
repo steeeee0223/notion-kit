@@ -52,7 +52,9 @@ export default function Default() {
           description={task.description}
           count={task.count}
           dismissible
-          onDismiss={() => setTasks((prev) => prev.filter((t) => t.id !== task.id))}
+          onDismiss={() =>
+            setTasks((prev) => prev.filter((t) => t.id !== task.id))
+          }
           action={
             <Button variant="soft-blue" size="sm">
               Review

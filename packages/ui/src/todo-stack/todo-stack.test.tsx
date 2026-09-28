@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent, { type UserEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { TodoStack, TodoItem, type TodoStackProps } from "./todo-stack";
+import { TodoItem, TodoStack, type TodoStackProps } from "./todo-stack";
 
 class TodoStackObject {
   private constructor(readonly user: UserEvent) {}
@@ -14,7 +14,9 @@ class TodoStackObject {
   }
 
   item(name: string) {
-    return screen.getByText(name).closest<HTMLElement>("[data-slot=todo-item]")!;
+    return screen
+      .getByText(name)
+      .closest<HTMLElement>("[data-slot=todo-item]")!;
   }
 
   dismissButton(name: string) {

@@ -26,7 +26,9 @@ describe("EmptyState", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Add invoice" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Add invoice" }),
+    ).toBeInTheDocument();
   });
 
   it.each(["sm", "md"] as const)(

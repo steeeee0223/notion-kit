@@ -35,7 +35,9 @@ const tabsListVariants = cva(
   },
 );
 
-interface TabsListProps extends TabsPrimitive.List.Props, VariantProps<typeof tabsListVariants> {}
+interface TabsListProps
+  extends TabsPrimitive.List.Props,
+    VariantProps<typeof tabsListVariants> {}
 
 function TabsList({ className, variant = "line", ...props }: TabsListProps) {
   return (
@@ -75,15 +77,18 @@ const tabsTriggerVariants = cva(
   },
 );
 
-const tabsTriggerInnerVariants = cva("inline-flex items-center gap-1.5 rounded-sm", {
-  variants: {
-    variant: {
-      line: "px-2 py-1 hover:bg-default/5",
-      segmented: "",
+const tabsTriggerInnerVariants = cva(
+  "inline-flex items-center gap-1.5 rounded-sm",
+  {
+    variants: {
+      variant: {
+        line: "px-2 py-1 hover:bg-default/5",
+        segmented: "",
+      },
     },
+    defaultVariants: { variant: "line" },
   },
-  defaultVariants: { variant: "line" },
-});
+);
 
 function TabsTrigger({
   className,

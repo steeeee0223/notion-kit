@@ -74,9 +74,17 @@ export interface StatCardProps
   loading?: boolean;
 }
 
-function DeltaIndicator({ value, direction, positiveIsGood = true }: StatCardDelta) {
+function DeltaIndicator({
+  value,
+  direction,
+  positiveIsGood = true,
+}: StatCardDelta) {
   const tone =
-    direction === "flat" ? "neutral" : direction === "up" === positiveIsGood ? "good" : "bad";
+    direction === "flat"
+      ? "neutral"
+      : (direction === "up") === positiveIsGood
+        ? "good"
+        : "bad";
   return (
     <span className={cn(deltaVariants({ tone }))}>
       {direction === "up" && <Icon.ArrowUp className="size-3" />}
@@ -108,7 +116,8 @@ function StatCard({
   ...props
 }: StatCardProps) {
   const isInteractive = interactive ?? Boolean(href ?? props.onClick);
-  const displayValue = typeof value === "number" && format ? format(value) : value;
+  const displayValue =
+    typeof value === "number" && format ? format(value) : value;
 
   return useRender({
     defaultTagName: href ? "a" : isInteractive ? "button" : "div",
@@ -119,7 +128,9 @@ function StatCard({
         "data-loading": loading ? "" : undefined,
         href,
         type: !href && isInteractive ? "button" : undefined,
-        className: cn(statCardVariants({ interactive: isInteractive, className })),
+        className: cn(
+          statCardVariants({ interactive: isInteractive, className }),
+        ),
       },
       props,
       {
@@ -129,18 +140,24 @@ function StatCard({
           <>
             <div className="flex items-center justify-between gap-2">
               <span className="truncate text-sm text-muted">{label}</span>
-              {period && <span className="shrink-0 text-xs text-muted">{period}</span>}
+              {period && (
+                <span className="shrink-0 text-xs text-muted">{period}</span>
+              )}
             </div>
             <div className="flex items-end justify-between gap-3">
               <span className="text-2xl/tight font-semibold text-primary tabular-nums">
                 {displayValue}
               </span>
-              {chart && <div className="h-8 w-20 shrink-0 text-secondary">{chart}</div>}
+              {chart && (
+                <div className="h-8 w-20 shrink-0 text-secondary">{chart}</div>
+              )}
             </div>
             {(delta ?? caption) && (
               <div className="flex items-center gap-2">
                 {delta && <DeltaIndicator {...delta} />}
-                {caption && <span className="text-xs text-muted">{caption}</span>}
+                {caption && (
+                  <span className="text-xs text-muted">{caption}</span>
+                )}
               </div>
             )}
           </>

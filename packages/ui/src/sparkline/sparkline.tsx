@@ -72,7 +72,14 @@ function Sparkline({
       preserveAspectRatio="none"
       className={cn("h-8 w-full overflow-visible text-current", className)}
     >
-      {areaPath && <path d={areaPath} fill="currentColor" fillOpacity={0.12} stroke="none" />}
+      {areaPath && (
+        <path
+          d={areaPath}
+          fill="currentColor"
+          fillOpacity={0.12}
+          stroke="none"
+        />
+      )}
       {points.length > 0 && (
         <path
           d={linePath}

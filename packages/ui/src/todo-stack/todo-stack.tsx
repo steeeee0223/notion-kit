@@ -5,7 +5,8 @@ import { Icon } from "@notion-kit/icons";
 
 import { Badge, Button } from "@/primitives";
 
-export interface TodoStackProps extends Omit<React.ComponentProps<"div">, "title"> {
+export interface TodoStackProps
+  extends Omit<React.ComponentProps<"div">, "title"> {
   /** The list heading, e.g. `"To-dos"`. */
   title?: React.ReactNode;
   /** A count shown next to the title, e.g. the number of open items. */
@@ -18,14 +19,27 @@ export interface TodoStackProps extends Omit<React.ComponentProps<"div">, "title
  * A Ramp-style action list. Compose with `TodoItem` children; shows an
  * "all done" empty state when there are none.
  */
-function TodoStack({ title, count, empty, className, children, ...props }: TodoStackProps) {
+function TodoStack({
+  title,
+  count,
+  empty,
+  className,
+  children,
+  ...props
+}: TodoStackProps) {
   const hasItems = React.Children.count(children) > 0;
 
   return (
-    <div data-slot="todo-stack" className={cn("flex flex-col", className)} {...props}>
+    <div
+      data-slot="todo-stack"
+      className={cn("flex flex-col", className)}
+      {...props}
+    >
       {(title ?? count !== undefined) && (
         <div className="flex items-center justify-between gap-2 pb-2">
-          {title && <h3 className="text-sm font-semibold text-primary">{title}</h3>}
+          {title && (
+            <h3 className="text-sm font-semibold text-primary">{title}</h3>
+          )}
           {count !== undefined && (
             <span className="text-xs text-muted tabular-nums">{count}</span>
           )}
@@ -98,10 +112,17 @@ function TodoItem({
   return (
     <div
       data-slot="todo-item"
-      className={cn("flex items-start gap-3 py-3 first:pt-0 last:pb-0", className)}
+      className={cn(
+        "flex items-start gap-3 py-3 first:pt-0 last:pb-0",
+        className,
+      )}
       {...props}
     >
-      {icon && <span className={cn("mt-0.5 shrink-0", toneVariants({ tone }))}>{icon}</span>}
+      {icon && (
+        <span className={cn("mt-0.5 shrink-0", toneVariants({ tone }))}>
+          {icon}
+        </span>
+      )}
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-primary">{title}</p>
         {description && <p className="text-sm text-muted">{description}</p>}

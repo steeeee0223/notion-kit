@@ -7,7 +7,9 @@ describe("Sparkline", () => {
   it("Sparkline_Render_ExposesAriaLabelAsImageRole", () => {
     render(<Sparkline data={[1, 2, 3]} ariaLabel="Revenue trend, up 12%" />);
 
-    expect(screen.getByRole("img", { name: "Revenue trend, up 12%" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "Revenue trend, up 12%" }),
+    ).toBeInTheDocument();
   });
 
   it("Sparkline_Render_UsesNonScalingStrokeAndFillsContainerWidth", () => {

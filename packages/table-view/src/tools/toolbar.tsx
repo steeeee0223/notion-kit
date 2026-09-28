@@ -73,15 +73,21 @@ function ToolbarContent({ className }: ToolbarProps) {
           </Button>
         }
       />
-      <ToolbarItem
-        icon={<Icon.LightningSmall />}
-        label={messages.toolbar.automations}
-      />
+      {/* Automations and full page have no action yet; a read-only table
+          does not offer them. */}
+      {!readOnly.locked && (
+        <ToolbarItem
+          icon={<Icon.LightningSmall />}
+          label={messages.toolbar.automations}
+        />
+      )}
       <ToolbarSearch />
-      <ToolbarItem
-        icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
-        label={messages.toolbar.openFullPage}
-      />
+      {!readOnly.locked && (
+        <ToolbarItem
+          icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
+          label={messages.toolbar.openFullPage}
+        />
+      )}
       {!readOnly.hideViewSettings && (
         <DropdownMenu
           open={tableMenu.open}

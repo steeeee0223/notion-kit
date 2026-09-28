@@ -7,13 +7,17 @@ describe("PageHeader", () => {
   it("PageHeader_Default_RendersTitleAsHeading1", () => {
     render(<PageHeader title="Overview" />);
 
-    expect(screen.getByRole("heading", { level: 1, name: "Overview" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Overview" }),
+    ).toBeInTheDocument();
   });
 
   it("PageHeader_As_RendersTitleWithTheGivenTag", () => {
     render(<PageHeader title="Overview" as="h2" />);
 
-    expect(screen.getByRole("heading", { level: 2, name: "Overview" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Overview" }),
+    ).toBeInTheDocument();
   });
 
   it("PageHeader_BreadcrumbDescriptionActionsMeta_RendersAllSlots", () => {
@@ -28,7 +32,9 @@ describe("PageHeader", () => {
     );
 
     expect(screen.getByText("Home / Overview")).toBeInTheDocument();
-    expect(screen.getByText("A summary of this workspace.")).toBeInTheDocument();
+    expect(
+      screen.getByText("A summary of this workspace."),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "New" })).toBeInTheDocument();
     expect(screen.getByText("Last updated today")).toBeInTheDocument();
   });
