@@ -42,6 +42,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -140,6 +141,7 @@ function NumericOperand({
   rule: FilterRule;
   root: FilterGroup;
 }) {
+  const messages = useTableViewMessages();
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const persisted = typeof rule.value === "number" ? rule.value : undefined;
   const authoritative = persisted?.toString() ?? "";
@@ -163,7 +165,7 @@ function NumericOperand({
   return (
     <Input
       {...props}
-      aria-label="Value"
+      aria-label={messages.filterMenu.value}
       inputMode="decimal"
       className="min-w-24 flex-1"
     />
@@ -177,6 +179,7 @@ function RelativeDateOperand({
   rule: FilterRule;
   root: FilterGroup;
 }) {
+  const messages = useTableViewMessages();
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const amount = getRecordNumber(rule.value, "amount");
   const unit = getRelativeDateUnit(rule.value);
@@ -203,7 +206,7 @@ function RelativeDateOperand({
     <div className="flex min-w-32 flex-1 gap-1">
       <Input
         {...props}
-        aria-label="Relative date amount"
+        aria-label={messages.filterMenu.relativeDateAmount}
         inputMode="numeric"
         className="min-w-16 flex-1"
       />
@@ -216,7 +219,7 @@ function RelativeDateOperand({
         }}
       >
         <SelectTrigger
-          aria-label="Relative date unit"
+          aria-label={messages.filterMenu.relativeDateUnit}
           className="w-24 border border-border"
         >
           <SelectValue />
@@ -302,12 +305,13 @@ function SingleOptionTrigger({
 }: {
   optionsByName: Map<string, FilterOption>;
 }) {
+  const messages = useTableViewMessages();
   const triggerRef = useRef<HTMLButtonElement>(null);
   return (
     <>
       <ComboboxTrigger
         ref={triggerRef}
-        aria-label="Value select"
+        aria-label={messages.filterMenu.valueSelect}
         className="h-7 min-w-24 flex-1 justify-start rounded-md border border-border bg-input px-2 text-primary"
       >
         <ComboboxValue>
@@ -315,15 +319,17 @@ function SingleOptionTrigger({
             selected ? (
               <OptionTag {...optionsByName.get(selected)!} />
             ) : (
-              <span className="text-sm text-secondary">Choose option</span>
+              <span className="text-sm text-secondary">
+                {messages.filterMenu.chooseOption}
+              </span>
             )
           }
         </ComboboxValue>
       </ComboboxTrigger>
       <ComboboxContent anchor={triggerRef} className="w-72 p-2">
         <ComboboxInput
-          aria-label="Search options"
-          placeholder="Search options"
+          aria-label={messages.filterMenu.searchOptions}
+          placeholder={messages.filterMenu.searchOptions}
           className="h-7 w-full rounded-md border border-border px-2"
         />
         <OptionComboboxList optionsByName={optionsByName} />
@@ -343,6 +349,7 @@ function MultipleOptionOperand({
   value: string[];
   onValueChange: (value: string[]) => void;
 }) {
+  const messages = useTableViewMessages();
   const [inputValue, setInputValue] = useState("");
   const triggerRef = useRef<HTMLButtonElement>(null);
   return (
@@ -359,7 +366,7 @@ function MultipleOptionOperand({
     >
       <ComboboxTrigger
         ref={triggerRef}
-        aria-label="Value select"
+        aria-label={messages.filterMenu.valueSelect}
         className="h-7 min-w-24 flex-1 justify-start rounded-md border border-border bg-input px-2 text-primary"
       >
         <ComboboxValue>
@@ -374,7 +381,9 @@ function MultipleOptionOperand({
                 )}
               </>
             ) : (
-              <span className="text-sm text-secondary">Choose options</span>
+              <span className="text-sm text-secondary">
+                {messages.filterMenu.chooseOptions}
+              </span>
             )
           }
         </ComboboxValue>
@@ -389,15 +398,15 @@ function MultipleOptionOperand({
                     <ComboboxChip key={name}>{name}</ComboboxChip>
                   ))}
                   <ComboboxChipsInput
-                    aria-label="Search options"
-                    placeholder="Search options"
+                    aria-label={messages.filterMenu.searchOptions}
+                    placeholder={messages.filterMenu.searchOptions}
                   />
                 </>
               )}
             </ComboboxValue>
           </ComboboxChips>
           <ComboboxClear
-            aria-label="Clear selected options"
+            aria-label={messages.filterMenu.clearSelectedOptions}
             className="absolute top-1/2 right-1 -translate-y-1/2"
           />
         </div>
@@ -441,6 +450,7 @@ function optionGroups(options: FilterOption[]): OptionGroup[] {
 }
 
 function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
+  const messages = useTableViewMessages();
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const { props } = useInputField({
     id: `filter-text-${rule.id}`,
@@ -450,7 +460,13 @@ function TextOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
     reconcileCommittedValue: true,
   });
 
-  return <Input {...props} aria-label="Value" className="min-w-24 flex-1" />;
+  return (
+    <Input
+      {...props}
+      aria-label={messages.filterMenu.value}
+      className="min-w-24 flex-1"
+    />
+  );
 }
 
 function parseNumericDraft(value: string, relative: boolean) {
@@ -466,6 +482,7 @@ function parseNumericDraft(value: string, relative: boolean) {
 
 function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const property = table.getColumnInfo(rule.propertyId);
   const timeZone = getTimeZone(property.config as DateConfig);
@@ -489,10 +506,10 @@ function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
         }}
       >
         <SelectTrigger
-          aria-label="Date preset select"
+          aria-label={messages.filterMenu.datePresetSelect}
           className="w-32 border border-border"
         >
-          <SelectValue placeholder="Select date" />
+          <SelectValue placeholder={messages.filterMenu.selectDate} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
@@ -573,6 +590,7 @@ function CustomDateOperand({
   timeZone: string;
   onValueChange: (value: number | undefined) => void;
 }) {
+  const messages = useTableViewMessages();
   const authoritative = formatDateValue(value, timeZone);
   const [open, setOpen] = useState(false);
   const { props } = useInputField({
@@ -595,13 +613,13 @@ function CustomDateOperand({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        aria-label="Custom date select"
+        aria-label={messages.filterMenu.customDateSelect}
         render={
           <Button
             type="button"
             className="h-7 min-w-32 flex-1 justify-start px-2 font-normal"
           >
-            {authoritative || "Select date"}
+            {authoritative || messages.filterMenu.selectDate}
           </Button>
         }
       />
@@ -609,8 +627,8 @@ function CustomDateOperand({
         <div className="p-2">
           <Input
             {...props}
-            aria-label="Custom date input"
-            placeholder="YYYY-MM-DD"
+            aria-label={messages.filterMenu.customDateInput}
+            placeholder={messages.filterMenu.dateInputPlaceholder}
           />
         </div>
         <Calendar
@@ -638,6 +656,7 @@ function DateRangeOperand({
   root: FilterGroup;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const updateRule = useFilterRuleUpdate(root, rule.id);
   const property = table.getColumnInfo(rule.propertyId);
   const timeZone = getTimeZone(property.config as DateConfig);
@@ -698,13 +717,15 @@ function DateRangeOperand({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        aria-label="Date range select"
+        aria-label={messages.filterMenu.dateRangeSelect}
         render={
           <Button
             type="button"
             className="h-7 min-w-40 flex-1 justify-start px-2 font-normal"
           >
-            {start && end ? `${start} → ${end}` : "Select a range"}
+            {start && end
+              ? `${start} → ${end}`
+              : messages.filterMenu.selectARange}
           </Button>
         }
       />
@@ -712,8 +733,8 @@ function DateRangeOperand({
         <div className="flex flex-col gap-2">
           <Input
             ref={startRef}
-            aria-label="Starting"
-            placeholder="Starting"
+            aria-label={messages.filterMenu.starting}
+            placeholder={messages.filterMenu.starting}
             value={start}
             onChange={(event) => {
               const next = event.currentTarget.value;
@@ -725,8 +746,8 @@ function DateRangeOperand({
           />
           <Input
             ref={endRef}
-            aria-label="Ending"
-            placeholder="Ending"
+            aria-label={messages.filterMenu.ending}
+            placeholder={messages.filterMenu.ending}
             value={end}
             onChange={(event) => {
               const next = event.currentTarget.value;

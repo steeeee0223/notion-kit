@@ -34,6 +34,19 @@ export class TableViewObject {
     return row;
   }
 
+  /**
+   * The row's clickable/focusable surface used by `openRowOnClick`. Not a
+   * named control: it has no accessible name of its own, only a generic
+   * click/Enter affordance that opens the row peek.
+   */
+  rowSurface(name: string | RegExp) {
+    const surface = this.row(name).querySelector<HTMLElement>(
+      '[data-slot="table-row-content"]',
+    );
+    if (!surface) throw new Error(`Unable to find row surface for ${name}`);
+    return surface;
+  }
+
   rows(name?: string | RegExp) {
     const rows = screen.getAllByRole("row");
     if (!name) return rows;

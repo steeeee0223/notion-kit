@@ -10,6 +10,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { countMethodHint } from "./constants";
@@ -20,6 +21,7 @@ interface CalcMenuProps {
 
 export function CalcMenu({ id }: CalcMenuProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const counting = table.getColumnCounting(id);
   const plugin = table.getColumnPlugin(id);
   const currentMethod = counting.method;
@@ -30,7 +32,7 @@ export function CalcMenu({ id }: CalcMenuProps) {
   return (
     <DropdownMenuGroup>
       <DropdownMenuCheckboxItem
-        label="None"
+        label={messages.calcMenu.none}
         checked={
           currentMethod === (CountMethod.NONE as string) || !selectedMethod
         }
@@ -43,8 +45,8 @@ export function CalcMenu({ id }: CalcMenuProps) {
             <DropdownMenuGroup>
               <DropdownMenuCheckboxItem
                 checkType="switch"
-                label="Show large counts as 99+"
-                desc="This improves performance for large databases."
+                label={messages.calcMenu.showLargeCounts}
+                desc={messages.calcMenu.showLargeCountsDesc}
                 checked={counting.isCapped}
                 onCheckedChange={() =>
                   table.setColumnCountCapped(id, (v) => !v)

@@ -24,6 +24,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuGroupHeader, MenuHeader } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 /**
@@ -31,6 +32,7 @@ import { useTableViewCtx } from "@/table-contexts";
  */
 export function PropsMenu() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const [search, setSearch] = useState("");
 
   const openEditPropMenu = (propId: string) =>
@@ -67,7 +69,7 @@ export function PropsMenu() {
         return (
           <>
             <MenuHeader
-              title="Properties"
+              title={messages.propsMenu.properties}
               onBack={() => table.setTableMenuState({ open: true, page: null })}
             />
             <Autocomplete
@@ -83,15 +85,19 @@ export function PropsMenu() {
                 clear
                 onCancel={() => setSearch("")}
                 onKeyDown={(e) => e.stopPropagation()}
-                placeholder="Search for a property..."
+                placeholder={messages.propsMenu.searchProperty}
               />
               <AutocompleteContent variant="inline">
                 <AutocompleteList>
                   <AutocompleteGroup>
                     <MenuGroupHeader
-                      title="Properties"
+                      title={messages.propsMenu.properties}
                       action={
-                        search ? null : noShownProps ? "Show all" : "Hide all"
+                        search
+                          ? null
+                          : noShownProps
+                            ? messages.propsMenu.showAll
+                            : messages.propsMenu.hideAll
                       }
                       onActionClick={table.toggleAllColumnsVisible}
                     />
@@ -123,7 +129,7 @@ export function PropsMenu() {
                   </AutocompleteGroup>
                 </AutocompleteList>
                 <AutocompleteEmpty className="px-3 text-start text-muted">
-                  No results
+                  {messages.propsMenu.noResults}
                 </AutocompleteEmpty>
               </AutocompleteContent>
             </Autocomplete>
@@ -132,7 +138,7 @@ export function PropsMenu() {
               <DropdownMenuItem
                 variant="secondary"
                 icon={<Icon.Plus className="size-4" />}
-                label="New property"
+                label={messages.propsMenu.newProperty}
                 closeOnClick={false}
                 onClick={() =>
                   table.setTableMenuState({
@@ -145,7 +151,7 @@ export function PropsMenu() {
                 <DropdownMenuItem
                   variant="secondary"
                   icon={<Icon.Trash />}
-                  label="Deleted properties"
+                  label={messages.propsMenu.deletedProperties}
                   closeOnClick={false}
                   onClick={() =>
                     table.setTableMenuState({
@@ -163,7 +169,7 @@ export function PropsMenu() {
                   window.open("https://www.notion.com/help/database-properties")
                 }
                 icon={<Icon.Help className="size-4" />}
-                label="Learn about properties"
+                label={messages.propsMenu.learnAboutProperties}
               />
             </DropdownMenuGroup>
           </>
@@ -188,6 +194,7 @@ function PropertyItem({
   onClick,
   onVisibilityChange,
 }: PropertyItemProps) {
+  const messages = useTableViewMessages();
   const { id, name, icon, hidden, type } = info;
 
   return (
@@ -203,7 +210,7 @@ function PropertyItem({
           icon={[
             <Sortable.Handle
               key="drag-handle"
-              aria-label={`Move ${name}`}
+              aria-label={messages.propsMenu.moveProperty(name)}
               className={cn("mr-2 hidden h-6 w-4.5", draggable && "flex")}
             />,
             <React.Fragment key="icon">
@@ -217,7 +224,7 @@ function PropertyItem({
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
           tabIndex={0}
-          aria-label={`Toggle ${name} visibility`}
+          aria-label={messages.propsMenu.toggleVisibility(name)}
           disabled={type === "title"}
           variant="hint"
           className="size-6 p-0 disabled:opacity-40"

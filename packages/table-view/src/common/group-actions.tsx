@@ -15,6 +15,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface GroupActionsProps {
@@ -36,6 +37,7 @@ export function GroupActions({ className, row }: GroupActionsProps) {
 
 function GroupActionsContent({ className, row }: GroupActionsProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const addRow = () => table.addRowToGroup(row.id);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -57,7 +59,7 @@ function GroupActionsContent({ className, row }: GroupActionsProps) {
         <DropdownMenuTrigger
           render={
             <Button
-              aria-label="Group options"
+              aria-label={messages.groupActions.groupOptions}
               variant="hint"
               className="size-6"
               onPointerDown={(e) => e.stopPropagation()}
@@ -72,22 +74,22 @@ function GroupActionsContent({ className, row }: GroupActionsProps) {
               {...(row.getShouldShowGroupAggregates()
                 ? {
                     icon: <Icon.EyeHideInversePadded className="size-6" />,
-                    label: "Hide aggregation",
+                    label: messages.groupActions.hideAggregation,
                   }
                 : {
                     icon: <Icon.Eye />,
-                    label: "Show aggregation",
+                    label: messages.groupActions.showAggregation,
                   })}
               onClick={() => row.toggleGroupAggregates()}
             />
             <DropdownMenuItem
               icon={<Icon.EyeHideInversePadded className="size-6" />}
-              label="Hide group"
+              label={messages.groupActions.hideGroup}
               onClick={() => row.toggleGroupVisibility()}
             />
             <DropdownMenuItem
               icon={<Icon.Trash />}
-              label="Delete rows"
+              label={messages.groupActions.deleteRows}
               closeOnClick={false}
               onClick={() => setShowDeleteConfirm(true)}
             />
@@ -96,16 +98,16 @@ function GroupActionsContent({ className, row }: GroupActionsProps) {
       </DropdownMenu>
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertModal
-          title="Are you sure? All rows inside this group will be deleted."
-          primary="Delete"
-          secondary="Cancel"
+          title={messages.groupActions.deleteGroupConfirmTitle}
+          primary={messages.groupActions.delete}
+          secondary={messages.groupActions.cancel}
           onTrigger={deleteRows}
         />
       </Dialog>
       {/* Create button */}
-      <TooltipPreset description="Create new" side="top">
+      <TooltipPreset description={messages.groupActions.createNew} side="top">
         <Button
-          aria-label="Add row"
+          aria-label={messages.rowActions.addRow}
           variant="hint"
           className="size-6"
           onPointerDown={(e) => e.stopPropagation()}

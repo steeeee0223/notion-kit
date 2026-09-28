@@ -10,6 +10,7 @@ import {
 } from "@notion-kit/ui/timeline";
 
 import { Cell, Row, RowActionGroup } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 import { TableHeaderCellResizer, TableHeaderCellTrigger } from "@/table-header";
@@ -52,6 +53,7 @@ function TimelineSidebarContent({
   onRowDragEnd,
 }: TimelineSidebarProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const titleHeader = table
     .getFlatHeaders()
     .find((header) => header.column.getInfo().type === "title");
@@ -59,7 +61,10 @@ function TimelineSidebarContent({
   if (!titleHeader) return null;
 
   return (
-    <TimelineSidebarPrimitive role="complementary" aria-label="Timeline table">
+    <TimelineSidebarPrimitive
+      role="complementary"
+      aria-label={messages.aria.timelineTable}
+    >
       <TimelineSidebarHeader className="relative flex h-17 text-secondary shadow-[inset_0_-1px_0_var(--color-border),inset_0_1px_0_var(--color-border)]">
         <Row.ActionPortal className="h-full" />
         <TableHeaderCellTrigger
@@ -107,6 +112,7 @@ function TimelineSidebarContent({
 
 function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const rows = table.getRowModel().rows;
   const nextIndexByGroup = new Map<string | undefined, number>();
 
@@ -128,7 +134,7 @@ function TimelineSidebarRows({ sortable }: { sortable?: boolean }) {
       .find((candidate) => candidate.column.id === titleColumnId);
     if (!titleCell) return null;
 
-    const title = String(titleDataCell.value || "New page");
+    const title = String(titleDataCell.value || messages.rowView.newPageTitle);
     const wrapped = titleCell.getInfo().wrapped;
     const index = nextIndexByGroup.get(row.parentId) ?? 0;
     nextIndexByGroup.set(row.parentId, index + 1);

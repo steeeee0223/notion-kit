@@ -15,6 +15,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { RowActionMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 
 import { Row } from "./table";
 
@@ -24,6 +25,7 @@ interface RowActionGroupProps {
 }
 
 export function RowActionGroup({ className, row }: RowActionGroupProps) {
+  const messages = useTableViewMessages();
   const [menuOpen, setMenuOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const addNextRow = (event: React.MouseEvent) => {
@@ -45,10 +47,10 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
       <TooltipPreset
         description={
           <>
-            <TooltipDescription text="Click to add below" />
+            <TooltipDescription text={messages.rowActions.addRowBelow} />
             <TooltipDescription
               type="secondary"
-              text="Option-click to add above"
+              text={messages.rowActions.addRowAbove}
             />
           </>
         }
@@ -56,7 +58,7 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
       >
         <Button
           variant="hint"
-          aria-label="Add row"
+          aria-label={messages.rowActions.addRow}
           className="size-6"
           onClick={addNextRow}
         >
@@ -67,8 +69,8 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
         <TooltipPreset
           description={
             <>
-              <TooltipDescription text="Drag to move" />
-              <TooltipDescription text="Click to open menu" />
+              <TooltipDescription text={messages.rowActions.dragToMove} />
+              <TooltipDescription text={messages.rowActions.clickToOpenMenu} />
             </>
           }
           className="text-center"
@@ -76,7 +78,10 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
           <PopoverTrigger
             ref={triggerRef}
             render={
-              <Sortable.Handle aria-label="Row actions" className="h-6 w-4.5" />
+              <Sortable.Handle
+                aria-label={messages.rowActions.rowActions}
+                className="h-6 w-4.5"
+              />
             }
           />
         </TooltipPreset>
@@ -93,7 +98,7 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
         size="sm"
         checked={row.getIsSelected()}
         className="ml-1.5 cursor-pointer rounded-xs accent-blue"
-        aria-label={`Select row ${row.id}`}
+        aria-label={messages.rowActions.selectRow(row.id)}
         onCheckedChange={(checked) => row.toggleSelected(checked)}
       />
     </Row.ActionContent>

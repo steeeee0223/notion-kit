@@ -18,6 +18,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import type { TableUiPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -47,6 +48,7 @@ interface TypesMenuProps {
 
 export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
   const { table, plugins: registry } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const propType = propId ? table.getColumnInfo(propId).type : null;
   const [search, setSearch] = useState("");
 
@@ -82,8 +84,8 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
         <MenuHeader
           title={
             menu === TableViewMenuPage.ChangePropType
-              ? "Change property type"
-              : "New property"
+              ? messages.typesMenu.changePropertyType
+              : messages.typesMenu.newProperty
           }
           onBack={
             back
@@ -116,15 +118,15 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
             <AutocompleteInput
               placeholder={
                 propId
-                  ? "Search for property type"
-                  : "Search or add new property"
+                  ? messages.typesMenu.searchPropertyType
+                  : messages.typesMenu.searchOrAddNewProperty
               }
               onKeyDown={(e) => e.stopPropagation()}
             />
             <AutocompleteContent variant="inline">
               <AutocompleteList>
                 <AutocompleteGroup>
-                  <AutocompleteLabel title="Type" />
+                  <AutocompleteLabel title={messages.typesMenu.typeTitle} />
                   <AutocompleteCollection>
                     {(plugin: TableUiPlugin) => (
                       <TooltipPreset
@@ -155,7 +157,7 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
                 </AutocompleteGroup>
                 {!propId && search.length > 0 && (
                   <AutocompleteGroup>
-                    <AutocompleteLabel title="Select to add" />
+                    <AutocompleteLabel title={messages.typesMenu.selectToAdd} />
                     <AutocompleteItem
                       value={`search-${search}`}
                       icon={

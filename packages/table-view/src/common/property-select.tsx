@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { DefaultIcon } from "./default-icon";
@@ -25,6 +26,7 @@ export function PropertySelect({
   onValueChange,
 }: PropertySelectProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   return (
     <table.Subscribe
@@ -47,7 +49,7 @@ export function PropertySelect({
             ),
           })),
           ...(!currentProperty
-            ? [{ value, label: `${value} (unavailable)` }]
+            ? [{ value, label: messages.aria.unavailableProperty(value) }]
             : []),
         ];
 
@@ -60,7 +62,7 @@ export function PropertySelect({
             }}
           >
             <SelectTrigger
-              aria-label="Property select"
+              aria-label={messages.aria.propertySelect}
               className={cn(
                 "my-0 w-full max-w-45 border border-border",
                 className,
@@ -73,7 +75,7 @@ export function PropertySelect({
                 {!currentProperty && (
                   <SelectItem
                     value={value}
-                    label={`${value} (unavailable)`}
+                    label={messages.aria.unavailableProperty(value)}
                     disabled
                   />
                 )}

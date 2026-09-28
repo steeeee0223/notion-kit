@@ -24,6 +24,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { MenuHeader } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { getSortingDirectionLabels } from "./sorting-options";
@@ -31,19 +32,20 @@ import { getSortingDirectionLabels } from "./sorting-options";
 export function EditGroupMenu() {
   const isClient = useIsClient();
   const { table, plugins } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const col = table.getGroupedColumnInfo();
 
   return (
     <>
       <MenuHeader
-        title="Group"
+        title={messages.viewMenu.group}
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
       <DropdownMenuGroup>
         <DropdownMenuItem
           closeOnClick={false}
-          label="Group by"
+          label={messages.groupMenu.groupBy}
           onClick={() =>
             table.setTableMenuState({
               open: true,
@@ -61,7 +63,7 @@ export function EditGroupMenu() {
           {(hideEmptyGroups) => (
             <DropdownMenuCheckboxItem
               closeOnClick={false}
-              label="Hide empty groups"
+              label={messages.groupMenu.hideEmptyGroups}
               checked={hideEmptyGroups}
               onCheckedChange={table.toggleHideEmptyGroups}
             />
@@ -70,7 +72,7 @@ export function EditGroupMenu() {
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuLabel title="Groups">
+        <DropdownMenuLabel title={messages.groupMenu.groups}>
           <div className="ml-auto">
             <Button
               tabIndex={0}
@@ -78,7 +80,9 @@ export function EditGroupMenu() {
               className="h-[initial] min-w-0 shrink bg-transparent px-1.5 py-0.5 text-xs/tight shadow-none"
               onClick={table.toggleAllGroupsVisible}
             >
-              {table.getIsSomeGroupVisible() ? "Hide all" : "Show all"}
+              {table.getIsSomeGroupVisible()
+                ? messages.propsMenu.hideAll
+                : messages.propsMenu.showAll}
             </Button>
           </div>
         </DropdownMenuLabel>
@@ -123,7 +127,7 @@ export function EditGroupMenu() {
             layout !== "board" && (
               <DropdownMenuItem
                 icon={<Icon.Trash />}
-                label="Remove grouping"
+                label={messages.groupMenu.removeGrouping}
                 onClick={() => table.setGroupingColumn(null)}
               />
             )
@@ -131,7 +135,7 @@ export function EditGroupMenu() {
         </table.Subscribe>
         <DropdownMenuItem
           icon={<Icon.QuestionMarkCircled />}
-          label="Learn about grouping"
+          label={messages.groupMenu.learnAboutGrouping}
           onClick={() => {
             if (!isClient) return;
             window.open(
@@ -147,6 +151,7 @@ export function EditGroupMenu() {
 
 function GroupingMethodControl({ colId }: { colId: string }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const methods = table.getColumnGroupingMethods(colId);
   if (methods.length <= 1) return null;
 
@@ -156,7 +161,7 @@ function GroupingMethodControl({ colId }: { colId: string }) {
         const selected = table.getSelectedGroupingMethod(colId);
         return (
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger label="Group using">
+            <DropdownMenuSubTrigger label={messages.groupMenu.groupUsing}>
               <MenuItemAction className="text-muted">
                 {selected.name}
               </MenuItemAction>
@@ -187,6 +192,7 @@ function GroupingMethodControl({ colId }: { colId: string }) {
 
 function GroupSortControl({ colId }: { colId: string }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const plugin = table.getColumnPlugin(colId);
   const methods = getGroupSortableSortingMethods(plugin);
 
@@ -207,14 +213,14 @@ function GroupSortControl({ colId }: { colId: string }) {
         const labels = method && getSortingDirectionLabels(method);
         const selectedLabel =
           value === "manual"
-            ? "Manual"
+            ? messages.groupMenu.manual
             : value === "ascending"
               ? labels?.ascending
               : labels?.descending;
 
         return (
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger label="Sort groups">
+            <DropdownMenuSubTrigger label={messages.groupMenu.sortGroups}>
               <MenuItemAction className="text-muted">
                 {selectedLabel}
               </MenuItemAction>
@@ -240,7 +246,7 @@ function GroupSortControl({ colId }: { colId: string }) {
                 <DropdownMenuRadioItem
                   value="manual"
                   closeOnClick={false}
-                  label="Manual"
+                  label={messages.groupMenu.manual}
                 />
                 {labels && (
                   <>
@@ -279,6 +285,7 @@ function GroupItem({
   children,
   onVisibilityChange,
 }: React.PropsWithChildren<GroupItemProps>) {
+  const messages = useTableViewMessages();
   return (
     <Sortable.Item
       id={id}
@@ -288,7 +295,7 @@ function GroupItem({
           closeOnClick={false}
           icon={
             <Sortable.Handle
-              aria-label={`Move ${id} group`}
+              aria-label={messages.groupMenu.moveGroup(id)}
               className="h-6 w-4.5"
             />
           }
@@ -299,7 +306,7 @@ function GroupItem({
       <MenuItemAction className="flex items-center text-muted [&_svg]:fill-current">
         <Button
           tabIndex={0}
-          aria-label={`Toggle ${id} group visibility`}
+          aria-label={messages.groupMenu.toggleGroupVisibility(id)}
           variant="hint"
           className="size-6"
           onClick={(e) => {

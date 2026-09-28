@@ -6,6 +6,7 @@ import { IconBlock } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import { Button, Input, TooltipPreset } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { DefaultIcon } from "./default-icon";
@@ -17,6 +18,7 @@ interface PropMetaProps {
 
 export function PropMeta({ propId, type }: PropMetaProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const [showDesc, setShowDesc] = useState(false);
   const toggleDesc = () => setShowDesc((prev) => !prev);
@@ -70,14 +72,14 @@ export function PropMeta({ propId, type }: PropMetaProps) {
                 endIcon={
                   <TooltipPreset
                     side="top"
-                    description="Add property description"
+                    description={messages.aria.addPropertyDescription}
                     className="z-999"
                   >
                     <Button
                       tabIndex={0}
                       variant="close"
                       className="ml-1 grow-0"
-                      aria-label="Add property description"
+                      aria-label={messages.aria.addPropertyDescription}
                       onClick={toggleDesc}
                     >
                       <Icon.InfoFilled className="fill-default/45 hover:fill-icon" />
@@ -90,8 +92,9 @@ export function PropMeta({ propId, type }: PropMetaProps) {
         </div>
         {nameField.error && (
           <div className="mx-4 pt-2 text-sm text-red">
-            A property named {nameField.props.value} already exists in this
-            database.
+            {messages.propsMenu.duplicateNameError(
+              String(nameField.props.value ?? ""),
+            )}
           </div>
         )}
       </div>
@@ -99,7 +102,7 @@ export function PropMeta({ propId, type }: PropMetaProps) {
         <div className="flex min-h-7 w-full min-w-0 flex-auto items-center px-3 py-1 leading-tight select-none">
           <Input
             className="text-[13px]/[20px]"
-            placeholder="Add a description..."
+            placeholder={messages.aria.addDescriptionPlaceholder}
             {...descField.props}
           />
         </div>

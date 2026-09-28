@@ -8,6 +8,8 @@ import {
   ScrollArea,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
+
 import { RowEditLogItem } from "./row-edit-log-item";
 import { TableEditLogItem } from "./table-edit-log-item";
 import type { EditLogState } from "./use-edit-log";
@@ -29,6 +31,7 @@ export function EditLogDialog({
   finalFocus,
   onOpenChangeComplete,
 }: EditLogDialogProps) {
+  const messages = useTableViewMessages();
   return (
     <Dialog
       open={state.target !== null}
@@ -43,23 +46,26 @@ export function EditLogDialog({
       >
         <DialogHeader className="items-start pr-8 text-left">
           <DialogTitle typography="h2" className="text-left">
-            Edit log
+            {messages.editLog.title}
           </DialogTitle>
           <DialogDescription className="text-left text-base">
             {state.target?.type === "row"
               ? state.target.title?.trim()
                 ? state.target.title
                 : state.target.rowId
-              : "Table history"}
+              : messages.editLog.tableHistory}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea
           role="region"
-          aria-label="Edit log entries"
+          aria-label={messages.editLog.entriesAriaLabel}
           className="mt-4 h-[min(60vh,32rem)] min-w-0"
         >
           <div className="min-w-0 pr-4">
-            <ul aria-label="Edit logs" className="m-0 min-w-0 list-none p-0">
+            <ul
+              aria-label={messages.editLog.listAriaLabel}
+              className="m-0 min-w-0 list-none p-0"
+            >
               {state.items.map((record) =>
                 "rowId" in record ? (
                   <RowEditLogItem key={record.id} record={record} />
@@ -70,20 +76,20 @@ export function EditLogDialog({
             </ul>
             {state.status === "loading" && (
               <p role="status" className="py-3 text-sm text-secondary">
-                Loading edit logs…
+                {messages.editLog.loading}
               </p>
             )}
             {state.status === "success" && state.items.length === 0 && (
               <p role="status" className="py-3 text-sm text-secondary">
-                No edit logs yet
+                {messages.editLog.empty}
               </p>
             )}
             {state.status === "error" ? (
               <div className="flex flex-col items-start gap-2 py-3">
                 <p role="alert" className="text-sm text-secondary">
-                  Could not load edit logs.
+                  {messages.editLog.loadError}
                 </p>
-                <Button onClick={onRetry}>Retry</Button>
+                <Button onClick={onRetry}>{messages.editLog.retry}</Button>
               </div>
             ) : (
               state.nextCursor !== null && (
@@ -94,7 +100,7 @@ export function EditLogDialog({
                   onClick={onLoadMore}
                   disabled={state.status === "loading"}
                 >
-                  Load more
+                  {messages.editLog.loadMore}
                 </Button>
               )
             )}

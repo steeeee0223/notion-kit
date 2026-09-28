@@ -3,7 +3,7 @@ import { useId, useState, type ReactNode } from "react";
 import { cn } from "@notion-kit/cn";
 import { useInputField } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { ROW_VIEW_OPTIONS, wrappedClassName } from "@notion-kit/table-hook";
+import { wrappedClassName } from "@notion-kit/table-hook";
 import type { Row } from "@notion-kit/table-hook";
 import type { TitleConfig } from "@notion-kit/table-hook/plugins";
 import { IconBlock, type IconData } from "@notion-kit/ui/icon-block";
@@ -19,6 +19,7 @@ import {
 import { CellTrigger } from "@/common/cell-trigger";
 import { RowViewIcon } from "@/common/default-icon";
 import { TextInputPopover } from "@/common/text-input-popover";
+import { useTableViewMessages } from "@/messages";
 import type { CellRendererProps } from "@/plugins/renderers";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -37,7 +38,9 @@ export function TitleTableSlot({
 }: TitleCellSlotProps) {
   const { data, disabled, onChange, wrapped } = props;
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const { rowView } = table.getTableGlobalState();
+  const modeTooltip = messages.rowView.modes[rowView].tooltip;
 
   return (
     <TextInputPopover
@@ -50,13 +53,10 @@ export function TitleTableSlot({
               id="quick-action-container"
               className="pointer-events-auto sticky right-1 flex bg-transparent"
             >
-              <TooltipPreset
-                description={ROW_VIEW_OPTIONS[rowView].tooltip}
-                side="top"
-              >
+              <TooltipPreset description={modeTooltip} side="top">
                 <Button
                   tabIndex={0}
-                  aria-label={ROW_VIEW_OPTIONS[rowView].tooltip}
+                  aria-label={modeTooltip}
                   size="xs"
                   className="rounded-md bg-main fill-secondary leading-tight font-medium tracking-[0.5px] text-secondary uppercase shadow-sm"
                   onClick={(e) => {
@@ -65,7 +65,7 @@ export function TitleTableSlot({
                   }}
                 >
                   <RowViewIcon rowView={rowView} />
-                  {width > 110 && <>Open</>}
+                  {width > 110 && <>{messages.rowView.open}</>}
                 </Button>
               </TooltipPreset>
             </div>
@@ -93,6 +93,7 @@ export function TitleCompactSlot({
   icon,
 }: TitleCellSlotProps) {
   const { data, disabled, onChange } = cellProps;
+  const messages = useTableViewMessages();
   const [open, setOpen] = useState(false);
   const id = useId();
   const { props: inputProps, reset } = useInputField({
@@ -115,12 +116,12 @@ export function TitleCompactSlot({
           className="pointer-events-auto relative flex bg-transparent p-0.5"
         >
           <Popover open={open} onOpenChange={setOpen}>
-            <TooltipPreset description="Edit" side="top">
+            <TooltipPreset description={messages.rowView.edit} side="top">
               <PopoverTrigger
                 render={
                   <Button
                     tabIndex={0}
-                    aria-label="Edit"
+                    aria-label={messages.rowView.edit}
                     size="xs"
                     className="rounded-md bg-main text-secondary shadow-sm"
                     onClick={(e) => e.stopPropagation()}
@@ -156,7 +157,11 @@ export function TitleCompactSlot({
       <div className="contents h-5 items-center">
         {icon && <IconBlock icon={icon} className="contents" />}
         <span className="mr-[5px] ml-1 inline leading-normal font-medium">
-          {data ? value : <span className="text-muted">New page</span>}
+          {data ? (
+            value
+          ) : (
+            <span className="text-muted">{messages.rowView.newPageTitle}</span>
+          )}
         </span>
       </div>
     </CellTrigger>

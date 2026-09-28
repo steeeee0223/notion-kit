@@ -17,6 +17,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { RowActionMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface BoardCardProps {
@@ -31,6 +32,7 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const actionTriggerRef = useRef<HTMLButtonElement>(null);
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const titleCell = row.getTitleCell();
 
   const { props } = useInputField({
@@ -79,13 +81,13 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
             <div className="pointer-events-auto absolute inset-e-0 z-20 flex h-6 rounded-sm border border-border text-xs whitespace-nowrap text-secondary opacity-0 shadow-sm transition-opacity group-hover/card:opacity-100 has-aria-expanded:opacity-100">
               {/* Title Edit Popover */}
               <Popover>
-                <TooltipPreset description="Edit" side="top">
+                <TooltipPreset description={messages.rowView.edit} side="top">
                   <PopoverTrigger
                     render={
                       <Button
                         variant={null}
                         className="flex rounded-none px-1.5 py-1 text-secondary"
-                        aria-label="Edit"
+                        aria-label={messages.rowView.edit}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Icon.PencilLine className="fill-current" />
@@ -110,7 +112,7 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
               {/* Row action menu */}
               <Popover open={menuOpen} onOpenChange={setMenuOpen}>
                 <TooltipPreset
-                  description="Rename, delete, move to and more..."
+                  description={messages.aria.rowActionsHint}
                   side="top"
                 >
                   <PopoverTrigger
@@ -118,7 +120,7 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
                       <Button
                         variant={null}
                         className="flex rounded-none px-1.5 py-1 text-secondary"
-                        aria-label="Actions"
+                        aria-label={messages.aria.actions}
                         ref={actionTriggerRef}
                         onClick={(e) => e.stopPropagation()}
                       >

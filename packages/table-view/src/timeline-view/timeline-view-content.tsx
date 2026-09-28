@@ -16,6 +16,7 @@ import {
 import { Table } from "@/common";
 import { getDatePropertyTimeZone } from "@/date-view/date-property";
 import { useDateViewNavigation } from "@/date-view/date-view-navigation-provider";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TimelineSidebar } from "./timeline-sidebar";
@@ -113,6 +114,7 @@ function TimelineViewReadyContent({
   resources: TimelineViewReadyResources;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const { anchorDate, setAnchorDate } = useDateViewNavigation();
   const timeZone = getDatePropertyTimeZone(table.getColumnInfo(propertyId));
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -195,9 +197,9 @@ function TimelineViewReadyContent({
         }}
       >
         <AlertModal
-          title="Would you like to remove sorting?"
-          primary="Remove"
-          secondary="Don't remove"
+          title={messages.rowActions.removeSortingTitle}
+          primary={messages.rowActions.removeSortingConfirm}
+          secondary={messages.rowActions.removeSortingCancel}
           onTrigger={handleConfirmRemoveSorting}
         />
       </Dialog>

@@ -7,6 +7,7 @@ import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
 import { Table } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 
@@ -52,6 +53,7 @@ function ListViewContentInner({
   setPendingDragEndEvent,
 }: ListViewContentInnerProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const rows = table.getRowModel().rows;
 
@@ -107,7 +109,7 @@ function ListViewContentInner({
                 onClick={() => table.addRow()}
               >
                 <Icon.Plus className="size-3.5 fill-current" />
-                New page
+                {messages.rowActions.newPage}
               </Button>
             )}
           </div>
@@ -120,9 +122,9 @@ function ListViewContentInner({
         }}
       >
         <AlertModal
-          title="Would you like to remove sorting?"
-          primary="Remove"
-          secondary="Don't remove"
+          title={messages.rowActions.removeSortingTitle}
+          primary={messages.rowActions.removeSortingConfirm}
+          secondary={messages.rowActions.removeSortingCancel}
           onTrigger={handleConfirmRemoveSorting}
         />
       </Dialog>

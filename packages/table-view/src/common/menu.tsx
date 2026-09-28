@@ -1,6 +1,7 @@
 import { Icon } from "@notion-kit/icons";
 import { Button } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface MenuHeaderProps {
@@ -12,6 +13,7 @@ interface MenuHeaderProps {
 
 export function MenuHeader({ id, title, onBack, onClose }: MenuHeaderProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const closeMenu =
     onClose ?? (() => table.setTableMenuState({ open: false, page: null }));
 
@@ -22,7 +24,7 @@ export function MenuHeader({ id, title, onBack, onClose }: MenuHeaderProps) {
           variant="hint"
           className="mr-2 -ml-0.5 h-[22px] w-6 shrink-0 rounded-md p-0"
           onClick={onBack}
-          aria-label="Back"
+          aria-label={messages.aria.back}
         >
           <Icon.ArrowLeftThick className="fill-default/45" />
         </Button>
@@ -33,7 +35,7 @@ export function MenuHeader({ id, title, onBack, onClose }: MenuHeaderProps) {
       <Button
         variant="close"
         size="circle"
-        aria-label="Close"
+        aria-label={messages.aria.close}
         onClick={closeMenu}
       >
         <Icon.Close className="h-full w-3.5 fill-secondary dark:fill-default/45" />

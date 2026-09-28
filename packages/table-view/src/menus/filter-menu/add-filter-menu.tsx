@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface AddFilterMenuProps {
@@ -30,6 +31,7 @@ export function AddFilterMenu({
   className,
 }: AddFilterMenuProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const titleRule = table.getTitleFilterRule();
   const canAddGroup = depth < 3;
 
@@ -42,7 +44,7 @@ export function AddFilterMenu({
           <MenuItem
             className={className}
             variant="secondary"
-            label="Add filter rule"
+            label={messages.filterMenu.addFilterRule}
             icon={<Icon.Plus className="size-4" />}
           />
         }
@@ -52,7 +54,7 @@ export function AddFilterMenu({
           {titleRule && (
             <DropdownMenuItem
               icon={<Icon.Plus className="size-4" />}
-              label="Add filter rule"
+              label={messages.filterMenu.addFilterRule}
               onClick={() =>
                 table.setFilters(
                   appendFilterNode(
@@ -67,8 +69,8 @@ export function AddFilterMenu({
           {canAddGroup && (
             <DropdownMenuItem
               icon={<Icon.SquareOnSquarePlus />}
-              label="Add filter group"
-              desc="A group to nest more filters"
+              label={messages.filterMenu.addFilterGroup}
+              desc={messages.filterMenu.addFilterGroupDesc}
               onClick={() =>
                 table.setFilters(
                   appendFilterNode(root, parentId, createFilterGroup()),

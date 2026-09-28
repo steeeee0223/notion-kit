@@ -10,6 +10,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader, PropMeta } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface EditPropMenuProps {
@@ -29,6 +30,7 @@ interface EditPropMenuProps {
  */
 export function EditPropMenu({ propId }: EditPropMenuProps) {
   const { table, plugins } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const info = table.getColumnInfo(propId);
   const uiPlugin = plugins.getUiPlugin(info.type);
@@ -52,7 +54,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   return (
     <>
       <MenuHeader
-        title="Edit property"
+        title={messages.propsMenu.editProperty}
         onBack={() =>
           table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
@@ -68,7 +70,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             <DropdownMenuItem
               disabled
               icon={<Icon.ArrowSquarePathUpDown />}
-              label="Type"
+              label={messages.propsMenu.type}
             >
               <MenuItemSelect>
                 <div className="flex items-center truncate">
@@ -85,7 +87,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
               closeOnClick={false}
               onClick={openTypesMenu}
               icon={<Icon.ArrowSquarePathUpDown />}
-              label="Type"
+              label={messages.propsMenu.type}
             >
               <MenuItemSelect>
                 <div className="flex truncate">
@@ -119,7 +121,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
         <DropdownMenuCheckboxItem
           checkType="switch"
           icon={<Icon.ArrowUTurnDownLeft />}
-          label="Wrap in view"
+          label={messages.propsMenu.wrapInView}
           checked={info.wrapped}
           onCheckedChange={wrapProp}
         />
@@ -128,18 +130,18 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             <DropdownMenuItem
               onClick={hideProp}
               icon={<Icon.EyeHideInversePadded className="size-6" />}
-              label="Hide in view"
+              label={messages.propsMenu.hideInView}
             />
             <DropdownMenuItem
               onClick={duplicateProp}
               icon={<Icon.Duplicate />}
-              label="Duplicate property"
+              label={messages.propsMenu.duplicateProperty}
             />
             <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}
               icon={<Icon.Trash />}
-              label="Delete property"
+              label={messages.propsMenu.deleteProperty}
             />
           </>
         )}

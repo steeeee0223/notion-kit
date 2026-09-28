@@ -3,7 +3,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
-import { ROW_VIEW_OPTIONS } from "@notion-kit/table-hook";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
@@ -21,6 +20,7 @@ import {
 import { KEYBOARD } from "@notion-kit/utils";
 
 import { useEditLog } from "@/edit-log/edit-log-provider";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface Action {
@@ -62,6 +62,7 @@ export function RowActionMenu({
   getReturnFocus,
 }: RowActionMenuProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const { canViewRowLogs, openRowLog, isOpen } = useEditLog();
   const searchInputRef = useRef<HTMLInputElement>(null);
   // 1. Edit icon
@@ -101,7 +102,7 @@ export function RowActionMenu({
       items: [
         {
           value: `edit-icon`,
-          label: "Edit icon",
+          label: messages.rowActionMenu.editIcon,
           icon: <Icon.EmojiFace className="size-5" />,
         },
       ],
@@ -111,14 +112,14 @@ export function RowActionMenu({
       items: [
         {
           value: `open-in-${rowView}`,
-          label: ROW_VIEW_OPTIONS[rowView].tooltip,
+          label: messages.rowView.modes[rowView].tooltip,
           icon: <Icon.ArrowDiagonalUpRight />,
           // shortcut: `${KEYBOARD.OPTION}Click`,
           onSelect: openRowView,
         },
         {
           value: "open-in-new-tab",
-          label: "Open in new tab",
+          label: messages.rowActionMenu.openInNewTab,
           icon: <Icon.ArrowDiagonalUpRight />,
           shortcut: `${KEYBOARD.CMD}${KEYBOARD.SHIFT}${KEYBOARD.ENTER}`,
           onSelect: openInNewTab,
@@ -132,7 +133,7 @@ export function RowActionMenu({
           ? [
               {
                 value: "edit-log",
-                label: "Edit log",
+                label: messages.rowActionMenu.editLog,
                 icon: <Icon.Clock />,
                 onSelect: () => {
                   const row = table.getRow(rowId);
@@ -156,20 +157,20 @@ export function RowActionMenu({
           : []),
         {
           value: "copy-link",
-          label: "Copy link",
+          label: messages.rowActionMenu.copyLink,
           icon: <Icon.Link />,
           onSelect: copyLink,
         },
         {
           value: "duplicate",
-          label: "Duplicate",
+          label: messages.rowActionMenu.duplicate,
           icon: <Icon.Duplicate />,
           shortcut: `${KEYBOARD.CMD}D`,
           onSelect: duplicateRow,
         },
         {
           value: "delete",
-          label: "Delete",
+          label: messages.rowActionMenu.delete,
           icon: <Icon.Trash />,
           shortcut: KEYBOARD.DEL,
           onSelect: deleteRow,
@@ -199,8 +200,8 @@ export function RowActionMenu({
     >
       <AutocompleteInput
         ref={searchInputRef}
-        aria-label="Search actions"
-        placeholder="Search actions..."
+        aria-label={messages.rowActionMenu.searchActionsLabel}
+        placeholder={messages.rowActionMenu.searchActionsPlaceholder}
       />
       <AutocompleteContent variant="inline">
         <AutocompleteList>

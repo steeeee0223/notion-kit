@@ -18,6 +18,7 @@ import { KEYBOARD } from "@notion-kit/utils";
 
 import { RowViewIcon } from "@/common";
 import { useEditLog } from "@/edit-log/edit-log-provider";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ViewNavProps {
@@ -27,6 +28,7 @@ interface ViewNavProps {
 export function ViewNav({ rowId }: ViewNavProps) {
   const { isOpen } = useEditLog();
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const { rowView } = table.getTableGlobalState();
   const rows = table
     .getRowModel()
@@ -58,7 +60,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             className="z-999"
             description={
               <>
-                <TooltipDescription text="Close" />
+                <TooltipDescription text={messages.rowView.close} />
                 <TooltipDescription type="secondary" text="Escape" />
               </>
             }
@@ -66,7 +68,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             <Button
               variant="hint"
               className="size-6"
-              aria-label="Close row"
+              aria-label={`${messages.rowView.close} row`}
               onClick={() => table.openRow(null)}
             >
               <Icon.ArrowChevronDoubleBackward className="size-5 rotate-180 fill-icon" />
@@ -78,7 +80,9 @@ export function ViewNav({ rowId }: ViewNavProps) {
             className="z-999"
             description={
               <>
-                <TooltipDescription text="Open in full page" />
+                <TooltipDescription
+                  text={messages.rowView.modes.full.tooltip}
+                />
                 <TooltipDescription
                   type="secondary"
                   text={KEYBOARD.CMD + KEYBOARD.ENTER}
@@ -89,7 +93,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
             <Button
               variant="hint"
               className="size-6"
-              aria-label="Open in full page"
+              aria-label={messages.rowView.modes.full.tooltip}
               onClick={() => table.openRowInFullPage(rowId)}
             >
               <Icon.ArrowExpandDiagonalSmall className="size-5 fill-icon" />
@@ -101,7 +105,10 @@ export function ViewNav({ rowId }: ViewNavProps) {
           className="mx-1 data-[orientation=vertical]:h-4"
         />
         <DropdownMenu>
-          <TooltipPreset className="z-999" description="Switch peek mode">
+          <TooltipPreset
+            className="z-999"
+            description={messages.rowView.switchPeekMode}
+          >
             <DropdownMenuTrigger
               render={
                 <Button variant="hint" className="size-6">
@@ -132,14 +139,14 @@ export function ViewNav({ rowId }: ViewNavProps) {
                 );
               }}
             >
-              {Object.entries(ROW_VIEW_OPTIONS).map(([key, option]) => {
+              {Object.keys(ROW_VIEW_OPTIONS).map((key) => {
                 const view = key as RowViewType;
                 return (
                   <DropdownMenuRadioItem
                     key={view}
                     value={view}
                     icon={<RowViewIcon rowView={view} />}
-                    label={option.label}
+                    label={messages.rowView.modes[view].label}
                   />
                 );
               })}
@@ -151,7 +158,7 @@ export function ViewNav({ rowId }: ViewNavProps) {
         <Button
           variant="hint"
           className="size-6"
-          aria-label="Previous row"
+          aria-label={messages.rowView.previousRow}
           disabled={!previousRowId}
           onClick={() => previousRowId && table.openRow(previousRowId)}
         >
@@ -160,13 +167,17 @@ export function ViewNav({ rowId }: ViewNavProps) {
         <Button
           variant="hint"
           className="size-6"
-          aria-label="Next row"
+          aria-label={messages.rowView.nextRow}
           disabled={!nextRowId}
           onClick={() => nextRowId && table.openRow(nextRowId)}
         >
           <Icon.Chevron className="fill-icon" />
         </Button>
-        <Button variant="hint" className="size-6">
+        <Button
+          variant="hint"
+          className="size-6"
+          aria-label={messages.rowView.moreActions}
+        >
           <Icon.Dots className="fill-icon" />
         </Button>
       </div>

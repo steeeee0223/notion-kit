@@ -7,7 +7,7 @@ import { CellSelectionProvider } from "./cell-selection-provider";
 import { useTableViewCtx } from "./table-view-provider";
 
 export function TableViewContent() {
-  const { table } = useTableViewCtx();
+  const { table, readOnly } = useTableViewCtx();
 
   return (
     <CellSelectionProvider>
@@ -53,7 +53,7 @@ export function TableViewContent() {
                 {/* Table body */}
                 <DndTableBody />
                 {/* Table footer */}
-                <TableFooter />
+                {!readOnly.hideFooter && <TableFooter />}
               </div>
               <div className="pointer-events-none clear-both mt-0 h-0 translate-y-0" />
               <div className="absolute z-9990 w-full translate-y-[-34px]" />

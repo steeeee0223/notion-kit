@@ -14,6 +14,7 @@ import {
 
 import { LayoutIcon, MenuHeader } from "@/common";
 import { useEditLog } from "@/edit-log/edit-log-provider";
+import { useTableViewMessages } from "@/messages";
 import {
   FILTER_MENU_TOOLBAR_TRIGGER_ID,
   useMenuCoordinator,
@@ -54,6 +55,7 @@ export function TableViewMenu(props: TableViewMenuProps) {
 
 function TableViewMenuContent(props: TableViewMenuProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const menu = table.getTableMenuState();
 
   switch (menu.page) {
@@ -64,7 +66,7 @@ function TableViewMenuContent(props: TableViewMenuProps) {
         <>
           <MenuHeader
             id="sort"
-            title="Sort"
+            title={messages.viewMenu.sort}
             onBack={() => table.setTableMenuState({ open: true, page: null })}
           />
           <SortMenu />
@@ -102,7 +104,8 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
   const { filterMenu } = useMenuCoordinator();
   const { canViewTableLogs, openTableLog } = useEditLog();
 
-  const { table } = useTableViewCtx();
+  const { table, readOnly } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const { locked, layout } = table.getTableGlobalState();
   const groupedColumn = table.getGroupedColumnInfo();
   const filterCount = countFilterRules(table.getFilters());
@@ -112,21 +115,22 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
 
   return (
     <>
-      <MenuHeader id="view-settings" title="View Settings" />
+      <MenuHeader id="view-settings" title={messages.viewMenu.viewSettings} />
       <DropdownMenuGroup>
         <DropdownMenuItem
           closeOnClick={false}
           icon={<LayoutIcon layout={layout} />}
-          label="Layout"
+          label={messages.viewMenu.layout}
           onClick={() => openMenu(TableViewMenuPage.Layout)}
         >
           <MenuItemSelect>
-            {LAYOUT_OPTIONS.find((l) => l.value === layout)?.label}
+            {messages.layoutMenu.layouts[layout] ??
+              LAYOUT_OPTIONS.find((l) => l.value === layout)?.label}
           </MenuItemSelect>
         </DropdownMenuItem>
         <DropdownMenuItem
           icon={<Icon.FilterSmall />}
-          label="Filter"
+          label={messages.viewMenu.filter}
           onClick={() => filterMenu.handle.open(FILTER_MENU_TOOLBAR_TRIGGER_ID)}
         >
           <MenuItemSelect>{filterCount || ""}</MenuItemSelect>
@@ -134,7 +138,7 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
         <DropdownMenuItem
           closeOnClick={false}
           icon={<Icon.ArrowUpDown />}
-          label="Sort"
+          label={messages.viewMenu.sort}
           onClick={() => openMenu(TableViewMenuPage.Sort)}
         >
           <MenuItemSelect>{sortingCount || ""}</MenuItemSelect>
@@ -142,7 +146,7 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
         <DropdownMenuItem
           closeOnClick={false}
           icon={<Icon.SquareGridBelowLines />}
-          label="Group"
+          label={messages.viewMenu.group}
           onClick={() =>
             openMenu(
               groupedColumn
@@ -156,11 +160,11 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuLabel title="Data source settings" />
+        <DropdownMenuLabel title={messages.viewMenu.dataSourceSettings} />
         <DropdownMenuItem
           closeOnClick={false}
           icon={<Icon.Sliders />}
-          label="Edit properties"
+          label={messages.viewMenu.editProperties}
           disabled={locked}
           onClick={() => openMenu(TableViewMenuPage.Props)}
         >
@@ -169,17 +173,22 @@ function TableMenu({ getReturnFocus }: TableViewMenuProps) {
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuItem
-          closeOnClick={false}
-          {...(locked
-            ? { icon: <Icon.LockOpen />, label: "Unlock database" }
-            : { icon: <Icon.Lock />, label: "Lock database" })}
-          onClick={table.toggleTableLocked}
-        />
+        {!readOnly.locked && (
+          <DropdownMenuItem
+            closeOnClick={false}
+            {...(locked
+              ? {
+                  icon: <Icon.LockOpen />,
+                  label: messages.viewMenu.unlockDatabase,
+                }
+              : { icon: <Icon.Lock />, label: messages.viewMenu.lockDatabase })}
+            onClick={table.toggleTableLocked}
+          />
+        )}
         {canViewTableLogs && (
           <DropdownMenuItem
             icon={<Icon.Clock />}
-            label="Edit log"
+            label={messages.viewMenu.editLog}
             onClick={() => {
               const returnFocus = getReturnFocus?.();
               table.setTableMenuState({ open: false, page: null });

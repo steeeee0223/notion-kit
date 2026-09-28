@@ -17,6 +17,7 @@ import {
 
 import { Row } from "@/common";
 import { PropsMenu, TypesMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TableHeaderActionCell } from "./table-header-action-cell";
@@ -124,6 +125,7 @@ function TableHeaderRow() {
 
 function TableHeaderRowContent() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const headers = table.getCenterLeafHeaders();
   const startPinnedHeaders = table.getStartLeafHeaders();
@@ -155,7 +157,7 @@ function TableHeaderRowContent() {
                   size="sm"
                   checked={isAllRowsSelected}
                   indeterminate={isSomeRowsSelected && !isAllRowsSelected}
-                  aria-label="Select all rows"
+                  aria-label={messages.aria.selectAllRows}
                   className="cursor-pointer rounded-xs accent-blue"
                   onCheckedChange={(checked) =>
                     table.toggleAllRowsSelected(checked)

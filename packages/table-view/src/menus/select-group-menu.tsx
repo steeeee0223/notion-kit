@@ -14,10 +14,12 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function SelectGroupMenu() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const selectGroup = (colId: string | null) => {
     table.setGroupingColumn(colId);
@@ -49,7 +51,13 @@ export function SelectGroupMenu() {
         );
         const groupOptions = [
           ...(tableGlobal.layout !== "board"
-            ? [{ kind: "none" as const, id: null, name: "None" }]
+            ? [
+                {
+                  kind: "none" as const,
+                  id: null,
+                  name: messages.groupMenu.none,
+                },
+              ]
             : []),
           ...options,
         ];
@@ -57,7 +65,7 @@ export function SelectGroupMenu() {
         return (
           <>
             <MenuHeader
-              title="Group by"
+              title={messages.groupMenu.groupBy}
               onBack={() =>
                 table.setTableMenuState({
                   open: true,
@@ -74,7 +82,7 @@ export function SelectGroupMenu() {
               openOnInputClick
             >
               <AutocompleteInput
-                placeholder="Search for a property"
+                placeholder={messages.groupMenu.searchProperty}
                 onKeyDown={(e) => e.stopPropagation()}
               />
               <AutocompleteContent variant="inline">
@@ -106,7 +114,7 @@ export function SelectGroupMenu() {
                   </AutocompleteGroup>
                 </AutocompleteList>
                 <AutocompleteEmpty className="px-3 text-start text-muted">
-                  No results
+                  {messages.groupMenu.noResults}
                 </AutocompleteEmpty>
               </AutocompleteContent>
             </Autocomplete>

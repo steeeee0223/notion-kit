@@ -16,6 +16,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { PropMeta } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import {
   FILTER_MENU_TOOLBAR_TRIGGER_ID,
   useMenuCoordinator,
@@ -57,6 +58,7 @@ interface PropMenuProps {
 export function PropMenu({ propId, view }: PropMenuProps) {
   const { filterMenu } = useMenuCoordinator();
   const { table, plugins } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const info = table.getColumnInfo(propId);
   const plugin = table.getColumnPlugin(propId);
@@ -119,7 +121,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
               icon={<Icon.ArrowSquarePathUpDown />}
-              label="Change type"
+              label={messages.propsMenu.changeType}
             />
             <DropdownMenuContent sideOffset={-4} className="w-50">
               <TypesMenu propId={propId} menu={null} />
@@ -133,13 +135,13 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           <DropdownMenuGroup>
             <DropdownMenuItem
               icon={<Icon.FilterSmall />}
-              label="Filter"
+              label={messages.propsMenu.filter}
               onClick={addFilter}
             />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger
                 icon={<Icon.ArrowUpDown />}
-                label="Sort"
+                label={messages.propsMenu.sort}
               />
               <DropdownMenuContent sideOffset={-4} className="w-50">
                 <DropdownMenuGroup>
@@ -160,7 +162,11 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               {(grouping) => (
                 <DropdownMenuItem
                   icon={<Icon.SquareGridBelowLines />}
-                  label={grouping.includes(propId) ? "Ungroup" : "Group"}
+                  label={
+                    grouping.includes(propId)
+                      ? messages.propsMenu.ungroup
+                      : messages.propsMenu.group
+                  }
                   onClick={() =>
                     table.setGroupingColumn((v) =>
                       v === propId ? null : propId,
@@ -170,7 +176,10 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               )}
             </table.Subscribe>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
+              <DropdownMenuSubTrigger
+                icon={<Icon.Sum />}
+                label={messages.propsMenu.calculate}
+              />
               <DropdownMenuContent
                 sideOffset={-4}
                 className="w-50"
@@ -183,22 +192,34 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               disabled={!canFreeze}
               onClick={pinColumns}
               {...(canUnfreeze
-                ? { icon: <Icon.PinStrikeThrough />, label: "Unfreeze columns" }
-                : { icon: <Icon.Pin />, label: "Freeze up to column" })}
+                ? {
+                    icon: <Icon.PinStrikeThrough />,
+                    label: messages.propsMenu.unfreezeColumns,
+                  }
+                : {
+                    icon: <Icon.Pin />,
+                    label: messages.propsMenu.freezeUpToColumn,
+                  })}
               className="[&_svg]:w-3"
             />
             {info.type !== "title" && (
               <DropdownMenuItem
                 onClick={hideProp}
                 icon={<Icon.EyeHideInversePadded className="size-6" />}
-                label="Hide in view"
+                label={messages.propsMenu.hideInView}
               />
             )}
             <DropdownMenuItem
               onClick={wrapProp}
               {...(info.wrapped
-                ? { icon: <Icon.ArrowLineRight />, label: "Unwrap text" }
-                : { icon: <Icon.ArrowUTurnDownLeft />, label: "Wrap text" })}
+                ? {
+                    icon: <Icon.ArrowLineRight />,
+                    label: messages.propsMenu.unwrapText,
+                  }
+                : {
+                    icon: <Icon.ArrowUTurnDownLeft />,
+                    label: messages.propsMenu.wrapText,
+                  })}
             />
           </DropdownMenuGroup>
         </>
@@ -211,7 +232,11 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               key={side}
               onClick={() => insertColumn(side)}
               icon={<Icon.ArrowRectangle side={side} />}
-              label={`Insert ${side}`}
+              label={
+                side === "left"
+                  ? messages.propsMenu.insertLeft
+                  : messages.propsMenu.insertRight
+              }
             />
           ))}
         {info.type !== "title" && (
@@ -219,13 +244,13 @@ export function PropMenu({ propId, view }: PropMenuProps) {
             <DropdownMenuItem
               onClick={duplicateProp}
               icon={<Icon.Duplicate />}
-              label="Duplicate property"
+              label={messages.propsMenu.duplicateProperty}
             />
             <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}
               icon={<Icon.Trash />}
-              label="Delete property"
+              label={messages.propsMenu.deleteProperty}
             />
           </>
         )}

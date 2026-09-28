@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface BulkActionMenuProps {
@@ -20,9 +21,9 @@ interface BulkActionMenuProps {
 
 export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const rowCount = rowIds.length;
-  const rowLabel = `${rowCount} row${rowCount === 1 ? "" : "s"}`;
+  const rowLabel = messages.bulkEdit.rowCount(rowIds.length);
 
   const duplicateRows = () => table.duplicateRows(rowIds);
   const deleteRows = () => {
@@ -33,7 +34,7 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
   return (
     <>
       <Button
-        aria-label={`Delete ${rowLabel}`}
+        aria-label={messages.bulkEdit.deleteRows(rowLabel)}
         variant="hint"
         className="h-full shrink-0 rounded-none border-r px-2"
         onClick={() => setShowDeleteConfirm(true)}
@@ -44,7 +45,7 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
         <DropdownMenuTrigger
           render={
             <Button
-              aria-label="More bulk actions"
+              aria-label={messages.bulkEdit.moreBulkActions}
               variant="hint"
               className="h-full shrink-0 rounded-none px-2"
             >
@@ -56,13 +57,13 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
           <DropdownMenuGroup>
             <DropdownMenuItem
               icon={<Icon.Duplicate />}
-              label="Duplicate"
+              label={messages.bulkEdit.duplicate}
               onClick={duplicateRows}
             />
             <DropdownMenuItem
               closeOnClick={false}
               icon={<Icon.Trash />}
-              label="Delete"
+              label={messages.bulkEdit.delete}
               variant="error"
               onClick={() => setShowDeleteConfirm(true)}
             />
@@ -71,9 +72,9 @@ export function BulkActionMenu({ rowIds }: BulkActionMenuProps) {
       </DropdownMenu>
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertModal
-          title={`Delete ${rowLabel}?`}
-          primary="Delete"
-          secondary="Cancel"
+          title={messages.bulkEdit.deleteRowsConfirmTitle(rowLabel)}
+          primary={messages.bulkEdit.delete}
+          secondary={messages.bulkEdit.cancel}
           onTrigger={deleteRows}
         />
       </Dialog>

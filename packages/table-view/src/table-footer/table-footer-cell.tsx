@@ -13,6 +13,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { CalcMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableFooterCellProps {
@@ -20,6 +21,7 @@ interface TableFooterCellProps {
 }
 
 export function TableFooterCell({ column }: TableFooterCellProps) {
+  const messages = useTableViewMessages();
   const info = column.getInfo();
   const props = {
     id: column.id,
@@ -33,7 +35,7 @@ export function TableFooterCell({ column }: TableFooterCellProps) {
         <DropdownMenuTrigger
           render={
             <Button
-              aria-label={`${info.name} calculation`}
+              aria-label={messages.footer.calculationFor(info.name)}
               tabIndex={0}
               variant="cell"
               className="h-8 w-full justify-end overflow-hidden pr-2 select-auto"
@@ -58,6 +60,7 @@ interface CountDisplayProps {
 
 function CountDisplay({ id, type }: CountDisplayProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   return (
     <table.Subscribe selector={(state) => state.columnCounting[id]}>
       {(counting) => {
@@ -72,7 +75,7 @@ function CountDisplay({ id, type }: CountDisplayProps) {
           <div className="flex items-center opacity-100 transition-opacity duration-200">
             <div className="flex items-center">
               <span className="text-muted">
-                {type === "checkbox" ? "∑" : "Calculate"}
+                {type === "checkbox" ? "∑" : messages.footer.calculate}
               </span>
               <Icon.Chevron
                 side="down"

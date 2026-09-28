@@ -11,6 +11,7 @@ import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
 import { Cell } from "@/common";
 import { RowActionMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -28,6 +29,7 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   if (row.getIsGrouped()) {
     return (
@@ -40,7 +42,7 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
   }
 
   const { cell } = row.getTitleCell();
-  const title = String(cell.value || "New page");
+  const title = String(cell.value || messages.rowView.newPageTitle);
   const feature = toTimelineFeature(row.original, propertyId, title);
 
   return (

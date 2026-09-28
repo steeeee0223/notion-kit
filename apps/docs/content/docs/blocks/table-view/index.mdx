@@ -21,6 +21,9 @@ description: A composable, editable data table with multiple layouts.
 - Open rows in a center dialog, side pane, or full page
 - Built-in plugins for title, text, number, checkbox, select, multi-select, links, and dates
 - Optional table and row edit logs with historical values and manual pagination
+- Localize every built-in string through a `messages` prop
+- A `readOnly` mode that keeps search, sort, and filter live
+- A row peek slot for consumer-rendered content below the property list
 
 ## Requirements
 
@@ -333,6 +336,83 @@ The standalone `@notion-kit/ui/timeline` exports remain available.
 `addRow({ initialValues: { [propertyId]: value } })` returns the proposed row
 ID. A controlled owner must accept the data before the row can be opened.
 
+### Localization
+
+Pass `messages` to override any subset of `defaultTableViewMessages`. It is a
+deep-partial `TableViewMessages`: unset keys fall back to the English default,
+so a partial override never leaves a string blank.
+
+```tsx
+import { TableView, type TableViewMessages } from "@notion-kit/table-view";
+
+const nl: DeepPartial<TableViewMessages> = {
+  toolbar: { filter: "Filter", sort: "Sorteren", search: "Zoeken" },
+  rowView: { close: "Sluiten" },
+};
+
+<TableView defaultProperties={properties} defaultData={data} messages={nl} />;
+```
+
+`TableViewMessages` is namespaced by UI area: `toolbar`, `viewMenu`,
+`layoutMenu`, `rowView`, `footer`, `propsMenu`, `sortMenu`, `filterMenu`,
+`groupMenu`, `calcMenu`, `rowActionMenu`, `deletedPropsMenu`, `typesMenu`,
+`editLog`, `groupActions`, `bulkEdit`, `rowActions`, and generic `aria`
+labels. Interpolated strings are functions (e.g.
+`footer.calculationFor(propertyName)`, `bulkEdit.rowCount(count)` for
+pluralization, `editLog.renamedTo(name)`), not templates. Filter/sort/group
+**operator and counting-method names** stay in their originating
+`@notion-kit/table-hook` data plugin (e.g. a select property's "Contains" /
+"Is not" operators) — they are plugin business logic, not view chrome, so
+localizing them means passing a plugin whose operator `name` is already in
+the target language.
+
+### Read-only mode
+
+Pass `readOnly` to present the table as `locked` (no edits, drag, or row
+selection) while search, sort, and filter keep working:
+
+```tsx
+<TableView defaultProperties={properties} defaultData={data} readOnly />
+```
+
+`readOnly` accepts `true` (hide every optional affordance) or an options
+object to hide a subset:
+
+| Field               | Default when `readOnly` is set | Description                                                      |
+| -------------------- | ------------------------------- | ------------------------------------------------------------------ |
+| `hideNewButton`      | `true`                          | Hides the toolbar "New" button.                                   |
+| `hideAddProperty`    | `true`                          | Hides "+ add property". Always hidden while locked regardless.   |
+| `hideFooter`         | `true`                          | Hides the calculation/footer row. Set `false` to keep it visible. |
+| `hideRowActions`     | `true`                          | Hides the row drag handle/checkbox/add. Always hidden while locked. |
+| `hideViewSettings`   | `true`                          | Hides the settings (gear) toolbar button entirely.                |
+
+The toolbar "New" button calls `table.addRow()` by default, or your
+`onNewRow` handler when provided; it is hidden while `readOnly` (or
+`readOnly.hideNewButton`) is set.
+
+### Row peek slot
+
+`renderRowView` renders extra content below the property list in the side,
+center, and full-page peek. `onRowOpen` is called whenever the opened row
+changes, including with `null` when it closes. `openRowOnClick` makes the
+primary table and list layouts open a row when clicked anywhere on it (not
+just its title's hover affordance), or with `Enter` on a focused row.
+
+```tsx
+<TableView
+  defaultProperties={properties}
+  defaultData={data}
+  openRowOnClick
+  onRowOpen={(rowId) => console.log("opened", rowId)}
+  renderRowView={(row, table) => (
+    <MyExtraPanel rowId={row.id} table={table} />
+  )}
+/>
+```
+
+`defaultView.rowView` (or `view.rowView` when controlled) still chooses the
+initial peek mode (`"side"`, `"center"`, or `"full"`).
+
 ## Custom cell plugins
 
 Create a custom data plugin when a property needs its own storage or table
@@ -367,6 +447,12 @@ bulk editing.
 | `weekStartsOn`       | `Weekday`                   | Sets the first day of the week for date-based features.                      |
 | `defaultColumn`      | `Partial<ColumnDef>`        | Overrides the default TanStack Table column options.                         |
 | `children`           | `ReactNode`                 | Content rendered inside the Table View provider.                             |
+| `messages`           | `DeepPartial<TableViewMessages>` | Localizes any subset of the built-in English strings.                   |
+| `readOnly`           | `boolean \| TableViewReadOnlyOptions` | Presents the table as `locked` and hides optional affordances.     |
+| `renderRowView`      | `(row, table) => ReactNode` | Extra content below the property list in the row peek.                       |
+| `onRowOpen`          | `(rowId: string \| null) => void` | Called when the opened row changes, including on close (`null`).       |
+| `openRowOnClick`     | `boolean`                   | Opens the row peek on click/`Enter` for table and list layout rows.           |
+| `onNewRow`           | `(table) => void`           | Called by the toolbar "New" button; defaults to `table.addRow()`.             |
 
 ### TableViewState
 

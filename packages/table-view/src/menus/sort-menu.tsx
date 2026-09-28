@@ -31,6 +31,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, PropertySelect } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -40,6 +41,7 @@ import {
 
 export function SortMenu() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const [addingSort, setAddingSort] = useState(false);
 
   const reorderRules = (e: DragEndEvent) => {
@@ -71,7 +73,7 @@ export function SortMenu() {
                 closeOnClick={false}
                 variant="secondary"
                 icon={<Icon.Plus className="size-4" />}
-                label="Add sort"
+                label={messages.sortMenu.addSort}
               />
             }
           />
@@ -84,7 +86,7 @@ export function SortMenu() {
           variant="warning"
           className="text-secondary"
           icon={<Icon.Trash />}
-          label="Delete sort"
+          label={messages.sortMenu.deleteSort}
           onClick={() => table.resetSorting()}
         />
       </DropdownMenuGroup>
@@ -100,6 +102,7 @@ interface SortRuleProps {
 
 function SortRule({ id: currentId, desc, index }: SortRuleProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const updateRule = (columnSort: ColumnSort) =>
     table.setSorting((prev) =>
@@ -140,7 +143,9 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
               <DropdownMenuItem
                 closeOnClick={false}
                 className="h-9"
-                icon={<Sortable.Handle aria-label="Move sort" />}
+                icon={
+                  <Sortable.Handle aria-label={messages.sortMenu.moveSort} />
+                }
                 label={
                   <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
                     <PropertySelect
@@ -155,7 +160,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                       }
                     >
                       <SelectTrigger
-                        aria-label="Sort direction select"
+                        aria-label={messages.sortMenu.sortDirectionSelect}
                         className="my-0 w-full max-w-45 border border-border"
                       >
                         <SelectValue />
@@ -176,7 +181,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
               <Button
                 variant="hint"
                 className="size-5"
-                aria-label="Remove sort"
+                aria-label={messages.sortMenu.removeSort}
                 onClick={removeRule}
               >
                 <Icon.Close className="fill-current" />
@@ -191,6 +196,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
 
 function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const selectProp = (id: string) => {
     const defaultMethod = getDefaultSortingMethod(table.getColumnPlugin(id));
@@ -221,7 +227,7 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
           >
             <AutocompleteInput
               clear
-              placeholder="Search for a property..."
+              placeholder={messages.sortMenu.searchProperty}
               onKeyDown={(event) => event.stopPropagation()}
             />
             <AutocompleteContent variant="inline">
@@ -248,7 +254,7 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
                 </AutocompleteGroup>
               </AutocompleteList>
               <AutocompleteEmpty className="px-3 text-start text-muted">
-                No results
+                {messages.sortMenu.noResults}
               </AutocompleteEmpty>
             </AutocompleteContent>
           </Autocomplete>

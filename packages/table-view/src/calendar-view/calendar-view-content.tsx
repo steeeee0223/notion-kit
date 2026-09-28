@@ -23,6 +23,7 @@ import {
   type DateViewResources,
 } from "@/date-view/use-date-view-property";
 import { RowActionMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { getCalendarRows, toCalendarEvent } from "./calendar-adapter";
@@ -84,6 +85,7 @@ function CalendarViewReady({
   resources: DateViewResources;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const { anchorDate, setAnchorDate } = useDateViewNavigation();
   const timeZone = getDatePropertyTimeZone(property);
   const actions = useCalendarActions({
@@ -102,7 +104,7 @@ function CalendarViewReady({
     const event = toCalendarEvent(
       row.original,
       property.id,
-      title || "New page",
+      title || messages.rowView.newPageTitle,
       timeZone,
     );
     return event ? [event] : [];
@@ -111,7 +113,7 @@ function CalendarViewReady({
   return (
     <Table.Content
       role="region"
-      aria-label="Calendar"
+      aria-label={messages.aria.calendarRegion}
       data-testid="calendar-view-ready"
       data-property-id={property.id}
       data-range={resources.dateView.range}

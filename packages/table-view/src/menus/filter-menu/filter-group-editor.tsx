@@ -19,15 +19,11 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { PropertySelect } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { AddFilterMenu } from "./add-filter-menu";
 import { OperandControl } from "./operand-control";
-
-const LOGIC_ITEMS = [
-  { value: "and", label: "And" },
-  { value: "or", label: "Or" },
-];
 
 interface FilterGroupEditorProps {
   group: FilterGroup;
@@ -102,20 +98,25 @@ function FilterLogicLabel({
   root: FilterGroup;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
+  const logicItems = [
+    { value: "and", label: messages.filterMenu.logicAnd },
+    { value: "or", label: messages.filterMenu.logicOr },
+  ];
   const { logic } = group;
   if (index === 0) {
-    return <span className="text-secondary">Where</span>;
+    return <span className="text-secondary">{messages.filterMenu.where}</span>;
   }
   if (index > 1) {
     return (
       <span className="text-primary">
-        {LOGIC_ITEMS.find((item) => item.value === logic)?.label}
+        {logicItems.find((item) => item.value === logic)?.label}
       </span>
     );
   }
   return (
     <Select
-      items={LOGIC_ITEMS}
+      items={logicItems}
       value={logic}
       onValueChange={(value) => {
         if (!value) return;
@@ -127,14 +128,14 @@ function FilterLogicLabel({
       }}
     >
       <SelectTrigger
-        aria-label="Filter logic select"
+        aria-label={messages.filterMenu.filterLogicSelect}
         className="border border-border"
       >
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {LOGIC_ITEMS.map(({ value, label }) => (
+          {logicItems.map(({ value, label }) => (
             <SelectItem key={value} value={value} label={label} />
           ))}
         </SelectGroup>
@@ -153,6 +154,7 @@ function FilterRuleEditor({
   className?: string;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const properties = table.getFilterProperties();
   const property = properties.find(({ id }) => id === rule.propertyId);
   const operators = property
@@ -161,7 +163,12 @@ function FilterRuleEditor({
   const operator = operators.find(({ id }) => id === rule.operator);
   const operatorItems = [
     ...(!operator
-      ? [{ value: rule.operator, label: `${rule.operator} (unavailable)` }]
+      ? [
+          {
+            value: rule.operator,
+            label: messages.filterMenu.unavailableOperator(rule.operator),
+          },
+        ]
       : []),
     ...operators.map(({ id, name }) => ({ value: id, label: name })),
   ];
@@ -210,7 +217,7 @@ function FilterRuleEditor({
         }}
       >
         <SelectTrigger
-          aria-label="Operator select"
+          aria-label={messages.filterMenu.operatorSelect}
           className="w-fit border border-border"
         >
           <SelectValue />
@@ -231,7 +238,7 @@ function FilterRuleEditor({
             {!operator && (
               <SelectItem
                 value={rule.operator}
-                label={`${rule.operator} (unavailable)`}
+                label={messages.filterMenu.unavailableOperator(rule.operator)}
                 disabled
               />
             )}
@@ -257,6 +264,7 @@ function NodeActions({
   className?: string;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   return (
     <DropdownMenu>
@@ -264,7 +272,7 @@ function NodeActions({
         render={
           <Button
             variant="hint"
-            aria-label="Actions"
+            aria-label={messages.filterMenu.actions}
             className={cn("size-7", className)}
           >
             <Icon.Dots className="size-4 fill-icon" />
@@ -276,7 +284,7 @@ function NodeActions({
           <DropdownMenuItem
             variant="warning"
             icon={<Icon.Trash />}
-            label="Delete"
+            label={messages.filterMenu.delete}
             onClick={() => table.setFilters(removeFilterNode(root, id))}
           />
         </DropdownMenuGroup>

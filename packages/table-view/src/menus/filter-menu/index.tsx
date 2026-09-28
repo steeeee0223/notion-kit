@@ -1,6 +1,7 @@
 import { Icon } from "@notion-kit/icons";
 import { MenuGroup, MenuItem, Separator } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { AddFilterMenu } from "./add-filter-menu";
@@ -8,6 +9,7 @@ import { FilterGroupEditor } from "./filter-group-editor";
 
 export function FilterMenu() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   return (
     <table.Subscribe
@@ -21,7 +23,7 @@ export function FilterMenu() {
         const validFilters = table.validateFilters(filters) ? filters : null;
 
         return (
-          <section aria-label="Filters">
+          <section aria-label={messages.filterMenu.filtersRegion}>
             {validFilters ? (
               <>
                 <FilterGroupEditor
@@ -35,7 +37,7 @@ export function FilterMenu() {
                   {/* Delete action */}
                   <MenuItem
                     icon={<Icon.Trash />}
-                    label="Delete filter"
+                    label={messages.filterMenu.deleteFilter}
                     variant="warning"
                     onClick={() => table.clearFilters()}
                   />

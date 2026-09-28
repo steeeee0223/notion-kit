@@ -2,10 +2,17 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "storybook-react-rsbuild";
 
 import TableViewCalendar from "@notion-kit/registry/table-view-calendar";
-import { TableView } from "@notion-kit/table-view";
+import { DEFAULT_PLUGINS, TableView } from "@notion-kit/table-view";
 import type { ColumnDefs, DefaultPlugins, Row } from "@notion-kit/table-view";
 
 import { Database, mockData, mockEditLogs, mockProps } from "./database";
+import {
+  CaptureRunRowDetails,
+  createCaptureRunFixture,
+  nlMessages,
+  statusPlugin,
+  statusPluginUi,
+} from "./read-only-demo";
 
 const meta = {
   title: "collections/Table View",
@@ -90,3 +97,28 @@ export const TimelineView: Story = {
 };
 
 export const CalendarView: Story = { render: () => <TableViewCalendar /> };
+
+const captureRunPlugins = {
+  data: [...DEFAULT_PLUGINS.data, statusPlugin],
+  ui: [...DEFAULT_PLUGINS.ui, statusPluginUi],
+};
+
+export const ReadOnlyLocalized: Story = {
+  render: () => {
+    const { properties, data } = createCaptureRunFixture();
+
+    return (
+      <div className="px-24">
+        <TableView
+          plugins={captureRunPlugins}
+          properties={properties as ColumnDefs<typeof captureRunPlugins.data>}
+          data={data as Row<typeof captureRunPlugins.data>[]}
+          messages={nlMessages}
+          readOnly
+          openRowOnClick
+          renderRowView={(row) => <CaptureRunRowDetails row={row} />}
+        />
+      </div>
+    );
+  },
+};

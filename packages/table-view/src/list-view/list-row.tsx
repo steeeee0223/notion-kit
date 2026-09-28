@@ -44,8 +44,10 @@ export function ListRow({ rowId }: ListRowProps) {
               "relative h-7.5 w-full overflow-hidden rounded-md px-1 text-inherit opacity-100",
             )}
             onClick={() => table.openRow(row.id)}
-            onKeyDown={() => {
-              // noop
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              table.openRow(row.id);
             }}
           >
             {row.getVisibleCells().map((cell) => (

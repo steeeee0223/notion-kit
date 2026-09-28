@@ -22,6 +22,7 @@ import {
 
 import { LayoutIcon, MenuHeader, RowViewIcon } from "@/common";
 import { isUsableDateProperty } from "@/date-view/date-property";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function LayoutMenu() {
@@ -56,6 +57,7 @@ function LayoutMenuContent({
   columnsInfo: ReturnType<TableInstance["atoms"]["columnsInfo"]["get"]>;
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const dateProperties = columnOrder.flatMap((id) => {
     const property = columnsInfo[id];
     return property && isUsableDateProperty(property) ? [property] : [];
@@ -64,7 +66,7 @@ function LayoutMenuContent({
   return (
     <>
       <MenuHeader
-        title="Layout"
+        title={messages.layoutMenu.layoutTitle}
         onBack={() => table.setTableMenuState({ open: true, page: null })}
       />
       <DropdownMenuGroup>
@@ -89,7 +91,9 @@ function LayoutMenuContent({
               }
             >
               <LayoutIcon layout={layout.value} />
-              <div className="text-center">{layout.label}</div>
+              <div className="text-center">
+                {messages.layoutMenu.layouts[layout.value] ?? layout.label}
+              </div>
             </Button>
           ))}
         </div>
@@ -122,6 +126,7 @@ function DatePropertyMenu({
   properties: ColumnInfo[];
 }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const currentProperty =
     properties.find((property) => property.id === current) ?? properties[0]!;
 
@@ -129,7 +134,11 @@ function DatePropertyMenu({
     <DropdownMenuSub>
       <DropdownMenuSubTrigger
         disabled={locked}
-        label={layout === "calendar" ? "Calendar by" : "Timeline by"}
+        label={
+          layout === "calendar"
+            ? messages.layoutMenu.calendarBy
+            : messages.layoutMenu.timelineBy
+        }
       >
         <MenuItemAction className="flex items-center text-muted">
           {currentProperty.name}
@@ -159,14 +168,18 @@ function DatePropertyMenu({
 
 function RowViewMenu({ locked }: { locked: boolean }) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   return (
     <table.Subscribe selector={(state) => state.tableGlobal.rowView}>
       {(current) => (
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger disabled={locked} label="Open pages in">
+          <DropdownMenuSubTrigger
+            disabled={locked}
+            label={messages.layoutMenu.openPagesIn}
+          >
             <MenuItemAction className="flex items-center text-muted">
-              {ROW_VIEW_OPTIONS[current].label}
+              {messages.rowView.modes[current].label}
             </MenuItemAction>
           </DropdownMenuSubTrigger>
           <DropdownMenuContent sideOffset={-4} className="w-64">
@@ -188,16 +201,17 @@ function RowViewMenu({ locked }: { locked: boolean }) {
                 );
               }}
             >
-              {Object.entries(ROW_VIEW_OPTIONS).map(([value, option]) => {
+              {Object.keys(ROW_VIEW_OPTIONS).map((value) => {
                 const rowView = value as RowViewType;
+                const mode = messages.rowView.modes[rowView];
                 return (
                   <DropdownMenuRadioItem
                     key={rowView}
                     value={rowView}
                     closeOnClick={false}
                     icon={<RowViewIcon rowView={rowView} />}
-                    label={option.label}
-                    desc={option.desc}
+                    label={mode.label}
+                    desc={mode.desc}
                   />
                 );
               })}

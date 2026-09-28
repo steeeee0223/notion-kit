@@ -7,6 +7,7 @@ import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TableGroupedRow } from "./table-grouped-row";
@@ -62,6 +63,7 @@ function DndTableBodyContent({
   setPendingDragEndEvent,
 }: DndTableBodyContentProps) {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
@@ -126,7 +128,7 @@ function DndTableBodyContent({
         >
           <span className="sticky inset-s-(--table-view-row-action-gutter) inline-flex items-center text-sm text-muted opacity-100 transition-opacity duration-200">
             <Icon.Plus className="mr-[7px] ml-px size-3.5 fill-default/35" />
-            New page
+            {messages.rowActions.newPage}
           </span>
         </Button>
       )}
@@ -137,9 +139,9 @@ function DndTableBodyContent({
         }}
       >
         <AlertModal
-          title="Would you like to remove sorting?"
-          primary="Remove"
-          secondary="Don't remove"
+          title={messages.rowActions.removeSortingTitle}
+          primary={messages.rowActions.removeSortingConfirm}
+          secondary={messages.rowActions.removeSortingCancel}
           onTrigger={handleConfirmRemoveSorting}
         />
       </Dialog>

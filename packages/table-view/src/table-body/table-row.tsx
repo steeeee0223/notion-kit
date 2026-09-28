@@ -14,7 +14,7 @@ interface TableRowProps {
 
 export function TableRow({ row }: TableRowProps) {
   /** Add row */
-  const { table } = useTableViewCtx();
+  const { table, openRowOnClick } = useTableViewCtx();
   const { locked } = table.getTableGlobalState();
   const isSomeColumnPinned = table.atoms.columnPinning.get().start.length > 0;
 
@@ -50,7 +50,17 @@ export function TableRow({ row }: TableRowProps) {
       >
         {!locked && <RowActionGroup row={row} />}
       </Row.ActionPortal>
-      <Row.Content>
+      <Row.Content
+        {...(openRowOnClick && {
+          tabIndex: 0,
+          onClick: () => table.openRow(row.id),
+          onKeyDown: (event: React.KeyboardEvent) => {
+            if (event.key !== "Enter") return;
+            event.preventDefault();
+            table.openRow(row.id);
+          },
+        })}
+      >
         <Row.StickyContent>
           <TableCells cells={row.getStartVisibleCells()} />
         </Row.StickyContent>

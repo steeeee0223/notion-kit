@@ -1,9 +1,9 @@
 import { LAYOUT_OPTIONS } from "@notion-kit/table-hook";
 
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { ActionIcon } from "./action-icon";
-import { actionMessages } from "./messages";
 import { PropertyIcon } from "./property-icon";
 import { ReadOnlyValue } from "./read-only-value";
 import type { TableEditLog } from "./types";
@@ -49,39 +49,35 @@ export function TableEditLogItem({ record }: { record: TableEditLog }) {
 
 function EditLogResult({ record }: { record: TableEditLog }) {
   const { plugins } = useTableViewCtx();
+  const messages = useTableViewMessages();
   switch (record.action) {
     case "update":
       return <ReadOnlyValue record={{ id: record.id, ...record.cell! }} />;
     case "rename":
-      return <span>Renamed to {record.target.name}</span>;
+      return <span>{messages.editLog.renamedTo(record.target.name)}</span>;
     case "change-type": {
       const type = record.property!.type;
       const name =
         plugins.ui.find((plugin) => plugin.id === type)?.meta.name ?? type;
-      return <span>Changed to {name} type</span>;
+      return <span>{messages.editLog.changedToType(name)}</span>;
     }
-    case "change-layout":
-      return (
-        <span>
-          Changed to{" "}
-          {
-            LAYOUT_OPTIONS.find((layout) => layout.value === record.layout)!
-              .label
-          }{" "}
-          view
-        </span>
-      );
+    case "change-layout": {
+      const layoutLabel =
+        messages.layoutMenu.layouts[record.layout!] ??
+        LAYOUT_OPTIONS.find((layout) => layout.value === record.layout)!.label;
+      return <span>{messages.editLog.changedToView(layoutLabel)}</span>;
+    }
     case "group":
       return record.groupBy ? (
         <>
-          <span>Grouped by</span>
+          <span>{messages.editLog.groupedBy}</span>
           <PropertyIcon property={record.groupBy} />
           <span>{record.groupBy.name}</span>
         </>
       ) : (
-        <span>Removed grouping</span>
+        <span>{messages.editLog.removedGrouping}</span>
       );
     default:
-      return <span>{actionMessages[record.action]}</span>;
+      return <span>{messages.editLog.actions[record.action]}</span>;
   }
 }

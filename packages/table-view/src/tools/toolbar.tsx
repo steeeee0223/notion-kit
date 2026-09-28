@@ -13,6 +13,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { TableViewMenu } from "@/menus";
+import { useTableViewMessages } from "@/messages";
 import {
   FILTER_MENU_TOOLBAR_TRIGGER_ID,
   SORT_MENU_TOOLBAR_TRIGGER_ID,
@@ -36,20 +37,22 @@ export function Toolbar({ className }: ToolbarProps) {
 
 function ToolbarContent({ className }: ToolbarProps) {
   const settingsRef = useRef<HTMLButtonElement>(null);
-  const { table } = useTableViewCtx();
+  const { table, readOnly, onNewRow } = useTableViewCtx();
   const { filterMenu, sortMenu } = useMenuCoordinator();
   const tableMenu = table.getTableMenuState();
+  const messages = useTableViewMessages();
+  const canShowNewRow = !readOnly.hideNewButton;
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
-      <TooltipPreset description="Filter" side="top">
+      <TooltipPreset description={messages.toolbar.filter} side="top">
         <PopoverTrigger
           id={FILTER_MENU_TOOLBAR_TRIGGER_ID}
           handle={filterMenu.handle}
           render={
             <Button
               variant="nav-icon"
-              aria-label="Filter"
+              aria-label={messages.toolbar.filter}
               className="[&_svg]:fill-current"
             >
               <Icon.FilterSmall />
@@ -63,7 +66,7 @@ function ToolbarContent({ className }: ToolbarProps) {
         render={
           <Button
             variant="nav-icon"
-            aria-label="Sort"
+            aria-label={messages.toolbar.sort}
             className="[&_svg]:fill-current"
           >
             <Icon.ArrowUpDownSmall />
@@ -72,58 +75,68 @@ function ToolbarContent({ className }: ToolbarProps) {
       />
       <ToolbarItem
         icon={<Icon.LightningSmall />}
-        label="Create and view automations"
+        label={messages.toolbar.automations}
       />
       <ToolbarSearch />
       <ToolbarItem
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
-        label="Open as full page"
+        label={messages.toolbar.openFullPage}
       />
-      <DropdownMenu
-        open={tableMenu.open}
-        onOpenChange={(open) =>
-          table.setTableMenuState({
-            open,
-            page: open ? tableMenu.page : null,
-          })
-        }
-      >
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="nav-icon"
-              aria-label="Settings"
-              ref={settingsRef}
-              className="[&_svg]:fill-current"
-            >
-              <Icon.SlidersSmall />
-            </Button>
+      {!readOnly.hideViewSettings && (
+        <DropdownMenu
+          open={tableMenu.open}
+          onOpenChange={(open) =>
+            table.setTableMenuState({
+              open,
+              page: open ? tableMenu.page : null,
+            })
           }
-        />
-        <DropdownMenuContent collisionPadding={12} className="w-72">
-          <TableViewMenu getReturnFocus={() => settingsRef.current} />
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <Button variant="blue" size="sm" className="h-7 px-2">
-        New
-        <Icon.Chevron side="down" className="size-3 fill-current" />
-      </Button>
+        >
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="nav-icon"
+                aria-label={messages.toolbar.settings}
+                ref={settingsRef}
+                className="[&_svg]:fill-current"
+              >
+                <Icon.SlidersSmall />
+              </Button>
+            }
+          />
+          <DropdownMenuContent collisionPadding={12} className="w-72">
+            <TableViewMenu getReturnFocus={() => settingsRef.current} />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      {canShowNewRow && (
+        <Button
+          variant="blue"
+          size="sm"
+          className="h-7 px-2"
+          onClick={() => (onNewRow ? onNewRow(table) : table.addRow())}
+        >
+          {messages.toolbar.newRow}
+          <Icon.Chevron side="down" className="size-3 fill-current" />
+        </Button>
+      )}
     </div>
   );
 }
 
 function ToolbarSearch() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
   const searchInputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <div className="flex items-center">
-      <TooltipPreset description="Search" side="top">
+      <TooltipPreset description={messages.toolbar.search} side="top">
         <Button
           variant="nav-icon"
-          aria-label="Search"
+          aria-label={messages.toolbar.search}
           aria-controls={searchInputId}
           aria-expanded={searchOpen}
           className="[&_svg]:fill-current"
@@ -146,10 +159,10 @@ function ToolbarSearch() {
               "transition-[width,opacity] duration-200 ease-in-out",
               searchOpen ? "w-[150px] opacity-100" : "w-0 p-0 opacity-0",
             )}
-            aria-label="Search table"
+            aria-label={messages.toolbar.searchInputLabel}
             aria-hidden={!searchOpen}
             tabIndex={searchOpen ? undefined : -1}
-            placeholder="Search"
+            placeholder={messages.toolbar.searchPlaceholder}
             value={globalFilter}
             onChange={(e) => table.setGlobalFilter(e.target.value)}
             onCancel={table.resetGlobalFilter}

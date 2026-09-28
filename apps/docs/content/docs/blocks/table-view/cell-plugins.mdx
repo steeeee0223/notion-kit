@@ -47,6 +47,36 @@ column exposes `getInfo()`, `getPlugin()`, `getSelectedRowIds()`, `getCell()`,
 `updateCells()`, and `updateConfig()`. Adapters own their triggers, popovers,
 empty states, copy affordances, and layout classes.
 
+## Read-only display plugins
+
+`renderCell` is the only rendering field the registry requires, along with
+`renderGroupingValue`. `renderBulkEditor` and `renderConfigMenu` stay
+optional, so a plugin whose `renderCell` never calls `cell.update` (for
+example, a status badge derived from the cell's data) registers and displays
+normally without any editing surface:
+
+```tsx
+import type { CellProps, TableUiPlugin } from "@notion-kit/table-view";
+
+function StatusBadge({ cell }: CellProps) {
+  const status = cell.getData<StatusPlugin>();
+  return <span className={statusClassName[status]}>{statusLabel[status]}</span>;
+}
+
+const statusPluginUi: TableUiPlugin<StatusPlugin> = {
+  id: "status",
+  meta: { name: "Status", desc: "A read-only status badge", icon: null },
+  default: { name: "Status", icon: null },
+  renderCell: (props) => <StatusBadge {...props} />,
+  renderGroupingValue: ({ value }) => <>{String(value)}</>,
+  // No renderBulkEditor, no renderConfigMenu.
+};
+```
+
+Combine this with `<TableView readOnly>` so the property also cannot be
+reordered, hidden, or deleted through the properties menu while it stays
+fully visible and groupable.
+
 ## Read-only history renderers
 
 `renderReadOnlyValue` is optional. Existing adapters remain compatible and use

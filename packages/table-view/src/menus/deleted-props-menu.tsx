@@ -10,15 +10,17 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
+import { useTableViewMessages } from "@/messages";
 import { useTableViewCtx } from "@/table-contexts";
 
 export function DeletedPropsMenu() {
   const { table } = useTableViewCtx();
+  const messages = useTableViewMessages();
 
   return (
     <>
       <MenuHeader
-        title="Deleted properties"
+        title={messages.deletedPropsMenu.title}
         onBack={() =>
           table.setTableMenuState({ open: true, page: TableViewMenuPage.Props })
         }
@@ -44,6 +46,7 @@ interface PropertyItemProps {
 }
 
 function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
+  const messages = useTableViewMessages();
   return (
     <DropdownMenuItem
       label={info.name}
@@ -59,7 +62,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
       <MenuItemAction className="flex items-center text-muted">
         <Button
           tabIndex={0}
-          aria-label={`Restore ${info.name}`}
+          aria-label={messages.deletedPropsMenu.restoreProperty(info.name)}
           variant="hint"
           className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
@@ -71,7 +74,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
         </Button>
         <Button
           tabIndex={0}
-          aria-label={`Delete ${info.name}`}
+          aria-label={messages.deletedPropsMenu.deleteProperty(info.name)}
           variant="hint"
           className="size-6 disabled:opacity-40"
           onClick={(e) => {
