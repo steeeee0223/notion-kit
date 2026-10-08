@@ -39,7 +39,14 @@ export function checkbox(): CheckboxPlugin {
     },
     grouping: {
       defaultMethod: "value",
-      methods: [{ id: "value", name: "Value", function: groupByValue }],
+      methods: [
+        {
+          id: "value",
+          name: "Value",
+          function: groupByValue,
+          getDropValue: (_data, value) => value === true,
+        },
+      ],
     },
     counting: checkboxCounting(isEmpty),
     filtering: {

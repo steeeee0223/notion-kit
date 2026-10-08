@@ -24,9 +24,16 @@ import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
 import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
+import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 
 export interface RowActionsOptions {
   onTableDataChange?: ResourceChangeFn<Row[], DataResourceAction>;
+}
+
+export interface MoveRowOptions {
+  rowId: string;
+  groupId?: string;
+  beforeRowId: string | null;
 }
 
 export interface RowDragEndOptions {
@@ -65,6 +72,8 @@ export interface RowActionsTableApi {
   duplicateRows: (ids: string[]) => void;
   deleteRow: (id: string) => void;
   deleteRows: (ids: string[]) => void;
+  moveRow: (intent: MoveRowOptions) => void;
+  getCanMoveRowToGroup: (rowId: string, groupId: string) => boolean;
   handleKanbanRowDragOver: (e: DragOverEvent) => void;
   handleRowDragEnd: (e: DragEndEvent, options?: RowDragEndOptions) => void;
   updateRowIcon: (id: string, icon: IconData | null) => void;
@@ -546,6 +555,152 @@ export const RowActionsFeature: TableFeature = {
             })),
           },
         }),
+      );
+    };
+    const getDestinationRow = (row: Row, groupId: string) => {
+      if (table.getTableGlobalState().locked) return null;
+      const info = table.getGroupedColumnInfo();
+      if (!info) return null;
+      const state = table.atoms.groupingState.get();
+      const destination = state.groupValues[groupId];
+      if (!destination || state.groupVisibility[groupId] === false) return null;
+      const plugin = table.getColumnPlugin(info.id);
+      const method = table.getSelectedGroupingMethod(info.id);
+      const context = createRuntimePluginMethodContext(
+        table,
+        info.id,
+        info.config,
+        table.options.weekStartsOn ?? 1,
+      );
+      const cell = row.properties[info.id];
+      const data: unknown = cell ? cell.value : plugin.default.data;
+      const classify = (value: unknown, source: Row) =>
+        createGroupId(
+          info.id,
+          plugin.isEmpty(value)
+            ? null
+            : method.function(value, source, info.id, context),
+        );
+      if (classify(data, row) === groupId) return row;
+      if (!cell || !method.getDropValue) return null;
+      const value = method.getDropValue(data, destination.value, context);
+      const next = {
+        ...row,
+        properties: { ...row.properties, [info.id]: { ...cell, value } },
+        lastEditedAt: Date.now(),
+      };
+      return classify(value, next) === groupId ? next : null;
+    };
+    table.getCanMoveRowToGroup = (rowId, groupId) => {
+      const row = table.options.data.find(
+        (candidate) => candidate.id === rowId,
+      );
+      return !!row && getDestinationRow(row, groupId) !== null;
+    };
+    table.moveRow = ({ rowId, groupId, beforeRowId }) => {
+      const actionId = v4();
+      table.setTableData(
+        (rows) => {
+          if (table.getTableGlobalState().locked || beforeRowId === rowId)
+            return rows;
+          const source = rows.find((row) => row.id === rowId);
+          if (!source || !table.getRowModel().rowsById[rowId]) return rows;
+          const moved =
+            groupId === undefined ? source : getDestinationRow(source, groupId);
+          if (!moved) return rows;
+          const remaining = rows.filter((row) => row.id !== rowId);
+          const info = table.getGroupedColumnInfo();
+          const method = info ? table.getSelectedGroupingMethod(info.id) : null;
+          const plugin = info ? table.getColumnPlugin(info.id) : null;
+          const context = info
+            ? createRuntimePluginMethodContext(
+                table,
+                info.id,
+                info.config,
+                table.options.weekStartsOn ?? 1,
+              )
+            : null;
+          const belongs = (row: Row) => {
+            if (groupId === undefined) return true;
+            if (!info || !method || !plugin || !context) return false;
+            const cell = row.properties[info.id];
+            const value: unknown = cell ? cell.value : plugin.default.data;
+            return (
+              createGroupId(
+                info.id,
+                plugin.isEmpty(value)
+                  ? null
+                  : method.function(value, row, info.id, context),
+              ) === groupId
+            );
+          };
+          let index = remaining.length;
+          if (beforeRowId !== null) {
+            const anchor = remaining.find((row) => row.id === beforeRowId);
+            if (
+              !anchor ||
+              !belongs(anchor) ||
+              !table.getRowModel().rowsById[beforeRowId]
+            )
+              return rows;
+            index = remaining.indexOf(anchor);
+          } else if (groupId !== undefined) {
+            let last = -1;
+            remaining.forEach((row, position) => {
+              if (belongs(row)) last = position;
+            });
+            if (last >= 0) index = last + 1;
+          }
+          if (moved === source && groupId !== undefined) {
+            const currentGroup = rows.filter(belongs);
+            const proposedGroup = remaining.filter(belongs);
+            const groupIndex =
+              beforeRowId === null
+                ? proposedGroup.length
+                : proposedGroup.findIndex((row) => row.id === beforeRowId);
+            proposedGroup.splice(groupIndex, 0, moved);
+            if (
+              proposedGroup.every(
+                (row, position) => row === currentGroup[position],
+              )
+            )
+              return rows;
+          }
+          const next = insertAt(remaining, moved, index);
+          return moved === source &&
+            next.every((row, position) => row === rows[position])
+            ? rows
+            : next;
+        },
+        (previous, next) => {
+          const propertyId = table.atoms.grouping.get()[0];
+          const previousRow = previous.find((row) => row.id === rowId);
+          const nextRow = next.find((row) => row.id === rowId);
+          const previousValue: unknown = propertyId
+            ? previousRow?.properties[propertyId]?.value
+            : undefined;
+          const nextValue: unknown = propertyId
+            ? nextRow?.properties[propertyId]?.value
+            : undefined;
+          const grouping =
+            propertyId && previousValue !== nextValue
+              ? {
+                  propertyId,
+                  previousValue,
+                  nextValue,
+                }
+              : undefined;
+          return {
+            id: actionId,
+            type: "data.row.move",
+            payload: {
+              rowId,
+              previousPosition: getRowPosition(previous, rowId),
+              nextPosition: getRowPosition(next, rowId),
+              ...(grouping ? { grouping } : {}),
+            },
+          };
+        },
       );
     };
     table.handleKanbanRowDragOver = (event) => {

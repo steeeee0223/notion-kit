@@ -171,6 +171,8 @@ export function select(): SelectPlugin {
           id: "value",
           name: "Value",
           function: (data) => groupByValue(getFirstOption(data)),
+          getDropValue: (_data, value) =>
+            value === null ? null : String(value),
         },
       ],
     },
@@ -220,6 +222,13 @@ export function multiSelect(): MultiSelectPlugin {
           id: "value",
           name: "Value",
           function: (data) => groupByValue(getFirstOption(data)),
+          getDropValue: (data, value) =>
+            value === null
+              ? []
+              : [
+                  String(value),
+                  ...data.slice(1).filter((option) => option !== value),
+                ],
         },
       ],
     },
