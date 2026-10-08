@@ -188,6 +188,8 @@ export function textMethodCapabilities<Data = string>() {
           id: "exact",
           name: "Exact",
           function: (data: Data) => groupByTextExact(data),
+          getDropValue: (_data: Data, value: ComparableValue) =>
+            value === null ? "" : String(value),
         },
         {
           id: "alphabetical",

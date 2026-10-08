@@ -5,6 +5,7 @@ import {
   functionalUpdate,
   makeStateUpdater,
 } from "@tanstack/react-table";
+import { z } from "zod/mini";
 
 import type { ComparableValue } from "@notion-kit/table-hook/plugins";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
@@ -51,6 +52,10 @@ interface SyncGroupingStateOptions {
   groupSort?: PluginMethodState["groupSort"];
 }
 
+const categoryNamesSchema = z.object({
+  options: z.object({ names: z.array(z.string()) }),
+});
+
 export interface ExtendedGroupingTableState {
   groupingState: ExtendedGroupingState;
 }
@@ -69,6 +74,10 @@ export interface ExtendedGroupingTableApi {
   toggleHideEmptyGroups: () => void;
   toggleGroupVisible: (groupId: string) => void;
   toggleAllGroupsVisible: () => void;
+  moveGroup: (intent: {
+    groupId: string;
+    beforeGroupId: string | null;
+  }) => void;
   handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
   _syncGroupingState: (options?: SyncGroupingStateOptions) => void;
@@ -266,6 +275,33 @@ export const ExtendedGroupingFeature: TableFeature = {
         }
       });
 
+      if (groupingMethod.id === "value" && groupingMethod.getDropValue) {
+        const addCategory = (value: ComparableValue, original: unknown) => {
+          const id = createGroupId(info.id, value);
+          if (!entries.has(id))
+            entries.set(id, {
+              id,
+              value,
+              sortValue: groupingMethod.toSortValue?.(value, context) ?? value,
+              original,
+            });
+        };
+        if (plugin.id === "select" || plugin.id === "multi-select") {
+          const config = z.safeParse(
+            categoryNamesSchema,
+            info.config ?? plugin.default.config,
+          );
+          if (config.success)
+            config.data.options.names.forEach((name) =>
+              addCategory(name, plugin.id === "multi-select" ? [name] : name),
+            );
+          addCategory(null, plugin.id === "multi-select" ? [] : null);
+        } else if (plugin.id === "checkbox") {
+          addCategory(true, true);
+          addCategory(null, false);
+        }
+      }
+
       if (table._isKanbanDragActive()) {
         const previous = table.atoms.groupingState.get();
         previous.groupOrder.forEach((id) => {
@@ -389,6 +425,31 @@ export const ExtendedGroupingFeature: TableFeature = {
           ),
         };
       });
+    };
+    table.moveGroup = ({ groupId, beforeGroupId }) => {
+      if (table.getTableGlobalState().locked || groupId === beforeGroupId)
+        return;
+      const currentOrder = table.atoms.groupingState.get().groupOrder;
+      if (
+        !currentOrder.includes(groupId) ||
+        (beforeGroupId !== null && !currentOrder.includes(beforeGroupId))
+      )
+        return;
+      const groupOrder = currentOrder.filter((id) => id !== groupId);
+      groupOrder.splice(
+        beforeGroupId === null
+          ? groupOrder.length
+          : groupOrder.indexOf(beforeGroupId),
+        0,
+        groupId,
+      );
+      if (groupOrder.every((id, index) => id === currentOrder[index])) return;
+      pendingDraggedGroupOrder = groupOrder;
+      if (table.getGroupSort().mode === "manual") {
+        table._syncGroupingState();
+        return;
+      }
+      table.setGroupSort({ mode: "manual" });
     };
     table.handleGroupedRowDragEnd = (e) => {
       const currentOrder = table.atoms.groupingState.get().groupOrder;

@@ -72,7 +72,16 @@ export type DataResourceAction =
     >
   | TableAction<
       "data.row.move",
-      { rowId: string; previousPosition: number; nextPosition: number }
+      {
+        rowId: string;
+        previousPosition: number;
+        nextPosition: number;
+        grouping?: {
+          propertyId: string;
+          previousValue: unknown;
+          nextValue: unknown;
+        };
+      }
     >;
 
 export type PropertiesResourceAction =

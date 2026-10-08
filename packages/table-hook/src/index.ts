@@ -33,6 +33,7 @@ export {
 } from "@/features";
 export type {
   AddRowOptions,
+  MoveRowOptions,
   AdvancedFilteringTableApi,
   ColumnsInfoTableState,
   CountingTableState,
