@@ -38,6 +38,7 @@
     "@better-fetch/fetch": "catalog:",
     "@date-fns/tz": "catalog:fns",
     "@dnd-kit/abstract": "catalog:ui",
+    "@dnd-kit/collision": "catalog:ui",
     "@dnd-kit/dom": "catalog:ui",
     "@dnd-kit/helpers": "catalog:ui",
     "@dnd-kit/react": "catalog:ui",

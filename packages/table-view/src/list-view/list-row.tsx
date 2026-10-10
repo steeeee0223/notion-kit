@@ -21,7 +21,13 @@ export function ListRow({ rowId }: ListRowProps) {
       {(locked) => (
         <Sortable.Item
           id={row.id}
-          index={row.index}
+          index={
+            row.parentId
+              ? table
+                  .getRow(row.parentId)
+                  .subRows.findIndex((sibling) => sibling.id === row.id)
+              : row.index
+          }
           group={row.parentId}
           disabled={locked}
           data={{ type: "list-row", groupId: row.parentId }}

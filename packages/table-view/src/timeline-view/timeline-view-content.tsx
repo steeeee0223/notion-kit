@@ -14,6 +14,7 @@ import {
 } from "@notion-kit/ui/timeline";
 
 import { Table } from "@/common";
+import { getRowMoveIntent, type RowMoveIntent } from "@/common/row-dnd";
 import { getDatePropertyTimeZone } from "@/date-view/date-property";
 import { useDateViewNavigation } from "@/date-view/date-view-navigation-provider";
 import { useTableViewCtx } from "@/table-contexts";
@@ -116,8 +117,7 @@ function TimelineViewReadyContent({
   const { anchorDate, setAnchorDate } = useDateViewNavigation();
   const timeZone = getDatePropertyTimeZone(table.getColumnInfo(propertyId));
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [pendingDragEndEvent, setPendingDragEndEvent] =
-    useState<DragEndEvent | null>(null);
+  const [pendingMove, setPendingMove] = useState<RowMoveIntent | null>(null);
   const rows = table.getRowModel().rows;
   const titleHeader = table
     .getFlatHeaders()
@@ -125,21 +125,23 @@ function TimelineViewReadyContent({
 
   const handleRowDragEnd = useCallback(
     (event: DragEndEvent) => {
+      const intent = getRowMoveIntent(table, event);
+      if (!intent) return;
       if (resources.sorting.length === 0) {
-        table.handleRowDragEnd(event);
+        table.moveRow(intent);
         return;
       }
-      setPendingDragEndEvent(event);
+      setPendingMove(intent);
     },
     [resources.sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingDragEndEvent) {
+    if (pendingMove) {
       table.resetSorting();
-      table.handleRowDragEnd(pendingDragEndEvent);
+      table.moveRow(pendingMove);
     }
-    setPendingDragEndEvent(null);
+    setPendingMove(null);
   };
 
   if (!titleHeader) return null;
@@ -189,9 +191,9 @@ function TimelineViewReadyContent({
         )}
       </TimelineProvider>
       <Dialog
-        open={pendingDragEndEvent !== null}
+        open={pendingMove !== null}
         onOpenChange={(open) => {
-          if (!open) setPendingDragEndEvent(null);
+          if (!open) setPendingMove(null);
         }}
       >
         <AlertModal

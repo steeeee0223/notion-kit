@@ -7,14 +7,14 @@ import type { TableInstance } from "@notion-kit/table-hook";
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
+import { getRowMoveIntent, type RowMoveIntent } from "@/common/row-dnd";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { TableGroupedRow } from "./table-grouped-row";
 import { TableRow } from "./table-row";
 
 export function DndTableBody() {
-  const [pendingDragEndEvent, setPendingDragEndEvent] =
-    useState<DragEndEvent | null>(null);
+  const [pendingMove, setPendingMove] = useState<RowMoveIntent | null>(null);
   const { table } = useTableViewCtx();
 
   return (
@@ -38,8 +38,8 @@ export function DndTableBody() {
           locked={locked ?? false}
           sorting={sorting}
           isResizingColumn={Boolean(columnResizing.isResizingColumn)}
-          pendingDragEndEvent={pendingDragEndEvent}
-          setPendingDragEndEvent={setPendingDragEndEvent}
+          pendingMove={pendingMove}
+          setPendingMove={setPendingMove}
         />
       )}
     </table.Subscribe>
@@ -50,34 +50,36 @@ interface DndTableBodyContentProps {
   locked: boolean;
   sorting: SortingState;
   isResizingColumn: boolean;
-  pendingDragEndEvent: DragEndEvent | null;
-  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+  pendingMove: RowMoveIntent | null;
+  setPendingMove: (intent: RowMoveIntent | null) => void;
 }
 
 function DndTableBodyContent({
   locked,
   sorting,
   isResizingColumn,
-  pendingDragEndEvent,
-  setPendingDragEndEvent,
+  pendingMove,
+  setPendingMove,
 }: DndTableBodyContentProps) {
   const { table } = useTableViewCtx();
 
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
       const isSorted = sorting.length > 0;
-      if (!isSorted) return table.handleRowDragEnd(e);
-      setPendingDragEndEvent(e);
+      const intent = getRowMoveIntent(table, e);
+      if (!intent) return;
+      if (!isSorted) return table.moveRow(intent);
+      setPendingMove(intent);
     },
-    [setPendingDragEndEvent, sorting.length, table],
+    [setPendingMove, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingDragEndEvent) {
+    if (pendingMove) {
       table.resetSorting();
-      table.handleRowDragEnd(pendingDragEndEvent);
+      table.moveRow(pendingMove);
     }
-    setPendingDragEndEvent(null);
+    setPendingMove(null);
   };
 
   return (
@@ -131,9 +133,9 @@ function DndTableBodyContent({
         </Button>
       )}
       <Dialog
-        open={pendingDragEndEvent !== null}
+        open={pendingMove !== null}
         onOpenChange={(open) => {
-          if (!open) setPendingDragEndEvent(null);
+          if (!open) setPendingMove(null);
         }}
       >
         <AlertModal

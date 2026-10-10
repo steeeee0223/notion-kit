@@ -375,6 +375,45 @@ describe("semantic row moves", () => {
     );
   });
 
+  it("refreshes empty destinations when controlled property options change", () => {
+    const columns = (names: string[]): ColumnInfo[] =>
+      properties.map((column) => ({
+        ...column,
+        config: {
+          sort: "manual",
+          options: { names, items: {} },
+        },
+      }));
+    const plugins = arrayToEntity([select()]);
+    const view = {
+      pluginMethods: {
+        groupingMethodByColumn: {},
+        groupSort: { mode: "manual" as const },
+      },
+    };
+    const { result, rerender } = renderHook(
+      ({ columns }) =>
+        useTableView({ data, properties: columns, plugins, view }),
+      { initialProps: { columns: columns(["TODO", "DONE"]) } },
+    );
+    const { table } = result.current;
+    act(() => table.setGrouping(["status"]));
+    expect(table.getCanMoveRowToGroup("row0", "status:EMPTY")).toBe(false);
+
+    rerender({ columns: columns(["TODO", "DONE", "EMPTY"]) });
+    expect(table.atoms.groupingState.get().groupOrder).toContain(
+      "status:EMPTY",
+    );
+    expect(table.getCanMoveRowToGroup("row0", "status:EMPTY")).toBe(true);
+
+    rerender({ columns: columns(["TODO", "DONE"]) });
+    expect(table.atoms.groupingState.get().groupOrder).not.toContain(
+      "status:EMPTY",
+    );
+    expect(table.getCanMoveRowToGroup("row0", "status:EMPTY")).toBe(false);
+    expect(result.current.table.options.data).toBe(data);
+  });
+
   it("moves group order semantically and ignores no-ops", () => {
     const { table } = setup();
     act(() =>

@@ -22,7 +22,13 @@ export function TableRow({ row }: TableRowProps) {
     <Sortable.Item
       data-notion-slot="notion-table-view-row"
       id={row.id}
-      index={row.index}
+      index={
+        row.parentId
+          ? table
+              .getRow(row.parentId)
+              .subRows.findIndex((sibling) => sibling.id === row.id)
+          : row.index
+      }
       group={row.parentId}
       disabled={locked}
       data={{ type: "table-row", groupId: row.parentId }}

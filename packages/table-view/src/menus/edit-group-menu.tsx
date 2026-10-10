@@ -24,6 +24,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { MenuHeader } from "@/common";
+import { getGroupMoveIntent } from "@/common/row-dnd";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { getSortingDirectionLabels } from "./sorting-options";
@@ -89,7 +90,12 @@ export function EditGroupMenu() {
           })}
         >
           {({ groupOrder, groupVisibility }) => (
-            <Sortable.Root onDragEnd={table.handleGroupedRowDragEnd}>
+            <Sortable.Root
+              onDragEnd={(event) => {
+                const intent = getGroupMoveIntent(table, event);
+                if (intent) table.moveGroup(intent);
+              }}
+            >
               <Sortable.List>
                 {groupOrder.map((groupId, index) => {
                   if (!col) return null;

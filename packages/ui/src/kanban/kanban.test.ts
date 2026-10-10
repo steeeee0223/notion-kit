@@ -1,116 +1,87 @@
-import type { DragOverEvent } from "@dnd-kit/react";
 import { describe, expect, it } from "vitest";
 
-import { getKanbanItemsAfterDrag, KanbanDnd } from "./kanban";
+import { applyKanbanMove, KanbanDnd, type KanbanValue } from "./kanban";
 
-type TestItems = Record<string, string[]>;
+const value: KanbanValue = {
+  columnOrder: ["todo", "done", "empty"],
+  items: { todo: ["a", "b", "c"], done: ["d", "e"], empty: [] },
+};
 
-function dragItemOver({
-  sourceId,
-  targetColumnId,
-  targetId,
-  targetType = KanbanDnd.Item,
-}: {
-  sourceId: string;
-  targetColumnId?: string;
-  targetId: string;
-  targetType?: KanbanDnd;
-}) {
-  return {
-    operation: {
-      source: {
-        id: sourceId,
+describe("ApplyKanbanMove_Placement_ProjectsOnlyAffectedIds", () => {
+  it("transfers a card before a destination card without changing unrelated IDs", () => {
+    const next = applyKanbanMove(value, {
+      type: KanbanDnd.Item,
+      id: "b",
+      columnId: "done",
+      beforeId: "e",
+    });
+    expect(next.items).toEqual({
+      todo: ["a", "c"],
+      done: ["d", "b", "e"],
+      empty: [],
+    });
+    expect(next.columnOrder).toBe(value.columnOrder);
+    expect(next.items.empty).toBe(value.items.empty);
+    expect(value.items.todo).toEqual(["a", "b", "c"]);
+  });
+  it("appends to an empty column", () => {
+    expect(
+      applyKanbanMove(value, {
         type: KanbanDnd.Item,
-        manager: {
-          dragOperation: {
-            position: { current: { x: 0, y: 0 } },
-          },
-        },
-      },
-      target: {
-        id: targetId,
-        type: targetType,
-        data: { columnId: targetColumnId },
-      },
+        id: "b",
+        columnId: "empty",
+        beforeId: null,
+      }).items,
+    ).toEqual({ todo: ["a", "c"], done: ["d", "e"], empty: ["b"] });
+  });
+  it("reorders within a column without duplicating the source", () => {
+    expect(
+      applyKanbanMove(value, {
+        type: KanbanDnd.Item,
+        id: "a",
+        columnId: "todo",
+        beforeId: "c",
+      }).items.todo,
+    ).toEqual(["b", "a", "c"]);
+  });
+  it("reorders columns without changing membership", () => {
+    const next = applyKanbanMove(value, {
+      type: KanbanDnd.Column,
+      id: "todo",
+      beforeId: null,
+    });
+    expect(next.columnOrder).toEqual(["done", "empty", "todo"]);
+    expect(next.items).toBe(value.items);
+  });
+  it.each([
+    {
+      type: KanbanDnd.Item as const,
+      id: "missing",
+      columnId: "done",
+      beforeId: null,
     },
-  } as unknown as DragOverEvent;
-}
-
-describe("getKanbanItemsAfterDrag", () => {
-  it("moves items over sortable items using dnd-kit move", () => {
-    const items: TestItems = {
-      todo: ["a", "b"],
-      done: ["c"],
-    };
-
-    expect(
-      getKanbanItemsAfterDrag(
-        items,
-        dragItemOver({ sourceId: "b", targetId: "c" }),
-      ),
-    ).toEqual({
-      todo: ["a"],
-      done: ["b", "c"],
-    });
-  });
-
-  it("appends items to a column content target", () => {
-    const items: TestItems = {
-      todo: ["a", "b"],
-      done: [],
-    };
-
-    expect(
-      getKanbanItemsAfterDrag(
-        items,
-        dragItemOver({
-          sourceId: "a",
-          targetColumnId: "done",
-          targetId: "content:done",
-          targetType: KanbanDnd.ColumnContent,
-        }),
-      ),
-    ).toEqual({
-      todo: ["b"],
-      done: ["a"],
-    });
-  });
-
-  it("keeps items unchanged when the source is already last in the column content target", () => {
-    const items: TestItems = {
-      todo: ["a", "b"],
-      done: [],
-    };
-
-    expect(
-      getKanbanItemsAfterDrag(
-        items,
-        dragItemOver({
-          sourceId: "b",
-          targetColumnId: "todo",
-          targetId: "content:todo",
-          targetType: KanbanDnd.ColumnContent,
-        }),
-      ),
-    ).toBe(items);
-  });
-
-  it("ignores column content targets that do not map to the controlled items", () => {
-    const items: TestItems = {
-      todo: ["a", "b"],
-      done: [],
-    };
-
-    expect(
-      getKanbanItemsAfterDrag(
-        items,
-        dragItemOver({
-          sourceId: "a",
-          targetColumnId: "missing",
-          targetId: "content:missing",
-          targetType: KanbanDnd.ColumnContent,
-        }),
-      ),
-    ).toBe(items);
-  });
+    {
+      type: KanbanDnd.Item as const,
+      id: "a",
+      columnId: "missing",
+      beforeId: null,
+    },
+    { type: KanbanDnd.Item as const, id: "a", columnId: "done", beforeId: "c" },
+    { type: KanbanDnd.Item as const, id: "a", columnId: "todo", beforeId: "b" },
+    {
+      type: KanbanDnd.Item as const,
+      id: "c",
+      columnId: "todo",
+      beforeId: null,
+    },
+    { type: KanbanDnd.Item as const, id: "a", columnId: "todo", beforeId: "a" },
+    { type: KanbanDnd.Column as const, id: "missing", beforeId: null },
+    { type: KanbanDnd.Column as const, id: "todo", beforeId: "missing" },
+    { type: KanbanDnd.Column as const, id: "todo", beforeId: "done" },
+  ])(
+    "retains the authoritative reference for invalid/no-op placement %j",
+    (move) => {
+      expect(applyKanbanMove(value, move)).toBe(value);
+    },
+  );
 });

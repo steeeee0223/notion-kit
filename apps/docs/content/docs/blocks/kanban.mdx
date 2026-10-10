@@ -28,46 +28,124 @@ description: A board with draggable columns and cards.
 
 ### Board
 
-Use `getKanbanItemsAfterDrag` while dragging cards across columns, then use `getSortableItemsAfterDrag` when columns are reordered.
+Keep the accepted board value in application state. `Kanban.Root` supplies a projected value for rendering during a gesture, then calls `onMove` once for a changed, valid drop. Escape, an outside drop, and an unchanged placement leave application state untouched.
 
 <RegistryStory name="kanban-board" />
 
 ```tsx
+const [value, setValue] = useState<KanbanValue>(initialValue);
+
 <Kanban.Root
-  onDragOver={(event) => {
-    if (event.operation.source?.type === KanbanDnd.Item) {
-      setItems((value) => getKanbanItemsAfterDrag(value, event));
-    }
-  }}
-  onDragEnd={(event) => {
-    if (event.operation.source?.type === KanbanDnd.Column) {
-      setColumnOrder((value) => getSortableItemsAfterDrag(value, event));
-    }
-  }}
+  value={value}
+  onMove={(move) => setValue((current) => applyKanbanMove(current, move))}
+  renderOverlay={(source) => <BoardPreview source={source} />}
 >
-  {columnOrder.map((columnId, index) => (
-    <Kanban.Column key={columnId} id={columnId} index={index}>
-      <Kanban.ColumnHeader>{column.title}</Kanban.ColumnHeader>
-      <Kanban.ColumnContent>
-        {items[columnId].map((itemId, itemIndex) => (
-          <Kanban.Item
-            key={itemId}
-            id={itemId}
-            index={itemIndex}
-            group={columnId}
-          />
-        ))}
-      </Kanban.ColumnContent>
-    </Kanban.Column>
-  ))}
-</Kanban.Root>
+  {(projected) =>
+    projected.columnOrder.map((columnId, index) => (
+      <Kanban.Column key={columnId} id={columnId} index={index}>
+        <Kanban.ColumnHeader>{columnId}</Kanban.ColumnHeader>
+        <Kanban.ColumnContent>
+          {projected.items[columnId]?.map((itemId, itemIndex) => (
+            <Kanban.Item
+              key={itemId}
+              id={itemId}
+              index={itemIndex}
+              group={columnId}
+            >
+              <Kanban.ItemHandle />
+              {itemId}
+            </Kanban.Item>
+          ))}
+        </Kanban.ColumnContent>
+      </Kanban.Column>
+    ))
+  }
+</Kanban.Root>;
 ```
+
+Render the supplied projection, including each card's current column and local index. Keep empty columns in `columnOrder` with an empty array in `items` so they remain drop targets. Card bodies support pointer dragging; `Kanban.ItemHandle` supplies a separate keyboard handle. Column headers act as column handles.
+
+`renderOverlay` should return a display-only card or column. Reuse its visual content, but omit draggable components, editors, and action controls. Root makes the preview inert. Authoritative membership or ordering changes invalidate an active gesture; changing `contextKey` also invalidates it when permissions or grouping configuration change.
+
+For persisted boards, handle `onMove` with one application command that updates the card's group and position together. Use `canMove` to reject destinations that cannot accept the card. A controlled parent may reject a move by keeping `value` unchanged. When sorting overrides manual order, hold the completed move for confirmation before clearing the sort and committing it.
+
+In TableView, the selected grouping method must define `getDropValue` to allow transfers between groups. Exact text, checkbox, select, and multi-select groups supply this capability. Derived prefixes, number ranges, and date buckets allow same-group reordering but reject transfers. A sorted Board asks to remove sorting before applying the completed move.
 
 ## API Reference
 
 ### Kanban.Root
 
-Horizontal sortable root for kanban columns. Accepts the same props as `Sortable.Root`.
+Controls local drag projection and reports completed moves. Also accepts `Sortable.Root` props except its children and raw drag lifecycle callbacks.
+
+<TypeTable
+  type={{
+    value: {
+      type: "KanbanValue",
+      required: true,
+      description: "Accepted column order and card membership.",
+    },
+    children: {
+      type: "(projected: KanbanValue) => ReactNode",
+      required: true,
+      parameters: [
+        {
+          name: "projected",
+          type: "KanbanValue",
+          description: "The current drag projection.",
+        },
+      ],
+      returns: "ReactNode",
+      description: "Renders the current drag projection.",
+    },
+    onMove: {
+      type: "(move: KanbanMove) => void",
+      required: true,
+      parameters: [
+        {
+          name: "move",
+          type: "KanbanMove",
+          description: "A changed, valid completed move.",
+        },
+      ],
+      returns: "void",
+      description: "Receives one changed, valid completed move.",
+    },
+    renderOverlay: {
+      type: "(source: KanbanSource) => ReactNode",
+      required: true,
+      parameters: [
+        {
+          name: "source",
+          type: "KanbanSource",
+          description: "The card or column being dragged.",
+        },
+      ],
+      returns: "ReactNode",
+      description: "Renders a display-only drag preview.",
+    },
+    canMove: {
+      type: "(move: KanbanMove) => boolean",
+      parameters: [
+        {
+          name: "move",
+          type: "KanbanMove",
+          description: "The proposed placement.",
+        },
+      ],
+      returns: "boolean",
+      description: "Allows or rejects a proposed placement.",
+    },
+    contextKey: {
+      type: "string",
+      description: "Invalidates an active gesture when changed.",
+    },
+    disabled: {
+      type: "boolean",
+      default: "false",
+      description: "Disables dragging and invalidates an active gesture.",
+    },
+  }}
+/>
 
 ### Kanban.Column
 
@@ -165,36 +243,61 @@ Registers a draggable card.
   }}
 />
 
-### getKanbanItemsAfterDrag
+### Kanban.ItemHandle
 
-Returns the next grouped item state after moving a card within or between columns.
+Keyboard drag handle for a card. Accepts `Sortable.Handle` props and defaults to the accessible label `Move card`. Its click and keyboard events do not bubble to the card's open action.
+
+### applyKanbanMove
+
+Applies a completed semantic move to a board value. `beforeId: null` appends to the destination. Invalid and unchanged moves return the original value.
 
 ```ts
-setItems((items) => getKanbanItemsAfterDrag(items, event));
+setValue((current) => applyKanbanMove(current, move));
 ```
 
 <TypeTable
   type={{
-    items: {
-      type: "KanbanItems",
-      typeDescriptionLink: "#type-kanbanitems",
-      description: "Current mapping of column ids to card ids.",
+    value: {
+      type: "KanbanValue",
+      typeDescriptionLink: "#type-kanbanvalue",
+      description: "Current accepted board value.",
     },
-    event: {
-      type: "DragOverEvent | DragEndEvent",
-      description: (
-        <>
-          {" "}
-          Event from <code>Kanban.Root</code>.{" "}
-        </>
-      ),
+    move: {
+      type: "KanbanMove",
+      typeDescriptionLink: "#type-kanbanmove",
+      description: "Completed card or column placement.",
     },
   }}
 />
 
-### getKanbanColumnTargetId
+### `type` KanbanValue
 
-Reads a target column id from dnd-kit target data. Returns `null` when the data is not a kanban column target.
+```ts
+interface KanbanValue {
+  columnOrder: string[];
+  items: KanbanItems;
+}
+```
+
+### `type` KanbanMove
+
+```ts
+type KanbanMove =
+  | {
+      type: KanbanDnd.Item;
+      id: string;
+      columnId: string;
+      beforeId: string | null;
+    }
+  | { type: KanbanDnd.Column; id: string; beforeId: string | null };
+```
+
+### `type` KanbanSource
+
+```ts
+type KanbanSource =
+  { type: KanbanDnd.Item; id: string } | { type: KanbanDnd.Column; id: string };
+```
 
 ### `enum` KanbanDnd
 

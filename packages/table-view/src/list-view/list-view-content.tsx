@@ -7,14 +7,14 @@ import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, Sortable } from "@notion-kit/ui/primitives";
 
 import { Table } from "@/common";
+import { getRowMoveIntent, type RowMoveIntent } from "@/common/row-dnd";
 import { TableGroupedRow } from "@/table-body";
 import { useTableViewCtx } from "@/table-contexts";
 
 import { ListRow } from "./list-row";
 
 export function ListViewContent() {
-  const [pendingDragEndEvent, setPendingDragEndEvent] =
-    useState<DragEndEvent | null>(null);
+  const [pendingMove, setPendingMove] = useState<RowMoveIntent | null>(null);
   const { table } = useTableViewCtx();
 
   return (
@@ -32,8 +32,8 @@ export function ListViewContent() {
       {({ sorting }) => (
         <ListViewContentInner
           sorting={sorting}
-          pendingDragEndEvent={pendingDragEndEvent}
-          setPendingDragEndEvent={setPendingDragEndEvent}
+          pendingMove={pendingMove}
+          setPendingMove={setPendingMove}
         />
       )}
     </table.Subscribe>
@@ -42,14 +42,14 @@ export function ListViewContent() {
 
 interface ListViewContentInnerProps {
   sorting: SortingState;
-  pendingDragEndEvent: DragEndEvent | null;
-  setPendingDragEndEvent: (event: DragEndEvent | null) => void;
+  pendingMove: RowMoveIntent | null;
+  setPendingMove: (intent: RowMoveIntent | null) => void;
 }
 
 function ListViewContentInner({
   sorting,
-  pendingDragEndEvent,
-  setPendingDragEndEvent,
+  pendingMove,
+  setPendingMove,
 }: ListViewContentInnerProps) {
   const { table } = useTableViewCtx();
 
@@ -58,18 +58,20 @@ function ListViewContentInner({
   const handleRowDragEnd = useCallback(
     (e: DragEndEvent) => {
       const isSorted = sorting.length > 0;
-      if (!isSorted) return table.handleRowDragEnd(e);
-      setPendingDragEndEvent(e);
+      const intent = getRowMoveIntent(table, e);
+      if (!intent) return;
+      if (!isSorted) return table.moveRow(intent);
+      setPendingMove(intent);
     },
-    [setPendingDragEndEvent, sorting.length, table],
+    [setPendingMove, sorting.length, table],
   );
 
   const handleConfirmRemoveSorting = () => {
-    if (pendingDragEndEvent) {
+    if (pendingMove) {
       table.resetSorting();
-      table.handleRowDragEnd(pendingDragEndEvent);
+      table.moveRow(pendingMove);
     }
-    setPendingDragEndEvent(null);
+    setPendingMove(null);
   };
 
   return (
@@ -114,9 +116,9 @@ function ListViewContentInner({
         )}
       </table.Subscribe>
       <Dialog
-        open={pendingDragEndEvent !== null}
+        open={pendingMove !== null}
         onOpenChange={(open) => {
-          if (!open) setPendingDragEndEvent(null);
+          if (!open) setPendingMove(null);
         }}
       >
         <AlertModal

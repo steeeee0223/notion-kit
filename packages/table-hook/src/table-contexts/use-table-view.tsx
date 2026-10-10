@@ -275,7 +275,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       if (
         proposals.some(({ action }) => action.type === "view.group_sort.change")
       ) {
-        tableRef.current?._settlePendingGroupedRowDrag(
+        tableRef.current?._settlePendingGroupOrder(
           authoritative.pluginMethods?.groupSort ?? { mode: "manual" },
         );
       }
@@ -454,6 +454,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     table._syncGroupingState();
   }, [
     table,
+    dataEntity,
     tableGlobalState.pluginMethods?.groupingMethodByColumn,
     tableGlobalState.pluginMethods?.groupSort,
     weekStartsOn,
