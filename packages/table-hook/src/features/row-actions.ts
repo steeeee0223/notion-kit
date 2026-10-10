@@ -1,22 +1,13 @@
-import type { DragEndEvent, DragOverEvent } from "@dnd-kit/react";
 import type { TableFeature, Updater } from "@tanstack/react-table";
 import { functionalUpdate } from "@tanstack/react-table";
 import { v4 } from "uuid";
-import { z } from "zod/mini";
 
 import type {
   CellPlugin,
-  ComparableValue,
   InferData,
   TitlePlugin,
 } from "@notion-kit/table-hook/plugins";
 import type { IconData } from "@notion-kit/ui/icon-block";
-import {
-  getKanbanColumnTargetId,
-  getKanbanItemsAfterDrag,
-  type KanbanItems,
-} from "@notion-kit/ui/kanban";
-import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import { pruneRowSelection } from "@/features/row-selection";
 import type { _TableInstance } from "@/features/types";
@@ -24,13 +15,16 @@ import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
 import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
+import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 
 export interface RowActionsOptions {
   onTableDataChange?: ResourceChangeFn<Row[], DataResourceAction>;
 }
 
-export interface RowDragEndOptions {
-  reorder?: boolean;
+export interface MoveRowOptions {
+  rowId: string;
+  groupId?: string;
+  beforeRowId: string | null;
 }
 
 export interface AddRowOptions {
@@ -65,12 +59,11 @@ export interface RowActionsTableApi {
   duplicateRows: (ids: string[]) => void;
   deleteRow: (id: string) => void;
   deleteRows: (ids: string[]) => void;
-  handleKanbanRowDragOver: (e: DragOverEvent) => void;
-  handleRowDragEnd: (e: DragEndEvent, options?: RowDragEndOptions) => void;
+  moveRow: (intent: MoveRowOptions) => void;
+  getCanMoveRowToGroup: (rowId: string, groupId: string) => boolean;
   updateRowIcon: (id: string, icon: IconData | null) => void;
   // With Grouping API
   addRowToGroup: (groupId: string) => void;
-  _isKanbanDragActive: () => boolean;
 }
 
 export interface RowActionsColumnApi {
@@ -94,153 +87,6 @@ export interface RowActionsRowApi {
   getIsLastChild: () => boolean;
 }
 
-function getRowGroupingValue(
-  table: _TableInstance,
-  row: Row,
-  groupingColumnId: string,
-): ComparableValue | null {
-  const cell = row.properties[groupingColumnId];
-  if (!cell) return null;
-
-  const plugin = table.getColumnPlugin(groupingColumnId);
-  return (plugin.toGroupValue ?? plugin.toValue)(cell.value, row);
-}
-
-const groupTargetDataSchema = z.object({ groupId: z.string() });
-const projectedGroupTargetSchema = z
-  .object({
-    source: z.object({
-      id: z.unknown(),
-      group: z.string(),
-      index: z.number(),
-      initialGroup: z.string(),
-      initialIndex: z.number(),
-    }),
-    target: z.object({ id: z.unknown() }),
-  })
-  .check(
-    z.refine(
-      ({ source, target }) =>
-        source.id === target.id &&
-        (source.group !== source.initialGroup ||
-          source.index !== source.initialIndex),
-    ),
-  );
-
-function getGroupTargetId(data: unknown) {
-  const kanbanGroupId = getKanbanColumnTargetId(data);
-  if (kanbanGroupId) return kanbanGroupId;
-
-  const result = z.safeParse(groupTargetDataSchema, data);
-  return result.success ? result.data.groupId : null;
-}
-
-function getProjectedGroupTarget(source: unknown, target: unknown) {
-  const result = z.safeParse(projectedGroupTargetSchema, { source, target });
-  if (!result.success) return null;
-
-  return {
-    groupId: result.data.source.group,
-    index: result.data.source.index,
-  };
-}
-
-function reorderRowsForProjectedGroup(
-  table: _TableInstance,
-  rows: Row[],
-  sourceRowId: string,
-  targetGroupId: string,
-  targetGroupIndex: number,
-  groupingColumnId: string,
-) {
-  const sourceRow = rows.find((row) => row.id === sourceRowId);
-  if (!sourceRow) return rows;
-
-  const remainingRows = rows.filter((row) => row.id !== sourceRowId);
-  const targetRowIndices = remainingRows.flatMap((row, index) => {
-    const groupingValue = getRowGroupingValue(table, row, groupingColumnId);
-    return createGroupId(groupingColumnId, groupingValue) === targetGroupId
-      ? [index]
-      : [];
-  });
-  if (targetRowIndices.length === 0) return rows;
-
-  const localIndex = Math.min(
-    Math.max(targetGroupIndex, 0),
-    targetRowIndices.length,
-  );
-  const flatIndex =
-    localIndex < targetRowIndices.length
-      ? targetRowIndices[localIndex]!
-      : targetRowIndices.at(-1)! + 1;
-  return insertAt(remainingRows, sourceRow, flatIndex);
-}
-
-function createKanbanItemsFromRows(
-  table: _TableInstance,
-  rows: Row[],
-  groupingColumnId: string,
-  groupOrder: string[],
-): KanbanItems {
-  const items = Object.fromEntries(
-    groupOrder.map((groupId) => [groupId, [] as string[]]),
-  );
-
-  for (const row of rows) {
-    const groupingValue = getRowGroupingValue(table, row, groupingColumnId);
-    const groupId = createGroupId(groupingColumnId, groupingValue);
-    items[groupId]?.push(row.id);
-  }
-
-  return items;
-}
-
-function applyKanbanItemsToRows(
-  rows: Row[],
-  items: KanbanItems,
-  groupOrder: string[],
-  groupingColumnId: string,
-  groupValues: Record<string, { original: unknown } | undefined>,
-  options: { touchMovedRow?: boolean } = {},
-) {
-  const rowById = new Map(rows.map((row) => [row.id, row]));
-  const nextRows: Row[] = [];
-  const consumedIds = new Set<string>();
-  const now = Date.now();
-
-  for (const groupId of groupOrder) {
-    const groupValue = groupValues[groupId];
-    const itemIds = items[groupId] ?? [];
-    for (const itemId of itemIds) {
-      const row = rowById.get(itemId);
-      if (!row) continue;
-
-      consumedIds.add(itemId);
-      if (!groupValue || !row.properties[groupingColumnId]) {
-        nextRows.push(row);
-        continue;
-      }
-
-      nextRows.push({
-        ...row,
-        properties: {
-          ...row.properties,
-          [groupingColumnId]: {
-            ...row.properties[groupingColumnId],
-            id: options.touchMovedRow
-              ? v4()
-              : row.properties[groupingColumnId].id,
-            value: structuredClone(groupValue.original),
-          },
-        },
-        lastEditedAt: options.touchMovedRow ? now : row.lastEditedAt,
-      });
-    }
-  }
-
-  return [...nextRows, ...rows.filter((row) => !consumedIds.has(row.id))];
-}
-
 function getRowPosition(rows: Row[], rowId: string) {
   return rows.findIndex((row) => row.id === rowId);
 }
@@ -251,9 +97,6 @@ export const RowActionsFeature: TableFeature = {
   },
   constructTableAPIs: (_table) => {
     const table = _table as unknown as _TableInstance;
-    let kanbanDragSnapshot: Row[] | null = null;
-    table._isKanbanDragActive = () => kanbanDragSnapshot !== null;
-
     const scheduleGroupingStateSync = (rows: Row[]) => {
       if (table.atoms.grouping.get().length > 0) {
         queueMicrotask(() => {
@@ -548,151 +391,150 @@ export const RowActionsFeature: TableFeature = {
         }),
       );
     };
-    table.handleKanbanRowDragOver = (event) => {
-      if ("canceled" in event && event.canceled) return;
-
-      const grouping = table.atoms.grouping.get();
-      const groupingState = table.atoms.groupingState.get();
-      const groupingColumnId = grouping[0];
-      if (!groupingColumnId) return;
-
-      const sourceRowId = String(event.operation.source?.id ?? "");
-      const actionId = v4();
-      table.setTableData(
-        (rows) => {
-          const currentItems = createKanbanItemsFromRows(
-            table,
-            rows,
-            groupingColumnId,
-            groupingState.groupOrder,
-          );
-          const nextItems = getKanbanItemsAfterDrag(currentItems, event);
-          if (nextItems === currentItems) return rows;
-          kanbanDragSnapshot ??= rows;
-
-          const next = applyKanbanItemsToRows(
-            rows,
-            nextItems,
-            groupingState.groupOrder,
-            groupingColumnId,
-            groupingState.groupValues,
-          );
-          scheduleGroupingStateSync(next);
-          return next;
-        },
-        (previous, next) => ({
-          id: actionId,
-          type: "data.row.move",
-          payload: {
-            rowId: sourceRowId,
-            previousPosition: getRowPosition(previous, sourceRowId),
-            nextPosition: getRowPosition(next, sourceRowId),
-          },
-        }),
+    const getDestinationRow = (row: Row, groupId: string) => {
+      if (table.getTableGlobalState().locked) return null;
+      const info = table.getGroupedColumnInfo();
+      if (!info) return null;
+      const state = table.atoms.groupingState.get();
+      const destination = state.groupValues[groupId];
+      if (!destination || state.groupVisibility[groupId] === false) return null;
+      const plugin = table.getColumnPlugin(info.id);
+      const method = table.getSelectedGroupingMethod(info.id);
+      const context = createRuntimePluginMethodContext(
+        table,
+        info.id,
+        info.config,
+        table.options.weekStartsOn ?? 1,
       );
+      const cell = row.properties[info.id];
+      const data: unknown = cell ? cell.value : plugin.default.data;
+      const classify = (value: unknown, source: Row) =>
+        createGroupId(
+          info.id,
+          plugin.isEmpty(value)
+            ? null
+            : method.function(value, source, info.id, context),
+        );
+      if (classify(data, row) === groupId) return row;
+      if (!cell || !method.getDropValue) return null;
+      const value = method.getDropValue(data, destination.value, context);
+      const next = {
+        ...row,
+        properties: { ...row.properties, [info.id]: { ...cell, value } },
+        lastEditedAt: Date.now(),
+      };
+      return classify(value, next) === groupId ? next : null;
     };
-    table.handleRowDragEnd = (event, options = {}) => {
-      if (event.canceled) {
-        if (kanbanDragSnapshot) {
-          const snapshot = kanbanDragSnapshot;
-          const sourceRowId = String(event.operation.source?.id ?? "");
-          kanbanDragSnapshot = null;
-          table.setTableData(
-            () => {
-              scheduleGroupingStateSync(snapshot);
-              return snapshot;
-            },
-            (previous, next) => ({
-              id: v4(),
-              type: "data.row.move",
-              payload: {
-                rowId: sourceRowId,
-                previousPosition: getRowPosition(previous, sourceRowId),
-                nextPosition: getRowPosition(next, sourceRowId),
-              },
-            }),
-          );
-        }
-        return;
-      }
-      kanbanDragSnapshot = null;
-
-      const grouping = table.atoms.grouping.get();
-      const groupingState = table.atoms.groupingState.get();
-      const groupingColumnId = grouping[0];
-      const { source, target } = event.operation;
-      const sourceGroupId = getGroupTargetId(source?.data);
-      const projectedGroupTarget = getProjectedGroupTarget(source, target);
-      const targetGroupId =
-        projectedGroupTarget?.groupId ?? getGroupTargetId(target?.data);
-      const shouldReorder = options.reorder ?? true;
-
-      const sourceRowId = String(source?.id ?? "");
+    table.getCanMoveRowToGroup = (rowId, groupId) => {
+      const row = table.options.data.find(
+        (candidate) => candidate.id === rowId,
+      );
+      return !!row && getDestinationRow(row, groupId) !== null;
+    };
+    table.moveRow = ({ rowId, groupId, beforeRowId }) => {
       const actionId = v4();
       table.setTableData(
         (rows) => {
-          const hasValidProjectedGroups = Boolean(
-            projectedGroupTarget &&
-              sourceGroupId &&
-              groupingColumnId &&
-              groupingState.groupValues[sourceGroupId] &&
-              groupingState.groupValues[projectedGroupTarget.groupId],
-          );
-          const next = !shouldReorder
-            ? rows
-            : projectedGroupTarget
-              ? hasValidProjectedGroups
-                ? reorderRowsForProjectedGroup(
-                    table,
-                    rows,
-                    sourceRowId,
-                    projectedGroupTarget.groupId,
-                    projectedGroupTarget.index,
-                    groupingColumnId!,
-                  )
-                : rows
-              : getSortableItemsAfterDrag(rows, event);
-          if (
-            !source ||
-            (projectedGroupTarget && !hasValidProjectedGroups) ||
-            !targetGroupId ||
-            targetGroupId === sourceGroupId ||
-            !groupingColumnId ||
-            !groupingState.groupValues[targetGroupId]
-          ) {
-            scheduleGroupingStateSync(next);
-            return next;
+          if (table.getTableGlobalState().locked || beforeRowId === rowId)
+            return rows;
+          const source = rows.find((row) => row.id === rowId);
+          if (!source || !table.getRowModel().rowsById[rowId]) return rows;
+          const moved =
+            groupId === undefined ? source : getDestinationRow(source, groupId);
+          if (!moved) return rows;
+          const remaining = rows.filter((row) => row.id !== rowId);
+          const info = table.getGroupedColumnInfo();
+          const method = info ? table.getSelectedGroupingMethod(info.id) : null;
+          const plugin = info ? table.getColumnPlugin(info.id) : null;
+          const context = info
+            ? createRuntimePluginMethodContext(
+                table,
+                info.id,
+                info.config,
+                table.options.weekStartsOn ?? 1,
+              )
+            : null;
+          const belongs = (row: Row) => {
+            if (groupId === undefined) return true;
+            if (!info || !method || !plugin || !context) return false;
+            const cell = row.properties[info.id];
+            const value: unknown = cell ? cell.value : plugin.default.data;
+            return (
+              createGroupId(
+                info.id,
+                plugin.isEmpty(value)
+                  ? null
+                  : method.function(value, row, info.id, context),
+              ) === groupId
+            );
+          };
+          let index = remaining.length;
+          if (beforeRowId !== null) {
+            const anchor = remaining.find((row) => row.id === beforeRowId);
+            if (
+              !anchor ||
+              !belongs(anchor) ||
+              !table.getRowModel().rowsById[beforeRowId]
+            )
+              return rows;
+            index = remaining.indexOf(anchor);
+          } else if (groupId !== undefined) {
+            let last = -1;
+            remaining.forEach((row, position) => {
+              if (belongs(row)) last = position;
+            });
+            if (last >= 0) index = last + 1;
           }
-
-          const now = Date.now();
-          const updated = next.map((row) => {
-            if (row.id !== String(source.id)) return row;
-            return {
-              ...row,
-              properties: {
-                ...row.properties,
-                [groupingColumnId]: {
-                  id: v4(),
-                  value: structuredClone<unknown>(
-                    groupingState.groupValues[targetGroupId]?.original,
-                  ),
-                },
-              },
-              lastEditedAt: now,
-            };
-          });
-          scheduleGroupingStateSync(updated);
-          return updated;
+          if (moved === source && groupId !== undefined) {
+            const currentGroup = rows.filter(belongs);
+            const proposedGroup = remaining.filter(belongs);
+            const groupIndex =
+              beforeRowId === null
+                ? proposedGroup.length
+                : proposedGroup.findIndex((row) => row.id === beforeRowId);
+            proposedGroup.splice(groupIndex, 0, moved);
+            if (
+              proposedGroup.every(
+                (row, position) => row === currentGroup[position],
+              )
+            )
+              return rows;
+          }
+          const next = insertAt(remaining, moved, index);
+          return moved === source &&
+            next.every((row, position) => row === rows[position])
+            ? rows
+            : next;
         },
-        (previous, next) => ({
-          id: actionId,
-          type: "data.row.move",
-          payload: {
-            rowId: sourceRowId,
-            previousPosition: getRowPosition(previous, sourceRowId),
-            nextPosition: getRowPosition(next, sourceRowId),
-          },
-        }),
+        (previous, next) => {
+          const propertyId = table.atoms.grouping.get()[0];
+          const previousRow = previous.find((row) => row.id === rowId);
+          const nextRow = next.find((row) => row.id === rowId);
+          const previousValue: unknown = propertyId
+            ? previousRow?.properties[propertyId]?.value
+            : undefined;
+          const nextValue: unknown = propertyId
+            ? nextRow?.properties[propertyId]?.value
+            : undefined;
+          const grouping =
+            propertyId && previousValue !== nextValue
+              ? {
+                  propertyId,
+                  previousValue,
+                  nextValue,
+                }
+              : undefined;
+          return {
+            id: actionId,
+            type: "data.row.move",
+            payload: {
+              rowId,
+              previousPosition: getRowPosition(previous, rowId),
+              nextPosition: getRowPosition(next, rowId),
+              ...(grouping ? { grouping } : {}),
+            },
+          };
+        },
       );
     };
     table.updateRowIcon = (id, icon) => {

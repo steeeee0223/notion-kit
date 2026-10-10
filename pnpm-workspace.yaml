@@ -59,6 +59,7 @@ catalogs:
     usehooks-ts: ^3.1.1
     zustand: ^5.0.3
     "@dnd-kit/abstract": ^0.5.0
+    "@dnd-kit/collision": ^0.5.0
     "@dnd-kit/dom": ^0.5.0
     "@dnd-kit/helpers": ^0.5.0
     "@dnd-kit/react": ^0.5.0
