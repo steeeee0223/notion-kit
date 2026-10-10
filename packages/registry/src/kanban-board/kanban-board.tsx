@@ -1,19 +1,16 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
 import {
-  getKanbanItemsAfterDrag,
+  applyKanbanMove,
   Kanban,
   KanbanDnd,
   type KanbanItems,
+  type KanbanValue,
 } from "@notion-kit/ui/kanban";
-import {
-  Badge,
-  Button,
-  getSortableItemsAfterDrag,
-} from "@notion-kit/ui/primitives";
+import { Badge, Button } from "@notion-kit/ui/primitives";
 
 interface BoardColumn {
   id: string;
@@ -69,6 +66,28 @@ const initialBoardItems: KanbanItems = {
   "column:done": ["card:documentation"],
 };
 
+function BoardCardContent({ card }: { card: BoardCard }) {
+  return (
+    <>
+      <div className="font-medium wrap-break-word whitespace-pre-wrap">
+        {card.title}
+      </div>
+      <div className="mt-3 flex items-center gap-1.5 text-xs text-secondary">
+        <Icon.Clock className="size-3.5 fill-current" />
+        {card.detail}
+      </div>
+    </>
+  );
+}
+
+function BoardCardPreview({ card }: { card: BoardCard }) {
+  return (
+    <div className="min-h-10 rounded-lg border border-border-button bg-popover px-2.5 py-2 text-sm dark:border-none">
+      <BoardCardContent card={card} />
+    </div>
+  );
+}
+
 function SortableBoardCard({
   card,
   columnId,
@@ -80,14 +99,32 @@ function SortableBoardCard({
 }) {
   return (
     <Kanban.Item id={card.id} index={index} group={columnId}>
-      <div className="font-medium wrap-break-word whitespace-pre-wrap">
-        {card.title}
-      </div>
-      <div className="mt-3 flex items-center gap-1.5 text-xs text-secondary">
-        <Icon.Clock className="size-3.5 fill-current" />
-        {card.detail}
-      </div>
+      <Kanban.ItemHandle className="float-end" aria-label="Move card">
+        <Icon.DragHandle className="size-3.5 fill-current" />
+      </Kanban.ItemHandle>
+      <BoardCardContent card={card} />
     </Kanban.Item>
+  );
+}
+
+function BoardColumnPreview({
+  column,
+  itemIds,
+}: {
+  column: BoardColumn;
+  itemIds: string[];
+}) {
+  return (
+    <div className="flex w-65 flex-col gap-2 rounded-lg bg-main p-2">
+      <div className="flex items-center gap-2">
+        <Badge variant={column.variant}>{column.title}</Badge>
+        <span className="text-xs text-muted">{itemIds.length}</span>
+      </div>
+      {itemIds.map((id) => {
+        const card = boardCardsById.get(id);
+        return card ? <BoardCardPreview key={id} card={card} /> : null;
+      })}
+    </div>
   );
 }
 
@@ -151,11 +188,10 @@ function KanbanColumn({
 export function KanbanBoard() {
   const blockId = useId();
 
-  const [columnOrder, setColumnOrder] = useState(
-    boardColumns.map((column) => column.id),
-  );
-  const [items, setItems] = useState(initialBoardItems);
-  const snapshotRef = useRef<KanbanItems | null>(null);
+  const [value, setValue] = useState<KanbanValue>({
+    columnOrder: boardColumns.map((column) => column.id),
+    items: initialBoardItems,
+  });
 
   return (
     <div data-slot="notion-board-view" className="relative float-start px-24">
@@ -165,43 +201,41 @@ export function KanbanBoard() {
           className="relative flex min-w-full grow py-2"
         >
           <Kanban.Root
-            onDragStart={(e) => {
-              if (e.operation.source?.type !== KanbanDnd.Item) return;
-              snapshotRef.current = items;
-            }}
-            onDragOver={(e) => {
-              if (e.operation.source?.type !== KanbanDnd.Item) return;
-              setItems((v) => getKanbanItemsAfterDrag(v, e));
-            }}
-            onDragEnd={(e) => {
-              const sourceType = e.operation.source?.type;
-              if (sourceType === KanbanDnd.Column) {
-                setColumnOrder((v) => getSortableItemsAfterDrag(v, e));
-                return;
+            value={value}
+            onMove={(move) =>
+              setValue((current) => applyKanbanMove(current, move))
+            }
+            renderOverlay={(source) => {
+              if (source.type === KanbanDnd.Item) {
+                const card = boardCardsById.get(source.id);
+                return card ? <BoardCardPreview card={card} /> : null;
               }
-              if (
-                sourceType === KanbanDnd.Item &&
-                e.canceled &&
-                snapshotRef.current
-              ) {
-                setItems(snapshotRef.current);
-              }
-              snapshotRef.current = null;
+              const column = boardColumns.find((item) => item.id === source.id);
+              return column ? (
+                <BoardColumnPreview
+                  column={column}
+                  itemIds={value.items[column.id] ?? []}
+                />
+              ) : null;
             }}
           >
-            {columnOrder.map((columnId, index) => {
-              const column = boardColumns.find((item) => item.id === columnId);
-              if (!column) return null;
+            {(projected) =>
+              projected.columnOrder.map((columnId, index) => {
+                const column = boardColumns.find(
+                  (item) => item.id === columnId,
+                );
+                if (!column) return null;
 
-              return (
-                <KanbanColumn
-                  key={column.id}
-                  column={column}
-                  index={index}
-                  itemIds={items[column.id] ?? []}
-                />
-              );
-            })}
+                return (
+                  <KanbanColumn
+                    key={column.id}
+                    column={column}
+                    index={index}
+                    itemIds={projected.items[column.id] ?? []}
+                  />
+                );
+              })
+            }
           </Kanban.Root>
         </div>
       </div>

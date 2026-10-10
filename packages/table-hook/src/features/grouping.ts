@@ -1,4 +1,3 @@
-import type { DragEndEvent } from "@dnd-kit/react";
 import type { OnChangeFn, TableFeature } from "@tanstack/react-table";
 import {
   constructRow,
@@ -8,7 +7,6 @@ import {
 import { z } from "zod/mini";
 
 import type { ComparableValue } from "@notion-kit/table-hook/plugins";
-import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 import type { _RowInstance, _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
@@ -78,16 +76,13 @@ export interface ExtendedGroupingTableApi {
     groupId: string;
     beforeGroupId: string | null;
   }) => void;
-  handleGroupedRowDragEnd: (e: DragEndEvent) => void;
   _resetGroupingState: () => void;
   _syncGroupingState: (options?: SyncGroupingStateOptions) => void;
   _syncGroupingStateFromData: (
     rows: RowModel[],
     options?: { resetOrder?: boolean },
   ) => void;
-  _settlePendingGroupedRowDrag: (
-    groupSort: PluginMethodState["groupSort"],
-  ) => void;
+  _settlePendingGroupOrder: (groupSort: PluginMethodState["groupSort"]) => void;
   /**
    * Use this to render the empty group
    */
@@ -131,7 +126,7 @@ export const ExtendedGroupingFeature: TableFeature = {
     const table = _table as unknown as _TableInstance;
     const setGrouping = table.setGrouping.bind(table);
     const resetGrouping = table.resetGrouping.bind(table);
-    let pendingDraggedGroupOrder: string[] | undefined;
+    let pendingGroupOrder: string[] | undefined;
 
     interface GroupingEntry {
       id: string;
@@ -256,14 +251,7 @@ export const ExtendedGroupingFeature: TableFeature = {
       );
       const entries = new Map<string, GroupingEntry>();
 
-      rows.forEach((row) => {
-        const property = row.properties[info.id];
-        const original = (
-          property ? property.value : plugin.default.data
-        ) as never;
-        const value = plugin.isEmpty(original)
-          ? null
-          : groupingMethod.function(original, row, info.id, context);
+      const addEntry = (value: ComparableValue, original: unknown) => {
         const id = createGroupId(info.id, value);
         if (!entries.has(id)) {
           entries.set(id, {
@@ -273,19 +261,20 @@ export const ExtendedGroupingFeature: TableFeature = {
             original,
           });
         }
+      };
+
+      rows.forEach((row) => {
+        const property = row.properties[info.id];
+        const original = (
+          property ? property.value : plugin.default.data
+        ) as never;
+        const value = plugin.isEmpty(original)
+          ? null
+          : groupingMethod.function(original, row, info.id, context);
+        addEntry(value, original);
       });
 
       if (groupingMethod.id === "value" && groupingMethod.getDropValue) {
-        const addCategory = (value: ComparableValue, original: unknown) => {
-          const id = createGroupId(info.id, value);
-          if (!entries.has(id))
-            entries.set(id, {
-              id,
-              value,
-              sortValue: groupingMethod.toSortValue?.(value, context) ?? value,
-              original,
-            });
-        };
         if (plugin.id === "select" || plugin.id === "multi-select") {
           const config = z.safeParse(
             categoryNamesSchema,
@@ -293,21 +282,13 @@ export const ExtendedGroupingFeature: TableFeature = {
           );
           if (config.success)
             config.data.options.names.forEach((name) =>
-              addCategory(name, plugin.id === "multi-select" ? [name] : name),
+              addEntry(name, plugin.id === "multi-select" ? [name] : name),
             );
-          addCategory(null, plugin.id === "multi-select" ? [] : null);
+          addEntry(null, plugin.id === "multi-select" ? [] : null);
         } else if (plugin.id === "checkbox") {
-          addCategory(true, true);
-          addCategory(null, false);
+          addEntry(true, true);
+          addEntry(null, false);
         }
-      }
-
-      if (table._isKanbanDragActive()) {
-        const previous = table.atoms.groupingState.get();
-        previous.groupOrder.forEach((id) => {
-          const entry = previous.groupValues[id];
-          if (entry && !entries.has(id)) entries.set(id, { id, ...entry });
-        });
       }
 
       return Array.from(entries.values());
@@ -333,20 +314,20 @@ export const ExtendedGroupingFeature: TableFeature = {
       const entries = getGroupingEntriesFromData(
         table.getPreGroupedRowModel().rows.map((row) => row.original),
       );
-      const draggedGroupOrder = pendingDraggedGroupOrder;
-      if (draggedGroupOrder) {
+      const requestedGroupOrder = pendingGroupOrder;
+      if (requestedGroupOrder) {
         const groupSort = syncOptions.groupSort ?? table.getGroupSort();
         if (groupSort.mode !== "manual") {
           applyGroupingEntries(entries, syncOptions);
           return;
         }
-        pendingDraggedGroupOrder = undefined;
+        pendingGroupOrder = undefined;
         const nextIdSet = new Set(entries.map((entry) => entry.id));
         const groupOrder = [
-          ...draggedGroupOrder.filter((groupId) => nextIdSet.has(groupId)),
+          ...requestedGroupOrder.filter((groupId) => nextIdSet.has(groupId)),
           ...entries
             .map((entry) => entry.id)
-            .filter((groupId) => !draggedGroupOrder.includes(groupId)),
+            .filter((groupId) => !requestedGroupOrder.includes(groupId)),
         ];
         applyGroupingEntries(entries, { ...syncOptions, groupOrder });
         return;
@@ -356,10 +337,10 @@ export const ExtendedGroupingFeature: TableFeature = {
     table._syncGroupingStateFromData = (rows, options) => {
       applyGroupingEntries(getGroupingEntriesFromData(rows), options);
     };
-    table._settlePendingGroupedRowDrag = (groupSort) => {
-      if (!pendingDraggedGroupOrder) return;
+    table._settlePendingGroupOrder = (groupSort) => {
+      if (!pendingGroupOrder) return;
       if (groupSort.mode !== "manual") {
-        pendingDraggedGroupOrder = undefined;
+        pendingGroupOrder = undefined;
       }
       table._syncGroupingState({ groupSort });
     };
@@ -444,19 +425,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         groupId,
       );
       if (groupOrder.every((id, index) => id === currentOrder[index])) return;
-      pendingDraggedGroupOrder = groupOrder;
-      if (table.getGroupSort().mode === "manual") {
-        table._syncGroupingState();
-        return;
-      }
-      table.setGroupSort({ mode: "manual" });
-    };
-    table.handleGroupedRowDragEnd = (e) => {
-      const currentOrder = table.atoms.groupingState.get().groupOrder;
-      const groupOrder = getSortableItemsAfterDrag(currentOrder, e);
-      if (groupOrder === currentOrder) return;
-
-      pendingDraggedGroupOrder = groupOrder;
+      pendingGroupOrder = groupOrder;
       if (table.getGroupSort().mode === "manual") {
         table._syncGroupingState();
         return;
