@@ -4,7 +4,10 @@ import { Menu } from "@base-ui/react/menu";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import { Button } from "./button";
 import { popup, positioner } from "./design";
+import * as _Icon from "./icons";
+import { Input, type InputProps } from "./input";
 import {
   MenuGroup,
   MenuItem,
@@ -295,10 +298,88 @@ function DropdownMenuShortcut({
   return <MenuItemShortcut data-slot="dropdown-menu-shortcut" {...props} />;
 }
 
+/* Menu filtering */
+function DropdownMenuFilter({ ...props }: Menu.FilterProvider.Props) {
+  return <Menu.FilterProvider data-slot="dropdown-menu-filter" {...props} />;
+}
+
+type DropdownMenuInputProps = Omit<
+  Menu.Input.Props,
+  keyof InputProps | "render"
+> &
+  Omit<InputProps, "onChange" | "value" | "defaultValue"> & {
+    classNames?: {
+      wrapper?: string;
+    };
+  };
+
+function DropdownMenuInput({
+  className,
+  classNames,
+  search,
+  clear,
+  onCancel,
+  ...props
+}: DropdownMenuInputProps) {
+  return (
+    <div
+      data-slot="dropdown-menu-input-wrapper"
+      className={cn(
+        "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
+        classNames?.wrapper,
+      )}
+    >
+      <Menu.Input
+        data-slot="dropdown-menu-input"
+        render={
+          <Input
+            className={className}
+            search={search}
+            clear={clear}
+            onCancel={onCancel}
+          />
+        }
+        {...props}
+      />
+    </div>
+  );
+}
+
+function DropdownMenuClear({ ...props }: Menu.Clear.Props) {
+  return (
+    <Menu.Clear
+      data-slot="dropdown-menu-clear"
+      render={
+        <Button type="button" variant="close" size="circle">
+          <_Icon.Clear />
+        </Button>
+      }
+      {...props}
+    />
+  );
+}
+
+function DropdownMenuEmpty({ className, ...props }: Menu.Empty.Props) {
+  return (
+    <Menu.Empty
+      data-slot="dropdown-menu-empty"
+      className={cn(
+        "flex min-h-7 items-center p-2 text-sm/tight text-secondary select-none empty:hidden",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuClear,
+  DropdownMenuEmpty,
+  DropdownMenuFilter,
+  DropdownMenuInput,
   DropdownMenuItem,
   DropdownMenuCheckboxItem,
   DropdownMenuRadioItem,
