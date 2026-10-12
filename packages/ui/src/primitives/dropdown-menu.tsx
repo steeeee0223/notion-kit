@@ -7,7 +7,6 @@ import { Icon } from "@notion-kit/icons";
 import { Button } from "./button";
 import { popup, positioner } from "./design";
 import * as _Icon from "./icons";
-import { Input, type InputProps } from "./input";
 import {
   MenuGroup,
   MenuItem,
@@ -18,6 +17,7 @@ import {
 } from "./menu";
 import { Separator } from "./separator";
 import { Switch } from "./switch";
+import { inputVariants } from "./variants";
 
 function DropdownMenu({ ...props }: Menu.Root.Props) {
   return <Menu.Root data-slot="dropdown-menu" {...props} />;
@@ -303,59 +303,29 @@ function DropdownMenuFilter({ ...props }: Menu.FilterProvider.Props) {
   return <Menu.FilterProvider data-slot="dropdown-menu-filter" {...props} />;
 }
 
-type DropdownMenuInputProps = Omit<
-  Menu.Input.Props,
-  keyof InputProps | "render"
-> &
-  Omit<InputProps, "onChange" | "value" | "defaultValue"> & {
-    classNames?: {
-      wrapper?: string;
-    };
-  };
-
-function DropdownMenuInput({
-  className,
-  classNames,
-  search,
-  clear,
-  onCancel,
-  ...props
-}: DropdownMenuInputProps) {
+function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
   return (
     <div
       data-slot="dropdown-menu-input-wrapper"
-      className={cn(
-        "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
-        classNames?.wrapper,
-      )}
+      className="sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2"
     >
-      <Menu.Input
-        data-slot="dropdown-menu-input"
-        render={
-          <Input
-            className={className}
-            search={search}
-            clear={clear}
-            onCancel={onCancel}
-          />
-        }
-        {...props}
-      />
+      <div className={cn(inputVariants({ className }))}>
+        <Menu.Input
+          data-slot="dropdown-menu-input"
+          className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
+          {...props}
+        />
+        <Menu.Clear
+          data-slot="dropdown-menu-clear"
+          aria-label="Clear input"
+          render={
+            <Button type="button" variant="close" size="circle">
+              <_Icon.Clear />
+            </Button>
+          }
+        />
+      </div>
     </div>
-  );
-}
-
-function DropdownMenuClear({ ...props }: Menu.Clear.Props) {
-  return (
-    <Menu.Clear
-      data-slot="dropdown-menu-clear"
-      render={
-        <Button type="button" variant="close" size="circle">
-          <_Icon.Clear />
-        </Button>
-      }
-      {...props}
-    />
   );
 }
 
@@ -376,7 +346,6 @@ export {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuClear,
   DropdownMenuEmpty,
   DropdownMenuFilter,
   DropdownMenuInput,
