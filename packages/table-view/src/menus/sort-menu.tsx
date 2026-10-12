@@ -220,7 +220,6 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
             openOnInputClick
           >
             <AutocompleteInput
-              clear
               placeholder="Search for a property..."
               onKeyDown={(event) => event.stopPropagation()}
             />

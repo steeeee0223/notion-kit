@@ -51,7 +51,7 @@ export default function AutocompletePopover() {
           autoHighlight="always"
           openOnInputClick
         >
-          <AutocompleteInput search clear placeholder="Search workspace..." />
+          <AutocompleteInput placeholder="Search workspace..." />
           <AutocompleteContent variant="inline">
             <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
             <AutocompleteList>

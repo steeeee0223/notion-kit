@@ -79,11 +79,7 @@ export function TrashBox({
             items={options}
             itemToStringValue={(page) => page.title}
           >
-            <AutocompleteInput
-              search
-              clear
-              placeholder="Search pages in Trash"
-            />
+            <AutocompleteInput placeholder="Search pages in Trash" />
             <AutocompleteContent variant="inline" className="h-full">
               <AutocompleteEmpty className="size-full flex-col items-center justify-center gap-2">
                 <Icon.Trash className="size-9 shrink-0 fill-current" />

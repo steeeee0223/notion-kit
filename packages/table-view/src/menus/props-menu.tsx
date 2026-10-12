@@ -80,8 +80,6 @@ export function PropsMenu() {
               openOnInputClick
             >
               <AutocompleteInput
-                clear
-                onCancel={() => setSearch("")}
                 onKeyDown={(e) => e.stopPropagation()}
                 placeholder="Search for a property..."
               />

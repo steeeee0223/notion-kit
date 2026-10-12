@@ -21,7 +21,7 @@ export default function Demo() {
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button size="md">Open</Button>} />
         <DropdownMenuContent className="w-56">
-          <DropdownMenuInput search clear placeholder="Search actions..." />
+          <DropdownMenuInput placeholder="Search actions..." />
           <DropdownMenuEmpty>No matches found.</DropdownMenuEmpty>
           <DropdownMenuGroup>
             <DropdownMenuLabel title="My Account" />

@@ -225,7 +225,7 @@ export default function AutocompleteGridMenu() {
             openOnInputClick
             itemToStringValue={getIconStringValue}
           >
-            <AutocompleteInput search placeholder="Search icon..." />
+            <AutocompleteInput placeholder="Search icon..." />
             <AutocompleteContent variant="inline">
               <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
               <AutocompleteList>

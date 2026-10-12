@@ -55,6 +55,9 @@ function AutocompleteInput({
       className="sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2"
     >
       <div className={cn(inputVariants({ className }))}>
+        <div className="mr-1.5">
+          <_Icon.Search />
+        </div>
         <AutocompletePrimitive.Input
           data-slot="dropdown-menu-input"
           className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
