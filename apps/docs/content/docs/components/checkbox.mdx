@@ -6,11 +6,33 @@ links:
     href: https://ui.shadcn.com/docs/components/checkbox
 ---
 
-<ComponentPreview name="checkbox-default" preview={`<Checkbox />`} />
+import { story as CheckboxDefaultStory } from "@/stories/registry/checkbox-default.story";
+import { story as CheckboxSizesStory } from "@/stories/registry/checkbox-sizes.story";
+
+<CheckboxDefaultStory.WithControl />
+
+```tsx
+<Checkbox />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="checkbox-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/checkbox-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Options
 
@@ -21,13 +43,13 @@ links:
 Use the `size` prop to control the size of the checkbox.
 The default size is `"md"`.
 
-<ComponentPreview
-  name="checkbox-sizes"
-  preview={`<Checkbox size="xs"/>
+<CheckboxSizesStory.WithControl />
+
+```tsx
+<Checkbox size="xs"/>
   <Checkbox size="sm"/>
   <Checkbox size="md"/>
-  `}
-/>
+```
 
 ## API Reference
 

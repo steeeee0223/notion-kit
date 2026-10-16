@@ -6,11 +6,28 @@ links:
     href: https://ui.shadcn.com/docs/components/resizable
 ---
 
-<ComponentPreview name="resizable-demo" />
+import { story as ResizableDemoStory } from "@/stories/registry/resizable-demo.story";
+
+<ResizableDemoStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="resizable-demo" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/resizable-demo.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

@@ -3,11 +3,32 @@ title: Calendar
 description: Compose a month, week, or day calendar with editable events and timezone-aware dates.
 ---
 
-<ComponentPreview name="calendar-demo" />
+import { story as CalendarCustomEventsStory } from "@/stories/registry/calendar-custom-events.story";
+import { story as CalendarDayStory } from "@/stories/registry/calendar-day.story";
+import { story as CalendarDemoStory } from "@/stories/registry/calendar-demo.story";
+import { story as CalendarReadonlyStory } from "@/stories/registry/calendar-readonly.story";
+import { story as CalendarWeekStory } from "@/stories/registry/calendar-week.story";
+
+<CalendarDemoStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="calendar-demo" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/calendar-demo.json
+```
+
+</Tab>
+</Tabs>
 
 Import these components from `@notion-kit/ui/calendar`. For a date picker,
 use `Calendar` from `@notion-kit/ui/primitives`.
@@ -50,9 +71,10 @@ appear in adjacent columns, and events that cross midnight occupy each day
 they cover. This example uses UTC and saves creation, movement, resizing, and
 conversion in local React state.
 
-<ComponentPreview
-  name="calendar-week"
-  preview={`<CalendarProvider
+<CalendarWeekStory.WithControl />
+
+```tsx
+<CalendarProvider
   events={events}
   defaultRange="weekly"
   timeZone="UTC"
@@ -62,17 +84,18 @@ conversion in local React state.
 >
   <CalendarHeaderToolbar />
   <CalendarContent />
-</CalendarProvider>`}
-/>
+</CalendarProvider>
+```
 
 ### Day with controlled navigation
 
 Control `range` and `anchorDate` to keep the selected period and viewed date
 in your application. Apply each navigation callback to update the calendar.
 
-<ComponentPreview
-  name="calendar-day"
-  preview={`const [range, setRange] = useState<CalendarRange>("daily");
+<CalendarDayStory.WithControl />
+
+```tsx
+const [range, setRange] = useState<CalendarRange>("daily");
 const [anchorDate, setAnchorDate] = useState(() => Date.now());
 
 <CalendarProvider
@@ -86,17 +109,18 @@ const [anchorDate, setAnchorDate] = useState(() => Date.now());
 >
   <CalendarHeaderToolbar />
   <CalendarContent />
-</CalendarProvider>
-`} />
+</CalendarProvider>;
+```
 
 ### Read-only events
 
 Set `readOnly` to disable event mutations. Users can still change the range,
 navigate dates, and open events through `onEventClick`.
 
-<ComponentPreview
-  name="calendar-readonly"
-  preview={`<CalendarProvider
+<CalendarReadonlyStory.WithControl />
+
+```tsx
+<CalendarProvider
   events={events}
   defaultRange="weekly"
   readOnly
@@ -105,8 +129,8 @@ navigate dates, and open events through `onEventClick`.
 >
   <CalendarHeaderToolbar />
   <CalendarContent />
-</CalendarProvider>`}
-/>
+</CalendarProvider>
+```
 
 ### Custom event cards
 
@@ -115,9 +139,10 @@ Pass `renderEvent` to replace the default card. Compose `CalendarEvent.Root`,
 dragging, and resizing. The layout positions each segment and shows resize
 handles only at the event's actual boundaries.
 
-<ComponentPreview
-  name="calendar-custom-events"
-  preview={`<CalendarContent
+<CalendarCustomEventsStory.WithControl />
+
+```tsx
+<CalendarContent
   renderEvent={({ event, segment }) => (
     <CalendarEvent.Root event={event} segment={segment}>
       <CalendarEvent.Item>{event.name}</CalendarEvent.Item>
@@ -125,8 +150,8 @@ handles only at the event's actual boundaries.
       <CalendarEvent.Resize edge="end" />
     </CalendarEvent.Root>
   )}
-/>`}
 />
+```
 
 ## Event dates
 

@@ -8,11 +8,31 @@ links:
     href: https://ui.shadcn.com/docs/components/dropdown-menu
 ---
 
-<ComponentPreview name="dropdown-menu" hideCode />
+import { story as DropdownMenuCheckboxStory } from "@/stories/registry/dropdown-menu-checkbox.story";
+import { story as DropdownMenuFilterStory } from "@/stories/registry/dropdown-menu-filter.story";
+import { story as DropdownMenuRadioStory } from "@/stories/registry/dropdown-menu-radio.story";
+import { story as DropdownMenuStory } from "@/stories/registry/dropdown-menu.story";
+
+<DropdownMenuStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="dropdown-menu" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/dropdown-menu.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -51,9 +71,10 @@ links:
 
 A dropdown menu with groups, shortcuts, submenus, and a warning item.
 
-<ComponentPreview
-  name="dropdown-menu"
-  preview={`<DropdownMenu>
+<DropdownMenuStory.WithControl />
+
+```tsx
+<DropdownMenu>
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
@@ -63,20 +84,24 @@ A dropdown menu with groups, shortcuts, submenus, and a warning item.
       </DropdownMenuItem>
     </DropdownMenuGroup>
   </DropdownMenuContent>
-</DropdownMenu>`}
-/>
+</DropdownMenu>
+```
 
 ### Filtering
 
 Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Place the input outside `DropdownMenuList`, which contains the groups and actions. The list defaults to `max-h-75 overflow-x-hidden overflow-y-auto`. Add `className` only when the menu requires different styling.
 
-<ComponentPreview
-  name="dropdown-menu-filter"
-  preview={`<DropdownMenuFilter>
+<DropdownMenuFilterStory.WithControl />
+
+```tsx
+<DropdownMenuFilter>
   <DropdownMenu>
     <DropdownMenuTrigger render={<Button>Open</Button>} />
     <DropdownMenuContent>
-      <DropdownMenuInput aria-label="Search actions" placeholder="Search actions..." />
+      <DropdownMenuInput
+        aria-label="Search actions"
+        placeholder="Search actions..."
+      />
       <DropdownMenuEmpty>No matches found.</DropdownMenuEmpty>
       <DropdownMenuList>
         <DropdownMenuGroup>
@@ -86,8 +111,8 @@ Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Pla
       </DropdownMenuList>
     </DropdownMenuContent>
   </DropdownMenu>
-</DropdownMenuFilter>`}
-/>
+</DropdownMenuFilter>
+```
 
 `DropdownMenuFilter` forwards Base UI FilterProvider props and uses its defaults. Prefer uncontrolled query state. Pass `value` and `onValueChange` when the query also drives application behavior. Use `filter={null}` when the application renders its own matching rows.
 
@@ -101,9 +126,10 @@ Base UI renders a filtered popup as a dialog, its input as a searchbox, and its 
 
 Use `DropdownMenuCheckboxItem` for toggling options on and off.
 
-<ComponentPreview
-  name="dropdown-menu-checkbox"
-  preview={`<DropdownMenu>
+<DropdownMenuCheckboxStory.WithControl />
+
+```tsx
+<DropdownMenu>
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
@@ -115,16 +141,17 @@ Use `DropdownMenuCheckboxItem` for toggling options on and off.
       />
     </DropdownMenuGroup>
   </DropdownMenuContent>
-</DropdownMenu>`}
-/>
+</DropdownMenu>
+```
 
 ### Radio Items
 
 Use `DropdownMenuRadioGroup` and `DropdownMenuRadioItem` for mutually exclusive options.
 
-<ComponentPreview
-  name="dropdown-menu-radio"
-  preview={`<DropdownMenu>
+<DropdownMenuRadioStory.WithControl />
+
+```tsx
+<DropdownMenu>
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
@@ -134,8 +161,8 @@ Use `DropdownMenuRadioGroup` and `DropdownMenuRadioItem` for mutually exclusive 
       <DropdownMenuRadioItem value="right" label="Right" />
     </DropdownMenuRadioGroup>
   </DropdownMenuContent>
-</DropdownMenu>`}
-/>
+</DropdownMenu>
+```
 
 ## API Reference
 

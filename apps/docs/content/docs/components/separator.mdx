@@ -6,11 +6,28 @@ links:
     href: https://ui.shadcn.com/docs/components/separator
 ---
 
-<ComponentPreview name="separator-demo" />
+import { story as SeparatorDemoStory } from "@/stories/registry/separator-demo.story";
+
+<SeparatorDemoStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="separator-demo" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/separator-demo.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

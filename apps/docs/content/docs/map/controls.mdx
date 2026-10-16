@@ -3,21 +3,39 @@ title: Controls
 description: Positionable map controls for zooming, locating, fullscreen, compass reset, and 2D/3D view switching.
 ---
 
-<ComponentPreview
-  name="map-controls"
-  preview={`<MapControls>
+import { story as MapControlsStory } from "@/stories/registry/map-controls.story";
+
+<MapControlsStory.WithControl />
+
+```tsx
+<MapControls>
   <MapControlGroup>
     <MapZoomIn />
     <MapZoomOut />
     <MapViewModeToggle />
     <MapCompass />
   </MapControlGroup>
-</MapControls>`}
-/>
+</MapControls>
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-controls" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-controls.json
+```
+
+</Tab>
+</Tabs>
 
 ## Usage
 

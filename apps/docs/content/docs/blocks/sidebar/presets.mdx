@@ -3,6 +3,12 @@ title: Sidebar Presets
 description: A collection of preset components in Notion sidebar.
 ---
 
+import { story as SidebarFavoriteListStory } from "@/stories/registry/sidebar-favorite-list.story";
+import { story as SidebarPageListStory } from "@/stories/registry/sidebar-page-list.story";
+import { story as SidebarSearchCommandStory } from "@/stories/registry/sidebar-search-command.story";
+import { story as SidebarTrashBoxStory } from "@/stories/registry/sidebar-trash-box.story";
+import { story as SidebarWorkspaceSwitcherStory } from "@/stories/registry/sidebar-workspace-switcher.story";
+
 ## Installation
 
 ```package-install
@@ -17,14 +23,15 @@ pnpm add @notion-kit/ui
 
 A `WorkspaceSwitcher` is a dropdown menu that controls workspaces and user's login state.
 
-<ComponentPreview
-  name="sidebar-workspace-switcher"
-  preview={`<WorkspaceSwitcher
-    user={user}
-    workspaces={workspaces}
-    activeWorkspace={activeWorkspace}
-  />`}
+<SidebarWorkspaceSwitcherStory.WithControl />
+
+```tsx
+<WorkspaceSwitcher
+  user={user}
+  workspaces={workspaces}
+  activeWorkspace={activeWorkspace}
 />
+```
 
 #### API Reference
 
@@ -42,14 +49,11 @@ A `WorkspaceSwitcher` is a dropdown menu that controls workspaces and user's log
 
 A page list is a component `DocList` showing a group of pages.
 
-<ComponentPreview
-  name="sidebar-page-list"
-  preview={`<DocList
-    group="document"
-    title="Document"
-    pages={pages}
-  />`}
-/>
+<SidebarPageListStory.WithControl />
+
+```tsx
+<DocList group="document" title="Document" pages={pages} />
+```
 
 #### API Reference
 
@@ -74,10 +78,11 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
   - The `FavoriteList` only shows your Favorite pages that are not **archived**.
 </Callout>
 
-<ComponentPreview
-  name="sidebar-favorite-list"
-  preview={`<FavoriteList pages={pages} />`}
-/>
+<SidebarFavoriteListStory.WithControl />
+
+```tsx
+<FavoriteList pages={pages} />
+```
 
 #### API Reference
 
@@ -95,7 +100,7 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
 
 A `SearchCommand` is a command dialog for searching all non-archived pages.
 
-<ComponentPreview name="sidebar-search-command" />
+<SidebarSearchCommandStory.WithControl />
 
 <Callout title="Note">
 
@@ -116,10 +121,11 @@ A `SearchCommand` is a command dialog for searching all non-archived pages.
 
 A `TrashBox` is a popover menu for searching archived pages.
 
-<ComponentPreview
-  name="sidebar-trash-box"
-  preview={`<TrashBox pages={pages} />`}
-/>
+<SidebarTrashBoxStory.WithControl />
+
+```tsx
+<TrashBox pages={pages} />
+```
 
 <Callout title="Note">
 

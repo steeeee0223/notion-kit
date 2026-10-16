@@ -6,14 +6,32 @@ links:
     href: https://base-ui.com/react/components/meter
 ---
 
-<ComponentPreview
-  name="meter-demo"
-  preview={`<MeterBar value={72} trackColor="#2383e2" />`}
-/>
+import { story as MeterDemoStory } from "@/stories/registry/meter-demo.story";
+
+<MeterDemoStory.WithControl />
+
+```tsx
+<MeterBar value={72} trackColor="#2383e2" />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="meter-demo" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/meter-demo.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -26,23 +44,23 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `Meter` extends the Base UI Meter root and renders a `<div>`.
 
-| Prop                | Type                                                  | Default          | Description                                                        |
-| ------------------- | ----------------------------------------------------- | ---------------- | ------------------------------------------------------------------ |
-| `value`             | `number`                                              | -                | The current value.                                                 |
-| `min`               | `number`                                              | `0`              | The minimum value.                                                 |
-| `max`               | `number`                                              | `100`            | The maximum value.                                                 |
-| `format`            | `Intl.NumberFormatOptions`                            | -                | Options used to format the value.                                  |
-| `locale`            | `Intl.LocalesArgument`                                | runtime locale   | Locale used by `Intl.NumberFormat` when formatting the value.      |
-| `aria-valuetext`    | `React.AriaAttributes["aria-valuetext"]`              | -                | Human-readable text for the current value.                         |
-| `getAriaValueText`  | `(formattedValue: string, value: number) => string`   | -                | Returns the human-readable text alternative for the current value. |
+| Prop               | Type                                                | Default        | Description                                                        |
+| ------------------ | --------------------------------------------------- | -------------- | ------------------------------------------------------------------ |
+| `value`            | `number`                                            | -              | The current value.                                                 |
+| `min`              | `number`                                            | `0`            | The minimum value.                                                 |
+| `max`              | `number`                                            | `100`          | The maximum value.                                                 |
+| `format`           | `Intl.NumberFormatOptions`                          | -              | Options used to format the value.                                  |
+| `locale`           | `Intl.LocalesArgument`                              | runtime locale | Locale used by `Intl.NumberFormat` when formatting the value.      |
+| `aria-valuetext`   | `React.AriaAttributes["aria-valuetext"]`            | -              | Human-readable text for the current value.                         |
+| `getAriaValueText` | `(formattedValue: string, value: number) => string` | -              | Returns the human-readable text alternative for the current value. |
 
 ### MeterBar
 
 `MeterBar` extends `Meter` and renders a horizontal track with an indicator.
 
-| Prop         | Type     | Default | Description                      |
-| ------------ | -------- | ------- | -------------------------------- |
-| `trackColor` | `string` | -       | CSS color for the indicator.     |
+| Prop         | Type     | Default | Description                  |
+| ------------ | -------- | ------- | ---------------------------- |
+| `trackColor` | `string` | -       | CSS color for the indicator. |
 
 ### MeterRing
 
@@ -61,6 +79,6 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `MeterValue` extends the Base UI Meter value and renders a `<span>`.
 
-| Prop       | Type                                                           | Default | Description                        |
-| ---------- | -------------------------------------------------------------- | ------- | ---------------------------------- |
-| `children` | `null \| ((formattedValue: string, value: number) => ReactNode)` | -       | Custom render function for value.  |
+| Prop       | Type                                                             | Default | Description                       |
+| ---------- | ---------------------------------------------------------------- | ------- | --------------------------------- |
+| `children` | `null \| ((formattedValue: string, value: number) => ReactNode)` | -       | Custom render function for value. |

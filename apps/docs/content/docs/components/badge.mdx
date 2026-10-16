@@ -6,11 +6,34 @@ links:
     href: https://ui.shadcn.com/docs/components/badge
 ---
 
-<ComponentPreview name="badge-default" preview={`<Badge>badge</Badge>`} />
+import { story as BadgeDefaultStory } from "@/stories/registry/badge-default.story";
+import { story as BadgeSizesStory } from "@/stories/registry/badge-sizes.story";
+import { story as BadgeVariantsStory } from "@/stories/registry/badge-variants.story";
+
+<BadgeDefaultStory.WithControl />
+
+```tsx
+<Badge>badge</Badge>
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="badge-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/badge-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Options
 
@@ -21,26 +44,27 @@ links:
 Use the `variant` prop to control the visual style of the badge.<br/>
 The default variant is `"default"`.
 
-<ComponentPreview
-  name="badge-variants"
-  preview={`<Badge variant="default">default</Badge>
+<BadgeVariantsStory.WithControl />
+
+```tsx
+<Badge variant="default">default</Badge>
   <Badge variant="gray">gray</Badge>
   <Badge variant="blue">blue</Badge>
   <Badge variant="orange">orange</Badge>
   <Badge variant="tag">tag</Badge>
-  `}
-/>
+```
 
 ### Size
 
 Use the `size` prop to control the text size of the badge.
 The default size is `"md"`.
 
-<ComponentPreview
-  name="badge-sizes"
-  preview={`<Badge size="sm">badge</Badge>
-<Badge size="md">badge</Badge>`}
-/>
+<BadgeSizesStory.WithControl />
+
+```tsx
+<Badge size="sm">badge</Badge>
+<Badge size="md">badge</Badge>
+```
 
 ## API Reference
 

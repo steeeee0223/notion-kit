@@ -5,7 +5,22 @@ description: An authentication context provider for your application.
 
 ## Installation
 
-<Installation packages="@notion-kit/auth-ui" registryName="login-form-auth" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/auth-ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/login-form-auth.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -18,8 +33,8 @@ See [Notion Auth](https://notion-authn.vercel.app/) for a complete example.
   purposes.
 </Callout>
 
-| Prop       | Type                    | Default | Description                                 |
-| ---------- | ----------------------- | ------- | ------------------------------------------- |
-| `authURL`  | `string`                | -       | The URL of the authentication service.      |
-| `appURL`   | `string`                | -       | The base URL for frontend return links.     |
-| `redirect` | `(url: string) => void` | -       | Your URL redirect function.                 |
+| Prop       | Type                    | Default | Description                             |
+| ---------- | ----------------------- | ------- | --------------------------------------- |
+| `authURL`  | `string`                | -       | The URL of the authentication service.  |
+| `appURL`   | `string`                | -       | The base URL for frontend return links. |
+| `redirect` | `(url: string) => void` | -       | Your URL redirect function.             |

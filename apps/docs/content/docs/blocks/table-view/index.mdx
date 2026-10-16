@@ -3,14 +3,30 @@ title: Table View
 description: A composable, editable data table with multiple layouts.
 ---
 
-<ComponentPreview name="table-view-uncontrolled" hideCode />
+import { story as TableViewCalendarStory } from "@/stories/registry/table-view-calendar.story";
+import { story as TableViewControlledStory } from "@/stories/registry/table-view-controlled.story";
+import { story as TableViewUncontrolledStory } from "@/stories/registry/table-view-uncontrolled.story";
+
+<TableViewUncontrolledStory.WithControl />
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/table-view"
-  registryName="table-view-uncontrolled"
-/>
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/table-view
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/table-view-uncontrolled.json
+```
+
+</Tab>
+</Tabs>
 
 ## Features
 
@@ -36,30 +52,29 @@ Use `defaultData`, `defaultProperties`, and `defaultView` when the table owns
 its state. These defaults are read once when the component mounts; remount with
 a different `key` to reset the table.
 
-<ComponentPreview
-  name="table-view-uncontrolled"
-  preview={`<TableView
-    defaultProperties={properties}
-    defaultData={data}
-  />`}
-/>
+<TableViewUncontrolledStory.WithControl />
+
+```tsx
+<TableView defaultProperties={properties} defaultData={data} />
+```
 
 ### Controlled Table
 
 Pass a resource and apply each callback's `next` value to keep it authoritative.
 Rows, properties, and view state can be controlled independently.
 
-<ComponentPreview
-  name="table-view-controlled"
-  preview={`<TableView
-    properties={properties}
-    data={data}
-    onDataChange={({ next }) => setData(next)}
-    onPropertiesChange={({ next }) => setProperties(next)}
-    view={view}
-    onViewChange={({ next }) => setView(next)}
-  />`}
+<TableViewControlledStory.WithControl />
+
+```tsx
+<TableView
+  properties={properties}
+  data={data}
+  onDataChange={({ next }) => setData(next)}
+  onPropertiesChange={({ next }) => setProperties(next)}
+  view={view}
+  onViewChange={({ next }) => setView(next)}
 />
+```
 
 Do not switch a resource between controlled and uncontrolled during one mount.
 
@@ -243,17 +258,18 @@ to open its row. Click an empty date or time to create a row and its initial
 date in one data update. Drag events to move them, resize their true edges,
 or move between the all-day area and time grid.
 
-<ComponentPreview
-  name="table-view-calendar"
-  preview={`<TableView
+<TableViewCalendarStory.WithControl />
+
+```tsx
+<TableView
   defaultProperties={properties}
   defaultData={data}
   defaultView={{
     layout: "calendar",
     dateView: { range: "monthly", datePropertyId: "date" },
   }}
-/>`}
 />
+```
 
 Set `dateView.datePropertyId` to the ID of a property whose type is `"date"`.
 The calendar uses that property's `config.tz` as the display timezone and

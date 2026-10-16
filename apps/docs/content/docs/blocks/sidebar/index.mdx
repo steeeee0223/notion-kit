@@ -6,11 +6,29 @@ links:
     href: https://ui.shadcn.com/docs/components/sidebar
 ---
 
-<ComponentPreview name="sidebar-basic" className="h-96 p-0" />
+import { story as SidebarBasicStory } from "@/stories/registry/sidebar-basic.story";
+import { story as SidebarNotionStory } from "@/stories/registry/sidebar-notion.story";
+
+<SidebarBasicStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="sidebar-notion" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/sidebar-notion.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -33,7 +51,7 @@ links:
 
 ### Notion Sidebar
 
-<ComponentPreview name="sidebar-notion" className="h-96 p-0" />
+<SidebarNotionStory.WithControl />
 
 ## API Reference
 

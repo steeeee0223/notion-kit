@@ -3,16 +3,34 @@ title: Popups
 description: Anchored popup content for map coordinates or marker interactions.
 ---
 
-<ComponentPreview
-  name="map-popup"
-  preview={`<MapPopup longitude={121.5654} latitude={25.033} closeButton>
+import { story as MapPopupStory } from "@/stories/registry/map-popup.story";
+
+<MapPopupStory.WithControl />
+
+```tsx
+<MapPopup longitude={121.5654} latitude={25.033} closeButton>
   Taipei 101
-</MapPopup>`}
-/>
+</MapPopup>
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-popup" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-popup.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

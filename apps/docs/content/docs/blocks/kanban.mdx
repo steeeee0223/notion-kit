@@ -3,11 +3,28 @@ title: Kanban
 description: A composable board layout with draggable columns, draggable cards, and grouped item movement.
 ---
 
-<ComponentPreview name="kanban-board" hideCode />
+import { story as KanbanBoardStory } from "@/stories/registry/kanban-board.story";
+
+<KanbanBoardStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="kanban-board" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/kanban-board.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -30,9 +47,10 @@ description: A composable board layout with draggable columns, draggable cards, 
 
 Use `getKanbanItemsAfterDrag` while dragging cards across columns, then use `getSortableItemsAfterDrag` when columns are reordered.
 
-<ComponentPreview
-  name="kanban-board"
-  preview={`<Kanban.Root
+<KanbanBoardStory.WithControl />
+
+```tsx
+<Kanban.Root
   onDragOver={(event) => {
     if (event.operation.source?.type === KanbanDnd.Item) {
       setItems((value) => getKanbanItemsAfterDrag(value, event));
@@ -59,8 +77,8 @@ Use `getKanbanItemsAfterDrag` while dragging cards across columns, then use `get
       </Kanban.ColumnContent>
     </Kanban.Column>
   ))}
-</Kanban.Root>`}
-/>
+</Kanban.Root>
+```
 
 ## API Reference
 

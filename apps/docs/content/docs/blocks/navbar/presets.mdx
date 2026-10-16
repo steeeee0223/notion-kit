@@ -3,6 +3,11 @@ title: Navbar Presets
 description: A collection of preset components in Notion navbar.
 ---
 
+import { story as NavbarMenuStory } from "@/stories/registry/navbar-menu.story";
+import { story as NavbarParticipantsStory } from "@/stories/registry/navbar-participants.story";
+import { story as NavbarSharingStory } from "@/stories/registry/navbar-sharing.story";
+import { story as NavbarTitleStory } from "@/stories/registry/navbar-title.story";
+
 ## Installation
 
 ```package-install
@@ -15,7 +20,11 @@ pnpm add @notion-kit/ui
 
 ### Title
 
-<ComponentPreview name="navbar-title" preview={`<Title page={page} />`} />
+<NavbarTitleStory.WithControl />
+
+```tsx
+<Title page={page} />
+```
 
 #### API Reference
 
@@ -27,12 +36,13 @@ pnpm add @notion-kit/ui
 
 ### Sharing
 
-<ComponentPreview
-  name="navbar-sharing"
-  preview={`<TooltipProvider>
-    <Publish page={page} />
-  </TooltipProvider>`}
-/>
+<NavbarSharingStory.WithControl />
+
+```tsx
+<TooltipProvider>
+  <Publish page={page} />
+</TooltipProvider>
+```
 
 #### API Reference
 
@@ -43,12 +53,13 @@ pnpm add @notion-kit/ui
 
 ### Menu
 
-<ComponentPreview
-  name="navbar-menu"
-  preview={`<TooltipProvider>
-    <Menu page={page} />
-  </TooltipProvider>`}
-/>
+<NavbarMenuStory.WithControl />
+
+```tsx
+<TooltipProvider>
+  <Menu page={page} />
+</TooltipProvider>
+```
 
 #### API Reference
 
@@ -59,12 +70,13 @@ pnpm add @notion-kit/ui
 
 ### Participants
 
-<ComponentPreview
-  name="navbar-participants"
-  preview={`<TooltipProvider>
-    <Participants currentUser={currentUser} otherUsers={otherUsers} />
-  </TooltipProvider>`}
-/>
+<NavbarParticipantsStory.WithControl />
+
+```tsx
+<TooltipProvider>
+  <Participants currentUser={currentUser} otherUsers={otherUsers} />
+</TooltipProvider>
+```
 
 #### API Reference
 

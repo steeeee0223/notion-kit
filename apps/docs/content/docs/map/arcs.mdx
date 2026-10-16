@@ -3,11 +3,32 @@ title: Arcs
 description: Render curved lines between points with hover state support.
 ---
 
-<ComponentPreview name="map-arc" preview={`<MapArc data={flightRoutes} />`} />
+import { story as MapArcStory } from "@/stories/registry/map-arc.story";
+
+<MapArcStory.WithControl />
+
+```tsx
+<MapArc data={flightRoutes} />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-arc" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-arc.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

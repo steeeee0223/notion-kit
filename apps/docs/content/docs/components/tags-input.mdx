@@ -3,22 +3,37 @@ title: Tags Input
 description: A dynamic input field for adding and managing multiple tags.
 ---
 
-<ComponentPreview
-  name="tags-input-default"
-  preview={`<TagsInput
-    placeholder="Search name or emails"
-    value={{ tags, input }}
-    onTagsChange={setTags}
-    onInputChange={setInput}
-  />`}
+import { story as TagsInputDefaultStory } from "@/stories/registry/tags-input-default.story";
+
+<TagsInputDefaultStory.WithControl />
+
+```tsx
+<TagsInput
+  placeholder="Search name or emails"
+  value={{ tags, input }}
+  onTagsChange={setTags}
+  onInputChange={setInput}
 />
+```
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/ui"
-  registryName="tags-input-default"
-/>
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/tags-input-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

@@ -3,19 +3,41 @@ title: Tree
 description: A collapsible, hierarchical tree component for organizing nested items like folders and files.
 ---
 
-<ComponentPreview
-  name="tree-default"
-  preview={`const tree = useTree(folderNodes, {});
-  return (
-    <Tree tree={tree}>
-      <TreeList nodeIds={tree.entity.rootIds} />
-    </Tree>
-  );`}
-/>
+import { story as TreeComboboxStory } from "@/stories/registry/tree-combobox.story";
+import { story as TreeDefaultStory } from "@/stories/registry/tree-default.story";
+import { story as TreeMultiSelectStory } from "@/stories/registry/tree-multi-select.story";
+import { story as TreeNonCollapsibleStory } from "@/stories/registry/tree-non-collapsible.story";
+import { story as TreeShowEmptyStory } from "@/stories/registry/tree-show-empty.story";
+
+<TreeDefaultStory.WithControl />
+
+```tsx
+const tree = useTree(folderNodes, {});
+return (
+  <Tree tree={tree}>
+    <TreeList nodeIds={tree.entity.rootIds} />
+  </Tree>
+);
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="tree-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/tree-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Usage
 
@@ -52,37 +74,41 @@ export default function MyTree() {
 
 Disable collapsing to show all nodes expanded by default.
 
-<ComponentPreview
-  name="tree-non-collapsible"
-  preview={`useTree(data, { collapsible: false })`}
-/>
+<TreeNonCollapsibleStory.WithControl />
+
+```tsx
+useTree(data, { collapsible: false });
+```
 
 ### Multi-Select
 
 Enable selection of multiple tree items.
 
-<ComponentPreview
-  name="tree-multi-select"
-  preview={`useTree(data, { selectionMode: "multiple" })`}
-/>
+<TreeMultiSelectStory.WithControl />
+
+```tsx
+useTree(data, { selectionMode: "multiple" });
+```
 
 ### Show Empty Children
 
 Display an indicator when a folder has no children.
 
-<ComponentPreview
-  name="tree-show-empty"
-  preview={`useTree(data, { showEmptyChild: true })`}
-/>
+<TreeShowEmptyStory.WithControl />
+
+```tsx
+useTree(data, { showEmptyChild: true });
+```
 
 ### Combobox Tree
 
 A searchable tree interface using a combobox.
 
-<ComponentPreview
-  name="tree-combobox"
-  preview={`<ComboboxTree tree={tree} />`}
-/>
+<TreeComboboxStory.WithControl />
+
+```tsx
+<ComboboxTree tree={tree} />
+```
 
 ## API Reference
 

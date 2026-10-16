@@ -3,11 +3,28 @@ title: Sortable
 description: A composable drag-and-drop primitive for reordering lists and item collections.
 ---
 
-<ComponentPreview name="sortable-list" hideCode />
+import { story as SortableListStory } from "@/stories/registry/sortable-list.story";
+
+<SortableListStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="sortable-list" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/sortable-list.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -30,9 +47,10 @@ description: A composable drag-and-drop primitive for reordering lists and item 
 
 Use `getSortableItemsAfterDrag` in `onDragEnd` to update ordered state after a successful drop.
 
-<ComponentPreview
-  name="sortable-list"
-  preview={`<Sortable.Root onDragEnd={...}>
+<SortableListStory.WithControl />
+
+```tsx
+<Sortable.Root onDragEnd={...}>
   <Sortable.List render={<MenuGroup />}>
     {items.map((item, index) => (
       <Sortable.Item
@@ -44,8 +62,7 @@ Use `getSortableItemsAfterDrag` in `onDragEnd` to update ordered state after a s
     ))}
   </Sortable.List>
 </Sortable.Root>
-`}
-/>
+```
 
 ## API Reference
 

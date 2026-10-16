@@ -6,11 +6,34 @@ links:
     href: https://ui.shadcn.com/docs/components/input
 ---
 
-<ComponentPreview name="input-default" preview={`<Input className="w-80" />`} />
+import { story as InputDefaultStory } from "@/stories/registry/input-default.story";
+import { story as InputFlatStory } from "@/stories/registry/input-flat.story";
+import { story as InputSearchStory } from "@/stories/registry/input-search.story";
+
+<InputDefaultStory.WithControl />
+
+```tsx
+<Input className="w-80" />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="input-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/input-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -18,29 +41,27 @@ links:
 
 ### Without Border
 
-<ComponentPreview
-  name="input-flat"
-  preview={`<Input
-    variant="flat"
-    className="w-80"
-    placeholder="Enter something..."
-  />`}
-/>
+<InputFlatStory.WithControl />
+
+```tsx
+<Input variant="flat" className="w-80" placeholder="Enter something..." />
+```
 
 ### Search Input
 
-<ComponentPreview
-  name="input-search"
-  preview={`<Input
-    className="w-80"
-    value={value}
-    onChange={(e) => setValue(e.target.value)}
-    onCancel={() => setValue("")}
-    placeholder="Enter something..."
-    search
-    clear
-  />`}
+<InputSearchStory.WithControl />
+
+```tsx
+<Input
+  className="w-80"
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  onCancel={() => setValue("")}
+  placeholder="Enter something..."
+  search
+  clear
 />
+```
 
 ## API Reference
 

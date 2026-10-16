@@ -3,9 +3,12 @@ title: Command
 description: A dialog-only command palette built on the autocomplete primitive.
 ---
 
-<ComponentPreview
-  name="command-dialog"
-  preview={`<>
+import { story as CommandDialogStory } from "@/stories/registry/command-dialog.story";
+
+<CommandDialogStory.WithControl />
+
+```tsx
+<>
   <Button size="sm" onClick={() => setOpen(true)}>
     Open command
   </Button>
@@ -39,12 +42,27 @@ description: A dialog-only command palette built on the autocomplete primitive.
       <CommandEmpty>No commands found.</CommandEmpty>
     </CommandList>
   </CommandDialog>
-</>`}
-/>
+</>
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="command-dialog" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/command-dialog.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -88,11 +106,11 @@ The command search input extends `AutocompleteInput`, including its built-in sea
 
 `default` renders a bordered field with inset spacing. `flat` renders a full-width header with a bottom divider. Both styles include the search icon and native clear button.
 
-| Prop          | Type                   | Default     | Description                                                |
-| ------------- | ---------------------- | ----------- | ---------------------------------------------------------- |
-| `placeholder` | `string`               | -           | Placeholder text for the command input.                    |
-| `variant`     | `"default" \| "flat"`  | `"default"` | Bordered field or full-width header with a bottom divider. |
-| `className`   | `string`               | -           | Classes for the styled field container.                    |
+| Prop          | Type                  | Default     | Description                                                |
+| ------------- | --------------------- | ----------- | ---------------------------------------------------------- |
+| `placeholder` | `string`              | -           | Placeholder text for the command input.                    |
+| `variant`     | `"default" \| "flat"` | `"default"` | Bordered field or full-width header with a bottom divider. |
+| `className`   | `string`              | -           | Classes for the styled field container.                    |
 
 The former `search` and `clear` props are removed.
 

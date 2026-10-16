@@ -1,6 +1,0 @@
-@import "tailwindcss";
-
-@import "@notion-kit/tailwind-config/base.css";
-
-/* Use this for better DX */
-@source "../../../packages/**/src/**/*.{ts,tsx}";

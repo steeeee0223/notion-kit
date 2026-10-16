@@ -3,11 +3,29 @@ title: Cover
 description: A component for displaying a cover image with an interactive picker.
 ---
 
-<ComponentPreview name="cover-default" hideCode />
+import { story as CoverDefaultStory } from "@/stories/registry/cover-default.story";
+import { story as CoverPickerStory } from "@/stories/registry/cover-picker.story";
+
+<CoverDefaultStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="cover-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/cover-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -15,28 +33,30 @@ description: A component for displaying a cover image with an interactive picker
 
 ### Notion Cover
 
-<ComponentPreview
-  name="cover-default"
-  preview={`<Cover
+<CoverDefaultStory.WithControl />
+
+```tsx
+<Cover
     url={cover}
     unsplashAPIKey={UNSPLASH_ACCESS_KEY}
     onSelect={...}
     onUpload={...}
     onRemove={...}
-  />`}
-/>
+  />
+```
 
 ### Cover Picker
 
-<ComponentPreview
-  name="cover-picker"
-  preview={`<CoverPicker unsplashAPIKey={UNSPLASH_ACCESS_KEY}>
-    <Button size="sm">
-      <ImageIcon className="mr-2 size-4" />
-      Change cover
-    </Button>
-  </CoverPicker>`}
-/>
+<CoverPickerStory.WithControl />
+
+```tsx
+<CoverPicker unsplashAPIKey={UNSPLASH_ACCESS_KEY}>
+  <Button size="sm">
+    <ImageIcon className="mr-2 size-4" />
+    Change cover
+  </Button>
+</CoverPicker>
+```
 
 ## API Reference
 

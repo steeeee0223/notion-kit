@@ -3,16 +3,34 @@ title: Markers
 description: DOM markers with custom content, labels, tooltips, popups, and drag callbacks.
 ---
 
-<ComponentPreview
-  name="map-markers"
-  preview={`<MapMarker longitude={121.5654} latitude={25.033}>
+import { story as MapMarkersStory } from "@/stories/registry/map-markers.story";
+
+<MapMarkersStory.WithControl />
+
+```tsx
+<MapMarker longitude={121.5654} latitude={25.033}>
   <MapMarkerContent />
-</MapMarker>`}
-/>
+</MapMarker>
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-markers" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-markers.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

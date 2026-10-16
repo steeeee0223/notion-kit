@@ -3,6 +3,8 @@ title: Get Started
 description: Learn how to authenticate and authorize users with Notion UI.
 ---
 
+import { story as LoginFormAuthStory } from "@/stories/registry/login-form-auth.story";
+
 We provide a complete example to set up authentication by integrating Notion UI with [`BETTER-AUTH`](https://www.better-auth.com/).
 See [Notion Auth](https://notion-authn.vercel.app/) for full example.
 
@@ -18,7 +20,22 @@ Follow the tutorial on [`BETTER-AUTH`](https://www.better-auth.com/docs/installa
 <Step>
 ### Install Auth UI from Notion UI
 
-<Installation packages="@notion-kit/auth-ui" registryName="login-form-auth" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/auth-ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/login-form-auth.json
+```
+
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -72,11 +89,7 @@ export default function Page() {
 
 You should see something like this:
 
-<ComponentPreview
-  name="login-form-auth"
-  hideCode
-  className="h-110 scale-50 p-0"
-/>
+<LoginFormAuthStory.WithControl />
 
 </Step>
 </Steps>

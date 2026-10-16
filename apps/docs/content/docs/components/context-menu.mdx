@@ -8,11 +8,28 @@ links:
     href: https://ui.shadcn.com/docs/components/context-menu
 ---
 
-<ComponentPreview name="context-menu" hideCode />
+import { story as ContextMenuStory } from "@/stories/registry/context-menu.story";
+
+<ContextMenuStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="context-menu" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/context-menu.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -47,12 +64,11 @@ links:
 
 A context menu with groups, shortcuts, submenus, checkbox items, and a destructive action.
 
-<ComponentPreview
-  name="context-menu"
-  preview={`<ContextMenu>
-  <ContextMenuTrigger>
-    Right click here
-  </ContextMenuTrigger>
+<ContextMenuStory.WithControl />
+
+```tsx
+<ContextMenu>
+  <ContextMenuTrigger>Right click here</ContextMenuTrigger>
   <ContextMenuContent>
     <ContextMenuGroup>
       <ContextMenuLabel title="Action" />
@@ -66,8 +82,8 @@ A context menu with groups, shortcuts, submenus, checkbox items, and a destructi
     <ContextMenuSeparator />
     <ContextMenuCheckboxItem checked label="Show Bookmarks" />
   </ContextMenuContent>
-</ContextMenu>`}
-/>
+</ContextMenu>
+```
 
 ## API Reference
 
@@ -117,8 +133,8 @@ A menu item that can be toggled on and off. Extends `ContextMenuItem` props.
 
 A non-interactive label used to title a group of items.
 
-| Prop    | Type     | Default | Description          |
-| ------- | -------- | ------- | -------------------- |
+| Prop    | Type     | Default | Description           |
+| ------- | -------- | ------- | --------------------- |
 | `title` | `string` | -       | The group label text. |
 
 ### ContextMenuSeparator

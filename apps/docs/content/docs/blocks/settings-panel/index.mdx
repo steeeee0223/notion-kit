@@ -3,7 +3,9 @@ title: Settings Panel
 description: A composable, themeable and customizable settings panel.
 ---
 
-<ComponentPreview name="settings-panel-notion" hideCode />
+import { story as SettingsPanelNotionStory } from "@/stories/registry/settings-panel-notion.story";
+
+<SettingsPanelNotionStory.WithControl />
 
 ## Supported Features
 
@@ -29,10 +31,22 @@ description: A composable, themeable and customizable settings panel.
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/settings-panel"
-  registryName="settings-panel-notion"
-/>
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/settings-panel
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/settings-panel-notion.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -66,20 +80,20 @@ description: A composable, themeable and customizable settings panel.
 
 ### Notion Settings Panel
 
-<ComponentPreview
-  name="settings-panel-notion"
-  preview={`<SettingsProvider adapters={adapters}>
-    <SettingsPanel>
-      <SettingsSidebar>
-        <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
-      </SettingsSidebar>
-      <SettingsContent>
-        <SettingsBodyPreset tab={tab} onTabChange={setTab} />
-      </SettingsContent>
-    </SettingsPanel>
-  </SettingsProvider>
-  `}
-/>
+<SettingsPanelNotionStory.WithControl />
+
+```tsx
+<SettingsProvider adapters={adapters}>
+  <SettingsPanel>
+    <SettingsSidebar>
+      <SettingsSidebarPreset tab={tab} onTabChange={setTab} />
+    </SettingsSidebar>
+    <SettingsContent>
+      <SettingsBodyPreset tab={tab} onTabChange={setTab} />
+    </SettingsContent>
+  </SettingsPanel>
+</SettingsProvider>
+```
 
 ## API Reference
 

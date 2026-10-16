@@ -6,11 +6,28 @@ links:
     href: https://ui.shadcn.com/docs/components/skeleton
 ---
 
-<ComponentPreview name="skeleton-demo" />
+import { story as SkeletonDemoStory } from "@/stories/registry/skeleton-demo.story";
+
+<SkeletonDemoStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="skeleton-demo" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/skeleton-demo.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

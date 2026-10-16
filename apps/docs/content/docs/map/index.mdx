@@ -6,11 +6,28 @@ links:
     href: https://maplibre.org/maplibre-gl-js/docs/
 ---
 
-<ComponentPreview name="map-default" />
+import { story as MapDefaultStory } from "@/stories/registry/map-default.story";
+
+<MapDefaultStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Setup
 

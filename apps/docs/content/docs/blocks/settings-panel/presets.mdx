@@ -3,6 +3,14 @@ title: Settings Panel Presets
 description: A collection of preset components in Notion settings panel.
 ---
 
+import { story as SettingsPanelConnectionsTableStory } from "@/stories/registry/settings-panel-connections-table.story";
+import { story as SettingsPanelGuestsTableStory } from "@/stories/registry/settings-panel-guests-table.story";
+import { story as SettingsPanelInvitationsTableStory } from "@/stories/registry/settings-panel-invitations-table.story";
+import { story as SettingsPanelMembersTableStory } from "@/stories/registry/settings-panel-members-table.story";
+import { story as SettingsPanelPlansTableStory } from "@/stories/registry/settings-panel-plans-table.story";
+import { story as SettingsPanelSessionsTableStory } from "@/stories/registry/settings-panel-sessions-table.story";
+import { story as SettingsPanelTeamspacesTableStory } from "@/stories/registry/settings-panel-teamspaces-table.story";
+
 ## Installation
 
 ```package-install
@@ -17,10 +25,11 @@ pnpm add @notion-kit/settings-panel
 
 A table to display all active sessions in the workspace.
 
-<ComponentPreview
-  name="settings-panel-sessions-table"
-  preview={`<SessionsTable currentSessionId={currentSessionId} data={data} />`}
-/>
+<SettingsPanelSessionsTableStory.WithControl />
+
+```tsx
+<SessionsTable currentSessionId={currentSessionId} data={data} />
+```
 
 #### API Reference
 
@@ -34,10 +43,11 @@ A table to display all active sessions in the workspace.
 
 A table to display all established connections.
 
-<ComponentPreview
-  name="settings-panel-connections-table"
-  preview={`<ConnectionsTable data={connections} />`}
-/>
+<SettingsPanelConnectionsTableStory.WithControl />
+
+```tsx
+<ConnectionsTable data={connections} />
+```
 
 #### API Reference
 
@@ -49,10 +59,11 @@ A table to display all established connections.
 
 A table to display all members (except guests) in the workspace.
 
-<ComponentPreview
-  name="settings-panel-members-table"
-  preview={`<MembersTable data={data} scopes={scopes} />`}
-/>
+<SettingsPanelMembersTableStory.WithControl />
+
+```tsx
+<MembersTable data={data} scopes={scopes} />
+```
 
 #### API Reference
 
@@ -70,10 +81,11 @@ A table to display all members (except guests) in the workspace.
 
 A table to display all guests in the workspace.
 
-<ComponentPreview
-  name="settings-panel-guests-table"
-  preview={`<GuestsTable data={data} scopes={scopes} />`}
-/>
+<SettingsPanelGuestsTableStory.WithControl />
+
+```tsx
+<GuestsTable data={data} scopes={scopes} />
+```
 
 #### API Reference
 
@@ -89,10 +101,11 @@ A table to display all guests in the workspace.
 
 A table to display all invitations in the workspace.
 
-<ComponentPreview
-  name="settings-panel-invitations-table"
-  preview={`<InvitationsTable data={data} scopes={scopes} />`}
-/>
+<SettingsPanelInvitationsTableStory.WithControl />
+
+```tsx
+<InvitationsTable data={data} scopes={scopes} />
+```
 
 #### API Reference
 
@@ -106,10 +119,11 @@ A table to display all invitations in the workspace.
 
 A table to display all teamspaces in the workspace.
 
-<ComponentPreview
-  name="settings-panel-teamspaces-table"
-  preview={`<TeamspacesTable workspace={name} data={data} />`}
-/>
+<SettingsPanelTeamspacesTableStory.WithControl />
+
+```tsx
+<TeamspacesTable workspace={name} data={data} />
+```
 
 #### API Reference
 
@@ -126,10 +140,11 @@ A table to display all teamspaces in the workspace.
 
 A table to display all possible plans and their corresponding features.
 
-<ComponentPreview
-  name="settings-panel-plans-table"
-  preview={`<PlansTable />`}
-/>
+<SettingsPanelPlansTableStory.WithControl />
+
+```tsx
+<PlansTable />
+```
 
 #### API Reference
 

@@ -3,9 +3,13 @@ title: Select
 description: Displays a list of options for the user to pick from—triggered by a button.
 ---
 
-<ComponentPreview
-  name="select-default"
-  preview={`<Select
+import { story as SelectCustomStory } from "@/stories/registry/select-custom.story";
+import { story as SelectDefaultStory } from "@/stories/registry/select-default.story";
+
+<SelectDefaultStory.WithControl />
+
+```tsx
+<Select
   value={value}
   onValueChange={(nextValue) => {
     if (nextValue !== null) setValue(nextValue);
@@ -26,8 +30,8 @@ description: Displays a list of options for the user to pick from—triggered by
       ))}
     </SelectGroup>
   </SelectContent>
-</Select>`}
-/>
+</Select>
+```
 
 ## Installation
 
@@ -37,7 +41,22 @@ pnpm add @notion-kit/select
 
 Or if you prefer using Shadcn primitives, use
 
-<Installation packages="@notion-kit/ui" registryName="select-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/select-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -45,23 +64,24 @@ Or if you prefer using Shadcn primitives, use
 
 ### Custom Options
 
-<ComponentPreview
-  name="select-custom"
-  preview={`<Select
-    items={options}
-    value={value}
-    onValueChange={(nextValue) => {
-      if (nextValue !== null) setValue(nextValue);
-    }}
-  >
-    <SelectTrigger>
-      <SelectValue>
-        <div>{selectedOption.label}</div>
-      </SelectValue>
-    </SelectTrigger>
-    <SelectContent>{/* SelectGroup + SelectItem */}</SelectContent>
-  </Select>`}
-/>
+<SelectCustomStory.WithControl />
+
+```tsx
+<Select
+  items={options}
+  value={value}
+  onValueChange={(nextValue) => {
+    if (nextValue !== null) setValue(nextValue);
+  }}
+>
+  <SelectTrigger>
+    <SelectValue>
+      <div>{selectedOption.label}</div>
+    </SelectValue>
+  </SelectTrigger>
+  <SelectContent>{/* SelectGroup + SelectItem */}</SelectContent>
+</Select>
+```
 
 ## API Reference
 

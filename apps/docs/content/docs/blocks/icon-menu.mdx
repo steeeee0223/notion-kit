@@ -3,11 +3,30 @@ title: Icon Menu
 description: A controlled popover menu with searchable icon factories, a virtualized grid, and upload support.
 ---
 
-<ComponentPreview name="icon-menu-default" hideCode />
+import { story as IconMenuCustomFactoryStory } from "@/stories/registry/icon-menu-custom-factory.story";
+import { story as IconMenuDefaultStory } from "@/stories/registry/icon-menu-default.story";
+import { story as IconMenuNotionIconsStory } from "@/stories/registry/icon-menu-notion-icons.story";
+
+<IconMenuDefaultStory.WithControl />
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="icon-menu-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/icon-menu-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -17,19 +36,19 @@ description: A controlled popover menu with searchable icon factories, a virtual
 
 Use the default factories for emoji and Lucide icons. Search runs through the autocomplete internals and each factory provides the searchable item text.
 
-<ComponentPreview name="icon-menu-default" />
+<IconMenuDefaultStory.WithControl />
 
 ### Notion Icons
 
 Compose factories to choose which tabs appear. This example includes emoji, Lucide, and Notion-style icons.
 
-<ComponentPreview name="icon-menu-notion-icons" />
+<IconMenuNotionIconsStory.WithControl />
 
 ### Custom Factory
 
 Use `useCustomFactory` to add your own icon set. `name` and `keywords` are searchable, and selected icons are tracked as recent items.
 
-<ComponentPreview name="icon-menu-custom-factory" />
+<IconMenuCustomFactoryStory.WithControl />
 
 ## Anatomy
 

@@ -3,14 +3,28 @@ title: Login Form
 description: A login form component for authentication.
 ---
 
-<ComponentPreview name="login-form-default" hideCode />
+import { story as LoginFormDefaultStory } from "@/stories/registry/login-form-default.story";
+
+<LoginFormDefaultStory.WithControl />
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/auth-ui"
-  registryName="login-form-default"
-/>
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/auth-ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/login-form-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -18,14 +32,11 @@ description: A login form component for authentication.
 
 ### Login Form
 
-<ComponentPreview
-  name="login-form-default"
-  preview={`<LoginForm
-    callbackURL="/"
-    mode={mode}
-    onModeChange={setMode}
-  />`}
-/>
+<LoginFormDefaultStory.WithControl />
+
+```tsx
+<LoginForm callbackURL="/" mode={mode} onModeChange={setMode} />
+```
 
 ## API Reference
 

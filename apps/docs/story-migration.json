@@ -1,0 +1,685 @@
+{
+  "auth/accept-invitation-form": {
+    "Default": {
+      "development": "auth/accept-invitation-form/Default"
+    }
+  },
+  "auth/create-workspace-form": {
+    "Default": {
+      "development": "auth/create-workspace-form/Default"
+    }
+  },
+  "auth/login-form": {
+    "SignIn": {
+      "registry": "login-form-auth"
+    }
+  },
+  "blocks/calendar-view": {
+    "Month": {
+      "registry": "calendar-demo"
+    },
+    "Week": {
+      "registry": "calendar-week"
+    },
+    "Day": {
+      "registry": "calendar-day"
+    },
+    "ReadOnly": {
+      "registry": "calendar-readonly"
+    },
+    "CustomEvents": {
+      "registry": "calendar-custom-events"
+    }
+  },
+  "blocks/code-block": {
+    "Default": {
+      "registry": "code-block-default"
+    },
+    "Controlled": {
+      "registry": "code-block-controlled"
+    },
+    "Mermaid": {
+      "registry": "code-block-mermaid"
+    },
+    "MermaidPreviewing": {
+      "development": "blocks/code-block/MermaidPreviewing"
+    },
+    "Readonly": {
+      "registry": "code-block-readonly"
+    }
+  },
+  "blocks/cool-todo/cool-todo": {
+    "Default": {
+      "development": "blocks/cool-todo/cool-todo/Default"
+    }
+  },
+  "blocks/cover": {
+    "Default": {
+      "registry": "cover-picker"
+    }
+  },
+  "blocks/date-range-input": {
+    "Default": {
+      "development": "blocks/date-range-input/Default"
+    }
+  },
+  "blocks/eject": {
+    "Default": {
+      "development": "blocks/eject/Default"
+    },
+    "DisappearMode": {
+      "development": "blocks/eject/DisappearMode"
+    },
+    "GhostMode": {
+      "development": "blocks/eject/GhostMode"
+    },
+    "KeyboardShortcut": {
+      "development": "blocks/eject/KeyboardShortcut"
+    },
+    "ContextMenuTrigger": {
+      "development": "blocks/eject/ContextMenuTrigger"
+    },
+    "Playground": {
+      "development": "blocks/eject/Playground"
+    },
+    "DialogForm": {
+      "development": "blocks/eject/DialogForm"
+    }
+  },
+  "blocks/falling-blocks": {
+    "Basic": {
+      "development": "blocks/falling-blocks/Basic"
+    },
+    "Draggable": {
+      "development": "blocks/falling-blocks/Draggable"
+    }
+  },
+  "blocks/icon-block": {
+    "Emoji": {
+      "registry": "icon-block-emoji"
+    },
+    "Lucide": {
+      "registry": "icon-block-lucide"
+    },
+    "ImageUrl": {
+      "registry": "icon-block-url"
+    },
+    "Text": {
+      "registry": "icon-block-text"
+    }
+  },
+  "blocks/icon-menu": {
+    "Default": {
+      "registry": "icon-menu-default"
+    },
+    "NotionIcons": {
+      "registry": "icon-menu-notion-icons"
+    },
+    "CustomFactory": {
+      "registry": "icon-menu-custom-factory"
+    }
+  },
+  "blocks/kanban": {
+    "Kanban": {
+      "registry": "kanban-board"
+    }
+  },
+  "blocks/learning-steps-dialog": {
+    "Default": {
+      "development": "blocks/learning-steps-dialog/Default"
+    }
+  },
+  "blocks/navbar": {
+    "NotionNavbar": {
+      "registry": "navbar-notion"
+    }
+  },
+  "blocks/settings-panel/dialogs": {
+    "CreateTeamspaceModal": {
+      "development": "blocks/settings-panel/dialogs/CreateTeamspaceModal"
+    },
+    "TeamspaceDetailModal": {
+      "development": "blocks/settings-panel/dialogs/TeamspaceDetailModal"
+    },
+    "AddTeamMembersModal": {
+      "development": "blocks/settings-panel/dialogs/AddTeamMembersModal"
+    },
+    "AddMembersModal": {
+      "development": "blocks/settings-panel/dialogs/AddMembersModal"
+    },
+    "DeleteAccountModal": {
+      "development": "blocks/settings-panel/dialogs/DeleteAccountModal"
+    },
+    "DeleteGuestModal": {
+      "development": "blocks/settings-panel/dialogs/DeleteGuestModal"
+    },
+    "DeleteMemberModal": {
+      "development": "blocks/settings-panel/dialogs/DeleteMemberModal"
+    },
+    "DeleteWorkspaceModal": {
+      "development": "blocks/settings-panel/dialogs/DeleteWorkspaceModal"
+    },
+    "EmailSettingsModal": {
+      "development": "blocks/settings-panel/dialogs/EmailSettingsModal"
+    },
+    "SetPasswordModal": {
+      "development": "blocks/settings-panel/dialogs/SetPasswordModal"
+    },
+    "ChangePasswordModal": {
+      "development": "blocks/settings-panel/dialogs/ChangePasswordModal"
+    },
+    "Add2FAModal": {
+      "development": "blocks/settings-panel/dialogs/Add2FAModal"
+    },
+    "Enable2FAMethodModal": {
+      "development": "blocks/settings-panel/dialogs/Enable2FAMethodModal"
+    },
+    "PasskeysManagement": {
+      "development": "blocks/settings-panel/dialogs/PasskeysManagement"
+    },
+    "UpgradeModal": {
+      "development": "blocks/settings-panel/dialogs/UpgradeModal"
+    },
+    "ChangePaymentMethodModal": {
+      "development": "blocks/settings-panel/dialogs/ChangePaymentMethodModal"
+    },
+    "AddEmojiModal": {
+      "development": "blocks/settings-panel/dialogs/AddEmojiModal"
+    },
+    "EditEmojiModal": {
+      "development": "blocks/settings-panel/dialogs/EditEmojiModal"
+    }
+  },
+  "blocks/settings-panel/settings-panel": {
+    "Default": {
+      "development": "blocks/settings-panel/settings-panel/Default"
+    },
+    "Preferences": {
+      "registry": "settings-panel-notion"
+    },
+    "Notifications": {
+      "development": "blocks/settings-panel/settings-panel/Notifications"
+    },
+    "MyConnections": {
+      "development": "blocks/settings-panel/settings-panel/MyConnections"
+    },
+    "Workspace": {
+      "development": "blocks/settings-panel/settings-panel/Workspace"
+    },
+    "People": {
+      "development": "blocks/settings-panel/settings-panel/People"
+    },
+    "Emoji": {
+      "development": "blocks/settings-panel/settings-panel/Emoji"
+    },
+    "Teamspaces": {
+      "development": "blocks/settings-panel/settings-panel/Teamspaces"
+    },
+    "Security": {
+      "development": "blocks/settings-panel/settings-panel/Security"
+    },
+    "Identity": {
+      "development": "blocks/settings-panel/settings-panel/Identity"
+    },
+    "Billing": {
+      "development": "blocks/settings-panel/settings-panel/Billing"
+    },
+    "Plans": {
+      "development": "blocks/settings-panel/settings-panel/Plans"
+    }
+  },
+  "blocks/settings-panel/tables": {
+    "Sessions": {
+      "registry": "settings-panel-sessions-table"
+    },
+    "MyConnections": {
+      "registry": "settings-panel-connections-table"
+    },
+    "Members": {
+      "registry": "settings-panel-members-table"
+    },
+    "Guests": {
+      "registry": "settings-panel-guests-table"
+    },
+    "Invitations": {
+      "registry": "settings-panel-invitations-table"
+    },
+    "Teamspaces": {
+      "registry": "settings-panel-teamspaces-table"
+    },
+    "TeamMembers": {
+      "development": "blocks/settings-panel/tables/TeamMembers"
+    },
+    "Plans": {
+      "registry": "settings-panel-plans-table"
+    },
+    "Emojis": {
+      "development": "blocks/settings-panel/tables/Emojis"
+    }
+  },
+  "blocks/sidebar-blocks": {
+    "TrashBox": {
+      "registry": "sidebar-trash-box"
+    }
+  },
+  "blocks/sidebar": {
+    "BasicSidebar": {
+      "registry": "sidebar-basic"
+    },
+    "NotionSidebar": {
+      "registry": "sidebar-notion"
+    }
+  },
+  "blocks/single-image-dropzone": {
+    "Default": {
+      "registry": "single-image-dropzone-default"
+    }
+  },
+  "blocks/sling-shot": {
+    "Default": {
+      "development": "blocks/sling-shot/Default"
+    },
+    "SoftLanding": {
+      "development": "blocks/sling-shot/SoftLanding"
+    },
+    "NoGoal": {
+      "development": "blocks/sling-shot/NoGoal"
+    }
+  },
+  "blocks/tags-input": {
+    "Default": {
+      "registry": "tags-input-default"
+    }
+  },
+  "blocks/timeline": {
+    "Layout": {
+      "registry": "timeline-layout"
+    },
+    "Example": {
+      "registry": "timeline-without-sidebar"
+    },
+    "WithSidebar": {
+      "registry": "timeline-with-sidebar"
+    }
+  },
+  "blocks/unsplash": {
+    "Default": {
+      "registry": "unsplash-default"
+    }
+  },
+  "collections/table-view/table-menus": {
+    "TableViewMenu": {
+      "development": "collections/table-view/table-menus/TableViewMenu"
+    },
+    "SortMenu": {
+      "development": "collections/table-view/table-menus/SortMenu"
+    },
+    "FilterMenu": {
+      "development": "collections/table-view/table-menus/FilterMenu"
+    },
+    "CalcMenu": {
+      "development": "collections/table-view/table-menus/CalcMenu"
+    },
+    "PropMenu": {
+      "development": "collections/table-view/table-menus/PropMenu"
+    },
+    "TypesMenu": {
+      "development": "collections/table-view/table-menus/TypesMenu"
+    },
+    "EditPropMenu": {
+      "development": "collections/table-view/table-menus/EditPropMenu"
+    },
+    "ColumnConfigMenus": {
+      "development": "collections/table-view/table-menus/ColumnConfigMenus"
+    },
+    "RowActionMenu": {
+      "development": "collections/table-view/table-menus/RowActionMenu"
+    }
+  },
+  "collections/table-view/table-view": {
+    "DatabaseView": {
+      "development": "collections/table-view/table-view/DatabaseView"
+    },
+    "Controlled": {
+      "development": "collections/table-view/table-view/Controlled"
+    },
+    "ListView": {
+      "development": "collections/table-view/table-view/ListView"
+    },
+    "BoardView": {
+      "development": "collections/table-view/table-view/BoardView"
+    },
+    "TimelineView": {
+      "development": "collections/table-view/table-view/TimelineView"
+    },
+    "CalendarView": {
+      "registry": "table-view-calendar"
+    }
+  },
+  "hooks/use-rect": {
+    "Default": {
+      "development": "hooks/use-rect/Default"
+    }
+  },
+  "map/map-arc": {
+    "Default": {
+      "registry": "map-arc"
+    },
+    "CustomStyling": {
+      "development": "map/map-arc/CustomStyling"
+    },
+    "WithHoverState": {
+      "development": "map/map-arc/WithHoverState"
+    },
+    "HighCurvature": {
+      "development": "map/map-arc/HighCurvature"
+    },
+    "StraightLines": {
+      "development": "map/map-arc/StraightLines"
+    }
+  },
+  "map/map-cluster-layer": {
+    "Default": {
+      "registry": "map-cluster-layer"
+    },
+    "CustomColors": {
+      "development": "map/map-cluster-layer/CustomColors"
+    },
+    "WithPointClick": {
+      "development": "map/map-cluster-layer/WithPointClick"
+    }
+  },
+  "map/map-controls": {
+    "AllControls": {
+      "development": "map/map-controls/AllControls"
+    }
+  },
+  "map/map-custom-geojson-layer": {
+    "ParksLayer": {
+      "registry": "map-custom-geojson-layer"
+    }
+  },
+  "map/map-marker": {
+    "Default": {
+      "development": "map/map-marker/Default"
+    },
+    "CustomContent": {
+      "development": "map/map-marker/CustomContent"
+    },
+    "WithPopup": {
+      "development": "map/map-marker/WithPopup"
+    },
+    "WithTooltip": {
+      "development": "map/map-marker/WithTooltip"
+    },
+    "WithLabel": {
+      "development": "map/map-marker/WithLabel"
+    },
+    "Draggable": {
+      "development": "map/map-marker/Draggable"
+    },
+    "MultipleMarkers": {
+      "registry": "map-markers"
+    }
+  },
+  "map/map-popup": {
+    "Default": {
+      "development": "map/map-popup/Default"
+    },
+    "ClickToOpen": {
+      "registry": "map-popup"
+    }
+  },
+  "map/map-route": {
+    "Default": {
+      "registry": "map-route"
+    },
+    "Styled": {
+      "development": "map/map-route/Styled"
+    },
+    "Dashed": {
+      "development": "map/map-route/Dashed"
+    },
+    "MultipleRoutes": {
+      "development": "map/map-route/MultipleRoutes"
+    }
+  },
+  "map/map": {
+    "Default": {
+      "registry": "map-default"
+    },
+    "DarkTheme": {
+      "development": "map/map/DarkTheme"
+    },
+    "LightTheme": {
+      "development": "map/map/LightTheme"
+    },
+    "Globe": {
+      "development": "map/map/Globe"
+    },
+    "ControlledViewport": {
+      "development": "map/map/ControlledViewport"
+    }
+  },
+  "ui/autocomplete": {
+    "Basic": {
+      "registry": "autocomplete-default"
+    },
+    "PopoverMenu": {
+      "registry": "autocomplete-popover"
+    },
+    "GridMenu": {
+      "registry": "autocomplete-grid-menu"
+    }
+  },
+  "ui/button": {
+    "Default": {
+      "registry": "button-default"
+    },
+    "Blue": {
+      "registry": "button-variants"
+    },
+    "Warning": {
+      "registry": "button-warning"
+    },
+    "Hint": {
+      "registry": "button-hint"
+    },
+    "Link": {
+      "registry": "button-variants"
+    },
+    "Nav": {
+      "registry": "button-nav-icon"
+    },
+    "Loading": {
+      "registry": "button-disabled"
+    }
+  },
+  "ui/calendar": {
+    "Basic": {
+      "development": "ui/calendar/Basic"
+    },
+    "RangeCalendar": {
+      "development": "ui/calendar/RangeCalendar"
+    },
+    "EnhancedDateTimePicker": {
+      "development": "ui/calendar/EnhancedDateTimePicker"
+    }
+  },
+  "ui/checkbox": {
+    "Default": {
+      "registry": "checkbox-default"
+    },
+    "Small": {
+      "registry": "checkbox-sizes"
+    },
+    "ExtraSmall": {
+      "registry": "checkbox-sizes"
+    }
+  },
+  "ui/combobox": {
+    "Basic": {
+      "registry": "combobox-basic"
+    },
+    "MultipleFloating": {
+      "registry": "combobox-multiple-floating"
+    },
+    "MultipleInline": {
+      "registry": "combobox-multiple-inline"
+    }
+  },
+  "ui/command": {
+    "Dialog": {
+      "registry": "command-dialog"
+    }
+  },
+  "ui/context-menu": {
+    "Example": {
+      "registry": "context-menu"
+    }
+  },
+  "ui/dialog": {
+    "Default": {
+      "development": "ui/dialog/Default"
+    }
+  },
+  "ui/dropdown-menu": {
+    "Example": {
+      "registry": "dropdown-menu"
+    },
+    "Checkboxes": {
+      "registry": "dropdown-menu-checkbox"
+    },
+    "Radio": {
+      "registry": "dropdown-menu-radio"
+    },
+    "FilterMenu": {
+      "registry": "dropdown-menu-filter"
+    },
+    "InlineMenu": {
+      "development": "ui/dropdown-menu/InlineMenu"
+    }
+  },
+  "ui/input": {
+    "Default": {
+      "registry": "input-default"
+    },
+    "Search": {
+      "registry": "input-search"
+    },
+    "WithClear": {
+      "development": "ui/input/WithClear"
+    }
+  },
+  "ui/meter": {
+    "Bar": {
+      "development": "ui/meter/Bar"
+    },
+    "Ring": {
+      "development": "ui/meter/Ring"
+    }
+  },
+  "ui/popover": {
+    "Detach": {
+      "development": "ui/popover/Detach"
+    }
+  },
+  "ui/radio-group": {
+    "Example": {
+      "development": "ui/radio-group/Example"
+    },
+    "Disabled": {
+      "development": "ui/radio-group/Disabled"
+    }
+  },
+  "ui/select": {
+    "Default": {
+      "registry": "select-default"
+    },
+    "CustomDisplay": {
+      "registry": "select-custom"
+    }
+  },
+  "ui/selectable/selectable": {
+    "Basic": {
+      "development": "ui/selectable/selectable/Basic"
+    },
+    "SelectContain": {
+      "development": "ui/selectable/selectable/SelectContain"
+    },
+    "MultiSelect": {
+      "development": "ui/selectable/selectable/MultiSelect"
+    },
+    "NoOverlay": {
+      "development": "ui/selectable/selectable/NoOverlay"
+    },
+    "WithDraggableItems": {
+      "development": "ui/selectable/selectable/WithDraggableItems"
+    }
+  },
+  "ui/sortable": {
+    "List": {
+      "registry": "sortable-list"
+    },
+    "ListWithItemHandle": {
+      "development": "ui/sortable/ListWithItemHandle"
+    }
+  },
+  "ui/spinner": {
+    "Default": {
+      "registry": "spinner-default"
+    },
+    "Dashed": {
+      "registry": "spinner-variants"
+    }
+  },
+  "ui/switch": {
+    "Default": {
+      "registry": "switch-default"
+    },
+    "Small": {
+      "registry": "switch-sizes"
+    }
+  },
+  "ui/table/table": {
+    "Default": {
+      "development": "ui/table/table/Default"
+    },
+    "Empty": {
+      "development": "ui/table/table/Empty"
+    },
+    "Pinned": {
+      "development": "ui/table/table/Pinned"
+    },
+    "Striped": {
+      "development": "ui/table/table/Striped"
+    }
+  },
+  "ui/tabs": {
+    "Default": {
+      "registry": "tabs-demo"
+    }
+  },
+  "ui/tooltip": {
+    "Default": {
+      "registry": "tooltip-demo"
+    }
+  },
+  "ui/tree/tree": {
+    "Default": {
+      "registry": "tree-default"
+    },
+    "NonCollapsible": {
+      "registry": "tree-non-collapsible"
+    },
+    "MultiSelect": {
+      "registry": "tree-multi-select"
+    },
+    "ShowingEmptyChild": {
+      "registry": "tree-show-empty"
+    },
+    "Combobox": {
+      "registry": "tree-combobox"
+    }
+  }
+}

@@ -3,14 +3,32 @@ title: Routes
 description: Render line routes from coordinate arrays.
 ---
 
-<ComponentPreview
-  name="map-route"
-  preview={`<MapRoute coordinates={coordinates} color="#ef4444" width={5} />`}
-/>
+import { story as MapRouteStory } from "@/stories/registry/map-route.story";
+
+<MapRouteStory.WithControl />
+
+```tsx
+<MapRoute coordinates={coordinates} color="#ef4444" width={5} />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-route" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-route.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

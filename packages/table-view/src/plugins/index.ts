@@ -86,5 +86,5 @@ export type {
   TableUiPlugin,
 } from "./registry";
 
-// TMP export for storybook
+// TMP export for development examples
 export * from "./date/date-cell";

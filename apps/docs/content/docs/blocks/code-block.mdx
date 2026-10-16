@@ -3,7 +3,12 @@ title: Code Block
 description: A composable code block with syntax highlighting, language selection, code formatting, and Mermaid diagram support.
 ---
 
-<ComponentPreview name="code-block-default" hideCode />
+import { story as CodeBlockControlledStory } from "@/stories/registry/code-block-controlled.story";
+import { story as CodeBlockDefaultStory } from "@/stories/registry/code-block-default.story";
+import { story as CodeBlockMermaidStory } from "@/stories/registry/code-block-mermaid.story";
+import { story as CodeBlockReadonlyStory } from "@/stories/registry/code-block-readonly.story";
+
+<CodeBlockDefaultStory.WithControl />
 
 ## Supported Features
 
@@ -27,10 +32,22 @@ description: A composable code block with syntax highlighting, language selectio
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/code-block"
-  registryName="code-block-default"
-/>
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/code-block
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/code-block-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -52,71 +69,73 @@ description: A composable code block with syntax highlighting, language selectio
 In uncontrolled mode, the component manages its own state internally.
 Use `defaultValue` to set the initial code and language.
 
-<ComponentPreview
-  name="code-block-default"
-  preview={`<CodeBlock
-    defaultValue={{
-      code: sampleCode,
-      lang: "typescript",
-    }}
-  >
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<CodeBlockDefaultStory.WithControl />
+
+```tsx
+<CodeBlock
+  defaultValue={{
+    code: sampleCode,
+    lang: "typescript",
+  }}
+>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ### Controlled
 
 In controlled mode, use `value` and `onChange` to manage state externally.
 
-<ComponentPreview
-  name="code-block-controlled"
-  preview={`<CodeBlock value={value} onChange={setValue}>
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<CodeBlockControlledStory.WithControl />
+
+```tsx
+<CodeBlock value={value} onChange={setValue}>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ### Readonly
 
 Use the `readonly` prop to prevent editing code, changing language, and editing the caption.
 
-<ComponentPreview
-  name="code-block-readonly"
-  preview={`<CodeBlock
-    readonly
-    defaultValue={{
-      code: sampleCode,
-      lang: "typescript",
-      caption: "This code block is readonly",
-    }}
-  >
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<CodeBlockReadonlyStory.WithControl />
+
+```tsx
+<CodeBlock
+  readonly
+  defaultValue={{
+    code: sampleCode,
+    lang: "typescript",
+    caption: "This code block is readonly",
+  }}
+>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ### Mermaid Diagrams
 
 When language is set to `mermaid`, a live diagram preview is rendered alongside the code editor.
 
-<ComponentPreview
-  name="code-block-mermaid"
-  preview={`<CodeBlock
-    defaultValue={{ code: mermaidCode, lang: "mermaid" }}
-  >
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<CodeBlockMermaidStory.WithControl />
+
+```tsx
+<CodeBlock defaultValue={{ code: mermaidCode, lang: "mermaid" }}>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ## API Reference
 

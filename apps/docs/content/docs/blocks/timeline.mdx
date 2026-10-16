@@ -3,7 +3,11 @@ title: Timeline
 description: A composable timeline view with draggable items, range headers, sidebar, and navigation tools.
 ---
 
-<ComponentPreview name="timeline-without-sidebar" hideCode />
+import { story as TimelineLayoutStory } from "@/stories/registry/timeline-layout.story";
+import { story as TimelineWithSidebarStory } from "@/stories/registry/timeline-with-sidebar.story";
+import { story as TimelineWithoutSidebarStory } from "@/stories/registry/timeline-without-sidebar.story";
+
+<TimelineWithoutSidebarStory.WithControl />
 
 ## Supported Features
 
@@ -25,10 +29,22 @@ description: A composable timeline view with draggable items, range headers, sid
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/ui"
-  registryName="timeline-without-sidebar"
-/>
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/timeline-without-sidebar.json
+```
+
+</Tab>
+</Tabs>
 
 ## Anatomy
 
@@ -72,9 +88,10 @@ description: A composable timeline view with draggable items, range headers, sid
 
 A minimal timeline showing the range header, toolbar, and today indicator — without any items.
 
-<ComponentPreview
-  name="timeline-layout"
-  preview={`<TimelineProvider range={range}>
+<TimelineLayoutStory.WithControl />
+
+```tsx
+<TimelineProvider range={range}>
   <TimelineContent>
     <TimelineRangeHeader />
     <TimelineToolbar>
@@ -83,16 +100,17 @@ A minimal timeline showing the range header, toolbar, and today indicator — wi
     </TimelineToolbar>
     <TimelineToday />
   </TimelineContent>
-</TimelineProvider>`}
-/>
+</TimelineProvider>
+```
 
 ### Without Sidebar
 
 A full timeline with draggable items, context menus, range selection, and a marker creation trigger.
 
-<ComponentPreview
-  name="timeline-without-sidebar"
-  preview={`<TimelineProvider range={range}>
+<TimelineWithoutSidebarStory.WithControl />
+
+```tsx
+<TimelineProvider range={range}>
   <TimelineContent>
     <TimelineRangeHeader />
     <TimelineList>
@@ -119,16 +137,17 @@ A full timeline with draggable items, context menus, range selection, and a mark
     </TimelineToolbar>
     <TimelineToday />
   </TimelineContent>
-</TimelineProvider>`}
-/>
+</TimelineProvider>
+```
 
 ### With Sidebar
 
 A timeline with an attached sidebar panel listing all items, plus a header toolbar for opening/closing the sidebar.
 
-<ComponentPreview
-  name="timeline-with-sidebar"
-  preview={`<TimelineProvider range={range}>
+<TimelineWithSidebarStory.WithControl />
+
+```tsx
+<TimelineProvider range={range}>
   <TimelineContent>
     <TimelineRangeHeader />
     <TimelineList>
@@ -160,8 +179,8 @@ A timeline with an attached sidebar panel listing all items, plus a header toolb
       ))}
     </TimelineSidebarBody>
   </TimelineSidebar>
-</TimelineProvider>`}
-/>
+</TimelineProvider>
+```
 
 ## Controlled navigation
 
@@ -181,18 +200,18 @@ the scrollable range is clamped and its actual visible date is reported.
 
 Root provider that manages timeline state, scroll position, and CSS variables.
 
-| Prop           | Type                   | Default     | Description                                                   |
-| -------------- | ---------------------- | ----------- | ------------------------------------------------------------- |
-| `range`        | `TimelineRange`        | `"monthly"` | The active range granularity.                                 |
-| `anchorDate` | `number` | - | Controlled center timestamp. |
-| `defaultAnchorDate` | `number` | Today | Initial center timestamp. |
-| `onAnchorDateChange` | `(date: number) => void` | - | Receives the viewed timestamp after user scrolling. |
-| `timeZone` | `string` | Browser zone | IANA timezone used to display dates. |
-| `zoom`         | `number`               | `100`       | Zoom level as a percentage.                                   |
-| `startDate`    | `number \| null`       | -           | Override the timeline start date (timestamp).                 |
-| `endDate`      | `number \| null`       | -           | Override the timeline end date (timestamp).                   |
-| `sidebarWidth` | `number`               | -           | Controlled sidebar width in pixels. Auto-detected if omitted. |
-| `onAddItem`    | `(ts: number) => void` | -           | Handler called when clicking to add a new item.               |
+| Prop                 | Type                     | Default      | Description                                                   |
+| -------------------- | ------------------------ | ------------ | ------------------------------------------------------------- |
+| `range`              | `TimelineRange`          | `"monthly"`  | The active range granularity.                                 |
+| `anchorDate`         | `number`                 | -            | Controlled center timestamp.                                  |
+| `defaultAnchorDate`  | `number`                 | Today        | Initial center timestamp.                                     |
+| `onAnchorDateChange` | `(date: number) => void` | -            | Receives the viewed timestamp after user scrolling.           |
+| `timeZone`           | `string`                 | Browser zone | IANA timezone used to display dates.                          |
+| `zoom`               | `number`                 | `100`        | Zoom level as a percentage.                                   |
+| `startDate`          | `number \| null`         | -            | Override the timeline start date (timestamp).                 |
+| `endDate`            | `number \| null`         | -            | Override the timeline end date (timestamp).                   |
+| `sidebarWidth`       | `number`                 | -            | Controlled sidebar width in pixels. Auto-detected if omitted. |
+| `onAddItem`          | `(ts: number) => void`   | -            | Handler called when clicking to add a new item.               |
 
 ### TimelineContent
 

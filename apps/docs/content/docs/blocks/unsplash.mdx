@@ -3,14 +3,33 @@ title: Unsplash
 description: A search-enabled autocomplete grid for browsing and selecting Unsplash images.
 ---
 
-<ComponentPreview
-  name="unsplash-default"
-  preview={`<Unsplash apiKey={UNSPLASH_ACCESS_KEY} onSelect={setImage} />`}
-/>
+import { story as UnsplashDefaultStory } from "@/stories/registry/unsplash-default.story";
+import { story as UnsplashSearchStory } from "@/stories/registry/unsplash-search.story";
+
+<UnsplashDefaultStory.WithControl />
+
+```tsx
+<Unsplash apiKey={UNSPLASH_ACCESS_KEY} onSelect={setImage} />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="unsplash-default" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/ui
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/unsplash-default.json
+```
+
+</Tab>
+</Tabs>
 
 ## Examples
 
@@ -20,13 +39,13 @@ description: A search-enabled autocomplete grid for browsing and selecting Unspl
 
 The picker opens inline, loads a default Unsplash collection, and searches remotely as the input changes.
 
-<ComponentPreview name="unsplash-default" />
+<UnsplashDefaultStory.WithControl />
 
 ### Controlled Selection
 
 Use `onSelect` to receive the full Unsplash image object and decide which URL size to store.
 
-<ComponentPreview name="unsplash-search" />
+<UnsplashSearchStory.WithControl />
 
 ## API Reference
 

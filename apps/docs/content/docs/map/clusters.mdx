@@ -3,14 +3,32 @@ title: Clusters
 description: Cluster GeoJSON points into scalable circle layers.
 ---
 
-<ComponentPreview
-  name="map-cluster-layer"
-  preview={`<MapClusterLayer data={pointsData} />`}
-/>
+import { story as MapClusterLayerStory } from "@/stories/registry/map-cluster-layer.story";
+
+<MapClusterLayerStory.WithControl />
+
+```tsx
+<MapClusterLayer data={pointsData} />
+```
 
 ## Installation
 
-<Installation packages="@notion-kit/map" registryName="map-cluster-layer" />
+<Tabs items={["Package", "Registry"]}>
+<Tab value="Package">
+
+```sh
+pnpm add @notion-kit/map
+```
+
+</Tab>
+<Tab value="Registry">
+
+```sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/map-cluster-layer.json
+```
+
+</Tab>
+</Tabs>
 
 ## API Reference
 

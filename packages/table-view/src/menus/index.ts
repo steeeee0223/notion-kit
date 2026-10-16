@@ -10,7 +10,7 @@ export * from "./table-view-menu";
 export * from "./types-menu";
 
 /**
- * export for storybook only
+ * export for development examples only
  */
 export { DateConfigMenu } from "../plugins/date/date-config-menu";
 export { NumberConfigMenu } from "../plugins/number/number-config-menu";
