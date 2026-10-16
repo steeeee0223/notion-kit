@@ -6,9 +6,10 @@ import type { RowInstance } from "@notion-kit/table-hook";
 import {
   Button,
   Checkbox,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuFilter,
+  DropdownMenuTrigger,
   Sortable,
   TooltipDescription,
   TooltipPreset,
@@ -63,31 +64,36 @@ export function RowActionGroup({ className, row }: RowActionGroupProps) {
           <Icon.Plus className="size-3.5 fill-icon" />
         </Button>
       </TooltipPreset>
-      <Popover open={menuOpen} onOpenChange={setMenuOpen}>
-        <TooltipPreset
-          description={
-            <>
-              <TooltipDescription text="Drag to move" />
-              <TooltipDescription text="Click to open menu" />
-            </>
-          }
-          className="text-center"
-        >
-          <PopoverTrigger
-            ref={triggerRef}
-            render={
-              <Sortable.Handle aria-label="Row actions" className="h-6 w-4.5" />
+      <DropdownMenuFilter>
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <TooltipPreset
+            description={
+              <>
+                <TooltipDescription text="Drag to move" />
+                <TooltipDescription text="Click to open menu" />
+              </>
             }
-          />
-        </TooltipPreset>
-        <PopoverContent className="w-[265px]" side="right" align="start">
-          <RowActionMenu
-            rowId={row.id}
-            onClose={() => setMenuOpen(false)}
-            getReturnFocus={() => triggerRef.current}
-          />
-        </PopoverContent>
-      </Popover>
+            className="text-center"
+          >
+            <DropdownMenuTrigger
+              ref={triggerRef}
+              render={
+                <Sortable.Handle
+                  aria-label="Row actions"
+                  className="h-6 w-4.5"
+                />
+              }
+            />
+          </TooltipPreset>
+          <DropdownMenuContent className="w-[265px]" side="right" align="start">
+            <RowActionMenu
+              rowId={row.id}
+              onClose={() => setMenuOpen(false)}
+              getReturnFocus={() => triggerRef.current}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </DropdownMenuFilter>
       <Checkbox
         id={`row-select-${row.id}`}
         size="sm"

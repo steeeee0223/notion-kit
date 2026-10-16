@@ -12,7 +12,7 @@ import {
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
-import { TableViewMenu } from "@/menus";
+import { TableViewMenu, TableViewMenuRoot } from "@/menus";
 import {
   FILTER_MENU_TOOLBAR_TRIGGER_ID,
   SORT_MENU_TOOLBAR_TRIGGER_ID,
@@ -36,9 +36,8 @@ export function Toolbar({ className }: ToolbarProps) {
 
 function ToolbarContent({ className }: ToolbarProps) {
   const settingsRef = useRef<HTMLButtonElement>(null);
-  const { table } = useTableViewCtx();
   const { filterMenu, sortMenu } = useMenuCoordinator();
-  const tableMenu = table.getTableMenuState();
+  const [settingsHandle] = useState(() => DropdownMenu.createHandle());
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
@@ -79,31 +78,29 @@ function ToolbarContent({ className }: ToolbarProps) {
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
         label="Open as full page"
       />
-      <DropdownMenu
-        open={tableMenu.open}
-        onOpenChange={(open) =>
-          table.setTableMenuState({
-            open,
-            page: open ? tableMenu.page : null,
-          })
+      <DropdownMenuTrigger
+        handle={settingsHandle}
+        render={
+          <Button
+            variant="nav-icon"
+            aria-label="Settings"
+            ref={settingsRef}
+            className="[&_svg]:fill-current"
+          >
+            <Icon.SlidersSmall />
+          </Button>
         }
-      >
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="nav-icon"
-              aria-label="Settings"
-              ref={settingsRef}
-              className="[&_svg]:fill-current"
-            >
-              <Icon.SlidersSmall />
-            </Button>
-          }
-        />
-        <DropdownMenuContent collisionPadding={12} className="w-72">
-          <TableViewMenu getReturnFocus={() => settingsRef.current} />
-        </DropdownMenuContent>
-      </DropdownMenu>
+      />
+      <TableViewMenuRoot handle={settingsHandle}>
+        {(query) => (
+          <DropdownMenuContent collisionPadding={12} className="w-72">
+            <TableViewMenu
+              query={query}
+              getReturnFocus={() => settingsRef.current}
+            />
+          </DropdownMenuContent>
+        )}
+      </TableViewMenuRoot>
       <Button variant="blue" size="sm" className="h-7 px-2">
         New
         <Icon.Chevron side="down" className="size-3 fill-current" />

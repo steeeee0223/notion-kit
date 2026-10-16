@@ -12,6 +12,7 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuFilter,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuTrigger,
@@ -60,6 +61,7 @@ export const TableViewMenu: Story = {
     const { table } = useTableViewCtx();
     const triggerRef = useRef<HTMLButtonElement>(null);
     const openingLogRef = useRef(false);
+    const [settingsHandle] = useState(() => DropdownMenu.createHandle());
 
     return (
       <table.Subscribe
@@ -70,42 +72,40 @@ export const TableViewMenu: Story = {
           groupingState: state.groupingState,
         })}
       >
-        {({ menu, tableGlobal, grouping, groupingState }) => (
+        {({ tableGlobal, grouping, groupingState }) => (
           <div className="grid grid-cols-2 justify-between gap-4 p-20">
-            <DropdownMenu
-              open={menu.open}
-              onOpenChange={(open) => {
-                if (open) openingLogRef.current = false;
-                table.setTableMenuState({ open, page: null });
-              }}
-            >
-              <DropdownMenuTrigger
-                ref={triggerRef}
-                render={
-                  <Button
-                    variant="nav-icon"
-                    aria-label="Settings"
-                    className="[&_svg]:fill-current"
-                  >
-                    <Icon.SlidersSmall />
-                  </Button>
-                }
-              />
-              <DropdownMenuContent
-                collisionPadding={12}
-                className="w-72"
-                finalFocus={() =>
-                  openingLogRef.current ? false : triggerRef.current
-                }
-              >
-                <Menu.TableViewMenu
-                  getReturnFocus={() => {
-                    openingLogRef.current = true;
-                    return triggerRef.current;
-                  }}
-                />
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <DropdownMenuTrigger
+              handle={settingsHandle}
+              ref={triggerRef}
+              render={
+                <Button
+                  variant="nav-icon"
+                  aria-label="Settings"
+                  className="[&_svg]:fill-current"
+                >
+                  <Icon.SlidersSmall />
+                </Button>
+              }
+            />
+            <Menu.TableViewMenuRoot handle={settingsHandle}>
+              {(query) => (
+                <DropdownMenuContent
+                  collisionPadding={12}
+                  className="w-72"
+                  finalFocus={() =>
+                    openingLogRef.current ? false : triggerRef.current
+                  }
+                >
+                  <Menu.TableViewMenu
+                    query={query}
+                    getReturnFocus={() => {
+                      openingLogRef.current = true;
+                      return triggerRef.current;
+                    }}
+                  />
+                </DropdownMenuContent>
+              )}
+            </Menu.TableViewMenuRoot>
             <div className="flex w-full flex-col gap-3">
               <Code title="Table global" codeObject={tableGlobal} />
               <Code title="Grouping" codeObject={grouping} />
@@ -252,20 +252,23 @@ export const PropMenu: Story = {
 
 export const TypesMenu: Story = {
   render: () => {
+    const [query, setQuery] = useState("");
     return (
       <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button variant="hint" size="sm" className="w-30">
-                Types menu
-              </Button>
-            }
-          />
-          <DropdownMenuContent collisionPadding={12} className="w-60">
-            <Menu.TypesMenu menu={null} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <DropdownMenuFilter value={query} onValueChange={setQuery}>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="hint" size="sm" className="w-30">
+                  Types menu
+                </Button>
+              }
+            />
+            <DropdownMenuContent collisionPadding={12} className="w-60">
+              <Menu.TypesMenu query={query} menu={null} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </DropdownMenuFilter>
       </div>
     );
   },
@@ -349,29 +352,35 @@ export const RowActionMenu: Story = {
 
     return (
       <div className="grid grid-cols-2 justify-between gap-4 p-20">
-        <Popover open={open} onOpenChange={setOpen}>
-          <TooltipPreset description="Click to open menu">
-            <PopoverTrigger
-              ref={triggerRef}
-              render={
-                <Button
-                  variant="hint"
-                  aria-label="Row actions"
-                  className="h-6 w-4.5"
-                >
-                  <Icon.DragHandle className="size-3.5 fill-icon" />
-                </Button>
-              }
-            />
-          </TooltipPreset>
-          <PopoverContent className="w-[265px]" side="right" align="start">
-            <Menu.RowActionMenu
-              rowId={mockData[0]!.id}
-              onClose={() => setOpen(false)}
-              getReturnFocus={() => triggerRef.current}
-            />
-          </PopoverContent>
-        </Popover>
+        <DropdownMenuFilter>
+          <DropdownMenu open={open} onOpenChange={setOpen}>
+            <TooltipPreset description="Click to open menu">
+              <DropdownMenuTrigger
+                ref={triggerRef}
+                render={
+                  <Button
+                    variant="hint"
+                    aria-label="Row actions"
+                    className="h-6 w-4.5"
+                  >
+                    <Icon.DragHandle className="size-3.5 fill-icon" />
+                  </Button>
+                }
+              />
+            </TooltipPreset>
+            <DropdownMenuContent
+              className="w-[265px]"
+              side="right"
+              align="start"
+            >
+              <Menu.RowActionMenu
+                rowId={mockData[0]!.id}
+                onClose={() => setOpen(false)}
+                getReturnFocus={() => triggerRef.current}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </DropdownMenuFilter>
       </div>
     );
   },

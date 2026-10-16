@@ -9,7 +9,7 @@ import { popup, positioner } from "./design";
 import * as _Icon from "./icons";
 import { MenuGroup, MenuItem, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import { inputVariants } from "./variants";
+import { inputVariants, type InputVariants } from "./variants";
 
 interface AutocompleteGroupItem<ItemValue> {
   items: readonly ItemValue[];
@@ -45,26 +45,40 @@ function AutocompleteInputGroup({
   );
 }
 
+type AutocompleteInputProps = Omit<
+  AutocompletePrimitive.Input.Props,
+  "className"
+> & {
+  className?: string;
+  variant?: InputVariants["variant"];
+  classNames?: { wrapper?: string };
+};
+
 function AutocompleteInput({
   className,
+  classNames,
+  variant,
   ...props
-}: AutocompletePrimitive.Input.Props) {
+}: AutocompleteInputProps) {
   return (
     <div
-      data-slot="dropdown-menu-input-wrapper"
-      className="sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2"
+      data-slot="autocomplete-input-wrapper"
+      className={cn(
+        "sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2",
+        classNames?.wrapper,
+      )}
     >
-      <div className={cn(inputVariants({ className }))}>
+      <div className={cn(inputVariants({ variant, className }))}>
         <div className="mr-1.5">
           <_Icon.Search />
         </div>
         <AutocompletePrimitive.Input
-          data-slot="dropdown-menu-input"
+          data-slot="autocomplete-input"
           className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
           {...props}
         />
         <AutocompletePrimitive.Clear
-          data-slot="dropdown-menu-clear"
+          data-slot="autocomplete-clear"
           aria-label="Clear input"
           render={
             <Button type="button" variant="close" size="circle">
@@ -332,6 +346,7 @@ export {
   useAutocompleteFilteredItems,
 };
 export type {
+  AutocompleteInputProps,
   AutocompleteContentProps,
   AutocompleteItemProps,
   AutocompleteLabelProps,

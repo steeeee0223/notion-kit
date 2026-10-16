@@ -25,14 +25,14 @@ export class RowActionsObject {
   }
 
   searchInput() {
-    return this.root.getByRole("combobox", {
+    return this.root.getByRole("searchbox", {
       name: "Search actions",
       exact: true,
     });
   }
 
   option(name: AccessibleName) {
-    return this.root.getByRole("option", { name });
+    return this.root.getByRole("menuitem", { name });
   }
 
   async search(value: string) {

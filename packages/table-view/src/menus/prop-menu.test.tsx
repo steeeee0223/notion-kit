@@ -397,7 +397,7 @@ it.each([
       tableView.user,
       "New property",
     );
-    await tableView.user.click(create.option("Number"));
+    await tableView.user.click(create.item("Number"));
 
     // Assert
     const change = lastResourceChange<ColumnInfo[]>(onPropertiesChange);
@@ -459,7 +459,7 @@ it("PropertyMenu_ChangeType_ReportsExactTypeAndCellBoundary", async () => {
     tableView.user,
     "Change property type",
   );
-  await tableView.user.click(types.option("Checkbox"));
+  await tableView.user.click(types.item("Checkbox"));
 
   // Assert
   const propertiesChange = lastResourceChange(onPropertiesChange);

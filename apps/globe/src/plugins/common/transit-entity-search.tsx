@@ -47,7 +47,6 @@ export function TransitEntitySearch<T>({
   onSelect,
 }: TransitEntitySearchProps<T>) {
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const groups = useMemo(
     () => [
       { label: "Recent", items: recentItems },
@@ -58,7 +57,6 @@ export function TransitEntitySearch<T>({
 
   function handleSelect(item: TransitSearchItem<T>) {
     onSelect(item.value);
-    setSearch("");
     setOpen(false);
   }
 
@@ -77,8 +75,6 @@ export function TransitEntitySearch<T>({
         <Autocomplete<TransitSearchItem<T>>
           items={groups}
           itemToStringValue={(item) => item.searchText}
-          value={search}
-          onValueChange={setSearch}
           open
           autoHighlight="always"
           openOnInputClick

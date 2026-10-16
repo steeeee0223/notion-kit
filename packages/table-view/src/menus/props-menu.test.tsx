@@ -43,6 +43,31 @@ describe("PropsMenu", () => {
     await properties.search("nonexistent");
 
     expect(properties.noResults()).toBeVisible();
+    expect(properties.queryGroupHeader()).not.toBeInTheDocument();
+    expect(properties.newPropertyItem()).toBeVisible();
+    expect(properties.helpItem()).toBeVisible();
+  });
+
+  it("PropertiesMenu_ClearSearch_RestoresPropertiesWithoutClosing", async () => {
+    const { properties } = await openPropertiesMenu();
+    await properties.search("Name");
+    expect(properties.queryProperty("Done")).not.toBeInTheDocument();
+    await properties.clearSearch();
+    expect(properties.searchInput()).toHaveValue("");
+    expect(properties.property("Done")).toBeVisible();
+    expect(properties.heading()).toBeVisible();
+  });
+
+  it("PropertiesMenu_NavigateBetweenSearchPages_ResetsQueryAndKeepsHostOpen", async () => {
+    const { properties } = await openPropertiesMenu();
+    await properties.search("Name");
+    const types = await properties.openNewProperty();
+    expect(types.searchInput()).toHaveValue("");
+    const next = await types.backToProperties();
+    expect(next.searchInput()).toHaveValue("");
+    expect(next.property("Done")).toBeVisible();
+    const settings = await next.backToViewSettings();
+    expect(settings.heading("View Settings")).toBeVisible();
   });
 
   it("PropertiesMenu_VisibilityToggle_HidesNamedColumnAndUpdatesVisibilityState", async () => {

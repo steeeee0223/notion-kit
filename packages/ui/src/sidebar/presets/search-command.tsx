@@ -55,8 +55,6 @@ export function SearchCommand({
       itemToStringValue={(page) => page.title}
     >
       <CommandInput
-        search
-        clear
         variant="flat"
         placeholder={`Search in ${workspaceName}...`}
         classNames={{

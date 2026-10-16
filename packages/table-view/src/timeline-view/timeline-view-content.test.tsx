@@ -202,7 +202,7 @@ it("TimelineUnlockedCard_ContextMenuTargetsTheMatchingRow", async () => {
   const secondCard = timeline.itemCard("second");
 
   fireEvent.contextMenu(secondCard, { clientX: 40, clientY: 20 });
-  fireEvent.click(await screen.findByRole("option", { name: "Delete" }));
+  fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }));
 
   await waitFor(() => expect(onDataChange).toHaveBeenCalledOnce());
   expect(onDataChange.mock.lastCall?.[0].action).toMatchObject({

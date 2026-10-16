@@ -22,7 +22,7 @@ async function createPropertyFromOpenTypeMenu(
   const menu = MenuSurfaceObject.withHeading(table.page, "New property");
   const input = menu.root.getByPlaceholder("Search or add new property");
   await input.fill(name);
-  await menu.root.getByRole("option", { name, exact: true }).click();
+  await menu.root.getByRole("menuitem", { name, exact: true }).click();
   return MenuSurfaceObject.withHeading(table.page, "Edit property");
 }
 

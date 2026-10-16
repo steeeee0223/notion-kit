@@ -2,8 +2,8 @@
 title: Dropdown Menu
 description: Displays a menu of actions or options that the user can choose from, triggered by a button.
 links:
-  - label: Radix UI
-    href: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
+  - label: Base UI
+    href: https://base-ui.com/react/components/menu
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/dropdown-menu
 ---
@@ -65,6 +65,37 @@ A dropdown menu with groups, shortcuts, submenus, and a warning item.
   </DropdownMenuContent>
 </DropdownMenu>`}
 />
+
+### Filtering
+
+Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Place the input outside `DropdownMenuList`, which contains the groups and actions. The list adds no layout styling.
+
+<ComponentPreview
+  name="dropdown-menu-filter"
+  preview={`<DropdownMenuFilter>
+  <DropdownMenu>
+    <DropdownMenuTrigger render={<Button>Open</Button>} />
+    <DropdownMenuContent>
+      <DropdownMenuInput aria-label="Search actions" placeholder="Search actions..." />
+      <DropdownMenuEmpty>No matches found.</DropdownMenuEmpty>
+      <DropdownMenuList>
+        <DropdownMenuGroup>
+          <DropdownMenuItem label="Profile" />
+          <DropdownMenuItem label="Settings" />
+        </DropdownMenuGroup>
+      </DropdownMenuList>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</DropdownMenuFilter>`}
+/>
+
+`DropdownMenuFilter` forwards Base UI FilterProvider props and uses its defaults. Prefer uncontrolled query state. Pass `value` and `onValueChange` when the query also drives application behavior. Use `filter={null}` when the application renders its own matching rows.
+
+Keep each label inside its `DropdownMenuGroup`. Filtering automatically hides a group and its label when none of its items match. Clearing the search restores them.
+
+`DropdownMenuInput` includes native clearing. Its optional `searchIcon` prop adds the search decoration; it defaults to false. Give the input a fixed accessible name.
+
+Base UI renders a filtered popup as a dialog, its input as a searchbox, and its list as a menu. Let the library own these roles and keyboard behavior. The same provider and content work under `ContextMenu`; wrap each searchable submenu in its own provider.
 
 ### Checkbox Items
 

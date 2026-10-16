@@ -24,6 +24,7 @@ function DropdownMenu({ ...props }: Menu.Root.Props) {
 }
 
 DropdownMenu.createHandle = Menu.createHandle;
+DropdownMenu.useFilter = Menu.useFilter;
 
 function DropdownMenuPortal({ ...props }: Menu.Portal.Props) {
   return <Menu.Portal data-slot="dropdown-menu-portal" {...props} />;
@@ -303,13 +304,27 @@ function DropdownMenuFilter({ ...props }: Menu.FilterProvider.Props) {
   return <Menu.FilterProvider data-slot="dropdown-menu-filter" {...props} />;
 }
 
-function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
+type DropdownMenuInputProps = Omit<Menu.Input.Props, "className"> & {
+  className?: string;
+  searchIcon?: boolean;
+};
+
+function DropdownMenuInput({
+  className,
+  searchIcon = false,
+  ...props
+}: DropdownMenuInputProps) {
   return (
     <div
       data-slot="dropdown-menu-input-wrapper"
       className="sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2"
     >
       <div className={cn(inputVariants({ className }))}>
+        {searchIcon && (
+          <div className="mr-1.5">
+            <_Icon.Search />
+          </div>
+        )}
         <Menu.Input
           data-slot="dropdown-menu-input"
           className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
@@ -327,6 +342,10 @@ function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
       </div>
     </div>
   );
+}
+
+function DropdownMenuList({ ...props }: Menu.List.Props) {
+  return <Menu.List data-slot="dropdown-menu-list" {...props} />;
 }
 
 function DropdownMenuEmpty({ className, ...props }: Menu.Empty.Props) {
@@ -349,6 +368,7 @@ export {
   DropdownMenuEmpty,
   DropdownMenuFilter,
   DropdownMenuInput,
+  DropdownMenuList,
   DropdownMenuItem,
   DropdownMenuCheckboxItem,
   DropdownMenuRadioItem,
@@ -362,3 +382,4 @@ export {
   DropdownMenuRadioGroup,
 };
 export type DropdownMenuHandle<Payload = unknown> = Menu.Handle<Payload>;
+export type { DropdownMenuInputProps };

@@ -12,7 +12,11 @@ export class MenuSurfaceObject {
     const heading = page.getByRole("heading", { name });
     return new MenuSurfaceObject(
       page,
-      page.getByRole("menu").filter({ has: heading }).last(),
+      page
+        .getByRole("menu")
+        .or(page.getByRole("dialog"))
+        .filter({ has: heading })
+        .last(),
     );
   }
 

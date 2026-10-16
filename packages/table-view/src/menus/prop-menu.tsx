@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -8,6 +9,7 @@ import {
 } from "@notion-kit/table-hook";
 import {
   DropdownMenuContent,
+  DropdownMenuFilter,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSub,
@@ -55,6 +57,7 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId, view }: PropMenuProps) {
+  const [typeMenuOpen, setTypeMenuOpen] = useState(false);
   const { filterMenu } = useMenuCoordinator();
   const { table, plugins } = useTableViewCtx();
 
@@ -116,15 +119,21 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           column,
         })}
         {info.type !== "title" && (
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger
-              icon={<Icon.ArrowSquarePathUpDown />}
-              label="Change type"
-            />
-            <DropdownMenuContent sideOffset={-4} className="w-50">
-              <TypesMenu propId={propId} menu={null} />
-            </DropdownMenuContent>
-          </DropdownMenuSub>
+          <DropdownMenuFilter>
+            <DropdownMenuSub open={typeMenuOpen} onOpenChange={setTypeMenuOpen}>
+              <DropdownMenuSubTrigger
+                icon={<Icon.ArrowSquarePathUpDown />}
+                label="Change type"
+              />
+              <DropdownMenuContent sideOffset={-4} className="w-50">
+                <TypesMenu
+                  propId={propId}
+                  menu={null}
+                  onNavigate={() => setTypeMenuOpen(false)}
+                />
+              </DropdownMenuContent>
+            </DropdownMenuSub>
+          </DropdownMenuFilter>
         )}
       </DropdownMenuGroup>
       {view === "table" && (

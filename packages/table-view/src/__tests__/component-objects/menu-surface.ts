@@ -4,7 +4,8 @@ import type { UserEvent } from "@testing-library/user-event";
 async function findMenuRootByHeading(name: string) {
   return waitFor(() => {
     const root = screen
-      .getAllByRole("menu")
+      .queryAllByRole("dialog")
+      .concat(screen.queryAllByRole("menu"))
       .find((menu) => within(menu).queryByRole("heading", { name }));
 
     if (!root) throw new Error(`Expected an open menu headed "${name}"`);
@@ -15,7 +16,8 @@ async function findMenuRootByHeading(name: string) {
 async function findMenuRootByItem(name: string | RegExp) {
   return waitFor(() => {
     const root = screen
-      .getAllByRole("menu")
+      .queryAllByRole("dialog")
+      .concat(screen.queryAllByRole("menu"))
       .find((menu) => within(menu).queryByRole("menuitem", { name }));
 
     if (!root) throw new Error(`Expected an open menu containing "${name}"`);

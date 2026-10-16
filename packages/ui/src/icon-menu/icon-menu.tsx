@@ -41,7 +41,6 @@ function IconMenuContent({
 }) {
   // Filter out factories that are hidden (e.g. upload factory with no stored icons)
   const visibleFactories = factories.filter((f) => !f.hidden);
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState(visibleFactories[0]?.id ?? "");
 
   const activeFactory = factories.find((f) => f.id === activeTab);
@@ -68,7 +67,6 @@ function IconMenuContent({
       value={activeTab}
       onValueChange={(value) => {
         setActiveTab(value);
-        setSearchQuery("");
       }}
       className="relative my-0.5 w-full"
     >
@@ -100,8 +98,6 @@ function IconMenuContent({
         >
           <IconGridMenu
             factory={factory}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
             onSelect={onSelect}
             onRandomSelect={handleRandomSelect}
           />

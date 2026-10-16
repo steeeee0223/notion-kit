@@ -5,22 +5,18 @@ import type { ColumnSort } from "@tanstack/react-table";
 import { Icon } from "@notion-kit/icons";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Autocomplete,
-  AutocompleteCollection,
-  AutocompleteContent,
-  AutocompleteEmpty,
-  AutocompleteGroup,
-  AutocompleteInput,
-  AutocompleteItem,
-  AutocompleteList,
   Button,
+  DropdownMenuContent,
+  DropdownMenuEmpty,
+  DropdownMenuFilter,
   DropdownMenuGroup,
+  DropdownMenuInput,
   DropdownMenuItem,
+  DropdownMenuList,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   getSortableItemsAfterDrag,
   MenuItemAction,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectContent,
   SelectGroup,
@@ -62,23 +58,25 @@ export function SortMenu() {
         </table.Subscribe>
       </DropdownMenuGroup>
       <DropdownMenuGroup>
-        <Popover open={addingSort} onOpenChange={setAddingSort}>
-          <PopoverTrigger
-            nativeButton={false}
-            role="menuitem" // override the default role: button
-            render={
-              <DropdownMenuItem
-                closeOnClick={false}
-                variant="secondary"
-                icon={<Icon.Plus className="size-4" />}
-                label="Add sort"
-              />
-            }
-          />
-          <PopoverContent>
-            <PropSelectMenu onSelect={() => setAddingSort(false)} />
-          </PopoverContent>
-        </Popover>
+        <DropdownMenuFilter>
+          <DropdownMenuSub open={addingSort} onOpenChange={setAddingSort}>
+            <DropdownMenuSubTrigger
+              variant="secondary"
+              icon={<Icon.Plus className="size-4" />}
+              label="Add sort"
+              chevron={false}
+              openOnHover={false}
+            />
+            <DropdownMenuContent
+              side="bottom"
+              align="center"
+              sideOffset={4}
+              className="w-72 overflow-hidden"
+            >
+              <PropSelectMenu onSelect={() => setAddingSort(false)} />
+            </DropdownMenuContent>
+          </DropdownMenuSub>
+        </DropdownMenuFilter>
         <DropdownMenuItem
           closeOnClick={false}
           variant="warning"
@@ -212,45 +210,37 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
         const sortedProps = new Set(sorting.map((s) => s.id));
 
         return (
-          <Autocomplete
-            items={columns}
-            itemToStringValue={(column) => column.name}
-            open
-            autoHighlight="always"
-            openOnInputClick
-          >
-            <AutocompleteInput
+          <>
+            <DropdownMenuInput
               placeholder="Search for a property..."
-              onKeyDown={(event) => event.stopPropagation()}
+              searchIcon
+              aria-label="Search sort properties"
             />
-            <AutocompleteContent variant="inline">
-              <AutocompleteList>
-                <AutocompleteGroup className="h-40 overflow-y-auto">
-                  <AutocompleteCollection>
-                    {(column: (typeof columns)[number]) => (
-                      <AutocompleteItem
-                        key={column.id}
-                        value={column}
-                        onClick={() => selectProp(column.id)}
-                        disabled={sortedProps.has(column.id)}
-                        icon={
-                          column.icon ? (
-                            <IconBlock icon={column.icon} />
-                          ) : (
-                            <DefaultIcon type={column.type} />
-                          )
-                        }
-                        label={column.name}
-                      />
-                    )}
-                  </AutocompleteCollection>
-                </AutocompleteGroup>
-              </AutocompleteList>
-              <AutocompleteEmpty className="px-3 text-start text-muted">
-                No results
-              </AutocompleteEmpty>
-            </AutocompleteContent>
-          </Autocomplete>
+
+            <DropdownMenuList className="max-h-75 overflow-x-hidden overflow-y-auto has-[[role=menuitem]]:h-40">
+              <DropdownMenuGroup>
+                {columns.map((column) => (
+                  <DropdownMenuItem
+                    key={column.id}
+                    closeOnClick={false}
+                    onClick={() => selectProp(column.id)}
+                    disabled={sortedProps.has(column.id)}
+                    icon={
+                      column.icon ? (
+                        <IconBlock icon={column.icon} />
+                      ) : (
+                        <DefaultIcon type={column.type} />
+                      )
+                    }
+                    label={column.name}
+                  />
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuList>
+            <DropdownMenuEmpty className="px-3 text-start text-muted">
+              No results
+            </DropdownMenuEmpty>
+          </>
         );
       }}
     </table.Subscribe>

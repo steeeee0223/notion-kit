@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 import { flexRender } from "@tanstack/react-table";
 
@@ -8,10 +8,8 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuFilter,
   DropdownMenuTrigger,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Sortable,
 } from "@notion-kit/ui/primitives";
 
@@ -188,20 +186,52 @@ function TableHeaderRowContent() {
         </div>
       </Sortable.List>
       <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-        {(locked) =>
-          !locked && (
-            <Popover>
-              <PopoverTrigger
-                render={<TableHeaderActionCell icon={<Icon.Plus />} />}
-              />
-              <PopoverContent sideOffset={0} collisionPadding={12}>
-                <TypesMenu menu={TableViewMenuPage.CreateProp} />
-              </PopoverContent>
-            </Popover>
-          )
-        }
+        {(locked) => !locked && <HeaderTypesMenu />}
       </table.Subscribe>
-      <DropdownMenu>
+      <HeaderPropsMenu />
+    </Row.Root>
+  );
+}
+
+function HeaderTypesMenu() {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const changeOpen = (open: boolean) => {
+    setOpen(open);
+    if (!open) setQuery("");
+  };
+  return (
+    <DropdownMenuFilter value={query} onValueChange={setQuery}>
+      <DropdownMenu open={open} onOpenChange={changeOpen}>
+        <DropdownMenuTrigger
+          render={<TableHeaderActionCell icon={<Icon.Plus />} />}
+        />
+        <DropdownMenuContent
+          sideOffset={0}
+          collisionPadding={12}
+          className="w-72 overflow-hidden"
+        >
+          <TypesMenu
+            query={query}
+            menu={TableViewMenuPage.CreateProp}
+            onNavigate={() => changeOpen(false)}
+          />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </DropdownMenuFilter>
+  );
+}
+
+function HeaderPropsMenu() {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const changeOpen = (open: boolean) => {
+    setOpen(open);
+    if (!open) setQuery("");
+  };
+  return (
+    <DropdownMenuFilter value={query} onValueChange={setQuery} filter={null}>
+      <DropdownMenu open={open} onOpenChange={changeOpen}>
         <DropdownMenuTrigger
           render={<TableHeaderActionCell icon={<Icon.Dots />} />}
         />
@@ -210,9 +240,9 @@ function TableHeaderRowContent() {
           sideOffset={0}
           collisionPadding={12}
         >
-          <PropsMenu />
+          <PropsMenu query={query} onNavigate={() => changeOpen(false)} />
         </DropdownMenuContent>
       </DropdownMenu>
-    </Row.Root>
+    </DropdownMenuFilter>
   );
 }

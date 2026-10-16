@@ -6,6 +6,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuTrigger,
+  DropdownMenuFilter,
 } from "@notion-kit/ui/primitives";
 import { TimelineAddFeatureTrack, TimelineRow } from "@notion-kit/ui/timeline";
 
@@ -94,26 +95,28 @@ export function TimelineTrackRow({ row, propertyId }: TimelineTrackRowProps) {
                   ) : (
                     <>
                       <TimelineRow.Resize direction="start" />
-                      <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                        <ContextMenuTrigger
-                          ref={triggerRef}
-                          render={
-                            <TimelineRow.Item
-                              aria-label={title}
-                              onClick={() => table.openRow(row.id)}
+                      <DropdownMenuFilter>
+                        <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
+                          <ContextMenuTrigger
+                            ref={triggerRef}
+                            render={
+                              <TimelineRow.Item
+                                aria-label={title}
+                                onClick={() => table.openRow(row.id)}
+                              />
+                            }
+                          >
+                            <TimelineBarContent rowId={row.id} />
+                          </ContextMenuTrigger>
+                          <ContextMenuContent className="w-[265px]">
+                            <RowActionMenu
+                              rowId={row.id}
+                              onClose={() => setMenuOpen(false)}
+                              getReturnFocus={() => triggerRef.current}
                             />
-                          }
-                        >
-                          <TimelineBarContent rowId={row.id} />
-                        </ContextMenuTrigger>
-                        <ContextMenuContent className="w-[265px]">
-                          <RowActionMenu
-                            rowId={row.id}
-                            onClose={() => setMenuOpen(false)}
-                            getReturnFocus={() => triggerRef.current}
-                          />
-                        </ContextMenuContent>
-                      </ContextMenu>
+                          </ContextMenuContent>
+                        </ContextMenu>
+                      </DropdownMenuFilter>
                       <TimelineRow.Resize direction="end" />
                     </>
                   )}

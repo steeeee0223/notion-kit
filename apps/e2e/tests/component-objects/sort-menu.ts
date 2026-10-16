@@ -16,7 +16,13 @@ export class SortMenuObject extends MenuSurfaceObject {
   }
 
   searchInput() {
-    return this.page.getByPlaceholder("Search for a property...");
+    return this.addPanel().getByRole("searchbox", {
+      name: "Search sort properties",
+    });
+  }
+
+  addPanel() {
+    return this.page.getByRole("dialog", { name: "Add sort", exact: true });
   }
 
   rule(propertyId: string) {
@@ -36,8 +42,10 @@ export class SortMenuObject extends MenuSurfaceObject {
   async add(propertyName: string) {
     await this.item("Add sort").click();
     await this.searchInput().fill(propertyName);
-    await this.page.getByRole("option", { name: propertyName }).click();
-    await expect(this.page.getByRole("listbox")).toBeHidden();
+    await this.addPanel()
+      .getByRole("menuitem", { name: propertyName, exact: true })
+      .click();
+    await expect(this.addPanel()).toBeHidden();
   }
 
   async setDirection(propertyId: string, next: AccessibleName) {

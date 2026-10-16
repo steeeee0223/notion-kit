@@ -84,14 +84,16 @@ Use `CommandDialog` for command palettes. Use `Autocomplete` directly for popove
 
 ### CommandInput
 
-The command search input. Extends `AutocompleteInput`.
+The command search input extends `AutocompleteInput`, including its built-in search icon and native clear button.
 
-| Prop          | Type                   | Default | Description                                    |
-| ------------- | ---------------------- | ------- | ---------------------------------------------- |
-| `search`      | `boolean`              | -       | Shows the search icon.                         |
-| `clear`       | `boolean`              | -       | Shows the clear affordance when there is text. |
-| `placeholder` | `string`               | -       | Placeholder text for the command input.        |
-| `classNames`  | `{ wrapper?: string }` | -       | Classes for the input wrapper.                 |
+| Prop          | Type                             | Default     | Description                             |
+| ------------- | -------------------------------- | ----------- | --------------------------------------- |
+| `placeholder` | `string`                         | -           | Placeholder text for the command input. |
+| `variant`     | `"default" \| "plain" \| "flat"` | `"default"` | Field styling.                          |
+| `className`   | `string`                         | -           | Classes for the styled field container. |
+| `classNames`  | `{ wrapper?: string }`           | -           | Classes for the outer input wrapper.    |
+
+The former `search` and `clear` props are removed.
 
 ### CommandList
 

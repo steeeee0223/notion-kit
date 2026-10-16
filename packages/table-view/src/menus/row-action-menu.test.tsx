@@ -15,6 +15,8 @@ import {
   vi,
 } from "vitest";
 
+import { DropdownMenu, DropdownMenuFilter } from "@notion-kit/ui/primitives";
+
 import { EditLogDialogObject } from "@/__tests__/component-objects/edit-log-dialog";
 import {
   renderTableView,
@@ -103,12 +105,20 @@ describe("RowActionMenu", () => {
         getRowUrl: (id) => `/${id}`,
         children: (
           <>
-            <section aria-label="First row actions">
-              <RowActionMenu rowId="row1" />
-            </section>
-            <section aria-label="Second row actions">
-              <RowActionMenu rowId="row3" />
-            </section>
+            <DropdownMenuFilter>
+              <DropdownMenu defaultOpen>
+                <section aria-label="First row actions">
+                  <RowActionMenu rowId="row1" />
+                </section>
+              </DropdownMenu>
+            </DropdownMenuFilter>
+            <DropdownMenuFilter>
+              <DropdownMenu defaultOpen>
+                <section aria-label="Second row actions">
+                  <RowActionMenu rowId="row3" />
+                </section>
+              </DropdownMenu>
+            </DropdownMenuFilter>
           </>
         ),
       });
