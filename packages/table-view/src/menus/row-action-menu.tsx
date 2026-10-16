@@ -203,7 +203,7 @@ export function RowActionMenu({
         }}
       />
 
-      <DropdownMenuList className="max-h-75 overflow-x-hidden overflow-y-auto">
+      <DropdownMenuList>
         {groups.map((group, index) => {
           const isLast = groups.length - 1 === index;
 

@@ -84,7 +84,7 @@ export function PropsMenu({
               placeholder="Search for a property..."
             />
 
-            <DropdownMenuList>
+            <DropdownMenuList className="max-h-none overflow-visible">
               <div className="max-h-75 overflow-x-hidden overflow-y-auto">
                 {visibleProps.length > 0 && (
                   <DropdownMenuGroup>

@@ -330,8 +330,14 @@ function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
   );
 }
 
-function DropdownMenuList({ ...props }: Menu.List.Props) {
-  return <Menu.List data-slot="dropdown-menu-list" {...props} />;
+function DropdownMenuList({ className, ...props }: Menu.List.Props) {
+  return (
+    <Menu.List
+      data-slot="dropdown-menu-list"
+      className={cn("max-h-75 overflow-x-hidden overflow-y-auto", className)}
+      {...props}
+    />
+  );
 }
 
 function DropdownMenuEmpty({ className, ...props }: Menu.Empty.Props) {

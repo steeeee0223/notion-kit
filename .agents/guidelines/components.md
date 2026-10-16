@@ -6,7 +6,9 @@ Use these rules when composing UI components or changing shared primitives.
 
 - Compose the project's primitives before building custom controls.
 - Follow the project skill for primitive selection, composition, styling, and accessible names.
-- Prefer existing variants for appearance. Keep layout adjustments local to callers.
+- Use primitive defaults without adding `className` unless a concrete requirement needs different styling.
+- Prefer existing variants when a requirement needs a different appearance. Keep caller-specific layout adjustments local.
+- When shared styling needs improvement, propose an update to the primitive's default classes and obtain approval. Avoid repeating the same adjustment across callers.
 
 ## Preserve Base UI defaults
 

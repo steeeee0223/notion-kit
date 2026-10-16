@@ -68,7 +68,7 @@ A dropdown menu with groups, shortcuts, submenus, and a warning item.
 
 ### Filtering
 
-Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Place the input outside `DropdownMenuList`, which contains the groups and actions. The list adds no layout styling.
+Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Place the input outside `DropdownMenuList`, which contains the groups and actions. The list defaults to `max-h-75 overflow-x-hidden overflow-y-auto`. Add `className` only when the menu requires different styling.
 
 <ComponentPreview
   name="dropdown-menu-filter"

@@ -113,7 +113,7 @@ export function TypesMenu({
               aria-label="Search property types"
             />
 
-            <DropdownMenuList className="max-h-75 overflow-x-hidden overflow-y-auto">
+            <DropdownMenuList>
               <DropdownMenuGroup>
                 <DropdownMenuLabel title="Type" />
                 {Object.values(plugins).map((entry) => {

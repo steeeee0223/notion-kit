@@ -216,7 +216,7 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
               aria-label="Search sort properties"
             />
 
-            <DropdownMenuList className="max-h-75 overflow-x-hidden overflow-y-auto has-[[role=menuitem]]:h-40">
+            <DropdownMenuList className="has-[[role=menuitem]]:h-40">
               <DropdownMenuGroup>
                 {columns.map((column) => (
                   <DropdownMenuItem
