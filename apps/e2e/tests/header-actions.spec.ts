@@ -188,6 +188,11 @@ test("HeaderMenu_SortGroupAndChangeType_ApplyResultBearingActions", async ({
 
   header = await table.openHeader("Notes");
   await header.changeType("Number");
+  await expect(header.root).toBeHidden();
+  await expect(table.header("Notes")).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page.getByRole("heading", { name: "Edit property", exact: true }),
+  ).toBeVisible();
   await expect(table.controlledState()).toContainText(
     '"type":"properties.type.change"',
   );

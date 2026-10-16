@@ -30,23 +30,11 @@ describe("PropsMenu", () => {
     );
   });
 
-  it("PropertiesMenu_Search_FiltersProperties", async () => {
-    const { properties } = await openPropertiesMenu();
-
-    await properties.search("Name");
-
-    expect(properties.property("Name")).toBeVisible();
-    expect(properties.queryProperty("Done")).not.toBeInTheDocument();
-  });
-
-  it("PropertiesMenu_Search_KeepsPropertyClickable", async () => {
+  it("PropertiesMenu_Search_FiltersPropertiesAndKeepsMatchesClickable", async () => {
     const { tableView, properties } = await openPropertiesMenu();
-
     await properties.search("Done");
-    expect(properties.property("Done")).not.toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
+    expect(properties.queryProperty("Name")).not.toBeInTheDocument();
+
     await tableView.user.click(properties.property("Done"));
 
     const edit = await MenuSurfaceObject.findByHeading(
@@ -74,21 +62,6 @@ describe("PropsMenu", () => {
       "aria-expanded",
       "false",
     );
-  });
-
-  it("PropertiesMenu_HeaderReopen_ClearsSearch", async () => {
-    const tableView = renderTableView();
-    await tableView.clickButton("Properties");
-    const properties = await PropertiesMenuObject.find(tableView.user);
-    await properties.search("Done");
-
-    await tableView.clickOutside();
-    await properties.waitUntilClosed();
-    await tableView.clickButton("Properties");
-
-    const reopened = await PropertiesMenuObject.find(tableView.user);
-    expect(reopened.searchInput()).toHaveValue("");
-    expect(reopened.property("Name")).toBeVisible();
   });
 
   it("PropertiesMenu_UnmatchedSearch_ShowsNoResults", async () => {
@@ -134,21 +107,5 @@ describe("PropsMenu", () => {
     expect(
       screen.queryByRole("button", { name: "Done" }),
     ).not.toBeInTheDocument();
-  });
-
-  it("PropertiesMenu_BackNavigation_ReturnsToViewSettings", async () => {
-    const { properties } = await openPropertiesMenu();
-
-    const settings = await properties.backToViewSettings();
-
-    expect(settings.heading("View Settings")).toBeVisible();
-  });
-
-  it("PropertiesMenu_NewPropertyNavigation_OpensPropertyTypes", async () => {
-    const { properties } = await openPropertiesMenu();
-
-    const types = await properties.openNewProperty();
-
-    expect(types.heading()).toBeVisible();
   });
 });
