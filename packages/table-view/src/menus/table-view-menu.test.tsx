@@ -126,8 +126,8 @@ describe("TableViewMenu", () => {
 
     const properties = await settings.openPage("Edit properties", "Properties");
 
-    expect(properties.option("Name")).toBeVisible();
-    expect(properties.option("Done")).toBeVisible();
+    expect(properties.item("Name")).toBeVisible();
+    expect(properties.item("Done")).toBeVisible();
   });
 
   it("TableViewMenu_LockDatabase_TogglesToUnlock", async () => {

@@ -159,6 +159,12 @@ export const Index: Record<
       () => import("@notion-kit/registry/dropdown-menu-checkbox"),
     ),
   },
+  "dropdown-menu-filter": {
+    files: ["registry/src/dropdown-menu-filter/dropdown-menu-filter.tsx"],
+    component: React.lazy(
+      () => import("@notion-kit/registry/dropdown-menu-filter"),
+    ),
+  },
   "dropdown-menu-radio": {
     files: ["registry/src/dropdown-menu-radio/dropdown-menu-radio.tsx"],
     component: React.lazy(

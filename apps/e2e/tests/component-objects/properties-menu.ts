@@ -13,7 +13,7 @@ export class PropertiesMenuObject extends MenuSurfaceObject {
   }
 
   property(name: string) {
-    return this.root.getByRole("option", { name });
+    return this.item(name);
   }
 
   visibilityButton(name: string) {
@@ -32,7 +32,7 @@ export class PropertiesMenuObject extends MenuSurfaceObject {
     const types = MenuSurfaceObject.withHeading(this.page, "New property");
     const input = types.root.getByPlaceholder("Search or add new property");
     await input.fill(name);
-    await types.root.getByRole("option", { name, exact: true }).click();
+    await types.root.getByRole("menuitem", { name, exact: true }).click();
     return MenuSurfaceObject.withHeading(this.page, "Edit property");
   }
 

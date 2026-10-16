@@ -100,6 +100,13 @@ describe("Unsplash", () => {
     expect(setQuery).toHaveBeenCalledWith("mountains", expect.any(Object));
   });
 
+  it("Unsplash_SearchCleared_UpdatesRemoteQueryOnce", async () => {
+    const user = userEvent.setup();
+    render(<Unsplash apiKey="test-key" />);
+    await user.click(screen.getByRole("button", { name: "Clear input" }));
+    expect(setQuery).toHaveBeenCalledExactlyOnceWith("", expect.any(Object));
+  });
+
   it("Unsplash_Loaded_RendersImageGridOptions", () => {
     render(<Unsplash apiKey="test-key" />);
 

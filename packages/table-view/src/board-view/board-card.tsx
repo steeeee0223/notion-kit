@@ -8,6 +8,10 @@ import { IconBlock } from "@notion-kit/ui/icon-block";
 import { Kanban } from "@notion-kit/ui/kanban";
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuFilter,
+  DropdownMenuTrigger,
   Input,
   Popover,
   PopoverContent,
@@ -108,37 +112,39 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
               </Popover>
               <Separator orientation="vertical" />
               {/* Row action menu */}
-              <Popover open={menuOpen} onOpenChange={setMenuOpen}>
-                <TooltipPreset
-                  description="Rename, delete, move to and more..."
-                  side="top"
-                >
-                  <PopoverTrigger
-                    render={
-                      <Button
-                        variant={null}
-                        className="flex rounded-none px-1.5 py-1 text-secondary"
-                        aria-label="Actions"
-                        ref={actionTriggerRef}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Icon.Dots className="size-4 fill-current" />
-                      </Button>
-                    }
-                  />
-                </TooltipPreset>
-                <PopoverContent
-                  className="w-[265px]"
-                  side="bottom"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <RowActionMenu
-                    rowId={row.id}
-                    onClose={() => setMenuOpen(false)}
-                    getReturnFocus={() => actionTriggerRef.current}
-                  />
-                </PopoverContent>
-              </Popover>
+              <DropdownMenuFilter>
+                <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+                  <TooltipPreset
+                    description="Rename, delete, move to and more..."
+                    side="top"
+                  >
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          variant={null}
+                          className="flex rounded-none px-1.5 py-1 text-secondary"
+                          aria-label="Actions"
+                          ref={actionTriggerRef}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Icon.Dots className="size-4 fill-current" />
+                        </Button>
+                      }
+                    />
+                  </TooltipPreset>
+                  <DropdownMenuContent
+                    className="w-[265px]"
+                    side="bottom"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <RowActionMenu
+                      rowId={row.id}
+                      onClose={() => setMenuOpen(false)}
+                      getReturnFocus={() => actionTriggerRef.current}
+                    />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </DropdownMenuFilter>
             </div>
           </div>
           {/* Card title */}

@@ -54,7 +54,7 @@ export default function CommandDialogDemo() {
         itemToStringValue={(action) => action.label}
         title="Workspace command palette"
       >
-        <CommandInput search clear placeholder="Search actions..." />
+        <CommandInput placeholder="Search actions..." />
         <CommandList>
           <CommandGroup heading="Actions">
             <CommandCollection>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
@@ -6,17 +6,12 @@ import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { ColumnInfo } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Autocomplete,
-  AutocompleteCollection,
-  AutocompleteContent,
-  AutocompleteEmpty,
-  AutocompleteGroup,
-  AutocompleteInput,
-  AutocompleteItem,
-  AutocompleteList,
   Button,
+  DropdownMenu,
   DropdownMenuGroup,
+  DropdownMenuInput,
   DropdownMenuItem,
+  DropdownMenuList,
   DropdownMenuSeparator,
   MenuItemAction,
   MenuItemSelect,
@@ -29,12 +24,22 @@ import { useTableViewCtx } from "@/table-contexts";
 /**
  * @summary The menu of all properties
  */
-export function PropsMenu() {
+export function PropsMenu({
+  query: search,
+  onNavigate,
+}: {
+  query: string;
+  onNavigate?: () => void;
+}) {
   const { table } = useTableViewCtx();
-  const [search, setSearch] = useState("");
+  const { contains } = DropdownMenu.useFilter();
+  const navigate = (state: Parameters<typeof table.setTableMenuState>[0]) => {
+    table.setTableMenuState(state);
+    onNavigate?.();
+  };
 
   const openEditPropMenu = (propId: string) =>
-    table.setTableMenuState({
+    navigate({
       open: true,
       page: TableViewMenuPage.EditProp,
       id: propId,
@@ -64,30 +69,25 @@ export function PropsMenu() {
           { deletedCount: 0, props: [] as ColumnInfo[] },
         );
 
+        const visibleProps = props.filter((prop) =>
+          contains(prop.name, search),
+        );
+
         return (
           <>
             <MenuHeader
               title="Properties"
-              onBack={() => table.setTableMenuState({ open: true, page: null })}
+              onBack={() => navigate({ open: true, page: null })}
             />
-            <Autocomplete
-              items={props}
-              itemToStringValue={(prop) => prop.name}
-              value={search}
-              onValueChange={setSearch}
-              open
-              autoHighlight="always"
-              openOnInputClick
-            >
-              <AutocompleteInput
-                clear
-                onCancel={() => setSearch("")}
-                onKeyDown={(e) => e.stopPropagation()}
-                placeholder="Search for a property..."
-              />
-              <AutocompleteContent variant="inline">
-                <AutocompleteList>
-                  <AutocompleteGroup>
+            <DropdownMenuInput
+              aria-label="Search properties"
+              placeholder="Search for a property..."
+            />
+
+            <DropdownMenuList className="max-h-none overflow-visible">
+              <div className="max-h-75 overflow-x-hidden overflow-y-auto">
+                {visibleProps.length > 0 && (
+                  <DropdownMenuGroup>
                     <MenuGroupHeader
                       title="Properties"
                       action={
@@ -100,72 +100,75 @@ export function PropsMenu() {
                       onDragEnd={table.handleColumnDragEnd}
                     >
                       <Sortable.List>
-                        <AutocompleteCollection>
-                          {(prop: ColumnInfo) => (
-                            <PropertyItem
-                              key={prop.id}
-                              index={props.findIndex(
-                                (item) => item.id === prop.id,
-                              )}
-                              draggable={search.length === 0}
-                              info={prop}
-                              onClick={() => openEditPropMenu(prop.id)}
-                              onVisibilityChange={() =>
-                                table.setColumnInfo(prop.id, {
-                                  hidden: !prop.hidden,
-                                })
-                              }
-                            />
-                          )}
-                        </AutocompleteCollection>
+                        {visibleProps.map((prop) => (
+                          <PropertyItem
+                            key={prop.id}
+                            index={props.findIndex(
+                              (item) => item.id === prop.id,
+                            )}
+                            draggable={search.length === 0}
+                            info={prop}
+                            onClick={() => openEditPropMenu(prop.id)}
+                            onVisibilityChange={() =>
+                              table.setColumnInfo(prop.id, {
+                                hidden: !prop.hidden,
+                              })
+                            }
+                          />
+                        ))}
                       </Sortable.List>
                     </Sortable.Root>
-                  </AutocompleteGroup>
-                </AutocompleteList>
-                <AutocompleteEmpty className="px-3 text-start text-muted">
-                  No results
-                </AutocompleteEmpty>
-              </AutocompleteContent>
-            </Autocomplete>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                variant="secondary"
-                icon={<Icon.Plus className="size-4" />}
-                label="New property"
-                closeOnClick={false}
-                onClick={() =>
-                  table.setTableMenuState({
-                    open: true,
-                    page: TableViewMenuPage.CreateProp,
-                  })
-                }
-              />
-              {deletedCount > 0 && (
+                  </DropdownMenuGroup>
+                )}
+                {visibleProps.length === 0 && (
+                  <div className="flex min-h-7 items-center px-3 py-2 text-start text-sm/tight text-muted">
+                    No results
+                  </div>
+                )}
+              </div>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
                 <DropdownMenuItem
                   variant="secondary"
-                  icon={<Icon.Trash />}
-                  label="Deleted properties"
+                  icon={<Icon.Plus className="size-4" />}
+                  label="New property"
                   closeOnClick={false}
                   onClick={() =>
-                    table.setTableMenuState({
+                    navigate({
                       open: true,
-                      page: TableViewMenuPage.DeletedProps,
+                      page: TableViewMenuPage.CreateProp,
                     })
                   }
-                >
-                  <MenuItemSelect>{deletedCount}</MenuItemSelect>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem
-                variant="secondary"
-                onClick={() =>
-                  window.open("https://www.notion.com/help/database-properties")
-                }
-                icon={<Icon.Help className="size-4" />}
-                label="Learn about properties"
-              />
-            </DropdownMenuGroup>
+                />
+                {deletedCount > 0 && (
+                  <DropdownMenuItem
+                    variant="secondary"
+                    icon={<Icon.Trash />}
+                    label="Deleted properties"
+                    closeOnClick={false}
+                    onClick={() =>
+                      navigate({
+                        open: true,
+                        page: TableViewMenuPage.DeletedProps,
+                      })
+                    }
+                  >
+                    <MenuItemSelect>{deletedCount}</MenuItemSelect>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  variant="secondary"
+                  onClick={() =>
+                    window.open(
+                      "https://www.notion.com/help/database-properties",
+                    )
+                  }
+                  icon={<Icon.Help className="size-4" />}
+                  label="Learn about properties"
+                />
+              </DropdownMenuGroup>
+            </DropdownMenuList>
           </>
         );
       }}
@@ -194,11 +197,10 @@ function PropertyItem({
     <Sortable.Item
       id={id}
       index={index}
-      disabled={!draggable}
       render={
-        <AutocompleteItem
+        <DropdownMenuItem
           label={name}
-          value={info}
+          closeOnClick={false}
           onClick={onClick}
           icon={[
             <Sortable.Handle

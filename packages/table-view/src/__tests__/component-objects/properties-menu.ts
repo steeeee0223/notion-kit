@@ -14,21 +14,24 @@ export class PropertiesMenuObject extends MenuSurfaceObject {
   }
 
   searchInput() {
-    return within(this.root).getByPlaceholderText<HTMLInputElement>(
-      "Search for a property...",
-    );
+    return within(this.root).getByRole<HTMLInputElement>("searchbox", {
+      name: "Search properties",
+    });
   }
 
   property(name: string) {
-    return within(this.root).getByRole("option", { name });
+    return within(this.root).getByRole("menuitem", { name });
   }
 
   queryProperty(name: string) {
-    return within(this.root).queryByRole("option", { name });
+    return within(this.root).queryByRole("menuitem", { name });
   }
 
   noResults() {
     return within(this.root).getByText("No results");
+  }
+  queryGroupHeader() {
+    return within(this.root).queryByText("Properties", { selector: "div" });
   }
 
   newPropertyItem() {
@@ -61,6 +64,10 @@ export class PropertiesMenuObject extends MenuSurfaceObject {
     await this.user.type(this.searchInput(), value);
   }
 
+  async clearSearch() {
+    await this.user.click(within(this.root).getByLabelText("Clear input"));
+  }
+
   async openNewProperty() {
     await this.user.click(this.item("New property"));
     return PropertyTypesMenuObject.find(this.user);
@@ -88,13 +95,13 @@ export class PropertyTypesMenuObject extends MenuSurfaceObject {
   }
 
   searchInput() {
-    return within(this.root).getByPlaceholderText<HTMLInputElement>(
-      "Search or add new property",
-    );
+    return within(this.root).getByRole<HTMLInputElement>("searchbox", {
+      name: "Search property types",
+    });
   }
 
   type(name: string) {
-    return within(this.root).getByRole("option", { name });
+    return within(this.root).getByRole("menuitem", { name });
   }
 
   typeLabel() {

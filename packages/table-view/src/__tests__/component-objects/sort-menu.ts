@@ -18,17 +18,25 @@ export class SortMenuObject extends MenuSurfaceObject {
   }
 
   searchInput() {
-    return screen.getByPlaceholderText<HTMLInputElement>(
-      "Search for a property...",
-    );
+    return within(this.addPanel()).getByRole<HTMLInputElement>("searchbox", {
+      name: "Search sort properties",
+    });
+  }
+
+  addPanel() {
+    return screen.getByRole("dialog", { name: "Add sort" });
   }
 
   querySearchInput() {
     return screen.queryByPlaceholderText("Search for a property...");
   }
 
+  async noResults() {
+    return within(this.addPanel()).findByRole("status");
+  }
+
   propertyOption(name: string) {
-    return screen.getByRole("option", { name });
+    return within(this.addPanel()).getByRole("menuitem", { name });
   }
 
   rule(id: string) {

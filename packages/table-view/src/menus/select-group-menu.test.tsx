@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { EditGroupingMenuObject } from "../__tests__/component-objects/grouping-menu";
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
@@ -28,6 +29,14 @@ describe("SelectGroupMenu", () => {
 
     expect(editGrouping.heading()).toBeVisible();
     expect(editGrouping.selectedProperty("Done")).toBeVisible();
+  });
+
+  it("SelectGroupingMenu_KeyboardSelection_UsesNativeNavigation", async () => {
+    const { tableView, grouping } = await openSelectGroupingMenu();
+    await grouping.search("Done");
+    await tableView.user.keyboard("{ArrowDown}{Enter}");
+    const edit = await EditGroupingMenuObject.find(tableView.user);
+    expect(edit.selectedProperty("Done")).toBeVisible();
   });
 
   it("SelectGroupingMenu_BackNavigation_ReturnsToViewSettings", async () => {

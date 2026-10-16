@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+import React from "react";
 
 import { useCopyToClipboard } from "@notion-kit/hooks";
 import { Icon } from "@notion-kit/icons";
@@ -7,15 +6,12 @@ import { ROW_VIEW_OPTIONS } from "@notion-kit/table-hook";
 import type { IconData } from "@notion-kit/ui/icon-block";
 import { IconMenu } from "@notion-kit/ui/icon-menu";
 import {
-  Autocomplete,
-  AutocompleteCollection,
-  AutocompleteContent,
-  AutocompleteGroup,
-  AutocompleteInput,
-  AutocompleteItem,
-  AutocompleteLabel,
-  AutocompleteList,
-  AutocompleteSeparator,
+  DropdownMenuGroup,
+  DropdownMenuInput,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuList,
+  DropdownMenuSeparator,
   MenuItemShortcut,
 } from "@notion-kit/ui/primitives";
 import { KEYBOARD } from "@notion-kit/utils";
@@ -63,7 +59,6 @@ export function RowActionMenu({
 }: RowActionMenuProps) {
   const { table } = useTableViewCtx();
   const { canViewRowLogs, openRowLog, isOpen } = useEditLog();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   // 1. Edit icon
   const selectIcon = (icon: IconData) => {
     table.updateRowIcon(rowId, icon);
@@ -171,84 +166,89 @@ export function RowActionMenu({
           value: "delete",
           label: "Delete",
           icon: <Icon.Trash />,
-          shortcut: KEYBOARD.DEL,
+          shortcut: `${KEYBOARD.CMD}${KEYBOARD.DEL}`,
           onSelect: deleteRow,
         },
       ],
     },
   ];
 
-  /** Keyboard shortcut */
-  const hotkeyOptions = {
-    ignoreEventWhen: (event: KeyboardEvent) =>
-      isOpen() || event.target !== searchInputRef.current,
-    enableOnFormTags: ["INPUT"] as const,
-    preventDefault: true,
-  };
-  useHotkeys("meta+shift+enter", openInNewTab, hotkeyOptions);
-  useHotkeys("meta+d", duplicateRow, hotkeyOptions);
-  useHotkeys("backspace", deleteRow, hotkeyOptions);
-
   return (
-    <Autocomplete<Action>
-      items={groups}
-      itemToStringValue={(action) => action.value}
-      open
-      autoHighlight="always"
-      openOnInputClick
-    >
-      <AutocompleteInput
-        ref={searchInputRef}
+    <>
+      <DropdownMenuInput
         aria-label="Search actions"
         placeholder="Search actions..."
+        onKeyDown={(event) => {
+          if (isOpen() || event.nativeEvent.isComposing) return;
+          if (event.metaKey && event.shiftKey && event.key === "Enter") {
+            event.preventDefault();
+            openInNewTab();
+          } else if (
+            event.metaKey &&
+            !event.shiftKey &&
+            event.key.toLowerCase() === "d"
+          ) {
+            event.preventDefault();
+            duplicateRow();
+          } else if (
+            event.key === "Backspace" &&
+            event.metaKey &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.shiftKey
+          ) {
+            event.preventDefault();
+            deleteRow();
+          }
+        }}
       />
-      <AutocompleteContent variant="inline">
-        <AutocompleteList>
-          {(group: ActionGroup, index) => {
-            const isLast = groups.length - 1 === index;
 
-            return (
-              <React.Fragment key={group.value}>
-                <AutocompleteGroup key={group.value} items={group.items}>
-                  {group.value === "Page" && (
-                    <AutocompleteLabel title={group.value} />
-                  )}
-                  <AutocompleteCollection>
-                    {({ shortcut, onSelect, ...action }: Action) => {
-                      if (group.value === "Page") {
-                        return (
-                          <IconMenu
-                            key={action.value}
-                            className="w-full border-none text-start hover:bg-transparent"
-                            onSelect={selectIcon}
-                            onRemove={removeIcon}
-                            onUpload={uploadIcon}
-                          >
-                            <AutocompleteItem {...action} />
-                          </IconMenu>
-                        );
-                      }
+      <DropdownMenuList>
+        {groups.map((group, index) => {
+          const isLast = groups.length - 1 === index;
 
-                      return (
-                        <AutocompleteItem
-                          key={action.value}
-                          {...action}
-                          onClick={onSelect}
-                        >
-                          {shortcut && (
-                            <MenuItemShortcut>{shortcut}</MenuItemShortcut>
-                          )}
-                        </AutocompleteItem>
-                      );
-                    }}
-                  </AutocompleteCollection>
-                </AutocompleteGroup>
-                {!isLast && <AutocompleteSeparator />}
-              </React.Fragment>
-            );
-          }}
-        </AutocompleteList>
-      </AutocompleteContent>
-    </Autocomplete>
+          return (
+            <React.Fragment key={group.value}>
+              <DropdownMenuGroup key={group.value}>
+                {group.value === "Page" && (
+                  <DropdownMenuLabel title={group.value} />
+                )}
+                {group.items.map(({ value, shortcut, onSelect, ...action }) => {
+                  if (group.value === "Page") {
+                    return (
+                      <IconMenu
+                        key={value}
+                        className="w-full border-none text-start hover:bg-transparent"
+                        onSelect={selectIcon}
+                        onRemove={removeIcon}
+                        onUpload={uploadIcon}
+                      >
+                        <DropdownMenuItem {...action} closeOnClick={false} />
+                      </IconMenu>
+                    );
+                  }
+
+                  return (
+                    <DropdownMenuItem
+                      key={value}
+                      {...action}
+                      onClick={onSelect}
+                    >
+                      {shortcut && (
+                        <MenuItemShortcut>{shortcut}</MenuItemShortcut>
+                      )}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuGroup>
+              {/* Separate only groups that remain visible after filtering. */}
+              {!isLast && (
+                <DropdownMenuSeparator className="[&:not(:has(~[data-slot=dropdown-menu-group]:not([hidden])))]:hidden [[data-slot=dropdown-menu-group][hidden]+&]:hidden" />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </DropdownMenuList>
+    </>
   );
 }

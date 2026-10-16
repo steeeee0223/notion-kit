@@ -1,3 +1,5 @@
+import { useState, type ComponentProps, type ReactNode } from "react";
+
 import { Icon } from "@notion-kit/icons";
 import {
   countFilterRules,
@@ -5,6 +7,8 @@ import {
   TableViewMenuPage,
 } from "@notion-kit/table-hook";
 import {
+  DropdownMenu,
+  DropdownMenuFilter,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -31,6 +35,77 @@ import { TypesMenu } from "./types-menu";
 
 interface TableViewMenuProps {
   getReturnFocus?: () => HTMLElement | null;
+  query: string;
+}
+
+type TableViewMenuRootProps = Omit<
+  ComponentProps<typeof DropdownMenu>,
+  "children" | "open" | "onOpenChange"
+> & {
+  children: (query: string) => ReactNode;
+};
+
+export function TableViewMenuRoot(props: TableViewMenuRootProps) {
+  const { table } = useTableViewCtx();
+  return (
+    <table.Subscribe selector={(state) => state.menu}>
+      {() => <TableViewMenuRootContent {...props} />}
+    </table.Subscribe>
+  );
+}
+
+function TableViewMenuRootContent({
+  children,
+  ...props
+}: TableViewMenuRootProps) {
+  const { table } = useTableViewCtx();
+  const menu = table.getTableMenuState();
+  const [search, setSearch] = useState({
+    page: menu.page,
+    id: menu.id,
+    query: "",
+  });
+  let query = search.query;
+  if (search.page !== menu.page || search.id !== menu.id) {
+    query = "";
+    setSearch({ page: menu.page, id: menu.id, query });
+  }
+  const searchable =
+    menu.page === TableViewMenuPage.Props ||
+    menu.page === TableViewMenuPage.CreateProp ||
+    menu.page === TableViewMenuPage.ChangePropType ||
+    menu.page === TableViewMenuPage.SelectGroupBy;
+  const needsQuery =
+    menu.page === TableViewMenuPage.Props ||
+    menu.page === TableViewMenuPage.CreateProp;
+  const root = (
+    <DropdownMenu
+      {...props}
+      open={menu.open}
+      onOpenChange={(open) => {
+        if (!open) setSearch({ page: menu.page, id: menu.id, query: "" });
+        table.setTableMenuState({ open, page: open ? menu.page : null });
+      }}
+    >
+      {children(query)}
+    </DropdownMenu>
+  );
+  return searchable ? (
+    <DropdownMenuFilter
+      key={`${menu.page}:${menu.id ?? ""}`}
+      value={needsQuery ? query : undefined}
+      onValueChange={
+        needsQuery
+          ? (query) => setSearch({ page: menu.page, id: menu.id, query })
+          : undefined
+      }
+      filter={menu.page === TableViewMenuPage.Props ? null : undefined}
+    >
+      {root}
+    </DropdownMenuFilter>
+  ) : (
+    root
+  );
 }
 
 export function TableViewMenu(props: TableViewMenuProps) {
@@ -52,7 +127,7 @@ export function TableViewMenu(props: TableViewMenuProps) {
   );
 }
 
-function TableViewMenuContent(props: TableViewMenuProps) {
+function TableViewMenuContent({ query, ...props }: TableViewMenuProps) {
   const { table } = useTableViewCtx();
   const menu = table.getTableMenuState();
 
@@ -71,7 +146,7 @@ function TableViewMenuContent(props: TableViewMenuProps) {
         </>
       );
     case TableViewMenuPage.Props:
-      return <PropsMenu />;
+      return <PropsMenu query={query} />;
     case TableViewMenuPage.EditProp:
       if (!menu.id) return null as never;
       return <EditPropMenu propId={menu.id} />;
@@ -79,9 +154,10 @@ function TableViewMenuContent(props: TableViewMenuProps) {
     case TableViewMenuPage.ChangePropType:
       return (
         <TypesMenu
-          propId={menu.id}
+          {...(menu.id ? { propId: menu.id } : { query })}
           menu={menu.page}
           back
+          closeOnClick={false}
           at={
             menu.data?.at as { id: string; side: "left" | "right" } | undefined
           }
@@ -98,7 +174,9 @@ function TableViewMenuContent(props: TableViewMenuProps) {
   }
 }
 
-function TableMenu({ getReturnFocus }: TableViewMenuProps) {
+function TableMenu({
+  getReturnFocus,
+}: Pick<TableViewMenuProps, "getReturnFocus">) {
   const { filterMenu } = useMenuCoordinator();
   const { canViewTableLogs, openTableLog } = useEditLog();
 

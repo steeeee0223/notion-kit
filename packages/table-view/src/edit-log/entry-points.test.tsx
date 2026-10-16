@@ -168,7 +168,7 @@ describe("EditLogEntryPoints", () => {
     const second = screen.getByRole("region", { name: "Second table" });
     const row = within(first).getByRole("row", { name: /Task 1/ });
     await user.click(RowActionsObject.trigger(row));
-    await user.click(screen.getByRole("option", { name: "Edit log" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit log" }));
     const dialog = await EditLogDialogObject.find(user);
     rerender(
       <Tables

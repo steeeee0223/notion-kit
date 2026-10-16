@@ -55,15 +55,8 @@ export function SearchCommand({
       itemToStringValue={(page) => page.title}
     >
       <CommandInput
-        search
-        clear
         variant="flat"
         placeholder={`Search in ${workspaceName}...`}
-        classNames={{
-          wrapper:
-            "z-10 h-12 w-full shrink-0 grow-0 overflow-hidden border-b bg-transparent px-1 py-0",
-        }}
-        className="size-full min-w-0 px-3 text-lg/[27px]"
       />
       <CommandList className={cn("h-full min-h-0 grow transform")}>
         <CommandGroup className="py-2" heading="Best matches">

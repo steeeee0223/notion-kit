@@ -115,13 +115,7 @@ export function Unsplash({ apiKey, onSelect }: UnsplashProps) {
       onValueChange={onValueChange}
       itemToStringValue={(image) => image.id}
     >
-      <AutocompleteInput
-        id="unsplash"
-        search
-        clear
-        onCancel={() => onValueChange("")}
-        placeholder="Search for an image..."
-      />
+      <AutocompleteInput id="unsplash" placeholder="Search for an image..." />
       <AutocompleteContent variant="inline" aria-busy={isLoading || undefined}>
         <AutocompleteStatus className="flex items-center gap-2">
           {isLoading ? (

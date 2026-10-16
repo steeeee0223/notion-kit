@@ -2,14 +2,11 @@ import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { ColumnInfo } from "@notion-kit/table-hook";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
-  Autocomplete,
-  AutocompleteCollection,
-  AutocompleteContent,
-  AutocompleteEmpty,
-  AutocompleteGroup,
-  AutocompleteInput,
-  AutocompleteItem,
-  AutocompleteList,
+  DropdownMenuEmpty,
+  DropdownMenuGroup,
+  DropdownMenuInput,
+  DropdownMenuItem,
+  DropdownMenuList,
   MenuItemCheck,
 } from "@notion-kit/ui/primitives";
 
@@ -66,50 +63,39 @@ export function SelectGroupMenu() {
                 })
               }
             />
-            <Autocomplete
-              items={groupOptions}
-              itemToStringValue={(option) => option.name}
-              open
-              autoHighlight="always"
-              openOnInputClick
-            >
-              <AutocompleteInput
-                placeholder="Search for a property"
-                onKeyDown={(e) => e.stopPropagation()}
-              />
-              <AutocompleteContent variant="inline">
-                <AutocompleteList>
-                  <AutocompleteGroup className="h-40">
-                    <AutocompleteCollection>
-                      {(option: (typeof groupOptions)[number]) => (
-                        <AutocompleteItem
-                          key={option.id ?? "none"}
-                          value={option}
-                          label={option.name}
-                          icon={
-                            option.kind === "column" ? (
-                              option.icon ? (
-                                <IconBlock icon={option.icon} />
-                              ) : (
-                                <DefaultIcon type={option.type} />
-                              )
-                            ) : null
-                          }
-                          onClick={() => selectGroup(option.id)}
-                        >
-                          {groupingColId === (option.id ?? undefined) && (
-                            <MenuItemCheck />
-                          )}
-                        </AutocompleteItem>
-                      )}
-                    </AutocompleteCollection>
-                  </AutocompleteGroup>
-                </AutocompleteList>
-                <AutocompleteEmpty className="px-3 text-start text-muted">
-                  No results
-                </AutocompleteEmpty>
-              </AutocompleteContent>
-            </Autocomplete>
+            <DropdownMenuInput
+              placeholder="Search for a property"
+              aria-label="Search grouping properties"
+            />
+
+            <DropdownMenuList className="has-[[role=menuitem]]:h-40">
+              <DropdownMenuGroup>
+                {groupOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={option.id ?? "none"}
+                    closeOnClick={false}
+                    label={option.name}
+                    icon={
+                      option.kind === "column" ? (
+                        option.icon ? (
+                          <IconBlock icon={option.icon} />
+                        ) : (
+                          <DefaultIcon type={option.type} />
+                        )
+                      ) : null
+                    }
+                    onClick={() => selectGroup(option.id)}
+                  >
+                    {groupingColId === (option.id ?? undefined) && (
+                      <MenuItemCheck />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuList>
+            <DropdownMenuEmpty className="px-3 text-start text-muted">
+              No results
+            </DropdownMenuEmpty>
           </>
         );
       }}

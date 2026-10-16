@@ -113,7 +113,12 @@ test("RowActionMenu_NewTabAndDeleteShortcuts_TargetTheOpenMenuRow", async ({
   await popup.close();
 
   await page.keyboard.press("Escape");
-  await (await table.openRowActions("Omega")).press("Backspace");
+  const actions = await table.openRowActions("Omega");
+  await actions.search("delete");
+  await actions.press("Backspace");
+  await expect(actions.searchInput()).toHaveValue("delet");
+  await expect(table.row("Omega")).toHaveCount(1);
+  await actions.press("Meta+Backspace");
   await expect(table.row("Omega")).toHaveCount(0);
   const snapshot = await table.controlledSnapshot();
   expect(snapshot.lastDataAction).toMatchObject({

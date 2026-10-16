@@ -6,7 +6,7 @@ description: A Base UI autocomplete composed with Notion-style menu groups, item
 <ComponentPreview
   name="autocomplete-default"
   preview={`<Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
-  <AutocompleteInput search clear placeholder="Search workspace..." />
+  <AutocompleteInput placeholder="Search workspace..." />
   <AutocompleteContent>
     <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
     <AutocompleteList>
@@ -54,7 +54,7 @@ Use `AutocompleteContent variant="inline"` when another primitive owns the overl
   />
   <PopoverContent>
     <Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
-      <AutocompleteInput search clear placeholder="Search workspace..." />
+      <AutocompleteInput placeholder="Search workspace..." />
       <AutocompleteContent variant="inline">
         <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
         <AutocompleteList>
@@ -144,15 +144,19 @@ The Base UI autocomplete root. It owns the input value, filtering, highlight sta
 
 ### AutocompleteInput
 
-The search input. It renders the shared `Input` primitive and supports the same visual affordances.
+The search input uses Base UI Input and Clear. It includes a search icon and shows the native clear button when the input has text. Use an uncontrolled root unless the query also drives application behavior.
 
-| Prop          | Type                   | Default | Description                                    |
-| ------------- | ---------------------- | ------- | ---------------------------------------------- |
-| `search`      | `boolean`              | -       | Shows the search icon.                         |
-| `clear`       | `boolean`              | -       | Shows the clear affordance when there is text. |
-| `placeholder` | `string`               | -       | Placeholder text for the input.                |
-| `onCancel`    | `() => void`           | -       | Handler passed to the underlying input.        |
-| `classNames`  | `{ wrapper?: string }` | -       | Classes for the input wrapper.                 |
+`default` renders a bordered field with inset spacing. `flat` renders a full-width header with a bottom divider. Both styles include the search icon and native clear button.
+
+| Prop          | Type                   | Default     | Description                                                |
+| ------------- | ---------------------- | ----------- | ---------------------------------------------------------- |
+| `placeholder` | `string`               | -           | Placeholder text for the input.                            |
+| `variant`     | `"default" \| "flat"`  | `"default"` | Bordered field or full-width header with a bottom divider. |
+| `className`   | `string`               | -           | Classes for the styled field container.                    |
+
+Other input props, including `ref`, `render`, and accessible labels, follow Base UI Input. `AutocompleteInputProps` exports this contract.
+
+The former `search`, `clear`, and `onCancel` props and standalone `AutocompleteClear` export are removed. Observe changes through the root's `onValueChange` when the application needs the query. Native clearing uses that same callback.
 
 ### AutocompleteContent
 
@@ -229,10 +233,6 @@ A visual divider between autocomplete groups.
 ### AutocompleteTrigger
 
 Optional trigger for autocomplete compositions that need a trigger affordance.
-
-### AutocompleteClear
-
-Clears the current autocomplete input value.
 
 ### AutocompleteStatus
 

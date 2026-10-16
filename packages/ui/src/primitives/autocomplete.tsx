@@ -7,9 +7,9 @@ import { Icon } from "@notion-kit/icons";
 import { Button } from "./button";
 import { popup, positioner } from "./design";
 import * as _Icon from "./icons";
-import { Input, type InputProps } from "./input";
 import { MenuGroup, MenuItem, MenuLabel } from "./menu";
 import { Separator } from "./separator";
+import { inputVariants } from "./variants";
 
 interface AutocompleteGroupItem<ItemValue> {
   items: readonly ItemValue[];
@@ -45,44 +45,50 @@ function AutocompleteInputGroup({
   );
 }
 
-type AutocompleteInputProps = Omit<
-  AutocompletePrimitive.Input.Props,
-  keyof InputProps | "render"
-> &
-  Omit<InputProps, "onChange" | "value" | "defaultValue"> & {
-    classNames?: {
-      wrapper?: string;
-    };
-  };
+type AutocompleteInputProps = AutocompletePrimitive.Input.Props & {
+  variant?: "default" | "flat";
+};
 
 function AutocompleteInput({
   className,
-  classNames,
-  search,
-  clear,
-  onCancel,
+  variant = "default",
   ...props
 }: AutocompleteInputProps) {
   return (
     <div
       data-slot="autocomplete-input-wrapper"
       className={cn(
-        "flex min-w-0 flex-auto flex-col px-3 pt-3 pb-2",
-        classNames?.wrapper,
+        "sticky top-0 flex min-w-0 flex-col bg-popover",
+        variant === "flat"
+          ? "z-10 h-12 w-full shrink-0 grow-0 border-b px-1"
+          : "flex-auto px-3 pt-3 pb-2",
       )}
     >
-      <AutocompletePrimitive.Input
-        data-slot="autocomplete-input"
-        render={
-          <Input
-            className={className}
-            search={search}
-            clear={clear}
-            onCancel={onCancel}
-          />
-        }
-        {...props}
-      />
+      <div
+        className={cn(
+          inputVariants({ variant }),
+          variant === "flat" && "size-full min-w-0 px-3 text-lg/[27px]",
+          className,
+        )}
+      >
+        <div className="mr-1.5">
+          <_Icon.Search />
+        </div>
+        <AutocompletePrimitive.Input
+          data-slot="autocomplete-input"
+          className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
+          {...props}
+        />
+        <AutocompletePrimitive.Clear
+          data-slot="autocomplete-clear"
+          aria-label="Clear input"
+          render={
+            <Button type="button" variant="close" size="circle">
+              <_Icon.Clear />
+            </Button>
+          }
+        />
+      </div>
     </div>
   );
 }
@@ -103,20 +109,6 @@ function AutocompleteTrigger({
     >
       {children ?? <Icon.Chevron side="down" className="size-3.5 fill-icon" />}
     </AutocompletePrimitive.Trigger>
-  );
-}
-
-function AutocompleteClear({ ...props }: AutocompletePrimitive.Clear.Props) {
-  return (
-    <AutocompletePrimitive.Clear
-      data-slot="autocomplete-clear"
-      render={
-        <Button type="button" variant="close" size="circle">
-          <_Icon.Clear />
-        </Button>
-      }
-      {...props}
-    />
   );
 }
 
@@ -340,7 +332,6 @@ function AutocompleteCollection({
 
 export {
   Autocomplete,
-  AutocompleteClear,
   AutocompleteCollection,
   AutocompleteContent,
   AutocompleteEmpty,
@@ -357,8 +348,8 @@ export {
   useAutocompleteFilteredItems,
 };
 export type {
-  AutocompleteContentProps,
   AutocompleteInputProps,
+  AutocompleteContentProps,
   AutocompleteItemProps,
   AutocompleteLabelProps,
   AutocompleteRootProps,

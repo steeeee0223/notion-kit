@@ -1,32 +1,22 @@
-import { useState } from "react";
 import { v4 } from "uuid";
 
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { PluginType } from "@notion-kit/table-hook";
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import {
-  Autocomplete,
-  AutocompleteCollection,
-  AutocompleteContent,
-  AutocompleteGroup,
-  AutocompleteInput,
-  AutocompleteItem,
-  AutocompleteLabel,
-  AutocompleteList,
+  DropdownMenuGroup,
+  DropdownMenuInput,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuList,
   MenuItemCheck,
   TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 import { DefaultIcon, MenuHeader } from "@/common";
-import type { TableUiPlugin } from "@/plugins";
 import { useTableViewCtx } from "@/table-contexts";
 
-interface TypesMenuProps {
-  /**
-   * @prop if null, will create a new column;
-   * otherwise will update a column by given `propId`
-   */
-  propId?: string;
+interface TypesMenuOptions {
   /**
    * @prop if undefined, will create a new column at the end;
    * otherwise will create a column at `at.side` of the column `at.id`
@@ -43,12 +33,23 @@ interface TypesMenuProps {
    * @prop whether to show back button in the header
    */
   back?: boolean;
+  /** Keep false for shared editor page navigation; use true for popup handoffs. */
+  closeOnClick: boolean;
 }
 
-export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
+type TypesMenuProps = TypesMenuOptions &
+  ({ propId: string; query?: never } | { propId?: undefined; query: string });
+
+export function TypesMenu({
+  propId,
+  at,
+  menu,
+  back,
+  query: search = "",
+  closeOnClick,
+}: TypesMenuProps) {
   const { table, plugins: registry } = useTableViewCtx();
   const propType = propId ? table.getColumnInfo(propId).type : null;
-  const [search, setSearch] = useState("");
 
   const select = (
     type: PluginType<CellPlugin[]>,
@@ -102,73 +103,63 @@ export function TypesMenu({ propId, at, menu, back }: TypesMenuProps) {
       )}
       <table.Subscribe selector={(state) => state.cellPlugins}>
         {(plugins) => (
-          <Autocomplete<TableUiPlugin>
-            items={Object.values(plugins).map((plugin) =>
-              registry.getUiPlugin(plugin.id),
-            )}
-            itemToStringValue={(plugin) => plugin.default.name}
-            value={search}
-            onValueChange={setSearch}
-            open
-            autoHighlight="always"
-            openOnInputClick
-          >
-            <AutocompleteInput
+          <>
+            <DropdownMenuInput
               placeholder={
                 propId
                   ? "Search for property type"
                   : "Search or add new property"
               }
-              onKeyDown={(e) => e.stopPropagation()}
+              aria-label="Search property types"
             />
-            <AutocompleteContent variant="inline">
-              <AutocompleteList>
-                <AutocompleteGroup>
-                  <AutocompleteLabel title="Type" />
-                  <AutocompleteCollection>
-                    {(plugin: TableUiPlugin) => (
-                      <TooltipPreset
-                        key={plugin.id}
-                        side="left"
-                        sideOffset={6}
-                        description={plugin.meta.desc}
-                        className="max-w-[282px] text-xs/[1.4]"
+
+            <DropdownMenuList>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel title="Type" />
+                {Object.values(plugins).map((entry) => {
+                  const plugin = registry.getUiPlugin(entry.id);
+                  return (
+                    <TooltipPreset
+                      key={plugin.id}
+                      side="left"
+                      sideOffset={6}
+                      description={plugin.meta.desc}
+                      className="max-w-[282px] text-xs/[1.4]"
+                    >
+                      <DropdownMenuItem
+                        closeOnClick={closeOnClick}
+                        disabled={plugin.id === "title"}
+                        icon={plugin.meta.icon}
+                        label={plugin.meta.name}
+                        onClick={() =>
+                          select(
+                            plugin.id,
+                            plugin.default.name,
+                            plugin.default.width,
+                          )
+                        }
                       >
-                        <AutocompleteItem
-                          value={plugin}
-                          disabled={plugin.id === "title"}
-                          icon={plugin.meta.icon}
-                          label={plugin.meta.name}
-                          onClick={() =>
-                            select(
-                              plugin.id,
-                              plugin.default.name,
-                              plugin.default.width,
-                            )
-                          }
-                        >
-                          {propType === plugin.id && <MenuItemCheck />}
-                        </AutocompleteItem>
-                      </TooltipPreset>
-                    )}
-                  </AutocompleteCollection>
-                </AutocompleteGroup>
-                {!propId && search.length > 0 && (
-                  <AutocompleteGroup>
-                    <AutocompleteLabel title="Select to add" />
-                    <AutocompleteItem
-                      value={`search-${search}`}
-                      icon={
-                        <DefaultIcon type="text" className="fill-menu-icon" />
-                      }
-                      label={search}
-                      onClick={() => select("text", search)}
-                    />
-                  </AutocompleteGroup>
-                )}
-              </AutocompleteList>
-            </AutocompleteContent>
-          </Autocomplete>
+                        {propType === plugin.id && <MenuItemCheck />}
+                      </DropdownMenuItem>
+                    </TooltipPreset>
+                  );
+                })}
+              </DropdownMenuGroup>
+              {!propId && search.length > 0 && (
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel title="Select to add" />
+                  <DropdownMenuItem
+                    closeOnClick={closeOnClick}
+                    icon={
+                      <DefaultIcon type="text" className="fill-menu-icon" />
+                    }
+                    label={search}
+                    onClick={() => select("text", search)}
+                  />
+                </DropdownMenuGroup>
+              )}
+            </DropdownMenuList>
+          </>
         )}
       </table.Subscribe>
     </>

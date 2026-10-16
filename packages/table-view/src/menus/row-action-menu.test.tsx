@@ -15,6 +15,8 @@ import {
   vi,
 } from "vitest";
 
+import { DropdownMenu, DropdownMenuFilter } from "@notion-kit/ui/primitives";
+
 import { EditLogDialogObject } from "@/__tests__/component-objects/edit-log-dialog";
 import {
   renderTableView,
@@ -91,7 +93,7 @@ async function openRowActionMenu(props: Partial<TableViewProps> = {}) {
 describe("RowActionMenu", () => {
   it.each([
     ["duplicate", "{Meta>}d{/Meta}"],
-    ["delete", "{Backspace}"],
+    ["delete", "{Meta>}{Backspace}{/Meta}"],
     ["new tab", "{Meta>}{Shift>}{Enter}{/Shift}{/Meta}"],
   ])(
     "RowActionMenu_%sShortcut_OnlyHandlesItsOwnSearchInput",
@@ -103,12 +105,20 @@ describe("RowActionMenu", () => {
         getRowUrl: (id) => `/${id}`,
         children: (
           <>
-            <section aria-label="First row actions">
-              <RowActionMenu rowId="row1" />
-            </section>
-            <section aria-label="Second row actions">
-              <RowActionMenu rowId="row3" />
-            </section>
+            <DropdownMenuFilter>
+              <DropdownMenu defaultOpen>
+                <section aria-label="First row actions">
+                  <RowActionMenu rowId="row1" />
+                </section>
+              </DropdownMenu>
+            </DropdownMenuFilter>
+            <DropdownMenuFilter>
+              <DropdownMenu defaultOpen>
+                <section aria-label="Second row actions">
+                  <RowActionMenu rowId="row3" />
+                </section>
+              </DropdownMenu>
+            </DropdownMenuFilter>
           </>
         ),
       });
@@ -277,16 +287,14 @@ describe("RowActionMenu", () => {
     });
   });
 
-  it("RowActionMenu_Backspace_RemovesExactRowResource", async () => {
-    // Arrange
+  it("RowActionMenu_MetaBackspaceWhileSearching_RemovesExactRowResource", async () => {
     const onDataChange = vi.fn();
     const { menu } = await openRowActionMenu({ onDataChange });
+    expect(menu.shortcutFor("Delete", "⌘Del")).toBeVisible();
 
-    // Act
-    menu.searchInput().focus();
-    await menu.press("{Backspace}");
+    await menu.search("delete");
+    await menu.press("{Meta>}{Backspace}{/Meta}");
 
-    // Assert
     await menu.waitForRowRemoved("Task 1");
     expect(lastAction(onDataChange)).toEqual({
       id: anyString,
@@ -297,6 +305,22 @@ describe("RowActionMenu", () => {
       },
     });
   });
+
+  it.each(["delete", ""])(
+    "RowActionMenu_BackspaceWithQuery=%s_EditsSearchWithoutDeletingRow",
+    async (query) => {
+      const onDataChange = vi.fn();
+      const { menu, tableView } = await openRowActionMenu({ onDataChange });
+
+      if (query) await menu.search(query);
+      menu.searchInput().focus();
+      await menu.press("{Backspace}");
+
+      expect(menu.searchInput()).toHaveValue(query.slice(0, -1));
+      expect(tableView.row("Task 1")).toBeInTheDocument();
+      expect(onDataChange).not.toHaveBeenCalled();
+    },
+  );
 
   it("RowActionMenu_MetaShiftEnter_OpensConfiguredRowInNewTab", async () => {
     // Arrange

@@ -35,20 +35,17 @@ export class RowActionsObject {
       await tableView.user.click(trigger);
     }
 
-    return new RowActionsObject(
-      tableView,
-      await screen.findByRole(contextMenu ? "menu" : "dialog"),
-    );
+    return new RowActionsObject(tableView, await screen.findByRole("dialog"));
   }
 
   searchInput() {
-    return within(this.root).getByRole<HTMLInputElement>("combobox", {
+    return within(this.root).getByRole<HTMLInputElement>("searchbox", {
       name: "Search actions",
     });
   }
 
   option(name: string | RegExp) {
-    return within(this.root).getByRole("option", { name });
+    return within(this.root).getByRole("menuitem", { name });
   }
 
   text(name: string | RegExp) {
@@ -56,7 +53,7 @@ export class RowActionsObject {
   }
 
   queryOption(name: string | RegExp) {
-    return within(this.root).queryByRole("option", { name });
+    return within(this.root).queryByRole("menuitem", { name });
   }
 
   shortcutFor(name: string | RegExp, shortcut: string | RegExp) {

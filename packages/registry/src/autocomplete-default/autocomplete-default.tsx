@@ -39,7 +39,7 @@ export default function AutocompleteDefault() {
         autoHighlight="always"
         openOnInputClick
       >
-        <AutocompleteInput search clear placeholder="Search workspace..." />
+        <AutocompleteInput placeholder="Search workspace..." />
         <AutocompleteContent>
           <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
           <AutocompleteList>

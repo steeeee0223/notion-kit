@@ -8,6 +8,7 @@ import {
 } from "@notion-kit/table-hook";
 import {
   DropdownMenuContent,
+  DropdownMenuFilter,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSub,
@@ -116,15 +117,17 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           column,
         })}
         {info.type !== "title" && (
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger
-              icon={<Icon.ArrowSquarePathUpDown />}
-              label="Change type"
-            />
-            <DropdownMenuContent sideOffset={-4} className="w-50">
-              <TypesMenu propId={propId} menu={null} />
-            </DropdownMenuContent>
-          </DropdownMenuSub>
+          <DropdownMenuFilter>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
+                icon={<Icon.ArrowSquarePathUpDown />}
+                label="Change type"
+              />
+              <DropdownMenuContent sideOffset={-4} className="w-50">
+                <TypesMenu propId={propId} menu={null} closeOnClick />
+              </DropdownMenuContent>
+            </DropdownMenuSub>
+          </DropdownMenuFilter>
         )}
       </DropdownMenuGroup>
       {view === "table" && (

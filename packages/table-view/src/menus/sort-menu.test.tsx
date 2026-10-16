@@ -109,7 +109,7 @@ describe("SortMenu", () => {
 
     await sort.search("missing property");
 
-    expect(screen.getByText("No results")).toBeVisible();
+    expect(await sort.noResults()).toHaveTextContent("No results");
   });
 
   it("SortMenu_RemoveRule_RemovesNamedRule", async () => {

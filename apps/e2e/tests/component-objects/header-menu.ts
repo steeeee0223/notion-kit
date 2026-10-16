@@ -92,7 +92,7 @@ export class HeaderMenuObject extends MenuSurfaceObject {
   async changeType(typeName: AccessibleName) {
     await this.item("Change type").hover();
     const option = this.page
-      .getByRole("option", {
+      .getByRole("menuitem", {
         name: typeName,
         exact: typeof typeName === "string",
       })

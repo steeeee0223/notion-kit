@@ -16,14 +16,10 @@ import { VirtualizedIconGrid } from "./virtualized-icon-grid";
 
 export function IconGridMenu({
   factory,
-  searchQuery,
-  setSearchQuery,
   onSelect,
   onRandomSelect,
 }: {
   factory: IconFactoryResult;
-  searchQuery: string;
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   onSelect?: (iconData: IconData) => void;
   onRandomSelect: () => void;
 }) {
@@ -49,16 +45,9 @@ export function IconGridMenu({
       openOnInputClick
       items={autocompleteItems}
       itemToStringValue={getIconStringValue}
-      value={searchQuery}
-      onValueChange={(value, details) => {
-        if (details.reason !== "item-press") {
-          setSearchQuery(value);
-        }
-      }}
     >
       <MenuSearchBar
         onRandomSelect={onRandomSelect}
-        onSearchClear={() => setSearchQuery("")}
         Palette={factory.renderToolbar?.()}
       />
       <AutocompleteContent variant="inline">

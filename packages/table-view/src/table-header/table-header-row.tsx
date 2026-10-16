@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/react";
 import { flexRender } from "@tanstack/react-table";
 
@@ -8,10 +8,8 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuFilter,
   DropdownMenuTrigger,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Sortable,
 } from "@notion-kit/ui/primitives";
 
@@ -188,31 +186,68 @@ function TableHeaderRowContent() {
         </div>
       </Sortable.List>
       <table.Subscribe selector={(state) => state.tableGlobal.locked}>
-        {(locked) =>
-          !locked && (
-            <Popover>
-              <PopoverTrigger
-                render={<TableHeaderActionCell icon={<Icon.Plus />} />}
-              />
-              <PopoverContent sideOffset={0} collisionPadding={12}>
-                <TypesMenu menu={TableViewMenuPage.CreateProp} />
-              </PopoverContent>
-            </Popover>
-          )
-        }
+        {(locked) => !locked && <HeaderTypesMenu />}
       </table.Subscribe>
+      <HeaderPropsMenu />
+    </Row.Root>
+  );
+}
+
+function HeaderTypesMenu() {
+  const [query, setQuery] = useState("");
+  return (
+    <DropdownMenuFilter value={query} onValueChange={setQuery}>
       <DropdownMenu>
         <DropdownMenuTrigger
-          render={<TableHeaderActionCell icon={<Icon.Dots />} />}
+          render={
+            <TableHeaderActionCell
+              aria-label="Add property"
+              icon={<Icon.Plus />}
+            />
+          }
+        />
+        <DropdownMenuContent
+          sideOffset={0}
+          collisionPadding={12}
+          className="w-72 overflow-hidden"
+        >
+          <TypesMenu
+            query={query}
+            menu={TableViewMenuPage.CreateProp}
+            closeOnClick
+          />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </DropdownMenuFilter>
+  );
+}
+
+function HeaderPropsMenu() {
+  const [query, setQuery] = useState("");
+  const actionsRef: React.ComponentProps<typeof DropdownMenu>["actionsRef"] =
+    React.useRef(null);
+  return (
+    <DropdownMenuFilter value={query} onValueChange={setQuery} filter={null}>
+      <DropdownMenu actionsRef={actionsRef}>
+        <DropdownMenuTrigger
+          render={
+            <TableHeaderActionCell
+              aria-label="Properties"
+              icon={<Icon.Dots />}
+            />
+          }
         />
         <DropdownMenuContent
           className="w-65"
           sideOffset={0}
           collisionPadding={12}
         >
-          <PropsMenu />
+          <PropsMenu
+            query={query}
+            onNavigate={() => actionsRef.current?.close()}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
-    </Row.Root>
+    </DropdownMenuFilter>
   );
 }

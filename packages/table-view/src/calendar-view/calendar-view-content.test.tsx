@@ -120,9 +120,9 @@ it.each(["monthly", "weekly", "daily"] as const)(
     calendar.rightClickTitle("Keep B");
     const menu = new RowActionsObject(
       tableView,
-      await screen.findByRole("menu"),
+      await screen.findByRole("dialog"),
     );
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(menu.root).toBeVisible();
     menu.choose("Delete");
 
     await waitFor(() =>

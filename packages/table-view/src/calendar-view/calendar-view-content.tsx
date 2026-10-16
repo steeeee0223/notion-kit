@@ -13,6 +13,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuTrigger,
+  DropdownMenuFilter,
 } from "@notion-kit/ui/primitives";
 
 import { Cell, Table } from "@/common";
@@ -166,18 +167,23 @@ function CalendarRowEvent({
           <CalendarRowTitle event={event} timeZone={timeZone} />
         </CalendarEvent.Item>
       ) : (
-        <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
-          <ContextMenuTrigger ref={triggerRef} render={<CalendarEvent.Item />}>
-            <CalendarRowTitle event={event} timeZone={timeZone} />
-          </ContextMenuTrigger>
-          <ContextMenuContent className="w-[265px]">
-            <RowActionMenu
-              rowId={event.id}
-              onClose={() => setMenuOpen(false)}
-              getReturnFocus={() => triggerRef.current}
-            />
-          </ContextMenuContent>
-        </ContextMenu>
+        <DropdownMenuFilter>
+          <ContextMenu open={menuOpen} onOpenChange={setMenuOpen}>
+            <ContextMenuTrigger
+              ref={triggerRef}
+              render={<CalendarEvent.Item />}
+            >
+              <CalendarRowTitle event={event} timeZone={timeZone} />
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-[265px]">
+              <RowActionMenu
+                rowId={event.id}
+                onClose={() => setMenuOpen(false)}
+                getReturnFocus={() => triggerRef.current}
+              />
+            </ContextMenuContent>
+          </ContextMenu>
+        </DropdownMenuFilter>
       )}
       <CalendarEvent.Resize edge="start" />
       <CalendarEvent.Resize edge="end" />

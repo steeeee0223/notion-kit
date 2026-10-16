@@ -13,17 +13,23 @@ export class GroupingMenuObject extends MenuSurfaceObject {
     });
     return new GroupingMenuObject(
       page,
-      page.getByRole("menu").filter({ has: groupHeading }).last(),
+      page
+        .getByRole("menu")
+        .or(page.getByRole("dialog"))
+        .filter({ has: groupHeading })
+        .last(),
     );
   }
 
   searchInput() {
-    return this.root.getByPlaceholder("Search for a property");
+    return this.root.getByRole("searchbox", {
+      name: "Search grouping properties",
+    });
   }
 
   async choose(propertyName: string) {
     await this.searchInput().fill(propertyName);
-    await this.root.getByRole("option", { name: propertyName }).click();
+    await this.item(propertyName).click();
     return GroupingMenuObject.open(this.page);
   }
 

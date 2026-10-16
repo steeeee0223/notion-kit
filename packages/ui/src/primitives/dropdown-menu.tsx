@@ -4,7 +4,9 @@ import { Menu } from "@base-ui/react/menu";
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 
+import { Button } from "./button";
 import { popup, positioner } from "./design";
+import * as _Icon from "./icons";
 import {
   MenuGroup,
   MenuItem,
@@ -15,12 +17,14 @@ import {
 } from "./menu";
 import { Separator } from "./separator";
 import { Switch } from "./switch";
+import { inputVariants } from "./variants";
 
 function DropdownMenu({ ...props }: Menu.Root.Props) {
   return <Menu.Root data-slot="dropdown-menu" {...props} />;
 }
 
 DropdownMenu.createHandle = Menu.createHandle;
+DropdownMenu.useFilter = Menu.useFilter;
 
 function DropdownMenuPortal({ ...props }: Menu.Portal.Props) {
   return <Menu.Portal data-slot="dropdown-menu-portal" {...props} />;
@@ -295,10 +299,73 @@ function DropdownMenuShortcut({
   return <MenuItemShortcut data-slot="dropdown-menu-shortcut" {...props} />;
 }
 
+/* Menu filtering */
+function DropdownMenuFilter({ ...props }: Menu.FilterProvider.Props) {
+  return <Menu.FilterProvider data-slot="dropdown-menu-filter" {...props} />;
+}
+
+function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
+  return (
+    <div
+      data-slot="dropdown-menu-input-wrapper"
+      className="sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2"
+    >
+      <div className={cn(inputVariants({ className }))}>
+        <Menu.Input
+          data-slot="dropdown-menu-input"
+          className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
+          {...props}
+        />
+        <Menu.Clear
+          data-slot="dropdown-menu-clear"
+          aria-label="Clear input"
+          render={
+            <Button
+              type="button"
+              variant="close"
+              size="circle"
+              className="ml-1 focus-visible:shadow-notion"
+            >
+              <_Icon.Clear />
+            </Button>
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
+function DropdownMenuList({ className, ...props }: Menu.List.Props) {
+  return (
+    <Menu.List
+      data-slot="dropdown-menu-list"
+      className={cn("max-h-75 overflow-x-hidden overflow-y-auto", className)}
+      {...props}
+    />
+  );
+}
+
+function DropdownMenuEmpty({ className, ...props }: Menu.Empty.Props) {
+  return (
+    <Menu.Empty
+      data-slot="dropdown-menu-empty"
+      className={cn(
+        "flex min-h-7 items-center p-2 text-sm/tight text-secondary select-none empty:hidden",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuEmpty,
+  DropdownMenuFilter,
+  DropdownMenuInput,
+  DropdownMenuList,
   DropdownMenuItem,
   DropdownMenuCheckboxItem,
   DropdownMenuRadioItem,

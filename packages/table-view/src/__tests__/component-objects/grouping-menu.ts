@@ -14,17 +14,17 @@ export class SelectGroupingMenuObject extends MenuSurfaceObject {
   }
 
   searchInput() {
-    return within(this.root).getByPlaceholderText<HTMLInputElement>(
-      "Search for a property",
-    );
+    return within(this.root).getByRole<HTMLInputElement>("searchbox", {
+      name: "Search grouping properties",
+    });
   }
 
   option(name: string) {
-    return within(this.root).getByRole("option", { name });
+    return within(this.root).getByRole("menuitem", { name });
   }
 
   queryOption(name: string) {
-    return within(this.root).queryByRole("option", { name });
+    return within(this.root).queryByRole("menuitem", { name });
   }
 
   async search(value: string) {

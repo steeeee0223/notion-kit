@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { ColumnInfo } from "@notion-kit/table-hook";
 
+import { MenuSurfaceObject } from "../__tests__/component-objects/menu-surface";
 import { renderTableView } from "../__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "../__tests__/mock";
 
@@ -25,14 +26,6 @@ function lastCreateAction(callback: {
 }
 
 describe("TypesMenu", () => {
-  it("PropertyTypesMenu_BackNavigation_ReturnsToProperties", async () => {
-    const types = await openPropertyTypesMenu();
-
-    const properties = await types.backToProperties();
-
-    expect(properties.heading()).toBeVisible();
-  });
-
   it.each([
     ["Text", "text"],
     ["Number", "number"],
@@ -55,6 +48,53 @@ describe("TypesMenu", () => {
       expect(action?.payload.property).toMatchObject({ type, name });
     },
   );
+
+  it("PropertyTypesMenu_ChangeType_KeepsSharedEditorOpen", async () => {
+    const tableView = renderTableView();
+    const settings = await tableView.openViewSettings();
+    const properties = await settings.openProperties();
+    await tableView.user.click(properties.property("Done"));
+    const edit = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    await tableView.user.click(edit.item("Type"));
+    const types = await MenuSurfaceObject.findByItem(tableView.user, "Number");
+
+    await tableView.user.click(types.item("Number"));
+
+    const next = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    expect(tableView.button("Settings")).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(next.item("Type")).toHaveTextContent("Number");
+  });
+
+  it("PropertyTypesMenu_HeaderCreate_ClosesPopupAndOpensPropertyEditor", async () => {
+    const tableView = renderTableView();
+    await tableView.clickButton("Add property");
+    const types = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "New property",
+    );
+
+    await tableView.user.click(types.item("Number"));
+
+    await types.waitUntilClosed();
+    const edit = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    expect(edit.item("Type")).toHaveTextContent("Number");
+    expect(tableView.button("Add property")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
 
   it("PropertyTypesMenu_CustomName_CreatesTextProperty", async () => {
     const onPropertiesChange = vi.fn();
