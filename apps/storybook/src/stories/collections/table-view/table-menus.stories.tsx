@@ -265,7 +265,7 @@ export const TypesMenu: Story = {
               }
             />
             <DropdownMenuContent collisionPadding={12} className="w-60">
-              <Menu.TypesMenu query={query} menu={null} />
+              <Menu.TypesMenu query={query} menu={null} closeOnClick />
             </DropdownMenuContent>
           </DropdownMenu>
         </DropdownMenuFilter>
