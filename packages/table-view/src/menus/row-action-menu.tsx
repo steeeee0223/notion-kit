@@ -176,7 +176,6 @@ export function RowActionMenu({
   return (
     <>
       <DropdownMenuInput
-        searchIcon
         aria-label="Search actions"
         placeholder="Search actions..."
         onKeyDown={(event) => {

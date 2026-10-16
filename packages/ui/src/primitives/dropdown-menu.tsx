@@ -304,27 +304,13 @@ function DropdownMenuFilter({ ...props }: Menu.FilterProvider.Props) {
   return <Menu.FilterProvider data-slot="dropdown-menu-filter" {...props} />;
 }
 
-type DropdownMenuInputProps = Omit<Menu.Input.Props, "className"> & {
-  className?: string;
-  searchIcon?: boolean;
-};
-
-function DropdownMenuInput({
-  className,
-  searchIcon = false,
-  ...props
-}: DropdownMenuInputProps) {
+function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
   return (
     <div
       data-slot="dropdown-menu-input-wrapper"
       className="sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2"
     >
       <div className={cn(inputVariants({ className }))}>
-        {searchIcon && (
-          <div className="mr-1.5">
-            <_Icon.Search />
-          </div>
-        )}
         <Menu.Input
           data-slot="dropdown-menu-input"
           className="block h-full resize-none border-none outline-hidden file:bg-inherit file:font-medium placeholder:text-default/45 disabled:cursor-not-allowed disabled:opacity-50"
@@ -382,4 +368,3 @@ export {
   DropdownMenuRadioGroup,
 };
 export type DropdownMenuHandle<Payload = unknown> = Menu.Handle<Payload>;
-export type { DropdownMenuInputProps };

@@ -110,7 +110,6 @@ export function TypesMenu({
                   ? "Search for property type"
                   : "Search or add new property"
               }
-              searchIcon
               aria-label="Search property types"
             />
 

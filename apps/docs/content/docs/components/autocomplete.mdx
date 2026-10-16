@@ -146,12 +146,13 @@ The Base UI autocomplete root. It owns the input value, filtering, highlight sta
 
 The search input uses Base UI Input and Clear. It includes a search icon and shows the native clear button when the input has text. Use an uncontrolled root unless the query also drives application behavior.
 
-| Prop          | Type                             | Default     | Description                             |
-| ------------- | -------------------------------- | ----------- | --------------------------------------- |
-| `placeholder` | `string`                         | -           | Placeholder text for the input.         |
-| `variant`     | `"default" \| "plain" \| "flat"` | `"default"` | Field styling.                          |
-| `className`   | `string`                         | -           | Classes for the styled field container. |
-| `classNames`  | `{ wrapper?: string }`           | -           | Classes for the outer input wrapper.    |
+`default` renders a bordered field with inset spacing. `flat` renders a full-width header with a bottom divider. Both styles include the search icon and native clear button.
+
+| Prop          | Type                   | Default     | Description                                                |
+| ------------- | ---------------------- | ----------- | ---------------------------------------------------------- |
+| `placeholder` | `string`               | -           | Placeholder text for the input.                            |
+| `variant`     | `"default" \| "flat"`  | `"default"` | Bordered field or full-width header with a bottom divider. |
+| `className`   | `string`               | -           | Classes for the styled field container.                    |
 
 Other input props, including `ref`, `render`, and accessible labels, follow Base UI Input. `AutocompleteInputProps` exports this contract.
 

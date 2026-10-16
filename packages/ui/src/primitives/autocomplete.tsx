@@ -9,7 +9,7 @@ import { popup, positioner } from "./design";
 import * as _Icon from "./icons";
 import { MenuGroup, MenuItem, MenuLabel } from "./menu";
 import { Separator } from "./separator";
-import { inputVariants, type InputVariants } from "./variants";
+import { inputVariants } from "./variants";
 
 interface AutocompleteGroupItem<ItemValue> {
   items: readonly ItemValue[];
@@ -45,30 +45,32 @@ function AutocompleteInputGroup({
   );
 }
 
-type AutocompleteInputProps = Omit<
-  AutocompletePrimitive.Input.Props,
-  "className"
-> & {
-  className?: string;
-  variant?: InputVariants["variant"];
-  classNames?: { wrapper?: string };
+type AutocompleteInputProps = AutocompletePrimitive.Input.Props & {
+  variant?: "default" | "flat";
 };
 
 function AutocompleteInput({
   className,
-  classNames,
-  variant,
+  variant = "default",
   ...props
 }: AutocompleteInputProps) {
   return (
     <div
       data-slot="autocomplete-input-wrapper"
       className={cn(
-        "sticky top-0 flex min-w-0 flex-auto flex-col bg-popover px-3 pt-3 pb-2",
-        classNames?.wrapper,
+        "sticky top-0 flex min-w-0 flex-col bg-popover",
+        variant === "flat"
+          ? "z-10 h-12 w-full shrink-0 grow-0 border-b px-1"
+          : "flex-auto px-3 pt-3 pb-2",
       )}
     >
-      <div className={cn(inputVariants({ variant, className }))}>
+      <div
+        className={cn(
+          inputVariants({ variant }),
+          variant === "flat" && "size-full min-w-0 px-3 text-lg/[27px]",
+          className,
+        )}
+      >
         <div className="mr-1.5">
           <_Icon.Search />
         </div>

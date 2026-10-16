@@ -65,7 +65,6 @@ export function SelectGroupMenu() {
             />
             <DropdownMenuInput
               placeholder="Search for a property"
-              searchIcon
               aria-label="Search grouping properties"
             />
 

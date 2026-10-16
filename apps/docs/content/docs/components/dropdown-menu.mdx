@@ -93,7 +93,7 @@ Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Pla
 
 Keep each label inside its `DropdownMenuGroup`. Filtering automatically hides a group and its label when none of its items match. Clearing the search restores them.
 
-`DropdownMenuInput` includes native clearing. Its optional `searchIcon` prop adds the search decoration; it defaults to false. Give the input a fixed accessible name.
+`DropdownMenuInput` includes native clearing and displays no search icon. Give the input a fixed accessible name.
 
 Base UI renders a filtered popup as a dialog, its input as a searchbox, and its list as a menu. Let the library own these roles and keyboard behavior. The same provider and content work under `ContextMenu`; wrap each searchable submenu in its own provider.
 

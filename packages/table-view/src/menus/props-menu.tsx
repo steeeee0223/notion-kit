@@ -80,7 +80,6 @@ export function PropsMenu({
               onBack={() => navigate({ open: true, page: null })}
             />
             <DropdownMenuInput
-              searchIcon
               aria-label="Search properties"
               placeholder="Search for a property..."
             />

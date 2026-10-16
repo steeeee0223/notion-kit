@@ -213,7 +213,6 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
           <>
             <DropdownMenuInput
               placeholder="Search for a property..."
-              searchIcon
               aria-label="Search sort properties"
             />
 

@@ -86,12 +86,13 @@ Use `CommandDialog` for command palettes. Use `Autocomplete` directly for popove
 
 The command search input extends `AutocompleteInput`, including its built-in search icon and native clear button.
 
-| Prop          | Type                             | Default     | Description                             |
-| ------------- | -------------------------------- | ----------- | --------------------------------------- |
-| `placeholder` | `string`                         | -           | Placeholder text for the command input. |
-| `variant`     | `"default" \| "plain" \| "flat"` | `"default"` | Field styling.                          |
-| `className`   | `string`                         | -           | Classes for the styled field container. |
-| `classNames`  | `{ wrapper?: string }`           | -           | Classes for the outer input wrapper.    |
+`default` renders a bordered field with inset spacing. `flat` renders a full-width header with a bottom divider. Both styles include the search icon and native clear button.
+
+| Prop          | Type                   | Default     | Description                                                |
+| ------------- | ---------------------- | ----------- | ---------------------------------------------------------- |
+| `placeholder` | `string`               | -           | Placeholder text for the command input.                    |
+| `variant`     | `"default" \| "flat"`  | `"default"` | Bordered field or full-width header with a bottom divider. |
+| `className`   | `string`               | -           | Classes for the styled field container.                    |
 
 The former `search` and `clear` props are removed.
 
