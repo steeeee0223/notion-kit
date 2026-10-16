@@ -320,7 +320,12 @@ function DropdownMenuInput({ className, ...props }: Menu.Input.Props) {
           data-slot="dropdown-menu-clear"
           aria-label="Clear input"
           render={
-            <Button type="button" variant="close" size="circle">
+            <Button
+              type="button"
+              variant="close"
+              size="circle"
+              className="ml-1 focus-visible:shadow-notion"
+            >
               <_Icon.Clear />
             </Button>
           }
