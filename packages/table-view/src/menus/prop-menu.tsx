@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { flexRender } from "@tanstack/react-table";
 
 import { Icon } from "@notion-kit/icons";
@@ -57,7 +56,6 @@ interface PropMenuProps {
  * 11. ✅ Delete property
  */
 export function PropMenu({ propId, view }: PropMenuProps) {
-  const [typeMenuOpen, setTypeMenuOpen] = useState(false);
   const { filterMenu } = useMenuCoordinator();
   const { table, plugins } = useTableViewCtx();
 
@@ -120,17 +118,13 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         })}
         {info.type !== "title" && (
           <DropdownMenuFilter>
-            <DropdownMenuSub open={typeMenuOpen} onOpenChange={setTypeMenuOpen}>
+            <DropdownMenuSub>
               <DropdownMenuSubTrigger
                 icon={<Icon.ArrowSquarePathUpDown />}
                 label="Change type"
               />
               <DropdownMenuContent sideOffset={-4} className="w-50">
-                <TypesMenu
-                  propId={propId}
-                  menu={null}
-                  onNavigate={() => setTypeMenuOpen(false)}
-                />
+                <TypesMenu propId={propId} menu={null} closeOnClick />
               </DropdownMenuContent>
             </DropdownMenuSub>
           </DropdownMenuFilter>

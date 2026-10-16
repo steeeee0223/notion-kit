@@ -44,6 +44,29 @@ async function openHeader(tableView: TableViewObject, name: string) {
   return MenuSurfaceObject.findByItem(tableView.user, "Calculate");
 }
 
+it("PropMenu_ChangeType_ClosesHeaderMenuAndOpensPropertyEditor", async () => {
+  const tableView = renderTableView();
+  const menu = await openHeader(tableView, "Done");
+
+  await tableView.user.click(menu.item("Change type"));
+  const types = await MenuSurfaceObject.findByItem(tableView.user, "Number");
+  await tableView.user.click(types.item("Number"));
+
+  await menu.waitUntilClosed();
+  const edit = await MenuSurfaceObject.findByHeading(
+    tableView.user,
+    "Edit property",
+  );
+  expect(edit.item("Type")).toHaveTextContent("Number");
+  await waitFor(() =>
+    expect(edit.root.contains(document.activeElement)).toBe(true),
+  );
+  expect(screen.getByRole("button", { name: "Done" })).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+});
+
 it("PropMenu_Filter_AppendsARootRuleAndOpensTheSharedFilterEditor", async () => {
   const onViewChange = vi.fn();
   const tableView = renderTableView({

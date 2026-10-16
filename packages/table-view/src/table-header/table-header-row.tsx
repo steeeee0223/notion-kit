@@ -195,16 +195,16 @@ function TableHeaderRowContent() {
 
 function HeaderTypesMenu() {
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
-  const changeOpen = (open: boolean) => {
-    setOpen(open);
-    if (!open) setQuery("");
-  };
   return (
     <DropdownMenuFilter value={query} onValueChange={setQuery}>
-      <DropdownMenu open={open} onOpenChange={changeOpen}>
+      <DropdownMenu>
         <DropdownMenuTrigger
-          render={<TableHeaderActionCell icon={<Icon.Plus />} />}
+          render={
+            <TableHeaderActionCell
+              aria-label="Add property"
+              icon={<Icon.Plus />}
+            />
+          }
         />
         <DropdownMenuContent
           sideOffset={0}
@@ -214,7 +214,7 @@ function HeaderTypesMenu() {
           <TypesMenu
             query={query}
             menu={TableViewMenuPage.CreateProp}
-            onNavigate={() => changeOpen(false)}
+            closeOnClick
           />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -224,23 +224,28 @@ function HeaderTypesMenu() {
 
 function HeaderPropsMenu() {
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
-  const changeOpen = (open: boolean) => {
-    setOpen(open);
-    if (!open) setQuery("");
-  };
+  const actionsRef: React.ComponentProps<typeof DropdownMenu>["actionsRef"] =
+    React.useRef(null);
   return (
     <DropdownMenuFilter value={query} onValueChange={setQuery} filter={null}>
-      <DropdownMenu open={open} onOpenChange={changeOpen}>
+      <DropdownMenu actionsRef={actionsRef}>
         <DropdownMenuTrigger
-          render={<TableHeaderActionCell icon={<Icon.Dots />} />}
+          render={
+            <TableHeaderActionCell
+              aria-label="Properties"
+              icon={<Icon.Dots />}
+            />
+          }
         />
         <DropdownMenuContent
           className="w-65"
           sideOffset={0}
           collisionPadding={12}
         >
-          <PropsMenu query={query} onNavigate={() => changeOpen(false)} />
+          <PropsMenu
+            query={query}
+            onNavigate={() => actionsRef.current?.close()}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </DropdownMenuFilter>

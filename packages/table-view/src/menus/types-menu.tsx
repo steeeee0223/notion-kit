@@ -33,7 +33,8 @@ interface TypesMenuOptions {
    * @prop whether to show back button in the header
    */
   back?: boolean;
-  onNavigate?: () => void;
+  /** Keep false for shared editor page navigation; use true for popup handoffs. */
+  closeOnClick: boolean;
 }
 
 type TypesMenuProps = TypesMenuOptions &
@@ -45,7 +46,7 @@ export function TypesMenu({
   menu,
   back,
   query: search = "",
-  onNavigate,
+  closeOnClick,
 }: TypesMenuProps) {
   const { table, plugins: registry } = useTableViewCtx();
   const propType = propId ? table.getColumnInfo(propId).type : null;
@@ -74,7 +75,6 @@ export function TypesMenu({
       page: TableViewMenuPage.EditProp,
       id: colId,
     });
-    onNavigate?.();
   };
 
   return (
@@ -127,7 +127,7 @@ export function TypesMenu({
                       className="max-w-[282px] text-xs/[1.4]"
                     >
                       <DropdownMenuItem
-                        closeOnClick={false}
+                        closeOnClick={closeOnClick}
                         disabled={plugin.id === "title"}
                         icon={plugin.meta.icon}
                         label={plugin.meta.name}
@@ -149,7 +149,7 @@ export function TypesMenu({
                 <DropdownMenuGroup>
                   <DropdownMenuLabel title="Select to add" />
                   <DropdownMenuItem
-                    closeOnClick={false}
+                    closeOnClick={closeOnClick}
                     icon={
                       <DefaultIcon type="text" className="fill-menu-icon" />
                     }

@@ -4,7 +4,6 @@ import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
 import {
   Button,
-  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   Input,
@@ -37,7 +36,6 @@ export function Toolbar({ className }: ToolbarProps) {
 function ToolbarContent({ className }: ToolbarProps) {
   const settingsRef = useRef<HTMLButtonElement>(null);
   const { filterMenu, sortMenu } = useMenuCoordinator();
-  const [settingsHandle] = useState(() => DropdownMenu.createHandle());
 
   return (
     <div className={cn("flex items-center justify-end gap-0.5", className)}>
@@ -78,27 +76,28 @@ function ToolbarContent({ className }: ToolbarProps) {
         icon={<Icon.ArrowExpandDiagonalSmall className="rotate-90" />}
         label="Open as full page"
       />
-      <DropdownMenuTrigger
-        handle={settingsHandle}
-        render={
-          <Button
-            variant="nav-icon"
-            aria-label="Settings"
-            ref={settingsRef}
-            className="[&_svg]:fill-current"
-          >
-            <Icon.SlidersSmall />
-          </Button>
-        }
-      />
-      <TableViewMenuRoot handle={settingsHandle}>
+      <TableViewMenuRoot>
         {(query) => (
-          <DropdownMenuContent collisionPadding={12} className="w-72">
-            <TableViewMenu
-              query={query}
-              getReturnFocus={() => settingsRef.current}
+          <>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="nav-icon"
+                  aria-label="Settings"
+                  ref={settingsRef}
+                  className="[&_svg]:fill-current"
+                >
+                  <Icon.SlidersSmall />
+                </Button>
+              }
             />
-          </DropdownMenuContent>
+            <DropdownMenuContent collisionPadding={12} className="w-72">
+              <TableViewMenu
+                query={query}
+                getReturnFocus={() => settingsRef.current}
+              />
+            </DropdownMenuContent>
+          </>
         )}
       </TableViewMenuRoot>
       <Button variant="blue" size="sm" className="h-7 px-2">

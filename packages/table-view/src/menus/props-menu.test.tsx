@@ -2,6 +2,7 @@ import { screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { MenuSurfaceObject } from "@/__tests__/component-objects/menu-surface";
+import { PropertiesMenuObject } from "@/__tests__/component-objects/properties-menu";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "@/__tests__/mock";
 
@@ -53,6 +54,41 @@ describe("PropsMenu", () => {
       "Edit property",
     );
     expect(edit.heading("Edit property")).toBeVisible();
+  });
+
+  it("PropertiesMenu_HeaderNavigation_ClosesPopupAndOpensSharedEditor", async () => {
+    const tableView = renderTableView();
+    await tableView.clickButton("Properties");
+    const properties = await PropertiesMenuObject.find(tableView.user);
+    await properties.search("Done");
+
+    await tableView.user.click(properties.property("Done"));
+
+    await properties.waitUntilClosed();
+    const edit = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    expect(edit.heading("Edit property")).toBeVisible();
+    expect(tableView.button("Properties")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("PropertiesMenu_HeaderReopen_ClearsSearch", async () => {
+    const tableView = renderTableView();
+    await tableView.clickButton("Properties");
+    const properties = await PropertiesMenuObject.find(tableView.user);
+    await properties.search("Done");
+
+    await tableView.clickOutside();
+    await properties.waitUntilClosed();
+    await tableView.clickButton("Properties");
+
+    const reopened = await PropertiesMenuObject.find(tableView.user);
+    expect(reopened.searchInput()).toHaveValue("");
+    expect(reopened.property("Name")).toBeVisible();
   });
 
   it("PropertiesMenu_UnmatchedSearch_ShowsNoResults", async () => {

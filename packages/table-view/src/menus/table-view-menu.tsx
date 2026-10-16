@@ -157,6 +157,7 @@ function TableViewMenuContent({ query, ...props }: TableViewMenuProps) {
           {...(menu.id ? { propId: menu.id } : { query })}
           menu={menu.page}
           back
+          closeOnClick={false}
           at={
             menu.data?.at as { id: string; side: "left" | "right" } | undefined
           }
