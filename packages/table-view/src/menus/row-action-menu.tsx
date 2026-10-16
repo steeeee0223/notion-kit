@@ -166,7 +166,7 @@ export function RowActionMenu({
           value: "delete",
           label: "Delete",
           icon: <Icon.Trash />,
-          shortcut: KEYBOARD.DEL,
+          shortcut: `${KEYBOARD.CMD}${KEYBOARD.DEL}`,
           onSelect: deleteRow,
         },
       ],
@@ -192,7 +192,7 @@ export function RowActionMenu({
             duplicateRow();
           } else if (
             event.key === "Backspace" &&
-            !event.metaKey &&
+            event.metaKey &&
             !event.ctrlKey &&
             !event.altKey &&
             !event.shiftKey

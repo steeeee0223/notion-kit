@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { MenuSurfaceObject } from "@/__tests__/component-objects/menu-surface";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "@/__tests__/mock";
 
@@ -35,6 +36,23 @@ describe("PropsMenu", () => {
 
     expect(properties.property("Name")).toBeVisible();
     expect(properties.queryProperty("Done")).not.toBeInTheDocument();
+  });
+
+  it("PropertiesMenu_Search_KeepsPropertyClickable", async () => {
+    const { tableView, properties } = await openPropertiesMenu();
+
+    await properties.search("Done");
+    expect(properties.property("Done")).not.toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+    await tableView.user.click(properties.property("Done"));
+
+    const edit = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    expect(edit.heading("Edit property")).toBeVisible();
   });
 
   it("PropertiesMenu_UnmatchedSearch_ShowsNoResults", async () => {

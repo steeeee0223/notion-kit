@@ -197,7 +197,6 @@ function PropertyItem({
     <Sortable.Item
       id={id}
       index={index}
-      disabled={!draggable}
       render={
         <DropdownMenuItem
           label={name}
