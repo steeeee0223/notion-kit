@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./learning-steps-dialog.lazy";
+import { blocksLearningStepsDialog } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: blocksLearningStepsDialog.DefaultExample,
   displayName: "Default",
   args: { initial: { open: true } },
   frame: {

@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./map-popup.lazy";
+import { mapMapPopup } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: mapMapPopup.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {

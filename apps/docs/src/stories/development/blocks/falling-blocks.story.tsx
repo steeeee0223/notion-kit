@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { BasicExample, DraggableExample } from "./falling-blocks.lazy";
+import { blocksFallingBlocks } from "@/stories/development.lazy";
 
 export const Basic = defineStory({
-  Component: BasicExample,
+  Component: blocksFallingBlocks.BasicExample,
   displayName: "Basic",
   args: { initial: {} },
   frame: {
@@ -13,7 +12,7 @@ export const Basic = defineStory({
   },
 });
 export const Draggable = defineStory({
-  Component: DraggableExample,
+  Component: blocksFallingBlocks.DraggableExample,
   displayName: "Draggable",
   args: { initial: {} },
   frame: {

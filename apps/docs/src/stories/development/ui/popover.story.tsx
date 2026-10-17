@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DetachExample } from "./popover.lazy";
+import { uiPopover } from "@/stories/development.lazy";
 
 export const Detach = defineStory({
-  Component: DetachExample,
+  Component: uiPopover.DetachExample,
   displayName: "Detach",
   args: { initial: {} },
   frame: {

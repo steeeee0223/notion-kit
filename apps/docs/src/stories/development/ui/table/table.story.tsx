@@ -1,14 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  DefaultExample,
-  EmptyExample,
-  PinnedExample,
-  StripedExample,
-} from "./table.lazy";
+import { uiTableTable } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: uiTableTable.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {
@@ -18,7 +12,7 @@ export const Default = defineStory({
   },
 });
 export const Empty = defineStory({
-  Component: EmptyExample,
+  Component: uiTableTable.EmptyExample,
   displayName: "Empty",
   args: { initial: {} },
   frame: {
@@ -28,7 +22,7 @@ export const Empty = defineStory({
   },
 });
 export const Pinned = defineStory({
-  Component: PinnedExample,
+  Component: uiTableTable.PinnedExample,
   displayName: "Pinned",
   args: { initial: {} },
   frame: {
@@ -38,7 +32,7 @@ export const Pinned = defineStory({
   },
 });
 export const Striped = defineStory({
-  Component: StripedExample,
+  Component: uiTableTable.StripedExample,
   displayName: "Striped",
   args: { initial: {} },
   frame: {

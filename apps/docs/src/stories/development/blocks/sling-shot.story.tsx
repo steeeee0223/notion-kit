@@ -1,13 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  DefaultExample,
-  NoGoalExample,
-  SoftLandingExample,
-} from "./sling-shot.lazy";
+import { blocksSlingShot } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: blocksSlingShot.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {
@@ -17,7 +12,7 @@ export const Default = defineStory({
   },
 });
 export const SoftLanding = defineStory({
-  Component: SoftLandingExample,
+  Component: blocksSlingShot.SoftLandingExample,
   displayName: "Soft Landing",
   args: { initial: {} },
   frame: {
@@ -27,7 +22,7 @@ export const SoftLanding = defineStory({
   },
 });
 export const NoGoal = defineStory({
-  Component: NoGoalExample,
+  Component: blocksSlingShot.NoGoalExample,
   displayName: "No Goal",
   args: { initial: {} },
   frame: {

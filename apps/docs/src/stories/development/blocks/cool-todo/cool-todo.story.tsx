@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./cool-todo.lazy";
+import { blocksCoolTodoCoolTodo } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: blocksCoolTodoCoolTodo.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {

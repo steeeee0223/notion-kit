@@ -1,17 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  ContextMenuTriggerExample,
-  DefaultExample,
-  DialogFormExample,
-  DisappearModeExample,
-  GhostModeExample,
-  KeyboardShortcutExample,
-  PlaygroundExample,
-} from "./eject.lazy";
+import { blocksEject } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: blocksEject.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {
@@ -21,7 +12,7 @@ export const Default = defineStory({
   },
 });
 export const DisappearMode = defineStory({
-  Component: DisappearModeExample,
+  Component: blocksEject.DisappearModeExample,
   displayName: "Disappear Mode",
   args: { initial: {} },
   frame: {
@@ -31,7 +22,7 @@ export const DisappearMode = defineStory({
   },
 });
 export const GhostMode = defineStory({
-  Component: GhostModeExample,
+  Component: blocksEject.GhostModeExample,
   displayName: "Ghost Mode",
   args: { initial: {} },
   frame: {
@@ -41,7 +32,7 @@ export const GhostMode = defineStory({
   },
 });
 export const KeyboardShortcut = defineStory({
-  Component: KeyboardShortcutExample,
+  Component: blocksEject.KeyboardShortcutExample,
   displayName: "Keyboard Shortcut",
   args: { initial: { mode: "respawn", shortcut: "mod+e" } },
   frame: {
@@ -51,7 +42,7 @@ export const KeyboardShortcut = defineStory({
   },
 });
 export const ContextMenuTrigger = defineStory({
-  Component: ContextMenuTriggerExample,
+  Component: blocksEject.ContextMenuTriggerExample,
   displayName: "Context Menu Trigger",
   args: { initial: {} },
   frame: {
@@ -61,7 +52,7 @@ export const ContextMenuTrigger = defineStory({
   },
 });
 export const Playground = defineStory({
-  Component: PlaygroundExample,
+  Component: blocksEject.PlaygroundExample,
   displayName: "Playground",
   args: { initial: {} },
   frame: {
@@ -71,7 +62,7 @@ export const Playground = defineStory({
   },
 });
 export const DialogForm = defineStory({
-  Component: DialogFormExample,
+  Component: blocksEject.DialogFormExample,
   displayName: "Dialog Form",
   args: { initial: {} },
   frame: {

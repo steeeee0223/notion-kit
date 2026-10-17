@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { WithClearExample } from "./input.lazy";
+import { uiInput } from "@/stories/development.lazy";
 
 export const WithClear = defineStory({
-  Component: WithClearExample,
+  Component: uiInput.WithClearExample,
   displayName: "With Clear",
   args: { initial: { clear: true, placeholder: "Search a website" } },
   frame: {

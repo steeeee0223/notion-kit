@@ -5,11 +5,7 @@ import { reactConfig } from "@notion-kit/eslint-config/react";
 
 export default defineConfig(
   {
-    ignores: [
-      "public/**",
-      "src/stories/registry/**",
-      "src/stories/registry.lazy.tsx",
-    ],
+    ignores: ["public/**", "src/stories/registry.lazy.tsx"],
   },
   baseConfig,
   reactConfig,

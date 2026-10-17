@@ -1,14 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  CustomStylingExample,
-  HighCurvatureExample,
-  StraightLinesExample,
-  WithHoverStateExample,
-} from "./map-arc.lazy";
+import { mapMapArc } from "@/stories/development.lazy";
 
 export const CustomStyling = defineStory({
-  Component: CustomStylingExample,
+  Component: mapMapArc.CustomStylingExample,
   displayName: "Custom Styling",
   args: { initial: { curvature: 0.4 } },
   frame: {
@@ -18,7 +12,7 @@ export const CustomStyling = defineStory({
   },
 });
 export const WithHoverState = defineStory({
-  Component: WithHoverStateExample,
+  Component: mapMapArc.WithHoverStateExample,
   displayName: "With Hover State",
   args: { initial: {} },
   frame: {
@@ -28,7 +22,7 @@ export const WithHoverState = defineStory({
   },
 });
 export const HighCurvature = defineStory({
-  Component: HighCurvatureExample,
+  Component: mapMapArc.HighCurvatureExample,
   displayName: "High Curvature",
   args: { initial: { curvature: 0.6 } },
   frame: {
@@ -38,7 +32,7 @@ export const HighCurvature = defineStory({
   },
 });
 export const StraightLines = defineStory({
-  Component: StraightLinesExample,
+  Component: mapMapArc.StraightLinesExample,
   displayName: "Straight Lines",
   args: { initial: { curvature: 0 } },
   frame: {

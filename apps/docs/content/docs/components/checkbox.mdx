@@ -1,15 +1,12 @@
 ---
 title: Checkbox
-description: A control that allows the user to toggle between checked and not checked.
+description: A checkbox with checked, unchecked, and indeterminate states.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/checkbox
 ---
 
-import { story as CheckboxDefaultStory } from "@/stories/registry/checkbox-default.story";
-import { story as CheckboxSizesStory } from "@/stories/registry/checkbox-sizes.story";
-
-<CheckboxDefaultStory.WithControl />
+<RegistryStory name="checkbox-default" />
 
 ```tsx
 <Checkbox />
@@ -28,7 +25,7 @@ import { story as CheckboxSizesStory } from "@/stories/registry/checkbox-sizes.s
 Use the `size` prop to control the size of the checkbox.
 The default size is `"md"`.
 
-<CheckboxSizesStory.WithControl />
+<RegistryStory name="checkbox-sizes" />
 
 ```tsx
 <Checkbox size="xs"/>
@@ -40,6 +37,12 @@ The default size is `"md"`.
 
 ### Checkbox
 
-| Prop   | Type                   | Default | Description               |
-| ------ | ---------------------- | ------- | ------------------------- |
-| `size` | `"xs" \| "sm" \| "md"` | `"md"`  | The size of the checkbox. |
+<TypeTable
+  type={{
+    size: {
+      type: '"xs" | "sm" | "md"',
+      default: '"md"',
+      description: "The size of the checkbox.",
+    },
+  }}
+/>

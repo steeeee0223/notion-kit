@@ -4,11 +4,14 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 
+import { RegistryStory } from "@/lib/registry-story";
+
 import { Installation } from "./docs/installation";
 
 export const mdxComponents = {
   ...defaultMdxComponents,
   Installation,
+  RegistryStory,
   Step,
   Steps,
   Tab,

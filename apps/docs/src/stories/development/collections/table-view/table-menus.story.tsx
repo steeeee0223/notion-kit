@@ -1,19 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  CalcMenuExample,
-  ColumnConfigMenusExample,
-  EditPropMenuExample,
-  FilterMenuExample,
-  PropMenuExample,
-  RowActionMenuExample,
-  SortMenuExample,
-  TableViewMenuExample,
-  TypesMenuExample,
-} from "./table-menus.lazy";
+import { collectionsTableViewTableMenus } from "@/stories/development.lazy";
 
 export const TableViewMenu = defineStory({
-  Component: TableViewMenuExample,
+  Component: collectionsTableViewTableMenus.TableViewMenuExample,
   displayName: "Table View Menu",
   args: { initial: {} },
   frame: {
@@ -23,7 +12,7 @@ export const TableViewMenu = defineStory({
   },
 });
 export const SortMenu = defineStory({
-  Component: SortMenuExample,
+  Component: collectionsTableViewTableMenus.SortMenuExample,
   displayName: "Sort Menu",
   args: { initial: {} },
   frame: {
@@ -33,7 +22,7 @@ export const SortMenu = defineStory({
   },
 });
 export const FilterMenu = defineStory({
-  Component: FilterMenuExample,
+  Component: collectionsTableViewTableMenus.FilterMenuExample,
   displayName: "Filter Menu",
   args: { initial: {} },
   frame: {
@@ -43,7 +32,7 @@ export const FilterMenu = defineStory({
   },
 });
 export const CalcMenu = defineStory({
-  Component: CalcMenuExample,
+  Component: collectionsTableViewTableMenus.CalcMenuExample,
   displayName: "Calc Menu",
   args: { initial: {} },
   frame: {
@@ -53,7 +42,7 @@ export const CalcMenu = defineStory({
   },
 });
 export const PropMenu = defineStory({
-  Component: PropMenuExample,
+  Component: collectionsTableViewTableMenus.PropMenuExample,
   displayName: "Prop Menu",
   args: { initial: {} },
   frame: {
@@ -63,7 +52,7 @@ export const PropMenu = defineStory({
   },
 });
 export const TypesMenu = defineStory({
-  Component: TypesMenuExample,
+  Component: collectionsTableViewTableMenus.TypesMenuExample,
   displayName: "Types Menu",
   args: { initial: {} },
   frame: {
@@ -73,7 +62,7 @@ export const TypesMenu = defineStory({
   },
 });
 export const EditPropMenu = defineStory({
-  Component: EditPropMenuExample,
+  Component: collectionsTableViewTableMenus.EditPropMenuExample,
   displayName: "Edit Prop Menu",
   args: { initial: {} },
   frame: {
@@ -83,7 +72,7 @@ export const EditPropMenu = defineStory({
   },
 });
 export const ColumnConfigMenus = defineStory({
-  Component: ColumnConfigMenusExample,
+  Component: collectionsTableViewTableMenus.ColumnConfigMenusExample,
   displayName: "Column Config Menus",
   args: { initial: {} },
   frame: {
@@ -93,7 +82,7 @@ export const ColumnConfigMenus = defineStory({
   },
 });
 export const RowActionMenu = defineStory({
-  Component: RowActionMenuExample,
+  Component: collectionsTableViewTableMenus.RowActionMenuExample,
   displayName: "Row Action Menu",
   args: { initial: {} },
   frame: {

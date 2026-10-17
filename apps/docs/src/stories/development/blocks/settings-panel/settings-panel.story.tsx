@@ -1,21 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  BillingExample,
-  DefaultExample,
-  EmojiExample,
-  IdentityExample,
-  MyConnectionsExample,
-  NotificationsExample,
-  PeopleExample,
-  PlansExample,
-  SecurityExample,
-  TeamspacesExample,
-  WorkspaceExample,
-} from "./settings-panel.lazy";
+import { blocksSettingsPanelSettingsPanel } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: blocksSettingsPanelSettingsPanel.DefaultExample,
   displayName: "Default",
   args: { initial: { tab: "account" } },
   frame: {
@@ -25,7 +12,7 @@ export const Default = defineStory({
   },
 });
 export const Notifications = defineStory({
-  Component: NotificationsExample,
+  Component: blocksSettingsPanelSettingsPanel.NotificationsExample,
   displayName: "Notifications",
   args: { initial: { tab: "notifications" } },
   frame: {
@@ -35,7 +22,7 @@ export const Notifications = defineStory({
   },
 });
 export const MyConnections = defineStory({
-  Component: MyConnectionsExample,
+  Component: blocksSettingsPanelSettingsPanel.MyConnectionsExample,
   displayName: "My Connections",
   args: { initial: { tab: "my-connections" } },
   frame: {
@@ -45,7 +32,7 @@ export const MyConnections = defineStory({
   },
 });
 export const Workspace = defineStory({
-  Component: WorkspaceExample,
+  Component: blocksSettingsPanelSettingsPanel.WorkspaceExample,
   displayName: "Workspace",
   args: { initial: { tab: "general" } },
   frame: {
@@ -55,7 +42,7 @@ export const Workspace = defineStory({
   },
 });
 export const People = defineStory({
-  Component: PeopleExample,
+  Component: blocksSettingsPanelSettingsPanel.PeopleExample,
   displayName: "People",
   args: { initial: { tab: "people" } },
   frame: {
@@ -65,7 +52,7 @@ export const People = defineStory({
   },
 });
 export const Emoji = defineStory({
-  Component: EmojiExample,
+  Component: blocksSettingsPanelSettingsPanel.EmojiExample,
   displayName: "Emoji",
   args: { initial: { tab: "emoji" } },
   frame: {
@@ -75,7 +62,7 @@ export const Emoji = defineStory({
   },
 });
 export const Teamspaces = defineStory({
-  Component: TeamspacesExample,
+  Component: blocksSettingsPanelSettingsPanel.TeamspacesExample,
   displayName: "Teamspaces",
   args: { initial: { tab: "teamspaces" } },
   frame: {
@@ -85,7 +72,7 @@ export const Teamspaces = defineStory({
   },
 });
 export const Security = defineStory({
-  Component: SecurityExample,
+  Component: blocksSettingsPanelSettingsPanel.SecurityExample,
   displayName: "Security",
   args: { initial: { tab: "security" } },
   frame: {
@@ -95,7 +82,7 @@ export const Security = defineStory({
   },
 });
 export const Identity = defineStory({
-  Component: IdentityExample,
+  Component: blocksSettingsPanelSettingsPanel.IdentityExample,
   displayName: "Identity",
   args: { initial: { tab: "identity" } },
   frame: {
@@ -105,7 +92,7 @@ export const Identity = defineStory({
   },
 });
 export const Billing = defineStory({
-  Component: BillingExample,
+  Component: blocksSettingsPanelSettingsPanel.BillingExample,
   displayName: "Billing",
   args: { initial: { tab: "billing" } },
   frame: {
@@ -115,7 +102,7 @@ export const Billing = defineStory({
   },
 });
 export const Plans = defineStory({
-  Component: PlansExample,
+  Component: blocksSettingsPanelSettingsPanel.PlansExample,
   displayName: "Plans",
   args: { initial: { tab: "plans" } },
   frame: {

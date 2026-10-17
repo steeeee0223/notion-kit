@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./use-rect.lazy";
+import { hooksUseRect } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: hooksUseRect.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {

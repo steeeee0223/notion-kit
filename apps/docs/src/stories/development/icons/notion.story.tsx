@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { IconGallery } from "./notion.lazy";
+import { iconsNotion } from "@/stories/development.lazy";
 
 export const Notion = defineStory({
-  Component: IconGallery,
+  Component: iconsNotion.IconGallery,
   frame: {
     src: "/story/development/icons/notion/Notion",
     width: 1280,

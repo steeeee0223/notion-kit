@@ -1,16 +1,12 @@
 ---
 title: Badge
-description: Displays a badge or a component that looks like a badge.
+description: A label for status, category, or other short text.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/badge
 ---
 
-import { story as BadgeDefaultStory } from "@/stories/registry/badge-default.story";
-import { story as BadgeSizesStory } from "@/stories/registry/badge-sizes.story";
-import { story as BadgeVariantsStory } from "@/stories/registry/badge-variants.story";
-
-<BadgeDefaultStory.WithControl />
+<RegistryStory name="badge-default" />
 
 ```tsx
 <Badge>badge</Badge>
@@ -29,7 +25,7 @@ import { story as BadgeVariantsStory } from "@/stories/registry/badge-variants.s
 Use the `variant` prop to control the visual style of the badge.<br/>
 The default variant is `"default"`.
 
-<BadgeVariantsStory.WithControl />
+<RegistryStory name="badge-variants" />
 
 ```tsx
 <Badge variant="default">default</Badge>
@@ -44,7 +40,7 @@ The default variant is `"default"`.
 Use the `size` prop to control the text size of the badge.
 The default size is `"md"`.
 
-<BadgeSizesStory.WithControl />
+<RegistryStory name="badge-sizes" />
 
 ```tsx
 <Badge size="sm">badge</Badge>
@@ -55,9 +51,19 @@ The default size is `"md"`.
 
 ### Badge
 
-An `Badge` extends the HTML `<div>` component. We list the extended properties only.
+`Badge` accepts HTML `<div>` props and the props below.
 
-| Prop      | Type                                                        | Default     | Description                    |
-| --------- | ----------------------------------------------------------- | ----------- | ------------------------------ |
-| `variant` | `"default" \| "gray" \| "blue \| "orange" \| "tag" \| null` | `"default"` | The visual style of the badge. |
-| `size`    | `"sm" \| "md"`                                              | `"md"`      | The size of the badge.         |
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "gray" | "blue | "orange" | "tag" | null',
+      default: '"default"',
+      description: "The visual style of the badge.",
+    },
+    size: {
+      type: '"sm" | "md"',
+      default: '"md"',
+      description: "The size of the badge.",
+    },
+  }}
+/>

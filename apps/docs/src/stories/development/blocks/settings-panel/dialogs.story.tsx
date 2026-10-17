@@ -1,28 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  Add2FAModalExample,
-  AddEmojiModalExample,
-  AddMembersModalExample,
-  AddTeamMembersModalExample,
-  ChangePasswordModalExample,
-  ChangePaymentMethodModalExample,
-  CreateTeamspaceModalExample,
-  DeleteAccountModalExample,
-  DeleteGuestModalExample,
-  DeleteMemberModalExample,
-  DeleteWorkspaceModalExample,
-  EditEmojiModalExample,
-  EmailSettingsModalExample,
-  Enable2FAMethodModalExample,
-  PasskeysManagementExample,
-  SetPasswordModalExample,
-  TeamspaceDetailModalExample,
-  UpgradeModalExample,
-} from "./dialogs.lazy";
+import { blocksSettingsPanelDialogs } from "@/stories/development.lazy";
 
 export const CreateTeamspaceModal = defineStory({
-  Component: CreateTeamspaceModalExample,
+  Component: blocksSettingsPanelDialogs.CreateTeamspaceModalExample,
   displayName: "Create Teamspace Modal",
   args: { initial: {} },
   frame: {
@@ -32,7 +12,7 @@ export const CreateTeamspaceModal = defineStory({
   },
 });
 export const TeamspaceDetailModal = defineStory({
-  Component: TeamspaceDetailModalExample,
+  Component: blocksSettingsPanelDialogs.TeamspaceDetailModalExample,
   displayName: "Teamspace Detail Modal",
   args: { initial: {} },
   frame: {
@@ -42,7 +22,7 @@ export const TeamspaceDetailModal = defineStory({
   },
 });
 export const AddTeamMembersModal = defineStory({
-  Component: AddTeamMembersModalExample,
+  Component: blocksSettingsPanelDialogs.AddTeamMembersModalExample,
   displayName: "Add Team Members Modal",
   args: { initial: {} },
   frame: {
@@ -52,7 +32,7 @@ export const AddTeamMembersModal = defineStory({
   },
 });
 export const AddMembersModal = defineStory({
-  Component: AddMembersModalExample,
+  Component: blocksSettingsPanelDialogs.AddMembersModalExample,
   displayName: "Add Members Modal",
   args: { initial: {} },
   frame: {
@@ -62,7 +42,7 @@ export const AddMembersModal = defineStory({
   },
 });
 export const DeleteAccountModal = defineStory({
-  Component: DeleteAccountModalExample,
+  Component: blocksSettingsPanelDialogs.DeleteAccountModalExample,
   displayName: "Delete Account Modal",
   args: { initial: {} },
   frame: {
@@ -72,7 +52,7 @@ export const DeleteAccountModal = defineStory({
   },
 });
 export const DeleteGuestModal = defineStory({
-  Component: DeleteGuestModalExample,
+  Component: blocksSettingsPanelDialogs.DeleteGuestModalExample,
   displayName: "Delete Guest Modal",
   args: { initial: {} },
   frame: {
@@ -82,7 +62,7 @@ export const DeleteGuestModal = defineStory({
   },
 });
 export const DeleteMemberModal = defineStory({
-  Component: DeleteMemberModalExample,
+  Component: blocksSettingsPanelDialogs.DeleteMemberModalExample,
   displayName: "Delete Member Modal",
   args: { initial: {} },
   frame: {
@@ -92,7 +72,7 @@ export const DeleteMemberModal = defineStory({
   },
 });
 export const DeleteWorkspaceModal = defineStory({
-  Component: DeleteWorkspaceModalExample,
+  Component: blocksSettingsPanelDialogs.DeleteWorkspaceModalExample,
   displayName: "Delete Workspace Modal",
   args: { initial: {} },
   frame: {
@@ -102,7 +82,7 @@ export const DeleteWorkspaceModal = defineStory({
   },
 });
 export const EmailSettingsModal = defineStory({
-  Component: EmailSettingsModalExample,
+  Component: blocksSettingsPanelDialogs.EmailSettingsModalExample,
   displayName: "Email Settings Modal",
   args: { initial: {} },
   frame: {
@@ -112,7 +92,7 @@ export const EmailSettingsModal = defineStory({
   },
 });
 export const SetPasswordModal = defineStory({
-  Component: SetPasswordModalExample,
+  Component: blocksSettingsPanelDialogs.SetPasswordModalExample,
   displayName: "Set Password Modal",
   args: { initial: {} },
   frame: {
@@ -122,7 +102,7 @@ export const SetPasswordModal = defineStory({
   },
 });
 export const ChangePasswordModal = defineStory({
-  Component: ChangePasswordModalExample,
+  Component: blocksSettingsPanelDialogs.ChangePasswordModalExample,
   displayName: "Change Password Modal",
   args: { initial: {} },
   frame: {
@@ -132,7 +112,7 @@ export const ChangePasswordModal = defineStory({
   },
 });
 export const Add2FAModal = defineStory({
-  Component: Add2FAModalExample,
+  Component: blocksSettingsPanelDialogs.Add2FAModalExample,
   displayName: "Add2 FAModal",
   args: { initial: {} },
   frame: {
@@ -142,7 +122,7 @@ export const Add2FAModal = defineStory({
   },
 });
 export const Enable2FAMethodModal = defineStory({
-  Component: Enable2FAMethodModalExample,
+  Component: blocksSettingsPanelDialogs.Enable2FAMethodModalExample,
   displayName: "Enable2 FAMethod Modal",
   args: { initial: {} },
   frame: {
@@ -152,7 +132,7 @@ export const Enable2FAMethodModal = defineStory({
   },
 });
 export const PasskeysManagement = defineStory({
-  Component: PasskeysManagementExample,
+  Component: blocksSettingsPanelDialogs.PasskeysManagementExample,
   displayName: "Passkeys Management",
   args: { initial: {} },
   frame: {
@@ -162,7 +142,7 @@ export const PasskeysManagement = defineStory({
   },
 });
 export const UpgradeModal = defineStory({
-  Component: UpgradeModalExample,
+  Component: blocksSettingsPanelDialogs.UpgradeModalExample,
   displayName: "Upgrade Modal",
   args: { initial: {} },
   frame: {
@@ -172,7 +152,7 @@ export const UpgradeModal = defineStory({
   },
 });
 export const ChangePaymentMethodModal = defineStory({
-  Component: ChangePaymentMethodModalExample,
+  Component: blocksSettingsPanelDialogs.ChangePaymentMethodModalExample,
   displayName: "Change Payment Method Modal",
   args: { initial: {} },
   frame: {
@@ -182,7 +162,7 @@ export const ChangePaymentMethodModal = defineStory({
   },
 });
 export const AddEmojiModal = defineStory({
-  Component: AddEmojiModalExample,
+  Component: blocksSettingsPanelDialogs.AddEmojiModalExample,
   displayName: "Add Emoji Modal",
   args: { initial: {} },
   frame: {
@@ -192,7 +172,7 @@ export const AddEmojiModal = defineStory({
   },
 });
 export const EditEmojiModal = defineStory({
-  Component: EditEmojiModalExample,
+  Component: blocksSettingsPanelDialogs.EditEmojiModalExample,
   displayName: "Edit Emoji Modal",
   args: { initial: {} },
   frame: {

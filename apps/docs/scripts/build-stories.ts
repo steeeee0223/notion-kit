@@ -1,9 +1,12 @@
+import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import ts from "typescript";
+import { pathToFileURL } from "node:url";
 import { z } from "zod";
 
-import { registryIndex } from "../../../packages/registry/src/index";
+import { registryIndex } from "@notion-kit/registry";
+
+import { storyTitle } from "@/lib/story";
 
 const groups = [
   "autocomplete",
@@ -43,148 +46,113 @@ const groups = [
   "tree",
   "unsplash",
 ];
-const title = (name: string) =>
-  name
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-const write = async (file: string, content: string) => {
-  await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, `${content.trim()}\n`);
-};
 
-for (const dir of [
-  "content/registry",
-  "content/development",
-  "src/stories/registry",
-]) {
-  await rm(dir, { recursive: true, force: true });
-}
+const output = new Map<string, string>();
+const page = (title: string, body: string) =>
+  `---\ntitle: ${title}\n---\n\n${body}`;
 
-const assigned = new Set<string>();
+output.set(
+  "src/stories/registry.lazy.tsx",
+  `import type { ComponentType } from 'react';
+import type { RegistryIndex } from '@notion-kit/registry';
+
+export const registryExamples: Record<RegistryIndex, () => Promise<{ default: ComponentType }>> = {
+${registryIndex.map((name) => `  '${name}': () => import('@notion-kit/registry/${name}'),`).join("\n")}
+};`,
+);
+
+const ungrouped = new Set<string>(registryIndex);
 for (const group of groups) {
   const names = registryIndex.filter(
     (name) => name === group || name.startsWith(`${group}-`),
   );
-  if (names.length === 0) throw new Error(`Empty registry group: ${group}`);
-  for (const name of names) {
-    if (assigned.has(name))
-      throw new Error(`Duplicate registry story: ${name}`);
-    assigned.add(name);
-    const height =
-      /^(calendar|settings-panel|sidebar|table-view|timeline|kanban)/.test(name)
-        ? 800
-        : name.startsWith("map-")
-          ? 600
-          : 320;
-    await write(
-      `src/stories/registry/${name}.lazy.tsx`,
-      `import { lazy } from 'react';\nexport const Example = lazy(() => import('@notion-kit/registry/${name}'));`,
-    );
-    await write(
-      `src/stories/registry/${name}.story.tsx`,
-      `import { defineStory } from '@/lib/story';\nimport { Example } from './${name}.lazy';\nexport const story = defineStory({Component: Example, displayName: ${JSON.stringify(title(name))}, args: {initial: {}}, frame: {src: '/story/registry/${name}/story', width: 1280, height: ${height}}});`,
-    );
-  }
-  await write(
+  if (!names.length) throw new Error(`Empty registry group: ${group}`);
+  for (const name of names) ungrouped.delete(name);
+  output.set(
     `content/registry/${group}.mdx`,
-    `---\ntitle: ${title(group)}\n---\n\n${names.map((name, index) => `import { story as Example${index} } from '@/stories/registry/${name}.story';`).join("\n")}\n\n${names.map((name, index) => `## ${title(name)}\n\n<Example${index}.WithControl />\n\n\`\`\`sh\npnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/${name}.json\n\`\`\``).join("\n\n")}`,
+    page(
+      storyTitle(group),
+      names
+        .map(
+          (name) => `## ${storyTitle(name)}
+
+<RegistryStory name="${name}" />
+
+\`\`\`sh
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/${name}.json
+\`\`\``,
+        )
+        .join("\n\n"),
+    ),
   );
 }
-if (assigned.size !== registryIndex.length)
-  throw new Error(
-    `Ungrouped registry entries: ${registryIndex.filter((name) => !assigned.has(name)).join(", ")}`,
-  );
-await write(
-  "content/registry/index.mdx",
-  "---\ntitle: Registry\ndescription: Installable Notion Kit component examples.\n---\n\nChoose a component in the sidebar to explore its examples.",
-);
-await write(
-  "content/registry/meta.json",
-  JSON.stringify(
-    { title: "Registry", root: true, pages: ["index", ...groups] },
-    null,
-    2,
-  ),
-);
+if (ungrouped.size)
+  throw new Error(`Ungrouped registry entries: ${[...ungrouped].join(", ")}`);
 
+const storyExports = z
+  .object({})
+  .catchall(z.object({ WithControl: z.function(), Frame: z.function() }));
 const directory = "src/stories/development";
 const files = (await readdir(directory, { recursive: true }))
   .filter((file) => file.endsWith(".story.tsx"))
   .sort();
 let count = 0;
-const developmentStories = new Set<string>();
 for (const file of files) {
-  const source = ts.createSourceFile(
-    file,
-    await readFile(path.join(directory, file), "utf8"),
-    ts.ScriptTarget.Latest,
-    true,
-    ts.ScriptKind.TSX,
+  const exports = storyExports.parse(
+    await import(pathToFileURL(path.resolve(directory, file)).href),
   );
-  const names: string[] = [];
-  for (const statement of source.statements) {
-    if (
-      !ts.isVariableStatement(statement) ||
-      !statement.modifiers?.some(
-        (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
-      )
-    )
-      continue;
-    for (const declaration of statement.declarationList.declarations) {
-      if (
-        ts.isIdentifier(declaration.name) &&
-        declaration.initializer &&
-        ts.isCallExpression(declaration.initializer) &&
-        declaration.initializer.expression.getText(source) === "defineStory"
-      )
-        names.push(declaration.name.text);
-    }
-  }
-  if (names.length === 0)
-    throw new Error(`No Fumadocs stories exported by ${file}`);
+  const names = Object.keys(exports);
+  if (!names.length) throw new Error(`No stories exported by ${file}`);
   count += names.length;
   const slug = file.replace(/\.story\.tsx$/, "");
-  for (const name of names) developmentStories.add(`${slug}/${name}`);
-  await write(
+  output.set(
     `content/development/${slug}.mdx`,
-    `---\ntitle: ${title(path.basename(slug))}\n---\n\nimport { ${names.join(", ")} } from '@/stories/development/${slug}.story';\n\n${names.map((name) => `## ${title(name)}\n\n<${name}.WithControl />`).join("\n\n")}`,
+    page(
+      storyTitle(path.basename(slug)),
+      `import { ${names.join(", ")} } from '@/stories/development/${slug}.story';
+
+${names.map((name) => `## ${storyTitle(name)}\n\n<${name}.WithControl />`).join("\n\n")}`,
+    ),
   );
 }
-await write(
-  "content/development/index.mdx",
-  "---\ntitle: Development\ndescription: Component scenarios beyond the registry examples.\n---\n\nChoose a component in the sidebar to explore its development scenarios.",
-);
-await write(
-  "content/development/meta.json",
-  JSON.stringify(
-    { title: "Development", root: true, pages: ["index", "..."] },
-    null,
-    2,
-  ),
-);
-const migration = z
-  .record(
-    z.string(),
-    z.record(
-      z.string(),
-      z.union([
-        z.object({ registry: z.enum(registryIndex) }),
-        z.object({ development: z.string() }),
-      ]),
+
+for (const section of ["registry", "development"]) {
+  const title = storyTitle(section);
+  output.set(
+    `content/${section}/index.mdx`,
+    page(title, "Choose an example from the sidebar."),
+  );
+  output.set(
+    `content/${section}/meta.json`,
+    JSON.stringify(
+      {
+        title,
+        root: true,
+        pages: section === "registry" ? ["index", ...groups] : ["index", "..."],
+      },
+      null,
+      2,
     ),
-  )
-  .parse(JSON.parse(await readFile("story-migration.json", "utf8")));
-for (const [file, stories] of Object.entries(migration)) {
-  for (const [name, destination] of Object.entries(stories)) {
-    if (
-      "development" in destination &&
-      !developmentStories.has(destination.development)
-    )
-      throw new Error(`Missing migrated scenario: ${file}/${name}`);
+  );
+}
+
+// Keep unchanged files in place so rerunning this command does not reload pages.
+for (const [file, content] of output) {
+  const next = `${content.trim()}\n`;
+  if (existsSync(file) && (await readFile(file, "utf8")) === next) continue;
+  await mkdir(path.dirname(file), { recursive: true });
+  await writeFile(file, next);
+}
+for (const directory of ["content/registry", "content/development"]) {
+  for (const file of await readdir(directory, {
+    recursive: true,
+    withFileTypes: true,
+  })) {
+    const name = path.join(file.parentPath, file.name);
+    if (file.isFile() && !output.has(name.split(path.sep).join("/")))
+      await rm(name);
   }
 }
 console.log(
-  `Generated ${assigned.size} registry examples in ${groups.length} groups and ${count} development scenarios.`,
+  `Generated ${registryIndex.length} registry examples and ${count} development stories.`,
 );

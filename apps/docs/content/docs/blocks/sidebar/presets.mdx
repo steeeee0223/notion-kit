@@ -1,13 +1,7 @@
 ---
 title: Sidebar Presets
-description: A collection of preset components in Notion sidebar.
+description: Page lists, workspace switching, search, and trash.
 ---
-
-import { story as SidebarFavoriteListStory } from "@/stories/registry/sidebar-favorite-list.story";
-import { story as SidebarPageListStory } from "@/stories/registry/sidebar-page-list.story";
-import { story as SidebarSearchCommandStory } from "@/stories/registry/sidebar-search-command.story";
-import { story as SidebarTrashBoxStory } from "@/stories/registry/sidebar-trash-box.story";
-import { story as SidebarWorkspaceSwitcherStory } from "@/stories/registry/sidebar-workspace-switcher.story";
 
 ## Installation
 
@@ -23,7 +17,7 @@ pnpm add @notion-kit/ui
 
 A `WorkspaceSwitcher` is a dropdown menu that controls workspaces and user's login state.
 
-<SidebarWorkspaceSwitcherStory.WithControl />
+<RegistryStory name="sidebar-workspace-switcher" />
 
 ```tsx
 <WorkspaceSwitcher
@@ -35,21 +29,53 @@ A `WorkspaceSwitcher` is a dropdown menu that controls workspaces and user's log
 
 #### API Reference
 
-| Prop                | Type                                     | Default | Description                                                                   |
-| ------------------- | ---------------------------------------- | ------- | ----------------------------------------------------------------------------- |
-| `user`\*            | [`User`](/docs/objects/user)             | -       | Current user.                                                                 |
-| `activeWorkspace`\* | [`Workspace`](/docs/objects/workspace)   | -       | Current user.                                                                 |
-| `workspaces`\*      | [`Workspace[]`](/docs/objects/workspace) | -       | Current user.                                                                 |
-| `onSelect`          | `(id: string) => void`                   | -       | Handler that is called when a workspace is selected.                          |
-| `onCreateAccount`   | `() => void`                             | -       | Handler that is called when the "Create Account" button is clicked.           |
-| `onCreateWorkspace` | `() => void`                             | -       | Handler that is called when the "Create or Join Workspace" button is clicked. |
-| `onLogout`          | `() => void`                             | -       | Handler that is called when the "Logout" button is clicked.                   |
+<TypeTable
+  type={{
+    user: {
+      type: "User",
+      typeDescriptionLink: "/docs/objects/user",
+      required: true,
+      description: "Current user.",
+    },
+    activeWorkspace: {
+      type: "Workspace",
+      typeDescriptionLink: "/docs/objects/workspace",
+      required: true,
+      description: "Current user.",
+    },
+    workspaces: {
+      type: "Workspace[]",
+      typeDescriptionLink: "/docs/objects/workspace",
+      required: true,
+      description: "Current user.",
+    },
+    onSelect: {
+      type: "(id: string) => void",
+      description: "Handler that is called when a workspace is selected.",
+    },
+    onCreateAccount: {
+      type: "() => void",
+      description:
+        'Handler that is called when the "Create Account" button is clicked.',
+    },
+    onCreateWorkspace: {
+      type: "() => void",
+      description:
+        'Handler that is called when the "Create or Join Workspace" button is clicked.',
+    },
+    onLogout: {
+      type: "() => void",
+      description:
+        'Handler that is called when the "Logout" button is clicked.',
+    },
+  }}
+/>
 
 ### Page List
 
 A page list is a component `DocList` showing a group of pages.
 
-<SidebarPageListStory.WithControl />
+<RegistryStory name="sidebar-page-list" />
 
 ```tsx
 <DocList group="document" title="Document" pages={pages} />
@@ -57,18 +83,57 @@ A page list is a component `DocList` showing a group of pages.
 
 #### API Reference
 
-| Prop          | Type                                           | Default                           | Description                                                                                      |
-| ------------- | ---------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `group`\*     | `string`                                       | -                                 | The identifier of the group.                                                                     |
-| `title`\*     | `string`                                       | -                                 | The group title.                                                                                 |
-| `pages`\*     | [`Page[]`](/docs/objects/page)                 | -                                 | Pages in this group.                                                                             |
-| `activePage`  | `string \| null`                               | -                                 | The active page in this group.                                                                   |
-| `defaultIcon` | [`IconData`](/docs/objects/icon)               | `{ type: "lucide", src: "file" }` | The default icon of the page within this group. This is useful when a page has no icon selected. |
-| `isLoading`   | `boolean`                                      | -                                 | The loading state of this group. It will show a skeleton if the group is loading.                |
-| `onSelect`    | `(id: string) => void`                         | -                                 | Handler that is called when a page is active.                                                    |
-| `onCreate`    | `(group: string, parentId?: string) => void`   | -                                 | Handler that is called when the "Create" button is triggered in this group.                      |
-| `onDuplicate` | `(id: string) => void`                         | -                                 | Handler that is called when the "Duplicate" action is triggered.                                 |
-| `onUpdate`    | `(id: string, data: UpdatePageParams) => void` | -                                 | Handler that is called when the page data or page state is updated.                              |
+<TypeTable
+  type={{
+    group: {
+      type: "string",
+      required: true,
+      description: "The identifier of the group.",
+    },
+    title: { type: "string", required: true, description: "The group title." },
+    pages: {
+      type: "Page[]",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Pages in this group.",
+    },
+    activePage: {
+      type: "string | null",
+      description: "The active page in this group.",
+    },
+    defaultIcon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      default: '{ type: "lucide", src: "file" }',
+      description:
+        "The default icon of the page within this group. This is useful when a page has no icon selected.",
+    },
+    isLoading: {
+      type: "boolean",
+      description:
+        "The loading state of this group. It will show a skeleton if the group is loading.",
+    },
+    onSelect: {
+      type: "(id: string) => void",
+      description: "Handler that is called when a page is active.",
+    },
+    onCreate: {
+      type: "(group: string, parentId?: string) => void",
+      description:
+        'Handler that is called when the "Create" button is triggered in this group.',
+    },
+    onDuplicate: {
+      type: "(id: string) => void",
+      description:
+        'Handler that is called when the "Duplicate" action is triggered.',
+    },
+    onUpdate: {
+      type: "(id: string, data: UpdatePageParams) => void",
+      description:
+        "Handler that is called when the page data or page state is updated.",
+    },
+  }}
+/>
 
 ### Favorite List
 
@@ -78,7 +143,7 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
   - The `FavoriteList` only shows your Favorite pages that are not **archived**.
 </Callout>
 
-<SidebarFavoriteListStory.WithControl />
+<RegistryStory name="sidebar-favorite-list" />
 
 ```tsx
 <FavoriteList pages={pages} />
@@ -86,21 +151,50 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
 
 #### API Reference
 
-| Prop          | Type                                           | Default | Description                                                                       |
-| ------------- | ---------------------------------------------- | ------- | --------------------------------------------------------------------------------- |
-| `pages`\*     | [`Page[]`](/docs/objects/page)                 | -       | Pages in this group.                                                              |
-| `activePage`  | `string \| null`                               | -       | The active page in this group.                                                    |
-| `isLoading`   | `boolean`                                      | -       | The loading state of this group. It will show a skeleton if the group is loading. |
-| `onSelect`    | `(id: string) => void`                         | -       | Handler that is called when a page is active.                                     |
-| `onCreate`    | `(group: string, parentId?: string) => void`   | -       | Handler that is called when the "Create" button is triggered in this group.       |
-| `onDuplicate` | `(id: string) => void`                         | -       | Handler that is called when the "Duplicate" action is triggered.                  |
-| `onUpdate`    | `(id: string, data: UpdatePageParams) => void` | -       | Handler that is called when the page data or page state is updated.               |
+<TypeTable
+  type={{
+    pages: {
+      type: "Page[]",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Pages in this group.",
+    },
+    activePage: {
+      type: "string | null",
+      description: "The active page in this group.",
+    },
+    isLoading: {
+      type: "boolean",
+      description:
+        "The loading state of this group. It will show a skeleton if the group is loading.",
+    },
+    onSelect: {
+      type: "(id: string) => void",
+      description: "Handler that is called when a page is active.",
+    },
+    onCreate: {
+      type: "(group: string, parentId?: string) => void",
+      description:
+        'Handler that is called when the "Create" button is triggered in this group.',
+    },
+    onDuplicate: {
+      type: "(id: string) => void",
+      description:
+        'Handler that is called when the "Duplicate" action is triggered.',
+    },
+    onUpdate: {
+      type: "(id: string, data: UpdatePageParams) => void",
+      description:
+        "Handler that is called when the page data or page state is updated.",
+    },
+  }}
+/>
 
 ### Search Command
 
 A `SearchCommand` is a command dialog for searching all non-archived pages.
 
-<SidebarSearchCommandStory.WithControl />
+<RegistryStory name="sidebar-search-command" />
 
 <Callout title="Note">
 
@@ -110,18 +204,36 @@ A `SearchCommand` is a command dialog for searching all non-archived pages.
 
 #### API Reference
 
-| Prop              | Type                           | Default | Description                                                        |
-| ----------------- | ------------------------------ | ------- | ------------------------------------------------------------------ |
-| `workspaceName`\* | `string`                       | -       | The name of current workspace.                                     |
-| `pages`\*         | [`Page[]`](/docs/objects/page) | -       | All your pages. But it searches only for non-archived pages.       |
-| `onSelect`        | `(page: Page) => void`         | -       | Handler that is called when a page is selected.                    |
-| `onOpenTrash`     | `() => void`                   | -       | Handler that is called when the "Open in Trash" button is clicked. |
+<TypeTable
+  type={{
+    workspaceName: {
+      type: "string",
+      required: true,
+      description: "The name of current workspace.",
+    },
+    pages: {
+      type: "Page[]",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Pages that have not been archived.",
+    },
+    onSelect: {
+      type: "(page: Page) => void",
+      description: "Handler that is called when a page is selected.",
+    },
+    onOpenTrash: {
+      type: "() => void",
+      description:
+        'Handler that is called when the "Open in Trash" button is clicked.',
+    },
+  }}
+/>
 
 ### Trash Box
 
 A `TrashBox` is a popover menu for searching archived pages.
 
-<SidebarTrashBoxStory.WithControl />
+<RegistryStory name="sidebar-trash-box" />
 
 ```tsx
 <TrashBox pages={pages} />
@@ -135,11 +247,42 @@ A `TrashBox` is a popover menu for searching archived pages.
 
 #### API Reference
 
-| Prop           | Type                           | Default | Description                                                                                    |
-| -------------- | ------------------------------ | ------- | ---------------------------------------------------------------------------------------------- |
-| `pages`\*      | [`Page[]`](/docs/objects/page) | -       | All your pages. But it searches only for archived pages.                                       |
-| `isOpen`       | `boolean`                      | -       | The (controlled) open state of the trash box. Must be used in conjunction with `onOpenChange`. |
-| `onOpenChange` | `(open: boolean) => void`      | -       | Handler that is called when the open state of the trash box changes.                           |
-| `onSelect`     | `(page: Page) => void`         | -       | Handler that is called when a page is selected.                                                |
-| `onRestore`    | `(id: string) => void`         | -       | Handler that is called when the "Restore" button of the page is clicked.                       |
-| `onDelete`     | `(page: Page) => void`         | -       | Handler that is called when the "Delete" button of the page is clicked.                        |
+<TypeTable
+  type={{
+    pages: {
+      type: "Page[]",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Archived pages.",
+    },
+    isOpen: {
+      type: "boolean",
+      description: (
+        <>
+          {" "}
+          The (controlled) open state of the trash box. Must be used in
+          conjunction with <code>onOpenChange</code>.{" "}
+        </>
+      ),
+    },
+    onOpenChange: {
+      type: "(open: boolean) => void",
+      description:
+        "Handler that is called when the open state of the trash box changes.",
+    },
+    onSelect: {
+      type: "(page: Page) => void",
+      description: "Handler that is called when a page is selected.",
+    },
+    onRestore: {
+      type: "(id: string) => void",
+      description:
+        'Handler that is called when the "Restore" button of the page is clicked.',
+    },
+    onDelete: {
+      type: "(page: Page) => void",
+      description:
+        'Handler that is called when the "Delete" button of the page is clicked.',
+    },
+  }}
+/>

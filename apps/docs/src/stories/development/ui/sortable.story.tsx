@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { ListWithItemHandleExample } from "./sortable.lazy";
+import { uiSortable } from "@/stories/development.lazy";
 
 export const ListWithItemHandle = defineStory({
-  Component: ListWithItemHandleExample,
+  Component: uiSortable.ListWithItemHandleExample,
   displayName: "List With Item Handle",
   args: { initial: {} },
   frame: {

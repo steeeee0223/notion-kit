@@ -1,15 +1,34 @@
 ---
 title: IconData
-description: An IconData object contains information about an icon. It is most often used to represent an icon that is rendered as a page icon in the Notion UI.
+description: Icon data for emoji, images, text, and icon libraries.
 ---
 
 ## Properties
 
-| Prop     | Type                                     | Description                                                         |
-| -------- | ---------------------------------------- | ------------------------------------------------------------------- |
-| `type`\* | `"emoji" \| "lucide" \| "url" \| "text"` | The type of the icon object.                                        |
-| `src`\*  | `string`                                 | The source of the icon.                                             |
-| `color`  | `string`                                 | The color of the icon. This value is used only in `"lucide"` icons. |
+<TypeTable
+  type={{
+    type: {
+      type: '"emoji" | "lucide" | "url" | "text"',
+      required: true,
+      description: "The type of the icon object.",
+    },
+    src: {
+      type: "string",
+      required: true,
+      description: "The source of the icon.",
+    },
+    color: {
+      type: "string",
+      description: (
+        <>
+          {" "}
+          The color of the icon. This value is used only in{" "}
+          <code>"lucide"</code> icons.{" "}
+        </>
+      ),
+    },
+  }}
+/>
 
 ## Icon Type Objects
 
@@ -17,10 +36,12 @@ description: An IconData object contains information about an icon. It is most o
 
 #### Properties
 
-| Prop     | Type      | Description |
-| -------- | --------- | ----------- |
-| `type`\* | `"emoji"` | -           |
-| `src`\*  | `string`  | The emoji.  |
+<TypeTable
+  type={{
+    type: { type: '"emoji"', required: true },
+    src: { type: "string", required: true, description: "The emoji." },
+  }}
+/>
 
 #### Example
 
@@ -35,11 +56,18 @@ description: An IconData object contains information about an icon. It is most o
 
 #### Properties
 
-| Prop     | Type                                      | Description                   |
-| -------- | ----------------------------------------- | ----------------------------- |
-| `type`\* | `"emoji"`                                 | -                             |
-| `src`\*  | [`LucideName`](https://lucide.dev/icons/) | The name of the Lucide icon.  |
-| `color`  | `string`                                  | The color of the Lucide icon. |
+<TypeTable
+  type={{
+    type: { type: '"emoji"', required: true },
+    src: {
+      type: "LucideName",
+      typeDescriptionLink: "https://lucide.dev/icons/",
+      required: true,
+      description: "The name of the Lucide icon.",
+    },
+    color: { type: "string", description: "The color of the Lucide icon." },
+  }}
+/>
 
 #### Example
 
@@ -55,10 +83,16 @@ description: An IconData object contains information about an icon. It is most o
 
 #### Properties
 
-| Prop     | Type     | Description           |
-| -------- | -------- | --------------------- |
-| `type`\* | `"url"`  | -                     |
-| `src`\*  | `string` | The URL of the image. |
+<TypeTable
+  type={{
+    type: { type: '"url"', required: true },
+    src: {
+      type: "string",
+      required: true,
+      description: "The URL of the image.",
+    },
+  }}
+/>
 
 #### Example
 
@@ -73,10 +107,16 @@ description: An IconData object contains information about an icon. It is most o
 
 #### Properties
 
-| Prop     | Type     | Description           |
-| -------- | -------- | --------------------- |
-| `type`\* | `"text"` | -                     |
-| `src`\*  | `string` | The displayed letter. |
+<TypeTable
+  type={{
+    type: { type: '"text"', required: true },
+    src: {
+      type: "string",
+      required: true,
+      description: "The displayed letter.",
+    },
+  }}
+/>
 
 #### Example
 

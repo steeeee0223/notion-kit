@@ -3,9 +3,7 @@ title: Routes
 description: Render line routes from coordinate arrays.
 ---
 
-import { story as MapRouteStory } from "@/stories/registry/map-route.story";
-
-<MapRouteStory.WithControl />
+<RegistryStory name="map-route" />
 
 ```tsx
 <MapRoute coordinates={coordinates} color="#ef4444" width={5} />
@@ -21,15 +19,41 @@ import { story as MapRouteStory } from "@/stories/registry/map-route.story";
 
 Renders a `LineString` GeoJSON source and a MapLibre line layer from an array of coordinates.
 
-| Prop            | Type                 | Default     | Description                              |
-| --------------- | -------------------- | ----------- | ---------------------------------------- |
-| `id`            | `string`             | -           | Optional route layer id.                 |
-| `coordinates`\* | `[number, number][]` | -           | Route coordinates as lng/lat pairs.      |
-| `color`         | `string`             | `"#4285F4"` | Line color.                              |
-| `width`         | `number`             | `3`         | Line width in pixels.                    |
-| `opacity`       | `number`             | `0.8`       | Line opacity.                            |
-| `dashArray`     | `[number, number]`   | -           | Dash pattern for dashed lines.           |
-| `interactive`   | `boolean`            | `true`      | Enables route mouse events and cursor.   |
-| `onClick`       | `() => void`         | -           | Called when the route is clicked.        |
-| `onMouseEnter`  | `() => void`         | -           | Called when the cursor enters the route. |
-| `onMouseLeave`  | `() => void`         | -           | Called when the cursor leaves the route. |
+<TypeTable
+  type={{
+    id: { type: "string", description: "Optional route layer id." },
+    coordinates: {
+      type: "[number, number][]",
+      required: true,
+      description: "Route coordinates as lng/lat pairs.",
+    },
+    color: { type: "string", default: '"#4285F4"', description: "Line color." },
+    width: {
+      type: "number",
+      default: "3",
+      description: "Line width in pixels.",
+    },
+    opacity: { type: "number", default: "0.8", description: "Line opacity." },
+    dashArray: {
+      type: "[number, number]",
+      description: "Dash pattern for dashed lines.",
+    },
+    interactive: {
+      type: "boolean",
+      default: "true",
+      description: "Enables route mouse events and cursor.",
+    },
+    onClick: {
+      type: "() => void",
+      description: "Called when the route is clicked.",
+    },
+    onMouseEnter: {
+      type: "() => void",
+      description: "Called when the cursor enters the route.",
+    },
+    onMouseLeave: {
+      type: "() => void",
+      description: "Called when the cursor leaves the route.",
+    },
+  }}
+/>

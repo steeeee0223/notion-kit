@@ -1,15 +1,12 @@
 ---
 title: Sidebar
-description: A composable, themeable and customizable sidebar component.
+description: Workspace navigation with page lists, search, and trash.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/sidebar
 ---
 
-import { story as SidebarBasicStory } from "@/stories/registry/sidebar-basic.story";
-import { story as SidebarNotionStory } from "@/stories/registry/sidebar-notion.story";
-
-<SidebarBasicStory.WithControl />
+<RegistryStory name="sidebar-basic" />
 
 ## Installation
 
@@ -36,18 +33,40 @@ import { story as SidebarNotionStory } from "@/stories/registry/sidebar-notion.s
 
 ### Notion Sidebar
 
-<SidebarNotionStory.WithControl />
+<RegistryStory name="sidebar-notion" />
 
 ## API Reference
 
 ### SidebarProvider
 
-| Prop           | Type                      | Default | Description                                                                                                      |
-| -------------- | ------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------- |
-| `config`       | `Partial<SidebarConfig>`  | -       | The configuration object of the sidebar.                                                                         |
-| `defaultOpen`  | `boolean`                 | -       | The open state of the sidebar when it is initially rendered. Use when you do not need to control its open state. |
-| `open`         | `boolean`                 | -       | The (controlled) open state of the sidebar. Must be used in conjunction with `onOpenChange`.                     |
-| `onOpenChange` | `(open: boolean) => void` | -       | Handler that is called when the open state of the sidebar changes.                                               |
+<TypeTable
+  type={{
+    config: {
+      type: "Partial<SidebarConfig>",
+      description: "The configuration object of the sidebar.",
+    },
+    defaultOpen: {
+      type: "boolean",
+      description:
+        "The open state of the sidebar when it is initially rendered. Use when you do not need to control its open state.",
+    },
+    open: {
+      type: "boolean",
+      description: (
+        <>
+          {" "}
+          The (controlled) open state of the sidebar. Must be used in
+          conjunction with <code>onOpenChange</code>.{" "}
+        </>
+      ),
+    },
+    onOpenChange: {
+      type: "(open: boolean) => void",
+      description:
+        "Handler that is called when the open state of the sidebar changes.",
+    },
+  }}
+/>
 
 <Callout title="Note">
   All the layout components below must be used within `<SidebarProvider>`.
@@ -55,13 +74,27 @@ import { story as SidebarNotionStory } from "@/stories/registry/sidebar-notion.s
 
 ### Sidebar
 
-A `Sidebar` extends the HTML `<div>` element. We list the extended properties only.
+`Sidebar` accepts HTML `<div>` props and the props below.
 
-| Prop          | Type                      | Default       | Description                       |
-| ------------- | ------------------------- | ------------- | --------------------------------- |
-| `side`        | `"left" \| "right"`       | `"left"`      | The side of the sidebar.          |
-| `variant`     | `"sidebar" \| "floating"` | `"sidebar"`   | The variant of the sidebar.       |
-| `collapsible` | `"offcanvas" \| "none"`   | `"offcanvas"` | Collapsible state of the sidebar. |
+<TypeTable
+  type={{
+    side: {
+      type: '"left" | "right"',
+      default: '"left"',
+      description: "The side of the sidebar.",
+    },
+    variant: {
+      type: '"sidebar" | "floating"',
+      default: '"sidebar"',
+      description: "The variant of the sidebar.",
+    },
+    collapsible: {
+      type: '"offcanvas" | "none"',
+      default: '"offcanvas"',
+      description: "Collapsible state of the sidebar.",
+    },
+  }}
+/>
 
 ### SidebarHeader
 
@@ -85,12 +118,18 @@ A `SidebarInset` extends the HTML `<main>` element.
 
 ### SidebarRail
 
-The `SidebarRail` is used to render a rail within a `<Sidebar>`. This rail can be used to **toggle and resize** the sidebar.
-It extends the HTML `<div>` element. We list the extended properties only.
+Use `SidebarRail` inside `Sidebar` to toggle or resize it.
+It accepts HTML `<div>` props and the props below.
 
-| Prop         | Type      | Default | Description                       |
-| ------------ | --------- | ------- | --------------------------------- |
-| `enableDrag` | `boolean` | `true`  | Whether the sidebar is draggable. |
+<TypeTable
+  type={{
+    enableDrag: {
+      type: "boolean",
+      default: "true",
+      description: "Whether the sidebar is draggable.",
+    },
+  }}
+/>
 
 ### SidebarClose
 
@@ -104,25 +143,85 @@ It extends the `<Button>` component.
 
 ### SidebarMenuItem
 
-A `SidebarMenuItem` extends the HTML `<div>` element. We list the extended properties only.
+`SidebarMenuItem` accepts HTML `<div>` props and the props below.
 
-| Prop       | Type         | Default | Description                        |
-| ---------- | ------------ | ------- | ---------------------------------- |
-| `label`\*  | `string`     | -       | The title of the item.             |
-| `hint`\*   | `string`     | -       | The tooltip of the item.           |
-| `icon`\*   | `LucideIcon` | -       | The displayed icon of the item.    |
-| `shortcut` | `string`     | -       | The keyboard shortcut of the item. |
+<TypeTable
+  type={{
+    label: {
+      type: "string",
+      required: true,
+      description: "The title of the item.",
+    },
+    hint: {
+      type: "string",
+      required: true,
+      description: "The tooltip of the item.",
+    },
+    icon: {
+      type: "LucideIcon",
+      required: true,
+      description: "The displayed icon of the item.",
+    },
+    shortcut: {
+      type: "string",
+      description: "The keyboard shortcut of the item.",
+    },
+  }}
+/>
 
 ### `type` SidebarConfig
 
 The configuration object of the sidebar.
 
-| Prop                   | Type                               | Default                                              | Description                                               |
-| ---------------------- | ---------------------------------- | ---------------------------------------------------- | --------------------------------------------------------- |
-| `defaultWidth`\*       | `string`                           | `248px`                                              | Default width of the sidebar.                             |
-| `defaultModileWidth`\* | `string`                           | `248px`                                              | Default width of the sidebar on mobile.                   |
-| `minWidth`\*           | `string`                           | `248px`                                              | Minimum draggable width of the sidebar.                   |
-| `maxWidth`\*           | `string`                           | `400px`                                              | Maximum draggable width of the sidebar.                   |
-| `shortcut`\*           | `string`                           | `\`                                                  | Keyboard shortcut `⌘ + <shortcut>` to toggle the sidebar. |
-| `cookieName`\*         | `{ state: string, width: string }` | `{ state: "sidebar:state", width: "sidebar:width" }` | Cookie names for sidebar state and sidebar width.         |
-| `cookieMaxAge`\*       | `number`                           | `7d`                                                 | Cookie's maximum lifetime (in seconds).                   |
+<TypeTable
+  type={{
+    defaultWidth: {
+      type: "string",
+      required: true,
+      default: "248px",
+      description: "Default width of the sidebar.",
+    },
+    defaultModileWidth: {
+      type: "string",
+      required: true,
+      default: "248px",
+      description: "Default width of the sidebar on mobile.",
+    },
+    minWidth: {
+      type: "string",
+      required: true,
+      default: "248px",
+      description: "Minimum draggable width of the sidebar.",
+    },
+    maxWidth: {
+      type: "string",
+      required: true,
+      default: "400px",
+      description: "Maximum draggable width of the sidebar.",
+    },
+    shortcut: {
+      type: "string",
+      required: true,
+      default: "\\",
+      description: (
+        <>
+          {" "}
+          Keyboard shortcut <code>⌘ + &lt;shortcut&gt;</code> to toggle the
+          sidebar.{" "}
+        </>
+      ),
+    },
+    cookieName: {
+      type: "{ state: string, width: string }",
+      required: true,
+      default: '{ state: "sidebar:state", width: "sidebar:width" }',
+      description: "Cookie names for sidebar state and sidebar width.",
+    },
+    cookieMaxAge: {
+      type: "number",
+      required: true,
+      default: "7d",
+      description: "Cookie's maximum lifetime (in seconds).",
+    },
+  }}
+/>

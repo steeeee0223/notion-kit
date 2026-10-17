@@ -3,13 +3,7 @@ title: Calendar
 description: Compose a month, week, or day calendar with editable events and timezone-aware dates.
 ---
 
-import { story as CalendarCustomEventsStory } from "@/stories/registry/calendar-custom-events.story";
-import { story as CalendarDayStory } from "@/stories/registry/calendar-day.story";
-import { story as CalendarDemoStory } from "@/stories/registry/calendar-demo.story";
-import { story as CalendarReadonlyStory } from "@/stories/registry/calendar-readonly.story";
-import { story as CalendarWeekStory } from "@/stories/registry/calendar-week.story";
-
-<CalendarDemoStory.WithControl />
+<RegistryStory name="calendar-demo" />
 
 ## Installation
 
@@ -56,7 +50,7 @@ appear in adjacent columns, and events that cross midnight occupy each day
 they cover. This example uses UTC and saves creation, movement, resizing, and
 conversion in local React state.
 
-<CalendarWeekStory.WithControl />
+<RegistryStory name="calendar-week" />
 
 ```tsx
 <CalendarProvider
@@ -77,7 +71,7 @@ conversion in local React state.
 Control `range` and `anchorDate` to keep the selected period and viewed date
 in your application. Apply each navigation callback to update the calendar.
 
-<CalendarDayStory.WithControl />
+<RegistryStory name="calendar-day" />
 
 ```tsx
 const [range, setRange] = useState<CalendarRange>("daily");
@@ -102,7 +96,7 @@ const [anchorDate, setAnchorDate] = useState(() => Date.now());
 Set `readOnly` to disable event mutations. Users can still change the range,
 navigate dates, and open events through `onEventClick`.
 
-<CalendarReadonlyStory.WithControl />
+<RegistryStory name="calendar-readonly" />
 
 ```tsx
 <CalendarProvider
@@ -124,7 +118,7 @@ Pass `renderEvent` to replace the default card. Compose `CalendarEvent.Root`,
 dragging, and resizing. The layout positions each segment and shows resize
 handles only at the event's actual boundaries.
 
-<CalendarCustomEventsStory.WithControl />
+<RegistryStory name="calendar-custom-events" />
 
 ```tsx
 <CalendarContent
@@ -161,7 +155,7 @@ events. Moving preserves null; resizing creates a real end. Timed events
 ending exactly at midnight do not occupy the next day. Existing zero-length
 or short events keep their values and receive a readable minimum height.
 
-The grid shows local 00:00–24:00. New time slots snap to 15 minutes. A missing
+The grid shows local 00:00 to 24:00. New time slots snap to 15 minutes. A missing
 DST wall time moves forward to a valid time; a repeated wall time selects the
 earlier offset. Existing timestamps retain their original offset.
 
@@ -190,22 +184,66 @@ the hidden time portion. A completed gesture sends one callback.
 
 ### CalendarProvider
 
-| Prop                 | Type                                    | Default      | Description                                            |
-| -------------------- | --------------------------------------- | ------------ | ------------------------------------------------------ |
-| `events`             | `readonly CalendarEventData[]`          | Required     | Authoritative event values.                            |
-| `range`              | `CalendarRange`                         | —            | Controlled period.                                     |
-| `defaultRange`       | `CalendarRange`                         | `monthly`    | Initial uncontrolled period.                           |
-| `onRangeChange`      | `(range: CalendarRange) => void`        | —            | Requests a period change.                              |
-| `anchorDate`         | `number`                                | —            | Controlled viewed timestamp.                           |
-| `defaultAnchorDate`  | `number`                                | Today        | Initial viewed timestamp.                              |
-| `onAnchorDateChange` | `(date: number) => void`                | —            | Requests a viewed date.                                |
-| `timeZone`           | `string`                                | Browser zone | IANA display timezone.                                 |
-| `weekStartsOn`       | `0` through `6`                         | `1`          | First weekday, with Sunday as zero.                    |
-| `readOnly`           | `boolean`                               | `false`      | Disables event mutations.                              |
-| `onCreate`           | `(value: CalendarEventValue) => void`   | —            | Receives start, end, and all-day values without an ID. |
-| `onEventClick`       | `(event: CalendarEventData) => void`    | —            | Opens an event.                                        |
-| `onEventChange`      | `(change: CalendarEventChange) => void` | —            | Receives ID, full date values, and operation reason.   |
-| `className`          | `string`                                | —            | Sets container size and local styles.                  |
+<TypeTable
+  type={{
+    events: {
+      type: "readonly CalendarEventData[]",
+      default: "Required",
+      description: "Authoritative event values.",
+    },
+    range: { type: "CalendarRange", description: "Controlled period." },
+    defaultRange: {
+      type: "CalendarRange",
+      default: "monthly",
+      description: "Initial uncontrolled period.",
+    },
+    onRangeChange: {
+      type: "(range: CalendarRange) => void",
+      description: "Requests a period change.",
+    },
+    anchorDate: { type: "number", description: "Controlled viewed timestamp." },
+    defaultAnchorDate: {
+      type: "number",
+      default: "Today",
+      description: "Initial viewed timestamp.",
+    },
+    onAnchorDateChange: {
+      type: "(date: number) => void",
+      description: "Requests a viewed date.",
+    },
+    timeZone: {
+      type: "string",
+      default: "Browser zone",
+      description: "IANA display timezone.",
+    },
+    weekStartsOn: {
+      type: "0 through 6",
+      default: "1",
+      description: "First weekday, with Sunday as zero.",
+    },
+    readOnly: {
+      type: "boolean",
+      default: "false",
+      description: "Disables event mutations.",
+    },
+    onCreate: {
+      type: "(value: CalendarEventValue) => void",
+      description: "Receives start, end, and all-day values without an ID.",
+    },
+    onEventClick: {
+      type: "(event: CalendarEventData) => void",
+      description: "Opens an event.",
+    },
+    onEventChange: {
+      type: "(change: CalendarEventChange) => void",
+      description: "Receives ID, full date values, and operation reason.",
+    },
+    className: {
+      type: "string",
+      description: "Sets container size and local styles.",
+    },
+  }}
+/>
 
 `CalendarEventValue` contains `startAt`, `endAt`, and `allDay`.
 `CalendarEventChange` adds `id` and `reason`, where reason is `move`,
@@ -227,26 +265,57 @@ the hidden time portion. A completed gesture sends one callback.
 Combines the period title, range select, and navigation. Also accepts div
 props; `children` appear before the range select.
 
-| Prop            | Type                             | Description                                                        |
-| --------------- | -------------------------------- | ------------------------------------------------------------------ |
-| `rangeDisabled` | `boolean`                        | Disables the range select while keeping date navigation available. |
-| `onRangeChange` | `(range: CalendarRange) => void` | Overrides the provider's range-change handler for this toolbar.    |
+<TypeTable
+  type={{
+    rangeDisabled: {
+      type: "boolean",
+      description:
+        "Disables the range select while keeping date navigation available.",
+    },
+    onRangeChange: {
+      type: "(range: CalendarRange) => void",
+      description:
+        "Overrides the provider's range-change handler for this toolbar.",
+    },
+  }}
+/>
 
 ### CalendarRangeSelect
 
-| Prop       | Type                             | Description                                       |
-| ---------- | -------------------------------- | ------------------------------------------------- |
-| `value`    | `CalendarRange`                  | Selected range. Defaults to the provider's range. |
-| `onChange` | `(range: CalendarRange) => void` | Overrides the provider's range-change handler.    |
-| `disabled` | `boolean`                        | Disables selection.                               |
+<TypeTable
+  type={{
+    value: {
+      type: "CalendarRange",
+      description: "Selected range. Defaults to the provider's range.",
+    },
+    onChange: {
+      type: "(range: CalendarRange) => void",
+      description: "Overrides the provider's range-change handler.",
+    },
+    disabled: { type: "boolean", description: "Disables selection." },
+  }}
+/>
 
 ### CalendarEvent
 
-| Part     | Props                                                  | Description                                                              |
-| -------- | ------------------------------------------------------ | ------------------------------------------------------------------------ |
-| `Root`   | `event`, `segment`, div props                          | Provides event and segment data to the card's compound parts.            |
-| `Item`   | Button props except `render`                           | Opens or moves the event. `children` replace the default time and title. |
-| `Resize` | `edge: "start" \| "end"`, button props except `render` | Edits one actual event boundary when changes are enabled.                |
+<TypeTable
+  type={{
+    Root: {
+      type: "event, segment, div props",
+      description:
+        "Provides event and segment data to the card's compound parts.",
+    },
+    Item: {
+      type: "Button props except render",
+      description:
+        "Opens or moves the event. children replace the default time and title.",
+    },
+    Resize: {
+      type: 'edge: "start" | "end", button props except render',
+      description: "Edits one actual event boundary when changes are enabled.",
+    },
+  }}
+/>
 
 `renderEvent` receives `CalendarEventRenderProps`: the source `event` and its
 visible `segment`. Pass both to `Root`; keep `Item` and `Resize` inside it.

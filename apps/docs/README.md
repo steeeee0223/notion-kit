@@ -1,69 +1,80 @@
-# Notion UI documentation
+# Notion UI docs
 
-This app uses React Router framework mode, Vite, Fumadocs MDX, and Fumadocs Story. The default Fumadocs layout provides three public sidebar tabs:
+React Router and Fumadocs serve the docs at `http://localhost:3000`.
 
-| Tab         | Route          | Source                           |
-| ----------- | -------------- | -------------------------------- |
-| Docs        | `/docs`        | `content/docs`                   |
-| Registry    | `/registry`    | `packages/registry/src/index.ts` |
-| Development | `/development` | `src/stories/development`        |
+| Route          | Content source                   |
+| -------------- | -------------------------------- |
+| `/docs`        | `content/docs`                   |
+| `/registry`    | `packages/registry/src/index.ts` |
+| `/development` | `src/stories/development`        |
 
-The original landing page remains at `/`, with its own Notion Kit styles. Documentation pages use Fumadocs defaults.
+## Run locally
 
-## Run the app
-
-From the workspace root, build the workspace dependencies once, then start the docs app:
+Build the workspace dependencies, then start the app:
 
 ```sh
 pnpm exec turbo run build --filter=@notion-kit/docs^...
 pnpm --filter @notion-kit/docs dev
 ```
 
-The app runs at `http://localhost:3000`. Build and serve the production app with:
+To build and serve production output:
 
 ```sh
 pnpm --filter @notion-kit/docs build
 pnpm --filter @notion-kit/docs start
 ```
 
-Vercel uses the React Router preset. Existing `/registry/*.json` installation URLs remain available as static files.
+## Add a registry example
 
-## Add examples
+Add the example to `packages/registry` and its name to `registryIndex`.
+The docs generator creates the registry page and lazy import.
+Use the example in MDX with:
 
-Registry examples belong in `packages/registry`. Add the example to `registryIndex`, then run `pnpm --filter @notion-kit/docs build:stories`. The generator creates grouped MDX pages and Story definitions. These generated files are ignored by Git and regenerated before development, builds, and type checks.
+```mdx
+<RegistryStory name="button-default" />
+```
 
-Additional scenarios belong in `src/stories/development`. Export `defineStory(...)` calls from a `.story.tsx` file. Keep the component in an `.examples.tsx` file and load it lazily through `.lazy.tsx`, so a documentation page loads the Story controls without loading the preview component. The generator discovers these exports and creates Development pages.
+Examples render in `/story/*` frames with Notion Kit styles, i18n, and toast support. Frames fit the page width without scaling the component.
 
-Story frames use `/story/*` and load components in the browser. Each frame has Notion Kit styles, i18n, and toast providers. Document pages use the default Fumadocs styles. This keeps portals, full-page layouts, and CSS variables inside their examples.
+## Add a development story
 
-Use an existing registry example when it already covers the scenario. `story-migration.json` records the destination of every former Storybook scenario. The generator checks that those destinations still exist. Storybook `play` tests were removed as part of the migration.
+1. Put the example in `src/stories/development/<path>.examples.tsx`.
+2. Add its lazy import to `src/stories/development.lazy.tsx`.
+3. Export a `defineStory(...)` call from `<path>.story.tsx`. See `src/stories/development/ui/input.story.tsx` for an example with controls.
 
-Stripe dialogs accept an optional `VITE_STRIPE_PUBLISHABLE_KEY` in an ignored `.env.local` file. Use a Stripe test publishable key. Without a key, the dialogs render without initializing Stripe.
+The generator reads the story exports and creates the development page. Run `pnpm --filter @notion-kit/docs build:stories` after adding or removing stories. Development startup, builds, and type checks run it automatically. Generated files are ignored by Git; unchanged files are kept in place.
 
-## Write documentation
+For Stripe dialog examples, set `VITE_STRIPE_PUBLISHABLE_KEY` to a test publishable key in `.env.local`. Without a key, the dialogs skip Stripe initialization.
 
-Use Fumadocs MDX components without style overrides. Import a registry Story and render `<story.WithControl />` for examples. Use Markdown code fences for code samples and the shared `Installation` component for installation instructions:
+## Write docs
+
+Use `Installation` for package and registry commands:
 
 ```mdx
 <Installation packages="@notion-kit/ui" registryName="button-default" />
 ```
 
-`Installation` uses Fumadocs tabs and code blocks to generate the package and registry commands. It is available in every documentation page through the shared MDX component map.
-
-The built-in `TypeTable` supports required props:
+Use `TypeTable` for API references:
 
 ```mdx
 <TypeTable
   type={{
-    icon: { type: "IconData", required: true, description: "The icon data." },
-    fallback: { type: "string", description: "Fallback text." },
+    icon: {
+      type: "IconData",
+      required: true,
+      description: "The icon to display.",
+    },
+    fallback: {
+      type: "string",
+      description: "Text shown if the image fails to load.",
+    },
   }}
 />
 ```
 
-See `content/docs/blocks/icon-block.mdx` for a complete example. Existing Markdown API tables continue to use Fumadocs defaults.
+Keep comparison and data tables in Markdown.
 
-## Verify changes
+## Check changes
 
 ```sh
 pnpm --filter @notion-kit/docs typecheck
@@ -72,4 +83,4 @@ pnpm --filter @notion-kit/docs format --write
 pnpm --filter @notion-kit/docs build
 ```
 
-Open all three tabs, exercise Story controls and frames, check search, and verify a registry JSON installation URL before shipping a migration.
+Check the affected pages and controls in the browser. Registry installation files are served at `/registry/<name>.json`.

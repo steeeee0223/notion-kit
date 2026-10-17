@@ -1,15 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  BasicExample,
-  MultiSelectExample,
-  NoOverlayExample,
-  SelectContainExample,
-  WithDraggableItemsExample,
-} from "./selectable.lazy";
+import { uiSelectableSelectable } from "@/stories/development.lazy";
 
 export const Basic = defineStory({
-  Component: BasicExample,
+  Component: uiSelectableSelectable.BasicExample,
   displayName: "Basic",
   args: { initial: {} },
   frame: {
@@ -19,7 +12,7 @@ export const Basic = defineStory({
   },
 });
 export const SelectContain = defineStory({
-  Component: SelectContainExample,
+  Component: uiSelectableSelectable.SelectContainExample,
   displayName: "Select Contain",
   args: { initial: { mode: "contain" } },
   frame: {
@@ -29,7 +22,7 @@ export const SelectContain = defineStory({
   },
 });
 export const MultiSelect = defineStory({
-  Component: MultiSelectExample,
+  Component: uiSelectableSelectable.MultiSelectExample,
   displayName: "Multi Select",
   args: { initial: { multiple: true } },
   frame: {
@@ -39,7 +32,7 @@ export const MultiSelect = defineStory({
   },
 });
 export const NoOverlay = defineStory({
-  Component: NoOverlayExample,
+  Component: uiSelectableSelectable.NoOverlayExample,
   displayName: "No Overlay",
   args: { initial: {} },
   frame: {
@@ -49,7 +42,7 @@ export const NoOverlay = defineStory({
   },
 });
 export const WithDraggableItems = defineStory({
-  Component: WithDraggableItemsExample,
+  Component: uiSelectableSelectable.WithDraggableItemsExample,
   displayName: "With Draggable Items",
   args: { initial: {} },
   frame: {

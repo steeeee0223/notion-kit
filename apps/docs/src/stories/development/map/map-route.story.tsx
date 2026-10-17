@@ -1,13 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  DashedExample,
-  MultipleRoutesExample,
-  StyledExample,
-} from "./map-route.lazy";
+import { mapMapRoute } from "@/stories/development.lazy";
 
 export const Styled = defineStory({
-  Component: StyledExample,
+  Component: mapMapRoute.StyledExample,
   displayName: "Styled",
   args: { initial: {} },
   frame: {
@@ -17,7 +12,7 @@ export const Styled = defineStory({
   },
 });
 export const Dashed = defineStory({
-  Component: DashedExample,
+  Component: mapMapRoute.DashedExample,
   displayName: "Dashed",
   args: { initial: {} },
   frame: {
@@ -27,7 +22,7 @@ export const Dashed = defineStory({
   },
 });
 export const MultipleRoutes = defineStory({
-  Component: MultipleRoutesExample,
+  Component: mapMapRoute.MultipleRoutesExample,
   displayName: "Multiple Routes",
   args: { initial: {} },
   frame: {

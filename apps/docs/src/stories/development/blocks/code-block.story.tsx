@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { MermaidPreviewingExample } from "./code-block.lazy";
+import { blocksCodeBlock } from "@/stories/development.lazy";
 
 export const MermaidPreviewing = defineStory({
-  Component: MermaidPreviewingExample,
+  Component: blocksCodeBlock.MermaidPreviewingExample,
   displayName: "Mermaid Previewing",
   args: { initial: {} },
   frame: {

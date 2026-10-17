@@ -1,18 +1,42 @@
 ---
 title: Workspace
-description: The Workspace object represents a Notion workspace.
+description: Workspace identity, plan, and membership details.
 ---
 
 ## Properties
 
-| Prop            | Type                             | Description                             |
-| --------------- | -------------------------------- | --------------------------------------- |
-| `id`\*          | `string`                         | Unique identifier of the workspace.     |
-| `name`\*        | `string`                         | Workspace's name.                       |
-| `memberCount`\* | `number`                         | The number of members in the workspace. |
-| `plan`\*        | [`Plan`](#plan)                  | Plan of the workspace.                  |
-| `icon`          | [`IconData`](/docs/objects/icon) | Workspace icon.                         |
-| `role`\*        | [`Role`](#role)                  | Role of the user in this workspace.     |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the workspace.",
+    },
+    name: { type: "string", required: true, description: "Workspace's name." },
+    memberCount: {
+      type: "number",
+      required: true,
+      description: "The number of members in the workspace.",
+    },
+    plan: {
+      type: "Plan",
+      typeDescriptionLink: "#plan",
+      required: true,
+      description: "Plan of the workspace.",
+    },
+    icon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      description: "Workspace icon.",
+    },
+    role: {
+      type: "Role",
+      typeDescriptionLink: "#role",
+      required: true,
+      description: "Role of the user in this workspace.",
+    },
+  }}
+/>
 
 ## Example
 

@@ -3,13 +3,11 @@ title: Advanced
 description: Use the underlying MapLibre instance for custom sources, layers, and interactions.
 ---
 
-import { story as MapCustomGeojsonLayerStory } from "@/stories/registry/map-custom-geojson-layer.story";
-
 The `useMap` hook gives child components access to the MapLibre instance after the map has loaded. Use it when you need MapLibre APIs directly, such as custom sources, custom layers, hover queries, visibility toggles, heatmaps, or raster overlays.
 
 ## Custom GeoJSON Layer
 
-<MapCustomGeojsonLayerStory.WithControl />
+<RegistryStory name="map-custom-geojson-layer" />
 
 ```tsx
 map.addSource("parks", { type: "geojson", data: geojsonData });

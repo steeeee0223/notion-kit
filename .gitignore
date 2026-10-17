@@ -71,7 +71,7 @@ apps/docs/public/registry/
 # generated docs stories
 apps/docs/content/registry/
 apps/docs/content/development/
-apps/docs/src/stories/registry/
+apps/docs/src/stories/registry.lazy.tsx
 
 # agents
 .agent/

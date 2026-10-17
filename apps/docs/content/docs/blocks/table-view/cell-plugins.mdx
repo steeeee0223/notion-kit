@@ -10,33 +10,119 @@ ID.
 
 ## Data plugin definition
 
-| Field                                          | Description                                                                                     |
-| ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `id`                                           | Unique property type identifier.                                                                |
-| `default`                                      | Default cell data and property configuration.                                                   |
-| `fromValue`                                    | Converts a comparable value into cell data.                                                     |
-| `toValue`                                      | Converts cell data for sorting and grouping.                                                    |
-| `toGroupValue`                                 | Optionally converts cell data to a grouping value; falls back to `toValue`.                     |
-| `isEmpty`                                      | Defines empty data for filters, counts, sorting, and grouping.                                  |
-| `toTextValue`                                  | Converts cell data to copyable text.                                                            |
-| `sorting`, `grouping`, `counting`, `filtering` | Optional pure data capabilities discovered by table menus.                                      |
-| `compare`                                      | Legacy row comparator used as a sorting fallback when no registered sorting method resolves.    |
-| `transferConfig`                               | Optionally derives configuration when a property changes to this type, using its existing rows. |
+<TypeTable
+  type={{
+    id: {
+      type: "Key",
+      description: "Unique property type identifier.",
+      required: true,
+    },
+    default: {
+      type: "{ config: Config; data: Data }",
+      description: "Default cell data and property configuration.",
+      required: true,
+    },
+    fromValue: {
+      type: "(value: ComparableValue, config: Config) => Data",
+      description: "Converts a comparable value into cell data.",
+      required: true,
+    },
+    toValue: {
+      type: "(data: Data, row: Row) => ComparableValue",
+      description: "Converts cell data for sorting and grouping.",
+      required: true,
+    },
+    toGroupValue: {
+      type: "(data: Data, row: Row) => ComparableValue",
+      description:
+        "Optionally converts cell data to a grouping value; falls back to toValue.",
+    },
+    isEmpty: {
+      type: "(data: Data) => boolean",
+      description:
+        "Defines empty data for filters, counts, sorting, and grouping.",
+      required: true,
+    },
+    toTextValue: {
+      type: "(data: Data, row: Row) => string",
+      description: "Converts cell data to copyable text.",
+      required: true,
+    },
+    sorting: {
+      type: "{ defaultMethod?: string; enableGroupSort?: boolean; methods: SortingMethodDescriptor<Data, Config>[] }",
+      description: "Sorting methods available to table menus.",
+    },
+    grouping: {
+      type: "{ defaultMethod?: string; methods: GroupingMethod<Data, Config>[] }",
+      description: "Grouping methods available to table menus.",
+    },
+    counting: {
+      type: "CountingMethodGroup[]",
+      description: "Counting methods available to table menus.",
+    },
+    filtering: {
+      type: "{ operators: FilterOperatorDescriptor<Data, Config>[] }",
+      description: "Filter operators available to table menus.",
+    },
+    compare: {
+      type: "(rowA: Row, rowB: Row, colId: string) => number",
+      description:
+        "Legacy row comparator used as a sorting fallback when no registered sorting method resolves.",
+    },
+    transferConfig: {
+      type: "(column: ColumnInfo, data: Row[]) => Config",
+      description:
+        "Optionally derives configuration when a property changes to this type, using its existing rows.",
+    },
+  }}
+/>
 
 Data plugins do not render React, carry icons, or decide cell presentation.
 
 ## UI adapter definition
 
-| Field                 | Description                                                                                       |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| `id`                  | Must match the data plugin ID.                                                                    |
-| `meta`                | Type-menu name, description, and icon.                                                            |
-| `default`             | Default property name, icon, and optional width.                                                  |
-| `renderCell`          | **Required.** Returns the complete React UI for a cell surface.                                   |
-| `renderReadOnlyValue` | Optional historical value renderer. Receives snapshots without a live cell or mutation callbacks. |
-| `renderBulkEditor`    | Optional. Its presence enables bulk editing.                                                      |
-| `renderConfigMenu`    | Optional property configuration UI.                                                               |
-| `renderGroupingValue` | **Required.** Returns the grouped label UI.                                                       |
+<TypeTable
+  type={{
+    id: {
+      type: "InferKey<TPlugin>",
+      description: "Must match the data plugin ID.",
+      required: true,
+    },
+    meta: {
+      type: "{ name: string; desc: string; icon: ReactNode }",
+      description: "Type-menu name, description, and icon.",
+      required: true,
+    },
+    default: {
+      type: "{ name: string; icon: ReactNode; width?: number }",
+      description: "Default property name, icon, and optional width.",
+      required: true,
+    },
+    renderCell: {
+      type: "(props: CellProps) => ReactNode",
+      description: "Returns the complete React UI for a cell surface.",
+      required: true,
+    },
+    renderReadOnlyValue: {
+      type: "(props: ReadOnlyValueProps) => ReactNode",
+      description:
+        "Optional historical value renderer. Receives snapshots without a live cell or mutation callbacks.",
+    },
+    renderBulkEditor: {
+      type: "(props: BulkEditorProps) => ReactNode",
+      description: "Optional. Its presence enables bulk editing.",
+    },
+    renderConfigMenu: {
+      type: "(props: ConfigMenuProps) => ReactNode",
+      description: "Optional property configuration UI.",
+    },
+    renderGroupingValue: {
+      type: "(props: GroupingValueProps) => ReactNode",
+      description: "Returns the grouped label UI.",
+      required: true,
+    },
+  }}
+/>
 
 `renderCell` receives `CellProps`, containing only a TanStack `cell` instance.
 Use `cell.getInfo()`, `cell.getPlugin()`, `cell.getData()`,
@@ -53,12 +139,31 @@ empty states, copy affordances, and layout classes.
 the record's `textValue` when the renderer is absent. The renderer receives
 `ReadOnlyValueProps`:
 
-| Field       | Description                                                  |
-| ----------- | ------------------------------------------------------------ |
-| `value`     | Historical cell value, typed as `unknown`.                   |
-| `config`    | Historical property configuration, typed as `unknown`.       |
-| `property`  | Historical ID, name, icon, type, and optional configuration. |
-| `textValue` | Historical plain-text representation used for fallback.      |
+<TypeTable
+  type={{
+    value: {
+      type: "unknown",
+      description: "Historical cell value, typed as unknown.",
+      required: true,
+    },
+    config: {
+      type: "unknown",
+      description: "Historical property configuration, typed as unknown.",
+      required: true,
+    },
+    property: {
+      type: 'RowEditLog["property"]',
+      description:
+        "Historical ID, name, icon, type, and optional configuration.",
+      required: true,
+    },
+    textValue: {
+      type: "string",
+      description: "Historical plain-text representation used for fallback.",
+      required: true,
+    },
+  }}
+/>
 
 Validate the snapshot with Zod before rendering it. Return `textValue` when the
 value or configuration is unsupported. Return **Empty** for an empty value;
@@ -108,14 +213,35 @@ combined-plugin registration path.
 
 ## Types
 
-| Type                            | Description                                                     |
-| ------------------------------- | --------------------------------------------------------------- |
-| `CellPlugin<Key, Data, Config>` | Pure table-hook data semantics and capabilities.                |
-| `TableUiPlugin<TPlugin>`        | React adapter coupled to one data plugin.                       |
-| `CellProps`                     | A TanStack cell instance for direct rendering.                  |
-| `BulkEditorProps`               | A TanStack column instance for bulk rendering.                  |
-| `ReadOnlyValueProps`            | Historical value, config, property metadata, and fallback text. |
-| `ConfigMenuProps`               | A TanStack column instance for configuration UI.                |
+<TypeTable
+  type={{
+    "CellPlugin<Key, Data, Config>": {
+      type: "CellPlugin<Key, Data, Config>",
+      description: "Pure table-hook data semantics and capabilities.",
+    },
+    "TableUiPlugin<TPlugin>": {
+      type: "TableUiPlugin<TPlugin>",
+      description: "React adapter coupled to one data plugin.",
+    },
+    CellProps: {
+      type: "CellProps",
+      description: "A TanStack cell instance for direct rendering.",
+    },
+    BulkEditorProps: {
+      type: "BulkEditorProps",
+      description: "A TanStack column instance for bulk rendering.",
+    },
+    ReadOnlyValueProps: {
+      type: "ReadOnlyValueProps",
+      description:
+        "Historical value, config, property metadata, and fallback text.",
+    },
+    ConfigMenuProps: {
+      type: "ConfigMenuProps",
+      description: "A TanStack column instance for configuration UI.",
+    },
+  }}
+/>
 
 <Cards>
   <Card title="Create a Cell Plugin" href="/docs/blocks/table-view/tutorial" />

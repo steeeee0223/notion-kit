@@ -1,21 +1,12 @@
 ---
 title: Button
-description: A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
+description: Triggers an action with mouse, touch, or keyboard input.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/button
 ---
 
-import { story as ButtonDefaultStory } from "@/stories/registry/button-default.story";
-import { story as ButtonDisabledStory } from "@/stories/registry/button-disabled.story";
-import { story as ButtonHintStory } from "@/stories/registry/button-hint.story";
-import { story as ButtonIconButtonStory } from "@/stories/registry/button-icon-button.story";
-import { story as ButtonNavIconStory } from "@/stories/registry/button-nav-icon.story";
-import { story as ButtonSizesStory } from "@/stories/registry/button-sizes.story";
-import { story as ButtonVariantsStory } from "@/stories/registry/button-variants.story";
-import { story as ButtonWarningStory } from "@/stories/registry/button-warning.story";
-
-<ButtonDefaultStory.WithControl />
+<RegistryStory name="button-default" />
 
 ```tsx
 <Button>button</Button>
@@ -34,7 +25,7 @@ import { story as ButtonWarningStory } from "@/stories/registry/button-warning.s
 Use the `variant` prop to control the visual style of the button.<br/>
 The default variant is `"primary"`.
 
-<ButtonVariantsStory.WithControl />
+<RegistryStory name="button-variants" />
 
 ```tsx
 <Button variant="primary" size="md">Button</Button>
@@ -50,7 +41,7 @@ The default variant is `"primary"`.
 
 Use the `size` prop to control the size of the button.
 
-<ButtonSizesStory.WithControl />
+<RegistryStory name="button-sizes" />
 
 ```tsx
 <Button size="xs">Button</Button>
@@ -65,7 +56,7 @@ Use the `size` prop to control the size of the button.
 
 ### Hint
 
-<ButtonHintStory.WithControl />
+<RegistryStory name="button-hint" />
 
 ```tsx
 <Button variant="hint" size="xs">
@@ -76,7 +67,7 @@ Use the `size` prop to control the size of the button.
 
 ### Warning
 
-<ButtonWarningStory.WithControl />
+<RegistryStory name="button-warning" />
 
 ```tsx
 <Button variant="red" size="md">
@@ -86,7 +77,7 @@ Use the `size` prop to control the size of the button.
 
 ### Nav Icon
 
-<ButtonNavIconStory.WithControl />
+<RegistryStory name="button-nav-icon" />
 
 ```tsx
 <Button variant="nav-icon">
@@ -96,7 +87,7 @@ Use the `size` prop to control the size of the button.
 
 ### Icon Button
 
-<ButtonIconButtonStory.WithControl />
+<RegistryStory name="button-icon-button" />
 
 ```tsx
 <Button variant="icon">
@@ -106,7 +97,7 @@ Use the `size` prop to control the size of the button.
 
 ### Disabled
 
-<ButtonDisabledStory.WithControl />
+<RegistryStory name="button-disabled" />
 
 ```tsx
 <Button disabled size="md">
@@ -118,9 +109,19 @@ Use the `size` prop to control the size of the button.
 
 ### Button
 
-An `Button` extends the HTML `<button>` component. We list the extended properties only.
+`Button` accepts HTML `<button>` props and the props below.
 
-| Prop      | Type                                                                                                                   | Default     | Description                     |
-| --------- | ---------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------- |
-| `variant` | `"primary" \| "icon" \| "link \| "blue" \| "soft-blue" \| "hint" \| "red" \| "red-fill" \| "white" \| "close" \| null` | `"primary"` | The visual style of the button. |
-| `size`    | `"xs" \| "sm" \| "md" \| "lg" \| "circle" \| null`                                                                     | `null`      | The size of the button.         |
+<TypeTable
+  type={{
+    variant: {
+      type: '"primary" | "icon" | "link" | "blue" | "soft-blue" | "hint" | "red" | "red-fill" | "white" | "close" | null',
+      default: '"primary"',
+      description: "The visual style of the button.",
+    },
+    size: {
+      type: '"xs" | "sm" | "md" | "lg" | "circle" | null',
+      default: "null",
+      description: "The size of the button.",
+    },
+  }}
+/>

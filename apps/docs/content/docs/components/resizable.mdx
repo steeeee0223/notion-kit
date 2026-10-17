@@ -6,9 +6,7 @@ links:
     href: https://ui.shadcn.com/docs/components/resizable
 ---
 
-import { story as ResizableDemoStory } from "@/stories/registry/resizable-demo.story";
-
-<ResizableDemoStory.WithControl />
+<RegistryStory name="resizable-demo" />
 
 ## Installation
 
@@ -18,6 +16,12 @@ import { story as ResizableDemoStory } from "@/stories/registry/resizable-demo.s
 
 ### ResizableHandle
 
-| Prop         | Type      | Default | Description                              |
-| ------------ | --------- | ------- | ---------------------------------------- |
-| `withHandle` | `boolean` | `true`  | Whether the handle icon should be shown. |
+<TypeTable
+  type={{
+    withHandle: {
+      type: "boolean",
+      default: "true",
+      description: "Whether the handle icon should be shown.",
+    },
+  }}
+/>

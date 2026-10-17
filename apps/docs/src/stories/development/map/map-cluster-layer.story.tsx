@@ -1,12 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  CustomColorsExample,
-  WithPointClickExample,
-} from "./map-cluster-layer.lazy";
+import { mapMapClusterLayer } from "@/stories/development.lazy";
 
 export const CustomColors = defineStory({
-  Component: CustomColorsExample,
+  Component: mapMapClusterLayer.CustomColorsExample,
   displayName: "Custom Colors",
   args: { initial: {} },
   frame: {
@@ -16,7 +12,7 @@ export const CustomColors = defineStory({
   },
 });
 export const WithPointClick = defineStory({
-  Component: WithPointClickExample,
+  Component: mapMapClusterLayer.WithPointClickExample,
   displayName: "With Point Click",
   args: { initial: {} },
   frame: {

@@ -1,4 +1,5 @@
 import { use } from "react";
+import { buttonVariants } from "fumadocs-ui/components/ui/button";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import {
   DocsBody,
@@ -29,7 +30,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   };
 }
 
-export const meta: Route.MetaFunction = ({ data }) => [
+export const meta: Route.MetaFunction = ({ loaderData: data }) => [
   { title: `${data.title} | Notion UI` },
   { name: "description", content: data.description },
 ];
@@ -51,11 +52,19 @@ export default function Page() {
       <DocsPage toc={content.toc} full={page.data.full}>
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription>{page.data.description}</DocsDescription>
-        {page.data.links?.map((link) => (
-          <p key={link.href}>
-            <Link to={link.href}>{link.label}</Link>
-          </p>
-        ))}
+        {page.data.links && (
+          <div className="flex flex-wrap gap-2">
+            {page.data.links.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={buttonVariants({ variant: "secondary", size: "sm" })}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        )}
         <DocsBody>
           <MDX components={mdxComponents} />
         </DocsBody>

@@ -3,9 +3,7 @@ title: Popups
 description: Anchored popup content for map coordinates or marker interactions.
 ---
 
-import { story as MapPopupStory } from "@/stories/registry/map-popup.story";
-
-<MapPopupStory.WithControl />
+<RegistryStory name="map-popup" />
 
 ```tsx
 <MapPopup longitude={121.5654} latitude={25.033} closeButton>
@@ -25,17 +23,40 @@ Creates a popup anchored to map coordinates and renders React content into the M
 
 `MapPopup` extends MapLibre `PopupOptions`.
 
-| Prop          | Type         | Default | Description                        |
-| ------------- | ------------ | ------- | ---------------------------------- |
-| `longitude`\* | `number`     | -       | Popup longitude.                   |
-| `latitude`\*  | `number`     | -       | Popup latitude.                    |
-| `onClose`     | `() => void` | -       | Called when the popup closes.      |
-| `closeButton` | `boolean`    | `false` | Shows the Notion Kit close button. |
+<TypeTable
+  type={{
+    longitude: {
+      type: "number",
+      required: true,
+      description: "Popup longitude.",
+    },
+    latitude: {
+      type: "number",
+      required: true,
+      description: "Popup latitude.",
+    },
+    onClose: {
+      type: "() => void",
+      description: "Called when the popup closes.",
+    },
+    closeButton: {
+      type: "boolean",
+      default: "false",
+      description: "Shows the Notion Kit close button.",
+    },
+  }}
+/>
 
 ### MapPopupClose
 
 Renders the close button used inside coordinate popups and marker popups. You usually get it by passing `closeButton`, but it can be used directly in custom popup content.
 
-| Prop        | Type         | Default | Description                     |
-| ----------- | ------------ | ------- | ------------------------------- |
-| `onClick`\* | `() => void` | -       | Called when the button is used. |
+<TypeTable
+  type={{
+    onClick: {
+      type: "() => void",
+      required: true,
+      description: "Called when the button is used.",
+    },
+  }}
+/>

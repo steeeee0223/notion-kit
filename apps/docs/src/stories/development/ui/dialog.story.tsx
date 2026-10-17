@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./dialog.lazy";
+import { uiDialog } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: uiDialog.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {

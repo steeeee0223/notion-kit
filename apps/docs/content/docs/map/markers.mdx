@@ -3,9 +3,7 @@ title: Markers
 description: DOM markers with custom content, labels, tooltips, popups, and drag callbacks.
 ---
 
-import { story as MapMarkersStory } from "@/stories/registry/map-markers.story";
-
-<MapMarkersStory.WithControl />
+<RegistryStory name="map-markers" />
 
 ```tsx
 <MapMarker longitude={121.5654} latitude={25.033}>
@@ -25,17 +23,46 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
 
 `MapMarker` extends MapLibre `MarkerOptions`, except `element`.
 
-| Prop           | Type                          | Default | Description                        |
-| -------------- | ----------------------------- | ------- | ---------------------------------- |
-| `longitude`\*  | `number`                      | -       | Marker longitude.                  |
-| `latitude`\*   | `number`                      | -       | Marker latitude.                   |
-| `onClick`      | `(event: MouseEvent) => void` | -       | Called when the marker is clicked. |
-| `onMouseEnter` | `(event: MouseEvent) => void` | -       | Called when the pointer enters.    |
-| `onMouseLeave` | `(event: MouseEvent) => void` | -       | Called when the pointer leaves.    |
-| `onDragStart`  | `(lngLat) => void`            | -       | Called when dragging starts.       |
-| `onDrag`       | `(lngLat) => void`            | -       | Called while dragging.             |
-| `onDragEnd`    | `(lngLat) => void`            | -       | Called when dragging ends.         |
-| `draggable`    | `boolean`                     | `false` | Enables MapLibre marker dragging.  |
+<TypeTable
+  type={{
+    longitude: {
+      type: "number",
+      required: true,
+      description: "Marker longitude.",
+    },
+    latitude: {
+      type: "number",
+      required: true,
+      description: "Marker latitude.",
+    },
+    onClick: {
+      type: "(event: MouseEvent) => void",
+      description: "Called when the marker is clicked.",
+    },
+    onMouseEnter: {
+      type: "(event: MouseEvent) => void",
+      description: "Called when the pointer enters.",
+    },
+    onMouseLeave: {
+      type: "(event: MouseEvent) => void",
+      description: "Called when the pointer leaves.",
+    },
+    onDragStart: {
+      type: "(lngLat) => void",
+      description: "Called when dragging starts.",
+    },
+    onDrag: { type: "(lngLat) => void", description: "Called while dragging." },
+    onDragEnd: {
+      type: "(lngLat) => void",
+      description: "Called when dragging ends.",
+    },
+    draggable: {
+      type: "boolean",
+      default: "false",
+      description: "Enables MapLibre marker dragging.",
+    },
+  }}
+/>
 
 ### MapMarkerContent
 
@@ -47,9 +74,15 @@ Attaches a MapLibre popup to a `MapMarker`. The popup opens through MapLibre mar
 
 `MapMarkerPopup` extends MapLibre `PopupOptions`.
 
-| Prop          | Type      | Default | Description                        |
-| ------------- | --------- | ------- | ---------------------------------- |
-| `closeButton` | `boolean` | `false` | Shows the Notion Kit close button. |
+<TypeTable
+  type={{
+    closeButton: {
+      type: "boolean",
+      default: "false",
+      description: "Shows the Notion Kit close button.",
+    },
+  }}
+/>
 
 ### MapMarkerTooltip
 
@@ -61,14 +94,26 @@ Shows tooltip content when the pointer enters the marker and removes it when the
 
 Positions a small text label above or below custom marker content.
 
-| Prop       | Type                | Default | Description            |
-| ---------- | ------------------- | ------- | ---------------------- |
-| `position` | `"top" \| "bottom"` | `"top"` | Position of the label. |
+<TypeTable
+  type={{
+    position: {
+      type: '"top" | "bottom"',
+      default: '"top"',
+      description: "Position of the label.",
+    },
+  }}
+/>
 
 ### MapPopupClose
 
 Renders the close button used by map popups. It is exported for custom popup compositions.
 
-| Prop        | Type         | Default | Description                     |
-| ----------- | ------------ | ------- | ------------------------------- |
-| `onClick`\* | `() => void` | -       | Called when the button is used. |
+<TypeTable
+  type={{
+    onClick: {
+      type: "() => void",
+      required: true,
+      description: "Called when the button is used.",
+    },
+  }}
+/>

@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./accept-invitation-form.lazy";
+import { authAcceptInvitationForm } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: authAcceptInvitationForm.DefaultExample,
   displayName: "Default",
   args: { initial: { invitationId: "test-invitation-id" } },
   frame: {

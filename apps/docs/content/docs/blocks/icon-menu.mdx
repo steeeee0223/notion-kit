@@ -3,11 +3,7 @@ title: Icon Menu
 description: A controlled popover menu with searchable icon factories, a virtualized grid, and upload support.
 ---
 
-import { story as IconMenuCustomFactoryStory } from "@/stories/registry/icon-menu-custom-factory.story";
-import { story as IconMenuDefaultStory } from "@/stories/registry/icon-menu-default.story";
-import { story as IconMenuNotionIconsStory } from "@/stories/registry/icon-menu-notion-icons.story";
-
-<IconMenuDefaultStory.WithControl />
+<RegistryStory name="icon-menu-default" />
 
 ## Installation
 
@@ -21,19 +17,19 @@ import { story as IconMenuNotionIconsStory } from "@/stories/registry/icon-menu-
 
 Use the default factories for emoji and Lucide icons. Search runs through the autocomplete internals and each factory provides the searchable item text.
 
-<IconMenuDefaultStory.WithControl />
+<RegistryStory name="icon-menu-default" />
 
 ### Notion Icons
 
 Compose factories to choose which tabs appear. This example includes emoji, Lucide, and Notion-style icons.
 
-<IconMenuNotionIconsStory.WithControl />
+<RegistryStory name="icon-menu-notion-icons" />
 
 ### Custom Factory
 
 Use `useCustomFactory` to add your own icon set. `name` and `keywords` are searchable, and selected icons are tracked as recent items.
 
-<IconMenuCustomFactoryStory.WithControl />
+<RegistryStory name="icon-menu-custom-factory" />
 
 ## Anatomy
 
@@ -70,33 +66,94 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
 
 ### IconMenu
 
-| Prop        | Type                       | Default | Description                                                                          |
-| ----------- | -------------------------- | ------- | ------------------------------------------------------------------------------------ |
-| `factories` | `IconFactoryResult[]`      | -       | Icon factory hooks to use. Falls back to built-in defaults when omitted.             |
-| `disabled`  | `boolean`                  | -       | Whether the menu is disabled.                                                        |
-| `onSelect`  | `(icon: IconData) => void` | -       | Handler that is called when an icon or emoji is selected or when a URL is submitted. |
-| `onUpload`  | `(file: File) => void`     | -       | Handler that is called when an image file is submitted.                              |
-| `onRemove`  | `() => void`               | -       | Handler that is called when the remove button is clicked.                            |
+<TypeTable
+  type={{
+    factories: {
+      type: "IconFactoryResult[]",
+      description:
+        "Icon factory hooks to use. Falls back to built-in defaults when omitted.",
+    },
+    disabled: { type: "boolean", description: "Whether the menu is disabled." },
+    onSelect: {
+      type: "(icon: IconData) => void",
+      description:
+        "Handler that is called when an icon or emoji is selected or when a URL is submitted.",
+    },
+    onUpload: {
+      type: "(file: File) => void",
+      description: "Handler that is called when an image file is submitted.",
+    },
+    onRemove: {
+      type: "() => void",
+      description: "Handler that is called when the remove button is clicked.",
+    },
+  }}
+/>
 
 - See [`IconData`](/docs/blocks/icon-block#type-icondata)
 
 ### IconFactoryResult
 
-| Field              | Type                                                                                    | Description                                                   |
-| ------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `id`               | `string`                                                                                | Unique factory id used for the tab value and storage keys.    |
-| `label`            | `string`                                                                                | Tab label shown in the menu.                                  |
-| `sections`         | `IconSection[]`                                                                         | Virtualized grid sections. Each section renders a label row.  |
-| `getItem`          | `(id: string) => IconItem`                                                              | Resolves an icon id into the item rendered by the grid.       |
-| `select`           | `(id: string) => void`                                                                  | Optional selection side effect, commonly used for recents.    |
-| `search`           | `(query: string) => string[]`                                                           | Returns matching icon ids for the current query.              |
-| `toIconData`       | `(item: IconItem) => IconData`                                                          | Converts a selected item into the value passed to `onSelect`. |
-| `renderIcon`       | `(item: IconItem) => React.ReactNode`                                                   | Renders the visual icon inside the grid button.               |
-| `renderToolbar`    | `() => React.ReactNode`                                                                 | Optional controls shown beside the search input.              |
-| `renderNavigation` | `(scrollToSection: (id: string) => void, activeSectionId: string \| null) => ReactNode` | Optional section navigation for large factories.              |
-| `isLoading`        | `boolean`                                                                               | Shows a searching status in the grid.                         |
-| `hidden`           | `boolean`                                                                               | Hides the factory tab, useful for empty upload history.       |
-| `getRandomIcon`    | `() => IconItem`                                                                        | Optional random selection source for the toolbar action.      |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      description: "Unique factory id used for the tab value and storage keys.",
+    },
+    label: { type: "string", description: "Tab label shown in the menu." },
+    sections: {
+      type: "IconSection[]",
+      description:
+        "Virtualized grid sections. Each section renders a label row.",
+    },
+    getItem: {
+      type: "(id: string) => IconItem",
+      description: "Resolves an icon id into the item rendered by the grid.",
+    },
+    select: {
+      type: "(id: string) => void",
+      description: "Optional selection side effect, commonly used for recents.",
+    },
+    search: {
+      type: "(query: string) => string[]",
+      description: "Returns matching icon ids for the current query.",
+    },
+    toIconData: {
+      type: "(item: IconItem) => IconData",
+      description: (
+        <>
+          {" "}
+          Converts a selected item into the value passed to{" "}
+          <code>onSelect</code>.{" "}
+        </>
+      ),
+    },
+    renderIcon: {
+      type: "(item: IconItem) => React.ReactNode",
+      description: "Renders the visual icon inside the grid button.",
+    },
+    renderToolbar: {
+      type: "() => React.ReactNode",
+      description: "Optional controls shown beside the search input.",
+    },
+    renderNavigation: {
+      type: "(scrollToSection: (id: string) => void, activeSectionId: string | null) => ReactNode",
+      description: "Optional section navigation for large factories.",
+    },
+    isLoading: {
+      type: "boolean",
+      description: "Shows a searching status in the grid.",
+    },
+    hidden: {
+      type: "boolean",
+      description: "Hides the factory tab, useful for empty upload history.",
+    },
+    getRandomIcon: {
+      type: "() => IconItem",
+      description: "Optional random selection source for the toolbar action.",
+    },
+  }}
+/>
 
 ## Creating a Custom Factory
 
@@ -163,9 +220,14 @@ const upload = useUploadFactory();
 
 ### Factory options
 
-| Option        | Type           | Description                              |
-| ------------- | -------------- | ---------------------------------------- |
-| `id`          | `string`       | Unique ID for the factory tab.           |
-| `label`       | `string`       | Tab label shown in the menu.             |
-| `icons`       | `CustomIcon[]` | Array of icon definitions.               |
-| `recentLimit` | `number`       | Max recent icons to track (default: 20). |
+<TypeTable
+  type={{
+    id: { type: "string", description: "Unique ID for the factory tab." },
+    label: { type: "string", description: "Tab label shown in the menu." },
+    icons: { type: "CustomIcon[]", description: "Array of icon definitions." },
+    recentLimit: {
+      type: "number",
+      description: "Max recent icons to track (default: 20).",
+    },
+  }}
+/>

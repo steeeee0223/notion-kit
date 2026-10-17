@@ -1,11 +1,9 @@
 ---
 title: Kanban
-description: A composable board layout with draggable columns, draggable cards, and grouped item movement.
+description: A board with draggable columns and cards.
 ---
 
-import { story as KanbanBoardStory } from "@/stories/registry/kanban-board.story";
-
-<KanbanBoardStory.WithControl />
+<RegistryStory name="kanban-board" />
 
 ## Installation
 
@@ -32,7 +30,7 @@ import { story as KanbanBoardStory } from "@/stories/registry/kanban-board.story
 
 Use `getKanbanItemsAfterDrag` while dragging cards across columns, then use `getSortableItemsAfterDrag` when columns are reordered.
 
-<KanbanBoardStory.WithControl />
+<RegistryStory name="kanban-board" />
 
 ```tsx
 <Kanban.Root
@@ -75,11 +73,20 @@ Horizontal sortable root for kanban columns. Accepts the same props as `Sortable
 
 Registers a draggable column. Accepts `Sortable.Item` props in addition to the following.
 
-| Prop      | Type           | Default | Description                          |
-| --------- | -------------- | ------- | ------------------------------------ |
-| `id`\*    | `string`       | -       | Stable column id.                    |
-| `index`\* | `number`       | -       | Current column index.                |
-| `render`  | `ReactElement` | -       | Replaces the default column element. |
+<TypeTable
+  type={{
+    id: { type: "string", required: true, description: "Stable column id." },
+    index: {
+      type: "number",
+      required: true,
+      description: "Current column index.",
+    },
+    render: {
+      type: "ReactElement",
+      description: "Replaces the default column element.",
+    },
+  }}
+/>
 
 ### Kanban.ColumnHeader
 
@@ -89,20 +96,39 @@ Renders a column header that also acts as the column drag handle. Accepts standa
 
 Vertical sortable list and droppable target for cards in the current column.
 
-| Prop          | Type                         | Default      | Description                                      |
-| ------------- | ---------------------------- | ------------ | ------------------------------------------------ |
-| `orientation` | `"horizontal" \| "vertical"` | `"vertical"` | Overrides the default vertical card list layout. |
-| `render`      | `ReactElement`               | -            | Replaces the default list element.               |
+<TypeTable
+  type={{
+    orientation: {
+      type: '"horizontal" | "vertical"',
+      default: '"vertical"',
+      description: "Overrides the default vertical card list layout.",
+    },
+    render: {
+      type: "ReactElement",
+      description: "Replaces the default list element.",
+    },
+  }}
+/>
 
 ### Kanban.Item
 
 Registers a draggable card.
 
-| Prop      | Type     | Default | Description                             |
-| --------- | -------- | ------- | --------------------------------------- |
-| `id`\*    | `string` | -       | Stable card id.                         |
-| `index`\* | `number` | -       | Current card index inside its column.   |
-| `group`\* | `string` | -       | Column id for the card's current group. |
+<TypeTable
+  type={{
+    id: { type: "string", required: true, description: "Stable card id." },
+    index: {
+      type: "number",
+      required: true,
+      description: "Current card index inside its column.",
+    },
+    group: {
+      type: "string",
+      required: true,
+      description: "Column id for the card's current group.",
+    },
+  }}
+/>
 
 ### getKanbanItemsAfterDrag
 
@@ -112,10 +138,24 @@ Returns the next grouped item state after moving a card within or between column
 setItems((items) => getKanbanItemsAfterDrag(items, event));
 ```
 
-| Parameter | Type                               | Description                                |
-| --------- | ---------------------------------- | ------------------------------------------ |
-| `items`   | [`KanbanItems`](#type-kanbanitems) | Current mapping of column ids to card ids. |
-| `event`   | `DragOverEvent \| DragEndEvent`    | Event from `Kanban.Root`.                  |
+<TypeTable
+  type={{
+    items: {
+      type: "KanbanItems",
+      typeDescriptionLink: "#type-kanbanitems",
+      description: "Current mapping of column ids to card ids.",
+    },
+    event: {
+      type: "DragOverEvent | DragEndEvent",
+      description: (
+        <>
+          {" "}
+          Event from <code>Kanban.Root</code>.{" "}
+        </>
+      ),
+    },
+  }}
+/>
 
 ### getKanbanColumnTargetId
 

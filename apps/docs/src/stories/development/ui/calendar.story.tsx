@@ -1,13 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  BasicExample,
-  EnhancedDateTimePickerExample,
-  RangeCalendarExample,
-} from "./calendar.lazy";
+import { uiCalendar } from "@/stories/development.lazy";
 
 export const Basic = defineStory({
-  Component: BasicExample,
+  Component: uiCalendar.BasicExample,
   displayName: "Basic",
   args: { initial: {} },
   frame: {
@@ -17,7 +12,7 @@ export const Basic = defineStory({
   },
 });
 export const RangeCalendar = defineStory({
-  Component: RangeCalendarExample,
+  Component: uiCalendar.RangeCalendarExample,
   displayName: "Range Calendar",
   args: { initial: {} },
   frame: {
@@ -27,7 +22,7 @@ export const RangeCalendar = defineStory({
   },
 });
 export const EnhancedDateTimePicker = defineStory({
-  Component: EnhancedDateTimePickerExample,
+  Component: uiCalendar.EnhancedDateTimePickerExample,
   displayName: "Enhanced Date Time Picker",
   args: { initial: {} },
   frame: {

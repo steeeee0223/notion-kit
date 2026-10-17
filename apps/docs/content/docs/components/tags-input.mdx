@@ -1,11 +1,9 @@
 ---
 title: Tags Input
-description: A dynamic input field for adding and managing multiple tags.
+description: Add and remove tags in a text field.
 ---
 
-import { story as TagsInputDefaultStory } from "@/stories/registry/tags-input-default.story";
-
-<TagsInputDefaultStory.WithControl />
+<RegistryStory name="tags-input-default" />
 
 ```tsx
 <TagsInput
@@ -24,9 +22,32 @@ import { story as TagsInputDefaultStory } from "@/stories/registry/tags-input-de
 
 ### TagsInput
 
-| Prop            | Type                                | Default | Description                                                       |
-| --------------- | ----------------------------------- | ------- | ----------------------------------------------------------------- |
-| `value`\*       | `{ tags: string[]; input: string }` | -       | The current input value and current tags (controlled).            |
-| `inputSchema`   | `z.Schema`                          | -       | Whether to validate the input tag with the provided `zod` schema. |
-| `onTagsChange`  | `(value: string[]) => void`         | -       | Handler that is called when the tags are updated.                 |
-| `onInputChange` | `(value: string) => void`           | -       | Handler that is called when the input value changes.              |
+<TypeTable
+  type={{
+    value: {
+      type: "{ tags: string[]; input: string }",
+      required: true,
+      description: "The current input value and current tags (controlled).",
+    },
+    inputSchema: {
+      type: "z.Schema",
+      description: (
+        <>
+          {" "}
+          Whether to validate the input tag with the provided <code>
+            zod
+          </code>{" "}
+          schema.{" "}
+        </>
+      ),
+    },
+    onTagsChange: {
+      type: "(value: string[]) => void",
+      description: "Handler that is called when the tags are updated.",
+    },
+    onInputChange: {
+      type: "(value: string) => void",
+      description: "Handler that is called when the input value changes.",
+    },
+  }}
+/>

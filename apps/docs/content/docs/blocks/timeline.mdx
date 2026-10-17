@@ -1,13 +1,9 @@
 ---
 title: Timeline
-description: A composable timeline view with draggable items, range headers, sidebar, and navigation tools.
+description: A timeline with draggable items, date ranges, and a sidebar.
 ---
 
-import { story as TimelineLayoutStory } from "@/stories/registry/timeline-layout.story";
-import { story as TimelineWithSidebarStory } from "@/stories/registry/timeline-with-sidebar.story";
-import { story as TimelineWithoutSidebarStory } from "@/stories/registry/timeline-without-sidebar.story";
-
-<TimelineWithoutSidebarStory.WithControl />
+<RegistryStory name="timeline-without-sidebar" />
 
 ## Supported Features
 
@@ -74,9 +70,9 @@ import { story as TimelineWithoutSidebarStory } from "@/stories/registry/timelin
 
 ### Layout Only
 
-A minimal timeline showing the range header, toolbar, and today indicator — without any items.
+A timeline with a range header, toolbar, and today indicator. No items are loaded.
 
-<TimelineLayoutStory.WithControl />
+<RegistryStory name="timeline-layout" />
 
 ```tsx
 <TimelineProvider range={range}>
@@ -95,7 +91,7 @@ A minimal timeline showing the range header, toolbar, and today indicator — wi
 
 A full timeline with draggable items, context menus, range selection, and a marker creation trigger.
 
-<TimelineWithoutSidebarStory.WithControl />
+<RegistryStory name="timeline-without-sidebar" />
 
 ```tsx
 <TimelineProvider range={range}>
@@ -132,7 +128,7 @@ A full timeline with draggable items, context menus, range selection, and a mark
 
 A timeline with an attached sidebar panel listing all items, plus a header toolbar for opening/closing the sidebar.
 
-<TimelineWithSidebarStory.WithControl />
+<RegistryStory name="timeline-with-sidebar" />
 
 ```tsx
 <TimelineProvider range={range}>
@@ -188,18 +184,52 @@ the scrollable range is clamped and its actual visible date is reported.
 
 Root provider that manages timeline state, scroll position, and CSS variables.
 
-| Prop                 | Type                     | Default      | Description                                                   |
-| -------------------- | ------------------------ | ------------ | ------------------------------------------------------------- |
-| `range`              | `TimelineRange`          | `"monthly"`  | The active range granularity.                                 |
-| `anchorDate`         | `number`                 | -            | Controlled center timestamp.                                  |
-| `defaultAnchorDate`  | `number`                 | Today        | Initial center timestamp.                                     |
-| `onAnchorDateChange` | `(date: number) => void` | -            | Receives the viewed timestamp after user scrolling.           |
-| `timeZone`           | `string`                 | Browser zone | IANA timezone used to display dates.                          |
-| `zoom`               | `number`                 | `100`        | Zoom level as a percentage.                                   |
-| `startDate`          | `number \| null`         | -            | Override the timeline start date (timestamp).                 |
-| `endDate`            | `number \| null`         | -            | Override the timeline end date (timestamp).                   |
-| `sidebarWidth`       | `number`                 | -            | Controlled sidebar width in pixels. Auto-detected if omitted. |
-| `onAddItem`          | `(ts: number) => void`   | -            | Handler called when clicking to add a new item.               |
+<TypeTable
+  type={{
+    range: {
+      type: "TimelineRange",
+      default: '"monthly"',
+      description: "The active range granularity.",
+    },
+    anchorDate: { type: "number", description: "Controlled center timestamp." },
+    defaultAnchorDate: {
+      type: "number",
+      default: "Today",
+      description: "Initial center timestamp.",
+    },
+    onAnchorDateChange: {
+      type: "(date: number) => void",
+      description: "Receives the viewed timestamp after user scrolling.",
+    },
+    timeZone: {
+      type: "string",
+      default: "Browser zone",
+      description: "IANA timezone used to display dates.",
+    },
+    zoom: {
+      type: "number",
+      default: "100",
+      description: "Zoom level as a percentage.",
+    },
+    startDate: {
+      type: "number | null",
+      description: "Override the timeline start date (timestamp).",
+    },
+    endDate: {
+      type: "number | null",
+      description: "Override the timeline end date (timestamp).",
+    },
+    sidebarWidth: {
+      type: "number",
+      description:
+        "Controlled sidebar width in pixels. Auto-detected if omitted.",
+    },
+    onAddItem: {
+      type: "(ts: number) => void",
+      description: "Handler called when clicking to add a new item.",
+    },
+  }}
+/>
 
 ### TimelineContent
 
@@ -219,11 +249,31 @@ No additional props.
 Owns one row's drag state and provides it to the compound parts. Omit `onMove`
 and the resize parts for a click-only row.
 
-| Prop       | Type                                                       | Default | Description                                                         |
-| ---------- | ---------------------------------------------------------- | ------- | ------------------------------------------------------------------- |
-| `item`\*   | [`TimelineFeature`](#type-timelinefeature)                 | -       | The feature data used for row geometry and drag identity.           |
-| `onMove`   | `(id: string, start: number, end: number \| null) => void` | -       | Enables moving/resizing and receives the committed timestamp range. |
-| `children` | `React.ReactNode`                                          | -       | Composed `Jump`, `Track`, `Item`, and optional `Resize` parts.      |
+<TypeTable
+  type={{
+    item: {
+      type: "TimelineFeature",
+      typeDescriptionLink: "#type-timelinefeature",
+      required: true,
+      description: "The feature data used for row geometry and drag identity.",
+    },
+    onMove: {
+      type: "(id: string, start: number, end: number | null) => void",
+      description:
+        "Enables moving/resizing and receives the committed timestamp range.",
+    },
+    children: {
+      type: "React.ReactNode",
+      description: (
+        <>
+          {" "}
+          Composed <code>Jump</code>, <code>Track</code>, <code>Item</code>, and
+          optional <code>Resize</code> parts.{" "}
+        </>
+      ),
+    },
+  }}
+/>
 
 ### TimelineRow.Jump
 
@@ -245,9 +295,15 @@ root has `onMove`. Accepts standard button props, including `onClick` and
 Renders one draggable range edge. It is omitted automatically when the root has
 no `onMove`.
 
-| Prop          | Type               | Default | Description                     |
-| ------------- | ------------------ | ------- | ------------------------------- |
-| `direction`\* | `"start" \| "end"` | -       | Selects the range edge to edit. |
+<TypeTable
+  type={{
+    direction: {
+      type: '"start" | "end"',
+      required: true,
+      description: "Selects the range edge to edit.",
+    },
+  }}
+/>
 
 ### TimelineToolbar
 
@@ -257,19 +313,36 @@ A sticky toolbar container for placing controls like range select and jump-to.
 
 A pre-composed toolbar with sidebar trigger, range select, and jump-to buttons.
 
-| Prop            | Type                             | Description                                             |
-| --------------- | -------------------------------- | ------------------------------------------------------- |
-| `onSidebarOpen` | `() => void`                     | Handler called when the sidebar open button is clicked. |
-| `onRangeChange` | `(range: TimelineRange) => void` | Handler called when the range is changed.               |
+<TypeTable
+  type={{
+    onSidebarOpen: {
+      type: "() => void",
+      description: "Handler called when the sidebar open button is clicked.",
+    },
+    onRangeChange: {
+      type: "(range: TimelineRange) => void",
+      description: "Handler called when the range is changed.",
+    },
+  }}
+/>
 
 ### TimelineRangeSelect
 
 A select dropdown for switching between range granularities.
 
-| Prop       | Type                             | Description                               |
-| ---------- | -------------------------------- | ----------------------------------------- |
-| `value`\*  | `TimelineRange`                  | The currently selected range.             |
-| `onChange` | `(value: TimelineRange) => void` | Handler called when the range is changed. |
+<TypeTable
+  type={{
+    value: {
+      type: "TimelineRange",
+      required: true,
+      description: "The currently selected range.",
+    },
+    onChange: {
+      type: "(value: TimelineRange) => void",
+      description: "Handler called when the range is changed.",
+    },
+  }}
+/>
 
 ### TimelineJumpTo
 
@@ -283,9 +356,14 @@ Renders a vertical red line and badge at today's date position.
 
 A hover-activated trigger that follows the cursor and creates a marker on click.
 
-| Prop             | Type                   | Description                                              |
-| ---------------- | ---------------------- | -------------------------------------------------------- |
-| `onCreateMarker` | `(ts: number) => void` | Handler called with the timestamp of the click position. |
+<TypeTable
+  type={{
+    onCreateMarker: {
+      type: "(ts: number) => void",
+      description: "Handler called with the timestamp of the click position.",
+    },
+  }}
+/>
 
 ### TimelineSidebar
 
@@ -303,19 +381,37 @@ A scrollable body area inside the sidebar.
 
 A button that hides the sidebar panel.
 
-| Prop          | Type         | Default        | Description                        |
-| ------------- | ------------ | -------------- | ---------------------------------- |
-| `description` | `string`     | `"Hide table"` | Tooltip text for the close button. |
-| `onClick`     | `() => void` | -              | Handler called when clicked.       |
+<TypeTable
+  type={{
+    description: {
+      type: "string",
+      default: '"Hide table"',
+      description: "Tooltip text for the close button.",
+    },
+    onClick: {
+      type: "() => void",
+      description: "Handler called when clicked.",
+    },
+  }}
+/>
 
 ### TimelineSidebarTrigger
 
 A button that opens the sidebar panel.
 
-| Prop          | Type         | Default        | Description                          |
-| ------------- | ------------ | -------------- | ------------------------------------ |
-| `description` | `string`     | `"Show table"` | Tooltip text for the trigger button. |
-| `onClick`     | `() => void` | -              | Handler called when clicked.         |
+<TypeTable
+  type={{
+    description: {
+      type: "string",
+      default: '"Show table"',
+      description: "Tooltip text for the trigger button.",
+    },
+    onClick: {
+      type: "() => void",
+      description: "Handler called when clicked.",
+    },
+  }}
+/>
 
 ### `type` TimelineRange
 
@@ -325,9 +421,33 @@ type TimelineRange = "daily" | "monthly" | "quarterly";
 
 ### `type` TimelineFeature
 
-| Prop        | Type             | Description                                                      |
-| ----------- | ---------------- | ---------------------------------------------------------------- |
-| `id`\*      | `string`         | Unique identifier for the feature.                               |
-| `name`\*    | `string`         | Display name of the feature.                                     |
-| `startAt`\* | `number`         | Start timestamp in milliseconds.                                 |
-| `endAt`\*   | `number \| null` | End timestamp in milliseconds, or `null` for an open-ended item. |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier for the feature.",
+    },
+    name: {
+      type: "string",
+      required: true,
+      description: "Display name of the feature.",
+    },
+    startAt: {
+      type: "number",
+      required: true,
+      description: "Start timestamp in milliseconds.",
+    },
+    endAt: {
+      type: "number | null",
+      required: true,
+      description: (
+        <>
+          {" "}
+          End timestamp in milliseconds, or <code>null</code> for an open-ended
+          item.{" "}
+        </>
+      ),
+    },
+  }}
+/>

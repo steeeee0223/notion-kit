@@ -9,7 +9,7 @@
     "clean": "git clean -xdf .cache .react-router .source .turbo build node_modules",
     "dev": "pnpm build:stories && react-router dev --port 3000",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
+    "lint": "pnpm build:stories && react-router typegen && eslint",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "pnpm build:stories && react-router typegen && tsc --noEmit"
   },

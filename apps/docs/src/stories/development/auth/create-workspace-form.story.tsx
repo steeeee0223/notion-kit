@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./create-workspace-form.lazy";
+import { authCreateWorkspaceForm } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: authCreateWorkspaceForm.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {

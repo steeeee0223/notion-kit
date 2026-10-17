@@ -1,12 +1,9 @@
 ---
 title: Spinner
-description: An animated loader to indicate background activity or pending operations.
+description: An animated indicator for loading or pending work.
 ---
 
-import { story as SpinnerDefaultStory } from "@/stories/registry/spinner-default.story";
-import { story as SpinnerVariantsStory } from "@/stories/registry/spinner-variants.story";
-
-<SpinnerDefaultStory.WithControl />
+<RegistryStory name="spinner-default" />
 
 ```tsx
 <Spinner />
@@ -25,7 +22,7 @@ import { story as SpinnerVariantsStory } from "@/stories/registry/spinner-varian
 Use the `variant` prop to control the visual style of the spinner.<br/>
 The default variant is `"solid"`.
 
-<SpinnerVariantsStory.WithControl />
+<RegistryStory name="spinner-variants" />
 
 ```tsx
 <Spinner variant="solid" />
@@ -36,6 +33,12 @@ The default variant is `"solid"`.
 
 ### Spinner
 
-| Prop      | Type                  | Default   | Description                      |
-| --------- | --------------------- | --------- | -------------------------------- |
-| `variant` | `"solid" \| "dashed"` | `"solid"` | The visual style of the spinner. |
+<TypeTable
+  type={{
+    variant: {
+      type: '"solid" | "dashed"',
+      default: '"solid"',
+      description: "The visual style of the spinner.",
+    },
+  }}
+/>

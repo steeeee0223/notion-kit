@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DisabledExample, ExampleExample } from "./radio-group.lazy";
+import { uiRadioGroup } from "@/stories/development.lazy";
 
 export const Example = defineStory({
-  Component: ExampleExample,
+  Component: uiRadioGroup.ExampleExample,
   displayName: "Example",
   args: { initial: {} },
   frame: {
@@ -13,7 +12,7 @@ export const Example = defineStory({
   },
 });
 export const Disabled = defineStory({
-  Component: DisabledExample,
+  Component: uiRadioGroup.DisabledExample,
   displayName: "Disabled",
   args: { initial: {} },
   frame: {

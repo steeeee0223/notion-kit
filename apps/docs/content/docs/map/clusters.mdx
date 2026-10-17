@@ -3,9 +3,7 @@ title: Clusters
 description: Cluster GeoJSON points into scalable circle layers.
 ---
 
-import { story as MapClusterLayerStory } from "@/stories/registry/map-cluster-layer.story";
-
-<MapClusterLayerStory.WithControl />
+<RegistryStory name="map-cluster-layer" />
 
 ```tsx
 <MapClusterLayer data={pointsData} />
@@ -21,13 +19,45 @@ import { story as MapClusterLayerStory } from "@/stories/registry/map-cluster-la
 
 Creates a clustered GeoJSON source for point data and renders cluster circles, cluster counts, and unclustered point circles.
 
-| Prop                | Type                                           | Default                             | Description                                  |
-| ------------------- | ---------------------------------------------- | ----------------------------------- | -------------------------------------------- |
-| `data`\*            | `string \| FeatureCollection<Point, P>`        | -                                   | GeoJSON data or a URL to fetch GeoJSON from. |
-| `clusterMaxZoom`    | `number`                                       | `14`                                | Maximum zoom level for clustering.           |
-| `clusterRadius`     | `number`                                       | `50`                                | Cluster radius in pixels.                    |
-| `clusterColors`     | `[string, string, string]`                     | `["#22c55e", "#eab308", "#ef4444"]` | Colors for small, medium, large clusters.    |
-| `clusterThresholds` | `[number, number]`                             | `[100, 750]`                        | Point count thresholds for cluster steps.    |
-| `pointColor`        | `string`                                       | `"#3b82f6"`                         | Color for unclustered points.                |
-| `onPointClick`      | `(feature, coordinates) => void`               | -                                   | Called when an unclustered point is clicked. |
-| `onClusterClick`    | `(clusterId, coordinates, pointCount) => void` | -                                   | Overrides the default cluster zoom behavior. |
+<TypeTable
+  type={{
+    data: {
+      type: "string | FeatureCollection<Point, P>",
+      required: true,
+      description: "GeoJSON data or a URL to fetch GeoJSON from.",
+    },
+    clusterMaxZoom: {
+      type: "number",
+      default: "14",
+      description: "Maximum zoom level for clustering.",
+    },
+    clusterRadius: {
+      type: "number",
+      default: "50",
+      description: "Cluster radius in pixels.",
+    },
+    clusterColors: {
+      type: "[string, string, string]",
+      default: '["#22c55e", "#eab308", "#ef4444"]',
+      description: "Colors for small, medium, large clusters.",
+    },
+    clusterThresholds: {
+      type: "[number, number]",
+      default: "[100, 750]",
+      description: "Point count thresholds for cluster steps.",
+    },
+    pointColor: {
+      type: "string",
+      default: '"#3b82f6"',
+      description: "Color for unclustered points.",
+    },
+    onPointClick: {
+      type: "(feature, coordinates) => void",
+      description: "Called when an unclustered point is clicked.",
+    },
+    onClusterClick: {
+      type: "(clusterId, coordinates, pointCount) => void",
+      description: "Overrides the default cluster zoom behavior.",
+    },
+  }}
+/>

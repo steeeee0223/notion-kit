@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { InlineMenuExample } from "./dropdown-menu.lazy";
+import { uiDropdownMenu } from "@/stories/development.lazy";
 
 export const InlineMenu = defineStory({
-  Component: InlineMenuExample,
+  Component: uiDropdownMenu.InlineMenuExample,
   displayName: "Inline Menu",
   args: { initial: {} },
   frame: {

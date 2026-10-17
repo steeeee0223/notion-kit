@@ -1,16 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  CustomContentExample,
-  DefaultExample,
-  DraggableExample,
-  WithLabelExample,
-  WithPopupExample,
-  WithTooltipExample,
-} from "./map-marker.lazy";
+import { mapMapMarker } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: mapMapMarker.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {
@@ -20,7 +12,7 @@ export const Default = defineStory({
   },
 });
 export const CustomContent = defineStory({
-  Component: CustomContentExample,
+  Component: mapMapMarker.CustomContentExample,
   displayName: "Custom Content",
   args: { initial: {} },
   frame: {
@@ -30,7 +22,7 @@ export const CustomContent = defineStory({
   },
 });
 export const WithPopup = defineStory({
-  Component: WithPopupExample,
+  Component: mapMapMarker.WithPopupExample,
   displayName: "With Popup",
   args: { initial: {} },
   frame: {
@@ -40,7 +32,7 @@ export const WithPopup = defineStory({
   },
 });
 export const WithTooltip = defineStory({
-  Component: WithTooltipExample,
+  Component: mapMapMarker.WithTooltipExample,
   displayName: "With Tooltip",
   args: { initial: {} },
   frame: {
@@ -50,7 +42,7 @@ export const WithTooltip = defineStory({
   },
 });
 export const WithLabel = defineStory({
-  Component: WithLabelExample,
+  Component: mapMapMarker.WithLabelExample,
   displayName: "With Label",
   args: { initial: {} },
   frame: {
@@ -60,7 +52,7 @@ export const WithLabel = defineStory({
   },
 });
 export const Draggable = defineStory({
-  Component: DraggableExample,
+  Component: mapMapMarker.DraggableExample,
   displayName: "Draggable",
   args: { initial: {} },
   frame: {

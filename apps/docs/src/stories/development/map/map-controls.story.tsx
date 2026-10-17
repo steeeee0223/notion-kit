@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { AllControlsExample } from "./map-controls.lazy";
+import { mapMapControls } from "@/stories/development.lazy";
 
 export const AllControls = defineStory({
-  Component: AllControlsExample,
+  Component: mapMapControls.AllControlsExample,
   displayName: "All Controls",
   args: { initial: {} },
   frame: {

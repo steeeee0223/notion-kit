@@ -1,15 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import {
-  BoardViewExample,
-  ControlledExample,
-  DatabaseViewExample,
-  ListViewExample,
-  TimelineViewExample,
-} from "./table-view.lazy";
+import { collectionsTableViewTableView } from "@/stories/development.lazy";
 
 export const DatabaseView = defineStory({
-  Component: DatabaseViewExample,
+  Component: collectionsTableViewTableView.DatabaseViewExample,
   displayName: "Database View",
   args: { initial: {} },
   frame: {
@@ -19,7 +12,7 @@ export const DatabaseView = defineStory({
   },
 });
 export const Controlled = defineStory({
-  Component: ControlledExample,
+  Component: collectionsTableViewTableView.ControlledExample,
   displayName: "Controlled",
   args: { initial: {} },
   frame: {
@@ -29,7 +22,7 @@ export const Controlled = defineStory({
   },
 });
 export const ListView = defineStory({
-  Component: ListViewExample,
+  Component: collectionsTableViewTableView.ListViewExample,
   displayName: "List View",
   args: { initial: {} },
   frame: {
@@ -39,7 +32,7 @@ export const ListView = defineStory({
   },
 });
 export const BoardView = defineStory({
-  Component: BoardViewExample,
+  Component: collectionsTableViewTableView.BoardViewExample,
   displayName: "Board View",
   args: { initial: {} },
   frame: {
@@ -49,7 +42,7 @@ export const BoardView = defineStory({
   },
 });
 export const TimelineView = defineStory({
-  Component: TimelineViewExample,
+  Component: collectionsTableViewTableView.TimelineViewExample,
   displayName: "Timeline View",
   args: { initial: {} },
   frame: {

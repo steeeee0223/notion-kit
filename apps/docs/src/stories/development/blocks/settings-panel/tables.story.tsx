@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { EmojisExample, TeamMembersExample } from "./tables.lazy";
+import { blocksSettingsPanelTables } from "@/stories/development.lazy";
 
 export const TeamMembers = defineStory({
-  Component: TeamMembersExample,
+  Component: blocksSettingsPanelTables.TeamMembersExample,
   displayName: "Team Members",
   args: { initial: {} },
   frame: {
@@ -13,7 +12,7 @@ export const TeamMembers = defineStory({
   },
 });
 export const Emojis = defineStory({
-  Component: EmojisExample,
+  Component: blocksSettingsPanelTables.EmojisExample,
   displayName: "Emojis",
   args: { initial: {} },
   frame: {

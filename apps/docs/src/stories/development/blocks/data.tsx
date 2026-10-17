@@ -1,12 +1,3 @@
-import React from "react";
-
-export interface Block {
-  name: string;
-  bg: string;
-  color: string;
-  svg: React.ReactNode;
-}
-
 export const DEFAULT_LOGOS = [
   {
     name: "Notion",

@@ -1,9 +1,8 @@
 import { defineStory } from "@/lib/story";
-
-import { DefaultExample } from "./date-range-input.lazy";
+import { blocksDateRangeInput } from "@/stories/development.lazy";
 
 export const Default = defineStory({
-  Component: DefaultExample,
+  Component: blocksDateRangeInput.DefaultExample,
   displayName: "Default",
   args: { initial: {} },
   frame: {

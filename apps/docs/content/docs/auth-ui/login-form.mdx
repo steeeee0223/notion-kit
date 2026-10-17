@@ -1,11 +1,9 @@
 ---
 title: Login Form
-description: A login form component for authentication.
+description: A login form with email and OAuth sign-in.
 ---
 
-import { story as LoginFormDefaultStory } from "@/stories/registry/login-form-default.story";
-
-<LoginFormDefaultStory.WithControl />
+<RegistryStory name="login-form-default" />
 
 ## Installation
 
@@ -20,7 +18,7 @@ import { story as LoginFormDefaultStory } from "@/stories/registry/login-form-de
 
 ### Login Form
 
-<LoginFormDefaultStory.WithControl />
+<RegistryStory name="login-form-default" />
 
 ```tsx
 <LoginForm callbackURL="/" mode={mode} onModeChange={setMode} />
@@ -34,8 +32,20 @@ import { story as LoginFormDefaultStory } from "@/stories/registry/login-form-de
   It should be used within the `<AuthProvider>` context.
 </Callout>
 
-| Prop           | Type                        | Default | Description                                                |
-| -------------- | --------------------------- | ------- | ---------------------------------------------------------- |
-| `mode`\*       | `LoginMode`                 | -       | The mode of the form. Either for signing up or signing in. |
-| `callbackURL`  | `string`                    | -       | The URL to redirect after successful authentication.       |
-| `onModeChange` | `(mode: LoginMode) => void` | -       | Handler that is called when the mode of the form changes.  |
+<TypeTable
+  type={{
+    mode: {
+      type: "LoginMode",
+      required: true,
+      description: "The mode of the form. Either for signing up or signing in.",
+    },
+    callbackURL: {
+      type: "string",
+      description: "The URL to redirect after successful authentication.",
+    },
+    onModeChange: {
+      type: "(mode: LoginMode) => void",
+      description: "Handler that is called when the mode of the form changes.",
+    },
+  }}
+/>

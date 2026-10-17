@@ -1,12 +1,30 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { registryIndex } from "@notion-kit/registry";
 import type { RegistryItem } from "@notion-kit/validators";
 import { RegistryIndexSchema } from "@notion-kit/validators";
 
-import { registryIndex } from "../../../packages/registry/src/index";
-import { getDemoFilesAndDependencies } from "../src/lib/registry";
-import { theme } from "../src/registry/theme";
+import { theme } from "@/registry/theme";
+
+async function getDemoFilesAndDependencies(demoName: string) {
+  const directory = path.join("../../packages/registry/src", demoName);
+  const files = (await readdir(directory)).filter(
+    (file) => file !== "index.ts",
+  );
+  const dependencies = new Set<string>();
+
+  for (const file of files) {
+    const content = await readFile(path.join(directory, file), "utf8");
+    for (const match of content.matchAll(/from\s+["']([^"']+)["']/g)) {
+      const dependency = match[1];
+      if (dependency?.startsWith("@notion-kit/"))
+        dependencies.add(dependency.split("/").slice(0, 2).join("/"));
+    }
+  }
+
+  return { files, dependencies: [...dependencies] };
+}
 
 const output = "public/registry";
 const items: RegistryItem[] = [theme];

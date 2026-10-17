@@ -1,15 +1,9 @@
 ---
 title: Icon Block
-description: A block for icon, emoji, or image display.
+description: Display an icon, emoji, image, or text.
 ---
 
-import { story as IconBlockEmojiStory } from "@/stories/registry/icon-block-emoji.story";
-import { story as IconBlockLucideStory } from "@/stories/registry/icon-block-lucide.story";
-import { story as IconBlockSizesStory } from "@/stories/registry/icon-block-sizes.story";
-import { story as IconBlockTextStory } from "@/stories/registry/icon-block-text.story";
-import { story as IconBlockUrlStory } from "@/stories/registry/icon-block-url.story";
-
-<IconBlockEmojiStory.WithControl />
+<RegistryStory name="icon-block-emoji" />
 
 ```tsx
 <IconBlock size="md" icon={{ type: "emoji", src: "🚀" }} />
@@ -27,7 +21,7 @@ import { story as IconBlockUrlStory } from "@/stories/registry/icon-block-url.st
 
 Use the `size` prop to control the size of the button.
 
-<IconBlockSizesStory.WithControl />
+<RegistryStory name="icon-block-sizes" />
 
 ```tsx
 <IconBlock size="sm" icon={icon} />
@@ -42,7 +36,7 @@ Use the `size` prop to control the size of the button.
 
 ### Lucide Icon
 
-<IconBlockLucideStory.WithControl />
+<RegistryStory name="icon-block-lucide" />
 
 ```tsx
 <IconBlock
@@ -53,7 +47,7 @@ Use the `size` prop to control the size of the button.
 
 ### Image Url
 
-<IconBlockUrlStory.WithControl />
+<RegistryStory name="icon-block-url" />
 
 ```tsx
 <IconBlock
@@ -64,7 +58,7 @@ Use the `size` prop to control the size of the button.
 
 ### Text
 
-<IconBlockTextStory.WithControl />
+<RegistryStory name="icon-block-text" />
 
 ```tsx
 <IconBlock size="md" icon={{ type: "text", src: "John" }} />
@@ -84,8 +78,7 @@ Use the `size` prop to control the size of the button.
     },
     fallback: {
       type: "string",
-      description:
-        "The fallback string to display when an image can not be loaded.",
+      description: "Text shown when the image fails to load.",
     },
   }}
 />
@@ -94,7 +87,7 @@ Use the `size` prop to control the size of the button.
 
 There are 4 types of icons:
 
-1. `emoji`: An emoji icon, whose `src` is simply the emoji string. See [Emoji Cheat Sheet](https://emojipedia.org/).
+1. `emoji`: An emoji icon, whose `src` is the emoji string. See [Emoji Cheat Sheet](https://emojipedia.org/).
 2. `lucide`: A Lucide icon, whose `src` is the name of the icon. See [Lucide Icons](https://lucide.dev/icons).
 3. `url`: An image URL. The image will be displayed in the block.
 4. `text`: A text string. Only the first letter of `src` will be displayed in the block.

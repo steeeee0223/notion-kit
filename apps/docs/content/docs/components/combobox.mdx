@@ -3,11 +3,7 @@ title: Combobox
 description: A Base UI combobox with Notion-style chip input, floating and inline variants, and creatable items.
 ---
 
-import { story as ComboboxBasicStory } from "@/stories/registry/combobox-basic.story";
-import { story as ComboboxMultipleFloatingStory } from "@/stories/registry/combobox-multiple-floating.story";
-import { story as ComboboxMultipleInlineStory } from "@/stories/registry/combobox-multiple-inline.story";
-
-<ComboboxBasicStory.WithControl />
+<RegistryStory name="combobox-basic" />
 
 ```tsx
 <ComboboxBasic />
@@ -55,7 +51,7 @@ Create static collections outside the component. For changing data, memoize `Com
 
 Use the floating variant for a positioned popup. This example supports creatable items and a configurable chip limit.
 
-<ComboboxMultipleFloatingStory.WithControl />
+<RegistryStory name="combobox-multiple-floating" />
 
 ```tsx
 <ComboboxMultipleFloating maxChips={3} />
@@ -65,7 +61,7 @@ Use the floating variant for a positioned popup. This example supports creatable
 
 Use `<Combobox inline open>` with the inline content variant when the list is part of the surrounding menu surface. The root's `inline` prop keeps selection and filtering in inline mode. This example supports creatable items and a configurable chip limit.
 
-<ComboboxMultipleInlineStory.WithControl />
+<RegistryStory name="combobox-multiple-inline" />
 
 ```tsx
 <ComboboxMultipleInline maxChips={3} />

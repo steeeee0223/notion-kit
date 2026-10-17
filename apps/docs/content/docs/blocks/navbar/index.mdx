@@ -1,11 +1,9 @@
 ---
 title: Navbar
-description: A composable, themeable and customizable navbar component.
+description: Page navigation with a title, sharing controls, and a page menu.
 ---
 
-import { story as NavbarNotionStory } from "@/stories/registry/navbar-notion.story";
-
-<NavbarNotionStory.WithControl />
+<RegistryStory name="navbar-notion" />
 
 ## Installation
 
@@ -17,7 +15,7 @@ import { story as NavbarNotionStory } from "@/stories/registry/navbar-notion.sto
 
 ### Notion Navbar
 
-<NavbarNotionStory.WithControl />
+<RegistryStory name="navbar-notion" />
 
 ## API Reference
 
@@ -27,13 +25,19 @@ A `Navbar` extends the HTML `<nav>` element.
 
 ### NavbarItem
 
-A `NavbarItem` extends the `<Button>` component. We list the extended properties only.
+`NavbarItem` accepts `<Button>` props and the props below.
 
 <Callout title="Note">
   - It must be used within a `<Navbar>` or a `<TooltipProvider>`.
   - See more about [Button variants](/docs/components/button#button).
 </Callout>
 
-| Prop     | Type     | Description                 |
-| -------- | -------- | --------------------------- |
-| `hint`\* | `string` | The displayed tooltip hint. |
+<TypeTable
+  type={{
+    hint: {
+      type: "string",
+      required: true,
+      description: "The displayed tooltip hint.",
+    },
+  }}
+/>
