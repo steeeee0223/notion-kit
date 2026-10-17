@@ -3,7 +3,6 @@
  * Tests for grouping states, visibility controls, and aggregate display
  */
 
-import type { DragEndEvent } from "@dnd-kit/react";
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -597,14 +596,7 @@ describe("useTableView - Extended Grouping", () => {
       const previous = table.atoms.groupingState.get();
 
       await act(async () => {
-        table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: {
-            canceled: false,
-            source: { id: bGroupId },
-            target: { id: aGroupId },
-          },
-        } as DragEndEvent);
+        table.moveGroup({ groupId: bGroupId!, beforeGroupId: null });
         await Promise.resolve();
       });
 
@@ -654,14 +646,7 @@ describe("useTableView - Extended Grouping", () => {
       const previous = table.atoms.groupingState.get();
 
       act(() => {
-        table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: {
-            canceled: false,
-            source: { id: bGroupId },
-            target: { id: aGroupId },
-          },
-        } as DragEndEvent);
+        table.moveGroup({ groupId: bGroupId!, beforeGroupId: null });
         rerender({ view: automaticView });
       });
 
@@ -707,14 +692,10 @@ describe("useTableView - Extended Grouping", () => {
         result.current.table.atoms.groupingState.get().groupOrder;
       act(() => {
         result.current.table.toggleGroupVisible(aGroupId!);
-        result.current.table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: {
-            canceled: false,
-            source: { id: bGroupId },
-            target: { id: aGroupId },
-          },
-        } as DragEndEvent);
+        result.current.table.moveGroup({
+          groupId: bGroupId!,
+          beforeGroupId: null,
+        });
       });
 
       await Promise.resolve();
@@ -907,14 +888,7 @@ describe("useTableView - Extended Grouping", () => {
       const [bGroupId, aGroupId] = table.atoms.groupingState.get().groupOrder;
       onViewChange.mockClear();
       act(() => {
-        table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: {
-            canceled: false,
-            source: { id: bGroupId },
-            target: { id: aGroupId },
-          },
-        } as DragEndEvent);
+        table.moveGroup({ groupId: bGroupId!, beforeGroupId: null });
       });
 
       expect(table.getGroupSort()).toEqual({ mode: "manual" });
@@ -1305,7 +1279,7 @@ describe("useTableView - Extended Grouping", () => {
   });
 
   describe("Group DnD", () => {
-    it("GroupDrag_ProjectedSelfTarget_ReordersStateAndRenderedGroupRows", () => {
+    it("GroupMove_BeforeThirdGroup_ReordersStateAndRenderedRows", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -1324,14 +1298,10 @@ describe("useTableView - Extended Grouping", () => {
       );
 
       act(() => {
-        table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: {
-            canceled: false,
-            source: { id: firstGroupId, initialIndex: 0, index: 1 },
-            target: { id: firstGroupId },
-          },
-        } as unknown as DragEndEvent);
+        table.moveGroup({
+          groupId: firstGroupId,
+          beforeGroupId: initialGroupOrder[2] ?? null,
+        });
       });
 
       const expectedGroupOrder = [
@@ -1347,7 +1317,7 @@ describe("useTableView - Extended Grouping", () => {
       );
     });
 
-    it("GroupDrag_DifferentTarget_ReordersGroupsExactly", () => {
+    it("GroupMove_AfterSecondGroup_ReordersGroupsExactly", () => {
       const { table } = renderTableHook({
         data: mockData,
         properties: mockProperties,
@@ -1366,14 +1336,10 @@ describe("useTableView - Extended Grouping", () => {
       const secondGroupId = initialGroupOrder[1]!;
 
       act(() => {
-        table.handleGroupedRowDragEnd({
-          canceled: false,
-          operation: {
-            canceled: false,
-            source: { id: firstGroupId },
-            target: { id: secondGroupId },
-          },
-        } as DragEndEvent);
+        table.moveGroup({
+          groupId: firstGroupId,
+          beforeGroupId: initialGroupOrder[2] ?? null,
+        });
       });
 
       const newGroupOrder = table.atoms.groupingState.get().groupOrder;
@@ -1386,14 +1352,12 @@ describe("useTableView - Extended Grouping", () => {
     });
 
     it.each([
-      ["canceled event", true, false, { id: "source" }, { id: "target" }],
-      ["canceled operation", false, true, { id: "source" }, { id: "target" }],
-      ["missing source", false, false, null, { id: "target" }],
-      ["missing target", false, false, { id: "source" }, null],
-      ["self target", false, false, { id: "source" }, { id: "source" }],
+      ["missing source", "missing", null],
+      ["missing target", "col2:25", "missing"],
+      ["self target", "col2:25", "col2:25"],
     ])(
-      "GroupDrag_%s_PreservesGroupOrderWithoutStateCallback",
-      (_scenario, canceled, operationCanceled, source, target) => {
+      "GroupMove_%s_PreservesOrderWithoutCallback",
+      (_scenario, groupId, beforeGroupId) => {
         const { table } = renderTableHook({
           data: mockData,
           properties: mockProperties,
@@ -1401,22 +1365,8 @@ describe("useTableView - Extended Grouping", () => {
         act(() => table.setGrouping(["col2"]));
         const previous = table.atoms.groupingState.get().groupOrder;
         const onGroupingStateChange = vi.fn();
-        table.setOptions((options) => ({
-          ...options,
-          onGroupingStateChange,
-        }));
-
-        act(() => {
-          table.handleGroupedRowDragEnd({
-            canceled,
-            operation: {
-              canceled: operationCanceled,
-              source,
-              target,
-            },
-          } as unknown as DragEndEvent);
-        });
-
+        table.setOptions((options) => ({ ...options, onGroupingStateChange }));
+        act(() => table.moveGroup({ groupId, beforeGroupId }));
         expect(onGroupingStateChange).not.toHaveBeenCalled();
         expect(table.atoms.groupingState.get().groupOrder).toEqual(previous);
       },

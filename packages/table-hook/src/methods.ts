@@ -87,6 +87,11 @@ export interface GroupingMethod<Data = unknown, Config = unknown> {
     colId: string,
     context: PluginMethodContext<Config>,
   ) => ComparableValue;
+  getDropValue?: (
+    currentData: Data,
+    destinationValue: ComparableValue,
+    context: PluginMethodContext<Config>,
+  ) => Data;
   toSortValue?: (
     groupValue: ComparableValue,
     context: PluginMethodContext<Config>,
@@ -214,17 +219,17 @@ export const sortByCheckbox = createSortingMethod(
   compareBooleans,
 );
 
-export const groupByValue: GroupingMethod = {
+export const groupByValue = {
   id: "value",
   name: "Value",
-  function: (data) => toGroupingValue(data),
-};
+  function: (data: unknown) => toGroupingValue(data),
+} satisfies GroupingMethod;
 
-export const groupByTextValue: GroupingMethod = {
+export const groupByTextValue = {
   id: "text",
   name: "Text",
-  function: (data) => toTextGroupingValue(data),
-};
+  function: (data: unknown) => toTextGroupingValue(data),
+} satisfies GroupingMethod;
 
 export const countAll: CountingMethod = {
   id: CountMethod.ALL,

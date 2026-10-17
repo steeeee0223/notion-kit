@@ -406,6 +406,148 @@ export class TableViewObject {
       .click();
   }
 
+  async showEmptyGroups() {
+    const grouping = await (await this.openSettings()).openGrouping();
+    if (
+      (await grouping
+        .checkboxItem("Hide empty groups")
+        .getAttribute("aria-checked")) === "true"
+    ) {
+      await grouping.toggleHideEmptyGroups();
+    }
+    await this.page.keyboard.press("Escape");
+  }
+
+  boardColumnContent(groupId: string) {
+    return this.group(groupId).locator('[data-slot="kanban-column-content"]');
+  }
+
+  boardColumnHandle(groupId: string) {
+    return this.group(groupId).getByRole("button", {
+      name: "Drag item",
+      exact: true,
+    });
+  }
+
+  boardCardHandle(rowId: string) {
+    return this.rowBlock(rowId).getByRole("button", {
+      name: "Move card",
+      exact: true,
+    });
+  }
+
+  async startKeyboardDrag(rowId: string) {
+    await this.boardCardHandle(rowId).focus();
+    await this.page.keyboard.press("Space");
+    await expect(
+      this.page.locator('[data-slot="kanban-overlay"]'),
+    ).toBeVisible();
+  }
+
+  async finishKeyboardDrag(rowId: string, key: "Space" | "Escape") {
+    await this.page.keyboard.press(key);
+    await expect(this.page.locator('[data-slot="kanban-overlay"]')).toHaveCount(
+      0,
+    );
+    await expect(this.boardCardHandle(rowId)).toBeFocused();
+  }
+
+  async startPointerDrag(source: Locator) {
+    await source.scrollIntoViewIfNeeded();
+    const box = await source.boundingBox();
+    if (!box) throw new Error("Drag source has no visible bounding box");
+    const isCard = (await source.getAttribute("data-slot")) === "kanban-item";
+    const start = {
+      x: box.x + (isCard ? 6 : box.width / 2),
+      y: box.y + (isCard ? 6 : box.height / 2),
+    };
+    await this.page.mouse.move(start.x, start.y);
+    await this.page.mouse.down();
+    await this.page.mouse.move(start.x + 10, start.y + 6, { steps: 4 });
+    await expect
+      .poll(() => this.page.locator("[data-dragging]").count())
+      .toBeGreaterThan(0);
+  }
+
+  async movePointerTo(target: Locator, edge: "center" | "after" = "center") {
+    const box = await target.boundingBox();
+    if (!box) throw new Error("Drop target has no visible bounding box");
+    await this.page.mouse.move(
+      box.x + (edge === "after" ? box.width - 4 : box.width / 2),
+      box.y + (edge === "after" ? box.height - 4 : box.height / 2),
+      { steps: 12 },
+    );
+  }
+
+  async dropPointerDrag() {
+    await this.page.mouse.up();
+    await expect(this.page.locator("[data-dragging]")).toHaveCount(0);
+    await expect(this.page.locator('[data-dnd-dragging="true"]')).toHaveCount(
+      0,
+    );
+    await expect(this.page.locator("[data-dnd-placeholder]")).toHaveCount(0);
+  }
+
+  async dragPointer(
+    source: Locator,
+    target: Locator,
+    edge: "center" | "after" = "center",
+  ) {
+    await this.startPointerDrag(source);
+    await this.movePointerTo(target, edge);
+    await this.dropPointerDrag();
+  }
+
+  async dragTouch(source: Locator, target: Locator) {
+    await source.scrollIntoViewIfNeeded();
+    const sourceBox = await source.boundingBox();
+    const targetBox = await target.boundingBox();
+    if (!sourceBox || !targetBox)
+      throw new Error("Touch drag requires visible source and target");
+    const input = await this.page.context().newCDPSession(this.page);
+    const start = { x: sourceBox.x + 6, y: sourceBox.y + 6 };
+    await input.send("Input.dispatchTouchEvent", {
+      type: "touchStart",
+      touchPoints: [start],
+    });
+    // The production touch sensor requires a 250 ms hold before moving.
+    await this.page.waitForTimeout(300);
+    await input.send("Input.dispatchTouchEvent", {
+      type: "touchMove",
+      touchPoints: [{ x: start.x + 10, y: start.y + 6 }],
+    });
+    await expect(
+      this.page.locator('[data-slot="kanban-overlay"]'),
+    ).toBeVisible();
+    for (let step = 1; step <= 12; step++) {
+      await input.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [
+          {
+            x:
+              start.x +
+              ((targetBox.x + targetBox.width / 2 - start.x) * step) / 12,
+            y:
+              start.y +
+              ((targetBox.y + targetBox.height - 4 - start.y) * step) / 12,
+          },
+        ],
+      });
+    }
+    await input.send("Input.dispatchTouchEvent", {
+      type: "touchEnd",
+      touchPoints: [],
+    });
+    await expect(this.page.locator('[data-slot="kanban-overlay"]')).toHaveCount(
+      0,
+    );
+    await input.detach();
+  }
+
+  boardScrollContainer() {
+    return this.page.locator('[data-slot="table-view-scroll-container"]');
+  }
+
   async dragPointerBy(source: Locator, deltaX: number, deltaY = 0) {
     await source.scrollIntoViewIfNeeded();
     const box = await source.boundingBox();

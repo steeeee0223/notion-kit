@@ -24,7 +24,7 @@ test("Grouping_StatusVisibilityAndRemoval_UpdatesMembershipWithoutViewWriteback"
 
   await expect(table.internalState()).toContainText('"grouping":["status"]');
   await expect(table.internalState()).toContainText(
-    '"groupOrder":["status:Active","status:null","status:Done"]',
+    '"groupOrder":["status:Active","status:null","status:Done","status:Backlog"]',
   );
   await expect(table.controlledState()).toContainText('"viewCount":0');
   await page.keyboard.press("Escape");
