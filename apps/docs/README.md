@@ -8,6 +8,8 @@ This app uses React Router framework mode, Vite, Fumadocs MDX, and Fumadocs Stor
 | Registry    | `/registry`    | `packages/registry/src/index.ts` |
 | Development | `/development` | `src/stories/development`        |
 
+The original landing page remains at `/`, with its own Notion Kit styles. Documentation pages use Fumadocs defaults.
+
 ## Run the app
 
 From the workspace root, build the workspace dependencies once, then start the docs app:
@@ -40,7 +42,13 @@ Stripe dialogs accept an optional `VITE_STRIPE_PUBLISHABLE_KEY` in an ignored `.
 
 ## Write documentation
 
-Use Fumadocs MDX components without style overrides. Import a registry Story and render `<story.WithControl />` for examples. Use Markdown code fences and the built-in `Tabs` for installation instructions.
+Use Fumadocs MDX components without style overrides. Import a registry Story and render `<story.WithControl />` for examples. Use Markdown code fences for code samples and the shared `Installation` component for installation instructions:
+
+```mdx
+<Installation packages="@notion-kit/ui" registryName="button-default" />
+```
+
+`Installation` uses Fumadocs tabs and code blocks to generate the package and registry commands. It is available in every documentation page through the shared MDX component map.
 
 The built-in `TypeTable` supports required props:
 
