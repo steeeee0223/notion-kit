@@ -7,11 +7,12 @@ The `useMap` hook gives child components access to the MapLibre instance after t
 
 ## Custom GeoJSON Layer
 
-<ComponentPreview
-  name="map-custom-geojson-layer"
-  preview={`map.addSource("parks", { type: "geojson", data: geojsonData });
-map.addLayer({ id: "parks-fill", type: "fill", source: "parks" });`}
-/>
+<RegistryStory name="map-custom-geojson-layer" />
+
+```tsx
+map.addSource("parks", { type: "geojson", data: geojsonData });
+map.addLayer({ id: "parks-fill", type: "fill", source: "parks" });
+```
 
 ## Installation
 

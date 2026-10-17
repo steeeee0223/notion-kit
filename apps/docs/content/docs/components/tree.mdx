@@ -1,17 +1,18 @@
 ---
 title: Tree
-description: A collapsible, hierarchical tree component for organizing nested items like folders and files.
+description: A collapsible tree for nested items such as folders and files.
 ---
 
-<ComponentPreview
-  name="tree-default"
-  preview={`const tree = useTree(folderNodes, {});
-  return (
-    <Tree tree={tree}>
-      <TreeList nodeIds={tree.entity.rootIds} />
-    </Tree>
-  );`}
-/>
+<RegistryStory name="tree-default" />
+
+```tsx
+const tree = useTree(folderNodes, {});
+return (
+  <Tree tree={tree}>
+    <TreeList nodeIds={tree.entity.rootIds} />
+  </Tree>
+);
+```
 
 ## Installation
 
@@ -19,7 +20,7 @@ description: A collapsible, hierarchical tree component for organizing nested it
 
 ## Usage
 
-The new tree package uses a modern, optimized architecture that accepts **flat data** (arrays with `parentId` relationships) and handles tree construction internally.
+`useTree` builds a tree from flat records with `id` and `parentId` fields.
 
 ### Basic Example
 
@@ -52,37 +53,41 @@ export default function MyTree() {
 
 Disable collapsing to show all nodes expanded by default.
 
-<ComponentPreview
-  name="tree-non-collapsible"
-  preview={`useTree(data, { collapsible: false })`}
-/>
+<RegistryStory name="tree-non-collapsible" />
+
+```tsx
+useTree(data, { collapsible: false });
+```
 
 ### Multi-Select
 
 Enable selection of multiple tree items.
 
-<ComponentPreview
-  name="tree-multi-select"
-  preview={`useTree(data, { selectionMode: "multiple" })`}
-/>
+<RegistryStory name="tree-multi-select" />
+
+```tsx
+useTree(data, { selectionMode: "multiple" });
+```
 
 ### Show Empty Children
 
 Display an indicator when a folder has no children.
 
-<ComponentPreview
-  name="tree-show-empty"
-  preview={`useTree(data, { showEmptyChild: true })`}
-/>
+<RegistryStory name="tree-show-empty" />
+
+```tsx
+useTree(data, { showEmptyChild: true });
+```
 
 ### Combobox Tree
 
 A searchable tree interface using a combobox.
 
-<ComponentPreview
-  name="tree-combobox"
-  preview={`<ComboboxTree tree={tree} />`}
-/>
+<RegistryStory name="tree-combobox" />
+
+```tsx
+<ComboboxTree tree={tree} />
+```
 
 ## API Reference
 
@@ -96,21 +101,60 @@ const tree = useTree<T>(data, options);
 
 **Parameters:**
 
-| Parameter | Type          | Description                                  |
-| --------- | ------------- | -------------------------------------------- |
-| `data`    | `T[]`         | Flat array of items with `id` and `parentId` |
-| `options` | `TreeOptions` | Configuration options for the tree           |
+<TypeTable
+  type={{
+    data: {
+      type: "T[]",
+      description: (
+        <>
+          {" "}
+          Flat array of items with <code>id</code> and{" "}
+          <code>parentId</code>{" "}
+        </>
+      ),
+    },
+    options: {
+      type: "TreeOptions",
+      description: "Configuration options for the tree",
+    },
+  }}
+/>
 
 **TreeOptions:**
 
-| Option              | Type                     | Default    | Description                      |
-| ------------------- | ------------------------ | ---------- | -------------------------------- |
-| `collapsible`       | `boolean`                | `true`     | Whether nodes can be collapsed   |
-| `showEmptyChild`    | `boolean`                | `false`    | Show indicator for empty folders |
-| `selectionMode`     | `"single" \| "multiple"` | `"single"` | Selection behavior               |
-| `initialExpanded`   | `string[]`               | `[]`       | IDs of initially expanded nodes  |
-| `initialSelected`   | `string[]`               | `[]`       | IDs of initially selected nodes  |
-| `onSelectionChange` | `(id: string) => void`   | -          | Called when selection changes    |
+<TypeTable
+  type={{
+    collapsible: {
+      type: "boolean",
+      default: "true",
+      description: "Whether nodes can be collapsed",
+    },
+    showEmptyChild: {
+      type: "boolean",
+      default: "false",
+      description: "Show indicator for empty folders",
+    },
+    selectionMode: {
+      type: '"single" | "multiple"',
+      default: '"single"',
+      description: "Selection behavior",
+    },
+    initialExpanded: {
+      type: "string[]",
+      default: "[]",
+      description: "IDs of initially expanded nodes",
+    },
+    initialSelected: {
+      type: "string[]",
+      default: "[]",
+      description: "IDs of initially selected nodes",
+    },
+    onSelectionChange: {
+      type: "(id: string) => void",
+      description: "Called when selection changes",
+    },
+  }}
+/>
 
 **Returns:** `TreeInstance<T>`
 
@@ -126,11 +170,30 @@ The tree instance exposes:
 
 Root container providing tree context.
 
-| Prop        | Type              | Description                          |
-| ----------- | ----------------- | ------------------------------------ |
-| `tree`\*    | `TreeInstance<T>` | Tree instance from `useTree`         |
-| `children`  | `React.ReactNode` | Tree content (typically `Tree.List`) |
-| `className` | `string`          | Additional CSS classes               |
+<TypeTable
+  type={{
+    tree: {
+      type: "TreeInstance<T>",
+      required: true,
+      description: (
+        <>
+          {" "}
+          Tree instance from <code>useTree</code>{" "}
+        </>
+      ),
+    },
+    children: {
+      type: "React.ReactNode",
+      description: (
+        <>
+          {" "}
+          Tree content (typically <code>Tree.List</code>){" "}
+        </>
+      ),
+    },
+    className: { type: "string", description: "Additional CSS classes" },
+  }}
+/>
 
 ### Tree.Item
 
@@ -140,9 +203,14 @@ A slottable tree item.
 
 A slottable button to expand/collapse a node.
 
-| Prop       | Type         | Description                                       |
-| ---------- | ------------ | ------------------------------------------------- |
-| `onToggle` | `() => void` | A handler that is called when the node is toggled |
+<TypeTable
+  type={{
+    onToggle: {
+      type: "() => void",
+      description: "A handler that is called when the node is toggled",
+    },
+  }}
+/>
 
 ### Tree.EmptyIndicator
 
@@ -156,27 +224,56 @@ A slottable tree group.
 
 Renders tree nodes recursively.
 
-| Prop          | Type             | Description                                   |
-| ------------- | ---------------- | --------------------------------------------- |
-| `nodeIds`\*   | `string[]`       | Array of node IDs to render                   |
-| `renderItem`  | `(props) => JSX` | Custom renderer for tree items (optional)     |
-| `renderEmpty` | `(props) => JSX` | Custom renderer for empty children (optional) |
+<TypeTable
+  type={{
+    nodeIds: {
+      type: "string[]",
+      required: true,
+      description: "Array of node IDs to render",
+    },
+    renderItem: {
+      type: "(props) => JSX",
+      description: "Custom renderer for tree items (optional)",
+    },
+    renderEmpty: {
+      type: "(props) => JSX",
+      description: "Custom renderer for empty children (optional)",
+    },
+  }}
+/>
 
 ### TreeList (Preset)
 
 Pre-styled tree list component from `@notion-kit/ui/tree/presets`.
 
-| Prop        | Type       | Description                 |
-| ----------- | ---------- | --------------------------- |
-| `nodeIds`\* | `string[]` | Array of node IDs to render |
+<TypeTable
+  type={{
+    nodeIds: {
+      type: "string[]",
+      required: true,
+      description: "Array of node IDs to render",
+    },
+  }}
+/>
 
 ### ComboboxTree (Preset)
 
 Searchable tree component with combobox behavior.
 
-| Prop     | Type              | Description                  |
-| -------- | ----------------- | ---------------------------- |
-| `tree`\* | `TreeInstance<T>` | Tree instance from `useTree` |
+<TypeTable
+  type={{
+    tree: {
+      type: "TreeInstance<T>",
+      required: true,
+      description: (
+        <>
+          {" "}
+          Tree instance from <code>useTree</code>{" "}
+        </>
+      ),
+    },
+  }}
+/>
 
 ### `type` TreeItemData (Preset)
 
@@ -194,12 +291,5 @@ interface TreeItemData {
 
 ## Architecture
 
-The tree package uses an optimized O(N) architecture:
-
-1. **Flat Data Input**: Accepts arrays with `parentId` relationships (e.g., from database queries)
-2. **Automatic Tree Building**: Constructs tree structure internally via BFS traversal
-3. **ID-Based Rendering**: Uses node IDs for efficient recursive rendering
-4. **Derived Visibility**: Computes visible nodes on-demand via `getVisibleIds()`
-5. **Smart State Management**: Handles expand/collapse, selection via tree instance
-
-This design eliminates the need for pre-structured tree data and provides better performance.
+The tree instance manages expansion and selection state. Use `getVisibleIds()`
+to read the nodes visible under the current expansion state.

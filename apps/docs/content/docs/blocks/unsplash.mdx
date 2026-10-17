@@ -3,10 +3,11 @@ title: Unsplash
 description: A search-enabled autocomplete grid for browsing and selecting Unsplash images.
 ---
 
-<ComponentPreview
-  name="unsplash-default"
-  preview={`<Unsplash apiKey={UNSPLASH_ACCESS_KEY} onSelect={setImage} />`}
-/>
+<RegistryStory name="unsplash-default" />
+
+```tsx
+<Unsplash apiKey={UNSPLASH_ACCESS_KEY} onSelect={setImage} />
+```
 
 ## Installation
 
@@ -20,22 +21,45 @@ description: A search-enabled autocomplete grid for browsing and selecting Unspl
 
 The picker opens inline, loads a default Unsplash collection, and searches remotely as the input changes.
 
-<ComponentPreview name="unsplash-default" />
+<RegistryStory name="unsplash-default" />
 
 ### Controlled Selection
 
 Use `onSelect` to receive the full Unsplash image object and decide which URL size to store.
 
-<ComponentPreview name="unsplash-search" />
+<RegistryStory name="unsplash-search" />
 
 ## API Reference
 
 ### Unsplash
 
-| Prop       | Type                             | Default | Description                                                                                  |
-| ---------- | -------------------------------- | ------- | -------------------------------------------------------------------------------------------- |
-| `apiKey`\* | `string`                         | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers).         |
-| `onSelect` | `(image: UnsplashImage) => void` | -       | Handler called when an image is selected. Use `image.urls.small`, `regular`, `full`, or raw. |
+<TypeTable
+  type={{
+    apiKey: {
+      type: "string",
+      required: true,
+      description: (
+        <>
+          {" "}
+          The Unsplash access key from{" "}
+          <a href="https://unsplash.com/developers">Unsplash Developers</a>
+          .{" "}
+        </>
+      ),
+    },
+    onSelect: {
+      type: "(image: UnsplashImage) => void",
+      description: (
+        <>
+          {" "}
+          Handler called when an image is selected. Use{" "}
+          <code>image.urls.small</code>, <code>regular</code>, <code>full</code>
+          , or raw.{" "}
+        </>
+      ),
+    },
+  }}
+/>
 
 ### `type` UnsplashImage
 

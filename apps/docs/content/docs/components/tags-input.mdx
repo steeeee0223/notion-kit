@@ -1,32 +1,65 @@
 ---
 title: Tags Input
-description: A dynamic input field for adding and managing multiple tags.
+description: Add and remove tags in a text field.
 ---
 
-<ComponentPreview
-  name="tags-input-default"
-  preview={`<TagsInput
-    placeholder="Search name or emails"
-    value={{ tags, input }}
-    onTagsChange={setTags}
-    onInputChange={setInput}
-  />`}
+<RegistryStory name="tags-input-default" />
+
+```tsx
+<TagsInput
+  placeholder="Search name or emails"
+  value={{ tags, input }}
+  onTagsChange={setTags}
+  onInputChange={setInput}
 />
+```
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/ui"
-  registryName="tags-input-default"
-/>
+<Installation packages="@notion-kit/ui" registryName="tags-input-default" />
 
 ## API Reference
 
 ### TagsInput
 
-| Prop            | Type                                | Default | Description                                                       |
-| --------------- | ----------------------------------- | ------- | ----------------------------------------------------------------- |
-| `value`\*       | `{ tags: string[]; input: string }` | -       | The current input value and current tags (controlled).            |
-| `inputSchema`   | `z.Schema`                          | -       | Whether to validate the input tag with the provided `zod` schema. |
-| `onTagsChange`  | `(value: string[]) => void`         | -       | Handler that is called when the tags are updated.                 |
-| `onInputChange` | `(value: string) => void`           | -       | Handler that is called when the input value changes.              |
+<TypeTable
+  type={{
+    value: {
+      type: "{ tags: (string | TagOption)[]; input: string }",
+      required: true,
+      description: "The current input value and current tags (controlled).",
+    },
+    inputSchema: {
+      type: "z.Schema",
+      description: (
+        <>
+          {" "}
+          Whether to validate the input tag with the provided <code>
+            zod
+          </code>{" "}
+          schema.{" "}
+        </>
+      ),
+    },
+    onTagsChange: {
+      type: "(value: string[]) => void",
+      description: "Handler that is called when the tags are updated.",
+    },
+    onInputChange: {
+      type: "(value: string) => void",
+      description: "Handler that is called when the input value changes.",
+    },
+  }}
+/>
+
+### TagOption
+
+Each tag can be a string or an object with a value and an optional color.
+`Color` is exported by `@notion-kit/utils`.
+
+<TypeTable
+  type={{
+    value: { type: "string", required: true, description: "The tag value." },
+    color: { type: "Color", description: "The tag background color." },
+  }}
+/>

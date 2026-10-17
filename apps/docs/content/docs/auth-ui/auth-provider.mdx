@@ -1,6 +1,6 @@
 ---
 title: Auth Provider
-description: An authentication context provider for your application.
+description: Authentication context for Notion UI components.
 ---
 
 ## Installation
@@ -18,8 +18,19 @@ See [Notion Auth](https://notion-authn.vercel.app/) for a complete example.
   purposes.
 </Callout>
 
-| Prop       | Type                    | Default | Description                                 |
-| ---------- | ----------------------- | ------- | ------------------------------------------- |
-| `authURL`  | `string`                | -       | The URL of the authentication service.      |
-| `appURL`   | `string`                | -       | The base URL for frontend return links.     |
-| `redirect` | `(url: string) => void` | -       | Your URL redirect function.                 |
+<TypeTable
+  type={{
+    authURL: {
+      type: "string",
+      description: "The URL of the authentication service.",
+    },
+    appURL: {
+      type: "string",
+      description: "The base URL for frontend return links.",
+    },
+    redirect: {
+      type: "(url: string) => void",
+      description: "Your URL redirect function.",
+    },
+  }}
+/>

@@ -1,12 +1,12 @@
 ---
 title: Tooltip
-description: A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
+description: Show a description when an element is hovered or focused.
 links:
   - label: Base UI
     href: https://base-ui.com/react/components/tooltip
 ---
 
-<ComponentPreview name="tooltip-demo" />
+<RegistryStory name="tooltip-demo" />
 
 ## Installation
 
@@ -57,8 +57,21 @@ Accepts Base UI popup props plus `align`, `alignOffset`, `anchor`,
 
 ### TooltipDescription
 
-| Prop        | Type                                  | Default     | Description                         |
-| ----------- | ------------------------------------- | ----------- | ----------------------------------- |
-| `text`\*    | `string`                              | -           | Text content or the image URL.      |
-| `type`      | `"primary" \| "secondary" \| "image"` | `"primary"` | Controls the description treatment. |
-| `className` | `string`                              | -           | Adds local presentation classes.    |
+<TypeTable
+  type={{
+    text: {
+      type: "string",
+      required: true,
+      description: "Text content or the image URL.",
+    },
+    type: {
+      type: '"primary" | "secondary" | "image"',
+      default: '"primary"',
+      description: "Controls the description treatment.",
+    },
+    className: {
+      type: "string",
+      description: "Adds local presentation classes.",
+    },
+  }}
+/>

@@ -63,11 +63,15 @@ dist/
 .turbo
 
 # docs registry
-docs/public/registry/
+apps/docs/public/registry/
 
-# storybook
-storybook-static/
-*storybook.log
+# React Router
+.react-router/
+
+# generated docs stories
+apps/docs/content/registry/
+apps/docs/content/development/
+apps/docs/src/stories/registry.lazy.tsx
 
 # agents
 .agent/

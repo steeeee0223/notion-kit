@@ -8,25 +8,60 @@ The core object for settings panel.
 
 ### Properties
 
-| Prop          | Type                                 | Description        |
-| ------------- | ------------------------------------ | ------------------ |
-| `account`\*   | [`AccountStore`](#account-store)     | User account.      |
-| `workspace`\* | [`WorkspaceStore`](#workspace-store) | Current workspace. |
+<TypeTable
+  type={{
+    account: {
+      type: "AccountStore",
+      typeDescriptionLink: "#account-store",
+      required: true,
+      description: "User account.",
+    },
+    workspace: {
+      type: "WorkspaceStore",
+      typeDescriptionLink: "#workspace-store",
+      required: true,
+      description: "Current workspace.",
+    },
+  }}
+/>
 
 ## Account Store
 
 ### Properties
 
-| Prop               | Type                   | Description                                     |
-| ------------------ | ---------------------- | ----------------------------------------------- |
-| `id`\*             | `string`               | Unique identifier of the user.                  |
-| `name`\*           | `string`               | User's name.                                    |
-| `email`\*          | `string`               | User's email.                                   |
-| `avatarUrl`\*      | `string`               | Chosen avatar image.                            |
-| `preferredName`\*  | `string`               | Preferred name of the user.                     |
-| `hasPassword`      | `boolean`              | Whether user has set password.                  |
-| `currentSessionId` | `string`               | Unique identifier of the current login session. |
-| `language`         | `"en" \| "de" \| "es"` | Preferred language.                             |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the user.",
+    },
+    name: { type: "string", required: true, description: "User's name." },
+    email: { type: "string", required: true, description: "User's email." },
+    avatarUrl: {
+      type: "string",
+      required: true,
+      description: "Chosen avatar image.",
+    },
+    preferredName: {
+      type: "string",
+      required: true,
+      description: "Preferred name of the user.",
+    },
+    hasPassword: {
+      type: "boolean",
+      description: "Whether user has set password.",
+    },
+    currentSessionId: {
+      type: "string",
+      description: "Unique identifier of the current login session.",
+    },
+    language: {
+      type: '"en" | "de" | "es"',
+      description: "Preferred language.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -45,15 +80,44 @@ The core object for settings panel.
 
 ### Properties
 
-| Prop           | Type                                   | Description                         |
-| -------------- | -------------------------------------- | ----------------------------------- |
-| `id`\*         | `string`                               | Unique identifier of the workspace. |
-| `name`\*       | `string`                               | Name of the workspace.              |
-| `icon`\*       | [`IconData`](/docs/objects/icon)       | Icon of the workspace.              |
-| `domain`\*     | `string`                               | Public domain.                      |
-| `inviteLink`\* | `string`                               | Invite link for the workspace.      |
-| `plan`\*       | [`Plan`](/docs/objects/workspace#plan) | Plan of the workspace.              |
-| `role`\*       | [`Role`](/docs/objects/workspace#role) | Role of the user in this workspace. |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the workspace.",
+    },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the workspace.",
+    },
+    icon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      required: true,
+      description: "Icon of the workspace.",
+    },
+    domain: { type: "string", required: true, description: "Public domain." },
+    inviteLink: {
+      type: "string",
+      required: true,
+      description: "Invite link for the workspace.",
+    },
+    plan: {
+      type: "Plan",
+      typeDescriptionLink: "/docs/objects/workspace#plan",
+      required: true,
+      description: "Plan of the workspace.",
+    },
+    role: {
+      type: "Role",
+      typeDescriptionLink: "/docs/objects/workspace#role",
+      required: true,
+      description: "Role of the user in this workspace.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -73,11 +137,25 @@ The core object for settings panel.
 
 ### Properties
 
-| Prop          | Type     | Description                                                |
-| ------------- | -------- | ---------------------------------------------------------- |
-| `id`\*        | `string` | Unique identifier of the passkey.                          |
-| `name`\*      | `string` | Name of the passkey.                                       |
-| `createdAt`\* | `number` | Creation time of the passkey. Formatted as timestamp (ms). |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the passkey.",
+    },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the passkey.",
+    },
+    createdAt: {
+      type: "number",
+      required: true,
+      description: "Creation time of the passkey. Formatted as timestamp (ms).",
+    },
+  }}
+/>
 
 ### Example
 
@@ -95,14 +173,41 @@ The row data of the sessions table.
 
 ### Properties
 
-| Prop           | Type                                | Description                                                   |
-| -------------- | ----------------------------------- | ------------------------------------------------------------- |
-| `id`\*         | `string`                            | Unique identifier of the session.                             |
-| `token`\*      | `string`                            | Unique token of the session.                                  |
-| `device`\*     | `string`                            | The logged in device.                                         |
-| `type`\*       | `"laptop" \| "mobile" \| "unknown"` | Type of the device.                                           |
-| `lastActive`\* | `number`                            | Last active time of the session. Formatted as timestamp (ms). |
-| `location`\*   | `string`                            | The logged in location.                                       |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the session.",
+    },
+    token: {
+      type: "string",
+      required: true,
+      description: "Unique token of the session.",
+    },
+    device: {
+      type: "string",
+      required: true,
+      description: "The logged in device.",
+    },
+    type: {
+      type: '"laptop" | "mobile" | "unknown"',
+      required: true,
+      description: "Type of the device.",
+    },
+    lastActive: {
+      type: "number",
+      required: true,
+      description:
+        "Last active time of the session. Formatted as timestamp (ms).",
+    },
+    location: {
+      type: "string",
+      required: true,
+      description: "The logged in location.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -123,11 +228,24 @@ The row data of the connections table.
 
 ### Properties
 
-| Prop           | Type                                                    | Description                          |
-| -------------- | ------------------------------------------------------- | ------------------------------------ |
-| `id`\*         | `string`                                                | Unique identifier of the connection. |
-| `connection`\* | `{ type: string, account: string, accountId?: string }` | The connection type and account.     |
-| `scopes`       | `string[]`                                              | Available scopes of the connection.  |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the connection.",
+    },
+    connection: {
+      type: "{ type: string, account: string, accountId?: string }",
+      required: true,
+      description: "The connection type and account.",
+    },
+    scopes: {
+      type: "string[]",
+      description: "Available scopes of the connection.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -149,13 +267,31 @@ The row data of the emojis table.
 
 ### Properties
 
-| Prop          | Type     | Description                                              |
-| ------------- | -------- | -------------------------------------------------------- |
-| `id`\*        | `string` | Unique identifier of the emoji.                          |
-| `name`\*      | `string` | Name of the emoji.                                       |
-| `src`\*       | `string` | URL or source of the emoji image.                        |
-| `createdBy`\* | `string` | Name of the user who added the emoji.                    |
-| `createdAt`\* | `number` | Creation time of the emoji. Formatted as timestamp (ms). |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the emoji.",
+    },
+    name: { type: "string", required: true, description: "Name of the emoji." },
+    src: {
+      type: "string",
+      required: true,
+      description: "URL or source of the emoji image.",
+    },
+    createdBy: {
+      type: "string",
+      required: true,
+      description: "Name of the user who added the emoji.",
+    },
+    createdAt: {
+      type: "number",
+      required: true,
+      description: "Creation time of the emoji. Formatted as timestamp (ms).",
+    },
+  }}
+/>
 
 ### Example
 
@@ -175,13 +311,31 @@ The row data of the members table.
 
 ### Properties
 
-| Prop           | Type                       | Description                      |
-| -------------- | -------------------------- | -------------------------------- |
-| `id`\*         | `string`                   | Unique identifier of the member. |
-| `user`\*       | `User`                     | Information of the member.       |
-| `role`\*       | `Role`                     | Role of the member.              |
-| `teamspaces`\* | `MemberTeamspace[]`        | Available teamspaces.            |
-| `groups`\*     | `CellOptions<GroupOption>` | Available groups.                |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the member.",
+    },
+    user: {
+      type: "User",
+      required: true,
+      description: "Information of the member.",
+    },
+    role: { type: "Role", required: true, description: "Role of the member." },
+    teamspaces: {
+      type: "MemberTeamspace[]",
+      required: true,
+      description: "Available teamspaces.",
+    },
+    groups: {
+      type: "CellOptions<GroupOption>",
+      required: true,
+      description: "Available groups.",
+    },
+  }}
+/>
 
 See schema definitions for:
 
@@ -227,11 +381,25 @@ The row data of the guests table.
 
 ### Properties
 
-| Prop       | Type           | Description                     |
-| ---------- | -------------- | ------------------------------- |
-| `id`\*     | `string`       | Unique identifier of the guest. |
-| `user`\*   | `User`         | Information of the guest.       |
-| `access`\* | `PageAccess[]` | Available pages for the guest.  |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the guest.",
+    },
+    user: {
+      type: "User",
+      required: true,
+      description: "Information of the guest.",
+    },
+    access: {
+      type: "PageAccess[]",
+      required: true,
+      description: "Available pages for the guest.",
+    },
+  }}
+/>
 
 See schema definitions for:
 
@@ -275,13 +443,35 @@ The row data of the invitations table.
 
 ### Properties
 
-| Prop          | Type                                    | Description                              |
-| ------------- | --------------------------------------- | ---------------------------------------- |
-| `id`\*        | `string`                                | The unique identifier of the invitation. |
-| `email`\*     | `string`                                | Email address of the invited user.       |
-| `role`\*      | `Role`                                  | Role of the invited user.                |
-| `status`\*    | `"pending" \| "rejected" \| "canceled"` | Current status of the invitation.        |
-| `invitedBy`\* | `User`                                  | The user who sent the invitation.        |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "The unique identifier of the invitation.",
+    },
+    email: {
+      type: "string",
+      required: true,
+      description: "Email address of the invited user.",
+    },
+    role: {
+      type: "Role",
+      required: true,
+      description: "Role of the invited user.",
+    },
+    status: {
+      type: '"pending" | "rejected" | "canceled"',
+      required: true,
+      description: "Current status of the invitation.",
+    },
+    invitedBy: {
+      type: "User",
+      required: true,
+      description: "The user who sent the invitation.",
+    },
+  }}
+/>
 
 See schema definitions for:
 
@@ -311,18 +501,60 @@ The row data of the teamspaces table.
 
 ### Properties
 
-| Prop            | Type                                           | Description                                                           |
-| --------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
-| `id`\*          | `string`                                       | The unique identifier of the teamspace.                               |
-| `name`\*        | `string`                                       | Name of the teamspace.                                                |
-| `icon`\*        | `IconData`                                     | Icon of the teamspace.                                                |
-| `permission`\*  | `"default" \| "open" \| "closed" \| "private"` | Permission level of the teamspace.                                    |
-| `description`   | `string`                                       | Description of the teamspace.                                         |
-| `memberCount`\* | `number`                                       | The number of users in the teamspace.                                 |
-| `ownedBy`\*     | `Pick<User, "name" \| "avatarUrl">`            | User who owns the teamspace.                                          |
-| `ownerCount`\*  | `number`                                       | The number of teamspace owners.                                       |
-| `updatedAt`\*   | `number`                                       | Last updated time of the teamspace. Formatted as timestamp (ms).      |
-| `role`          | `"owner" \| "member" \| false`                 | Role of the user in the teamspace; falsy if the user is not a member. |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "The unique identifier of the teamspace.",
+    },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the teamspace.",
+    },
+    icon: {
+      type: "IconData",
+      required: true,
+      description: "Icon of the teamspace.",
+    },
+    permission: {
+      type: '"default" | "open" | "closed" | "private"',
+      required: true,
+      description: "Permission level of the teamspace.",
+    },
+    description: {
+      type: "string",
+      description: "Description of the teamspace.",
+    },
+    memberCount: {
+      type: "number",
+      required: true,
+      description: "The number of users in the teamspace.",
+    },
+    ownedBy: {
+      type: 'Pick<User, "name" | "avatarUrl">',
+      required: true,
+      description: "User who owns the teamspace.",
+    },
+    ownerCount: {
+      type: "number",
+      required: true,
+      description: "The number of teamspace owners.",
+    },
+    updatedAt: {
+      type: "number",
+      required: true,
+      description:
+        "Last updated time of the teamspace. Formatted as timestamp (ms).",
+    },
+    role: {
+      type: '"owner" | "member" | false',
+      description:
+        "Role of the user in the teamspace; falsy if the user is not a member.",
+    },
+  }}
+/>
 
 See schema definitions for:
 
@@ -351,11 +583,21 @@ See schema definitions for:
 
 ### Properties
 
-| Prop            | Type     | Description                         |
-| --------------- | -------- | ----------------------------------- |
-| `id`\*          | `string` | The unique identifier of the group. |
-| `name`\*        | `string` | Name of the group.                  |
-| `memberCount`\* | `number` | The number of members in the group. |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "The unique identifier of the group.",
+    },
+    name: { type: "string", required: true, description: "Name of the group." },
+    memberCount: {
+      type: "number",
+      required: true,
+      description: "The number of members in the group.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -373,10 +615,22 @@ A `CellOptions` is a generic type `CellOptions<T>`, where `T` extends `{ id: str
 
 ### Properties
 
-| Prop        | Type             | Description                                                   |
-| ----------- | ---------------- | ------------------------------------------------------------- |
-| `current`\* | `string \| null` | The unique identifier of current option, i.e. `options[i].id` |
-| `options`\* | `T[]`            | Available options.                                            |
+<TypeTable
+  type={{
+    current: {
+      type: "string | null",
+      required: true,
+      description: (
+        <>
+          {" "}
+          The unique identifier of current option, i.e.{" "}
+          <code>options[i].id</code>{" "}
+        </>
+      ),
+    },
+    options: { type: "T[]", required: true, description: "Available options." },
+  }}
+/>
 
 ### Example
 
@@ -397,11 +651,21 @@ An example for `CellOptions<{ id: string, title: string }>`
 
 ### Properties
 
-| Prop      | Type     | Description                        |
-| --------- | -------- | ---------------------------------- |
-| `id`\*    | `string` | The unique identifier of the page. |
-| `name`\*  | `string` | Name of the page.                  |
-| `scope`\* | `string` | The user scope of the page.        |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "The unique identifier of the page.",
+    },
+    name: { type: "string", required: true, description: "Name of the page." },
+    scope: {
+      type: "string",
+      required: true,
+      description: "The user scope of the page.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -417,14 +681,28 @@ An example for `CellOptions<{ id: string, title: string }>`
 
 ### Properties
 
-| Prop              | Type      | Description                     |
-| ----------------- | --------- | ------------------------------- |
-| `paymentMethod`   | `string`  | Current payment method label.   |
-| `billedTo`        | `string`  | Business name / billed to name. |
-| `billingEmail`    | `string`  | Billing email address.          |
-| `invoiceEmails`   | `boolean` | Whether invoice emails are on.  |
-| `vatNumber`       | `string`  | VAT / tax ID number.            |
-| `upcomingInvoice` | `string`  | Upcoming invoice description.   |
+<TypeTable
+  type={{
+    paymentMethod: {
+      type: "string",
+      description: "Current payment method label.",
+    },
+    billedTo: {
+      type: "string",
+      description: "Business name / billed to name.",
+    },
+    billingEmail: { type: "string", description: "Billing email address." },
+    invoiceEmails: {
+      type: "boolean",
+      description: "Whether invoice emails are on.",
+    },
+    vatNumber: { type: "string", description: "VAT / tax ID number." },
+    upcomingInvoice: {
+      type: "string",
+      description: "Upcoming invoice description.",
+    },
+  }}
+/>
 
 ### Example
 
@@ -443,21 +721,33 @@ An example for `CellOptions<{ id: string, title: string }>`
 
 ### Properties
 
-| Prop        | Type     | Description              |
-| ----------- | -------- | ------------------------ |
-| `name`\*    | `string` | Full name.               |
-| `address`\* | `object` | Address details (below). |
+<TypeTable
+  type={{
+    name: { type: "string", required: true, description: "Full name." },
+    address: {
+      type: "object",
+      required: true,
+      description: "Address details (below).",
+    },
+  }}
+/>
 
 #### Address Fields
 
-| Prop            | Type             | Description     |
-| --------------- | ---------------- | --------------- |
-| `line1`\*       | `string`         | Address line 1. |
-| `line2`         | `string \| null` | Address line 2. |
-| `city`\*        | `string`         | City.           |
-| `state`\*       | `string`         | State / region. |
-| `postal_code`\* | `string`         | Postal code.    |
-| `country`\*     | `string`         | Country code.   |
+<TypeTable
+  type={{
+    line1: { type: "string", required: true, description: "Address line 1." },
+    line2: { type: "string | null", description: "Address line 2." },
+    city: { type: "string", required: true, description: "City." },
+    state: { type: "string", required: true, description: "State / region." },
+    postal_code: {
+      type: "string",
+      required: true,
+      description: "Postal code.",
+    },
+    country: { type: "string", required: true, description: "Country code." },
+  }}
+/>
 
 ### Example
 

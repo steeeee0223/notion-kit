@@ -1,0 +1,201 @@
+---
+title: Dialog
+description: Displays content in a popup with focus management and dismissal controls.
+links:
+  - label: Base UI
+    href: https://base-ui.com/react/components/dialog
+---
+
+<RegistryStory name="dialog-default" />
+
+The preview uses `AlertModal` for a confirmation action with a loading indicator.
+
+```tsx
+import { useState } from "react";
+
+import { AlertModal } from "@notion-kit/ui/alert-modal";
+import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
+
+export default function ConfirmationDialog() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger render={<Button size="md">Open</Button>} />
+      <AlertModal
+        title="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+        primary="Continue"
+        secondary="Cancel"
+        onTrigger={async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          setOpen(false);
+        }}
+      />
+    </Dialog>
+  );
+}
+```
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="dialog-default" />
+
+## Anatomy
+
+`Dialog` owns the open state. `DialogTrigger` opens the popup, and `DialogClose` closes it.
+`DialogContent` includes the portal, overlay, and a close button.
+An extra `DialogPortal` or `DialogOverlay` is unnecessary when using `DialogContent`.
+
+`DialogTitle` supplies the accessible name. `DialogDescription` supplies the description when the popup has explanatory text.
+
+## Examples
+
+### Custom content
+
+This dialog manages its own open state. The footer supplies a custom close action in place of the default close button.
+
+```tsx
+import {
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@notion-kit/ui/primitives";
+
+<Dialog>
+  <DialogTrigger render={<Button size="md">View details</Button>} />
+  <DialogContent hideClose>
+    <DialogHeader>
+      <DialogTitle>Workspace details</DialogTitle>
+      <DialogDescription>
+        Manage the settings for this workspace.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose render={<Button size="md">Done</Button>} />
+    </DialogFooter>
+  </DialogContent>
+</Dialog>;
+```
+
+## API reference
+
+### Dialog
+
+Wraps Base UI's `Dialog.Root` and does not render a DOM element.
+Common root props are listed below. Other props follow [Base UI's root reference](https://base-ui.com/react/components/dialog#root).
+
+<TypeTable
+  type={{
+    open: { type: "boolean", description: "The controlled open state." },
+    defaultOpen: {
+      type: "boolean",
+      default: "false",
+      description: "The initial open state of an uncontrolled dialog.",
+    },
+    onOpenChange: {
+      type: "(open: boolean, eventDetails: DialogRoot.ChangeEventDetails) => void",
+      description: "Called when the dialog opens or closes.",
+    },
+    onOpenChangeComplete: {
+      type: "(open: boolean) => void",
+      description: "Called after the opening or closing animation finishes.",
+    },
+    modal: {
+      type: 'boolean | "trap-focus"',
+      default: "true",
+      description:
+        "Controls focus trapping and interaction outside the dialog.",
+    },
+    disablePointerDismissal: {
+      type: "boolean",
+      default: "false",
+      description: "Prevents outside presses from closing the dialog.",
+    },
+  }}
+/>
+
+`DialogRoot.ChangeEventDetails` is the event-details type from `@base-ui/react/dialog`.
+
+### DialogContent
+
+Accepts Base UI's `Dialog.Popup` props and these additions.
+
+<TypeTable
+  type={{
+    hideClose: {
+      type: "boolean",
+      default: "false",
+      description: "Hides the built-in close button.",
+    },
+    noTitle: {
+      type: "boolean",
+      description:
+        "Renders an empty, visually hidden title and clears aria-describedby.",
+    },
+    container: {
+      type: 'DialogPrimitive.Portal.Props["container"]',
+      description:
+        "The element or ref that receives the portal. Defaults to the document body.",
+    },
+  }}
+/>
+
+`DialogPrimitive` refers to `Dialog` from `@base-ui/react/dialog`.
+
+### DialogTitle and DialogDescription
+
+Accept the corresponding Base UI title and description props, plus `typography`.
+
+<TypeTable
+  type={{
+    typography: {
+      type: '"h1" | "h2" | "h3" | "body" | "label" | "desc" | null',
+      description:
+        'The text style. DialogTitle defaults to "h3". DialogDescription defaults to "body".',
+    },
+  }}
+/>
+
+### Other parts
+
+These parts retain their underlying props:
+
+- `DialogTrigger` accepts Base UI's `Dialog.Trigger` props. Its `render` prop composes with `Button`.
+- `DialogClose` accepts Base UI's `Dialog.Close` props. It renders `CloseButton` unless `render` supplies a replacement.
+- `DialogPortal` and `DialogOverlay` accept Base UI's portal and backdrop props.
+- `DialogHeader`, `DialogFooter`, and `DialogIcon` accept HTML `<div>` props and provide layout styles.
+
+### AlertModal
+
+Imported from `@notion-kit/ui/alert-modal`. Renders confirmation content inside a parent `Dialog`, including a title and two action buttons.
+The primary action displays a spinner while `onTrigger` is pending. The secondary action closes the dialog.
+Resolving `onTrigger` does not close the dialog automatically.
+
+<TypeTable
+  type={{
+    title: {
+      type: "string",
+      required: true,
+      description: "The confirmation message and dialog title.",
+    },
+    primary: {
+      type: "string",
+      required: true,
+      description: "The primary action label.",
+    },
+    secondary: {
+      type: "string",
+      required: true,
+      description: "The close action label.",
+    },
+    onTrigger: {
+      type: "() => void | Promise<void>",
+      description: "Called when the primary action is activated.",
+    },
+  }}
+/>

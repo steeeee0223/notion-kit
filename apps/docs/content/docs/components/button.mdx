@@ -1,12 +1,16 @@
 ---
 title: Button
-description: A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
+description: Triggers an action with mouse, touch, or keyboard input.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/button
 ---
 
-<ComponentPreview name="button-default" preview={`<Button>button</Button>`} />
+<RegistryStory name="button-default" />
+
+```tsx
+<Button>button</Button>
+```
 
 ## Installation
 
@@ -21,29 +25,30 @@ links:
 Use the `variant` prop to control the visual style of the button.<br/>
 The default variant is `"primary"`.
 
-<ComponentPreview
-  name="button-variants"
-  preview={`<Button variant="primary" size="md">Button</Button>
+<RegistryStory name="button-variants" />
+
+```tsx
+<Button variant="primary" size="md">Button</Button>
   <Button variant="hint" size="md">Button</Button>
   <Button variant="blue" size="md">Button</Button>
   <Button variant="soft-blue" size="md">Button</Button>
   <Button variant="red" size="md">Button</Button>
   <Button variant="red-fill" size="md">Button</Button>
   <Button variant="link" size="md">Button</Button>
-  `}
-/>
+```
 
 ### Size
 
 Use the `size` prop to control the size of the button.
 
-<ComponentPreview
-  name="button-sizes"
-  preview={`<Button size="xs">Button</Button>
+<RegistryStory name="button-sizes" />
+
+```tsx
+<Button size="xs">Button</Button>
 <Button size="sm">Button</Button>
 <Button size="md">Button</Button>
-<Button size="lg">Button</Button>`}
-/>
+<Button size="lg">Button</Button>
+```
 
 ## Examples
 
@@ -51,55 +56,72 @@ Use the `size` prop to control the size of the button.
 
 ### Hint
 
-<ComponentPreview
-  name="button-hint"
-  preview={`<Button variant="hint" size="xs">
-    <CircleHelp className="mr-1.5 size-3.5" />
-    Learn more about this feature
-  </Button>`}
-/>
+<RegistryStory name="button-hint" />
+
+```tsx
+<Button variant="hint" size="xs">
+  <CircleHelp className="mr-1.5 size-3.5" />
+  Learn more about this feature
+</Button>
+```
 
 ### Warning
 
-<ComponentPreview
-  name="button-warning"
-  preview={`<Button variant="red" size="md">Delete this project</Button>`}
-/>
+<RegistryStory name="button-warning" />
+
+```tsx
+<Button variant="red" size="md">
+  Delete this project
+</Button>
+```
 
 ### Nav Icon
 
-<ComponentPreview
-  name="button-nav-icon"
-  preview={`<Button variant="nav-icon">
-    <MessageSquareIcon />
-  </Button>`}
-/>
+<RegistryStory name="button-nav-icon" />
+
+```tsx
+<Button variant="nav-icon">
+  <MessageSquareIcon />
+</Button>
+```
 
 ### Icon Button
 
-<ComponentPreview
-  name="button-icon-button"
-  preview={`<Button variant="icon">
-    <BoldIcon />
-  </Button>`}
-/>
+<RegistryStory name="button-icon-button" />
+
+```tsx
+<Button variant="icon">
+  <BoldIcon />
+</Button>
+```
 
 ### Disabled
 
-<ComponentPreview
-  name="button-disabled"
-  preview={`<Button disabled size="md">
-    <RefreshCw /> Please wait
-  </Button>`}
-/>
+<RegistryStory name="button-disabled" />
+
+```tsx
+<Button disabled size="md">
+  <RefreshCw /> Please wait
+</Button>
+```
 
 ## API Reference
 
 ### Button
 
-An `Button` extends the HTML `<button>` component. We list the extended properties only.
+`Button` accepts HTML `<button>` props and the props below.
 
-| Prop      | Type                                                                                                                   | Default     | Description                     |
-| --------- | ---------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------- |
-| `variant` | `"primary" \| "icon" \| "link \| "blue" \| "soft-blue" \| "hint" \| "red" \| "red-fill" \| "white" \| "close" \| null` | `"primary"` | The visual style of the button. |
-| `size`    | `"xs" \| "sm" \| "md" \| "lg" \| "circle" \| null`                                                                     | `null`      | The size of the button.         |
+<TypeTable
+  type={{
+    variant: {
+      type: '"primary" | "icon" | "link" | "blue" | "soft-blue" | "hint" | "red" | "red-fill" | "white" | "close" | null',
+      default: '"primary"',
+      description: "The visual style of the button.",
+    },
+    size: {
+      type: '"xs" | "sm" | "md" | "lg" | "circle" | null',
+      default: "null",
+      description: "The size of the button.",
+    },
+  }}
+/>

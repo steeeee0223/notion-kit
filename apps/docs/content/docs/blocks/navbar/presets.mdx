@@ -1,6 +1,6 @@
 ---
 title: Navbar Presets
-description: A collection of preset components in Notion navbar.
+description: Page titles, sharing controls, menus, and participant lists.
 ---
 
 ## Installation
@@ -15,60 +15,113 @@ pnpm add @notion-kit/ui
 
 ### Title
 
-<ComponentPreview name="navbar-title" preview={`<Title page={page} />`} />
+<RegistryStory name="navbar-title" />
+
+```tsx
+<Title page={page} />
+```
 
 #### API Reference
 
-| Prop       | Type                                            | Default | Description                                                 |
-| ---------- | ----------------------------------------------- | ------- | ----------------------------------------------------------- |
-| `page`\*   | [`Page`](/docs/objects/page)                    | -       | Current page data.                                          |
-| `readOnly` | `boolean`                                       | -       | Whether the title is editable.                              |
-| `onUpdate` | `({ title?: string, icon?: IconData }) => void` | -       | Handler that is called when new title or icon is submitted. |
+<TypeTable
+  type={{
+    page: {
+      type: "Page",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Current page data.",
+    },
+    readOnly: {
+      type: "boolean",
+      description: "Whether the title is editable.",
+    },
+    onUpdate: {
+      type: "({ title?: string, icon?: IconData }) => void",
+      description:
+        "Handler that is called when new title or icon is submitted.",
+    },
+  }}
+/>
 
 ### Sharing
 
-<ComponentPreview
-  name="navbar-sharing"
-  preview={`<TooltipProvider>
-    <Publish page={page} />
-  </TooltipProvider>`}
-/>
+<RegistryStory name="navbar-sharing" />
+
+```tsx
+<TooltipProvider>
+  <Publish page={page} />
+</TooltipProvider>
+```
 
 #### API Reference
 
-| Prop       | Type                                         | Default | Description                                                          |
-| ---------- | -------------------------------------------- | ------- | -------------------------------------------------------------------- |
-| `page`\*   | [`Page`](/docs/objects/page)                 | -       | Current page data.                                                   |
-| `onUpdate` | `(id: string, isPublished: boolean) => void` | -       | Handler that is called when the public state of the page is changed. |
+<TypeTable
+  type={{
+    page: {
+      type: "Page",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Current page data.",
+    },
+    onUpdate: {
+      type: "(id: string, isPublished: boolean) => void",
+      description:
+        "Handler that is called when the public state of the page is changed.",
+    },
+  }}
+/>
 
 ### Menu
 
-<ComponentPreview
-  name="navbar-menu"
-  preview={`<TooltipProvider>
-    <Menu page={page} />
-  </TooltipProvider>`}
-/>
+<RegistryStory name="navbar-menu" />
+
+```tsx
+<TooltipProvider>
+  <Menu page={page} />
+</TooltipProvider>
+```
 
 #### API Reference
 
-| Prop       | Type                                                                   | Default | Description                                                         |
-| ---------- | ---------------------------------------------------------------------- | ------- | ------------------------------------------------------------------- |
-| `page`\*   | [`Page`](/docs/objects/page)                                           | -       | Current page data.                                                  |
-| `onUpdate` | `(pageId: string, action: "archive" \| "restore" \| "delete") => void` | -       | Handler that is called when an action is triggered from a menuitem. |
+<TypeTable
+  type={{
+    page: {
+      type: "Page",
+      typeDescriptionLink: "/docs/objects/page",
+      required: true,
+      description: "Current page data.",
+    },
+    onUpdate: {
+      type: '(pageId: string, action: "archive" | "restore" | "delete") => void',
+      description:
+        "Handler that is called when an action is triggered from a menuitem.",
+    },
+  }}
+/>
 
 ### Participants
 
-<ComponentPreview
-  name="navbar-participants"
-  preview={`<TooltipProvider>
-    <Participants currentUser={currentUser} otherUsers={otherUsers} />
-  </TooltipProvider>`}
-/>
+<RegistryStory name="navbar-participants" />
+
+```tsx
+<TooltipProvider>
+  <Participants currentUser={currentUser} otherUsers={otherUsers} />
+</TooltipProvider>
+```
 
 #### API Reference
 
-| Prop          | Type                         | Default | Description                  |
-| ------------- | ---------------------------- | ------- | ---------------------------- |
-| `currentUser` | [`User`](/docs/objects/user) | -       | Current user, i.e. yourself. |
-| `otherUsers`  | `User[]`                     | `[]`    | Other users on the page.     |
+<TypeTable
+  type={{
+    currentUser: {
+      type: "User",
+      typeDescriptionLink: "/docs/objects/user",
+      description: "Current user, i.e. yourself.",
+    },
+    otherUsers: {
+      type: "User[]",
+      default: "[]",
+      description: "Other users on the page.",
+    },
+  }}
+/>

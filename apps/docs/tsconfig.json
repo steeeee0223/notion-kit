@@ -1,15 +1,21 @@
 {
   "extends": "@notion-kit/tsconfig/base.json",
   "compilerOptions": {
-    "module": "esnext",
-    "lib": ["ES2022", "dom", "dom.iterable"],
-    "jsx": "preserve",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"],
+    "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "fumadocs-mdx:collections/*": ["./.source/*"],
       "@/*": ["./src/*"]
-    },
-    "plugins": [{ "name": "next" }]
+    }
   },
-  "include": ["src", "scripts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src",
+    "scripts",
+    "vite.config.ts",
+    "react-router.config.ts",
+    "source.config.ts",
+    ".react-router/types/**/*"
+  ],
+  "exclude": ["node_modules", "build"]
 }

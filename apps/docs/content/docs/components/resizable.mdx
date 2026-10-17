@@ -6,7 +6,7 @@ links:
     href: https://ui.shadcn.com/docs/components/resizable
 ---
 
-<ComponentPreview name="resizable-demo" />
+<RegistryStory name="resizable-demo" />
 
 ## Installation
 
@@ -16,6 +16,12 @@ links:
 
 ### ResizableHandle
 
-| Prop         | Type      | Default | Description                              |
-| ------------ | --------- | ------- | ---------------------------------------- |
-| `withHandle` | `boolean` | `true`  | Whether the handle icon should be shown. |
+<TypeTable
+  type={{
+    withHandle: {
+      type: "boolean",
+      default: "true",
+      description: "Whether the handle icon should be shown.",
+    },
+  }}
+/>

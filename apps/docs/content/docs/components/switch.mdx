@@ -1,12 +1,16 @@
 ---
 title: Switch
-description: A control that allows the user to toggle between checked and not checked.
+description: Toggle a setting on or off.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/switch
 ---
 
-<ComponentPreview name="switch-default" preview={`<Switch />`} />
+<RegistryStory name="switch-default" />
+
+```tsx
+<Switch />
+```
 
 ## Installation
 
@@ -21,17 +25,23 @@ links:
 Use the `size` prop to control the size of the switch.
 The default size is `"md"`.
 
-<ComponentPreview
-  name="switch-sizes"
-  preview={`<Switch size="sm"/>
-  <Switch size="md"/>
-  `}
-/>
+<RegistryStory name="switch-sizes" />
+
+```tsx
+<Switch size="sm" />
+<Switch size="md" />
+```
 
 ## API Reference
 
 ### Switch
 
-| Prop   | Type           | Default | Description             |
-| ------ | -------------- | ------- | ----------------------- |
-| `size` | `"sm" \| "md"` | `"md"`  | The size of the switch. |
+<TypeTable
+  type={{
+    size: {
+      type: '"sm" | "md"',
+      default: '"md"',
+      description: "The size of the switch.",
+    },
+  }}
+/>

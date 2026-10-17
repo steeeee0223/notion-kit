@@ -3,17 +3,18 @@ title: Controls
 description: Positionable map controls for zooming, locating, fullscreen, compass reset, and 2D/3D view switching.
 ---
 
-<ComponentPreview
-  name="map-controls"
-  preview={`<MapControls>
+<RegistryStory name="map-controls" />
+
+```tsx
+<MapControls>
   <MapControlGroup>
     <MapZoomIn />
     <MapZoomOut />
     <MapViewModeToggle />
     <MapCompass />
   </MapControlGroup>
-</MapControls>`}
-/>
+</MapControls>
+```
 
 ## Installation
 
@@ -56,10 +57,19 @@ export function Example() {
 
 Positions one or more control groups over the map. It renders an absolutely positioned container and accepts children.
 
-| Prop        | Type                                                           | Default          | Description                      |
-| ----------- | -------------------------------------------------------------- | ---------------- | -------------------------------- |
-| `position`  | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right"` | `"bottom-right"` | Position of the controls.        |
-| `className` | `string`                                                       | -                | Additional classes for the root. |
+<TypeTable
+  type={{
+    position: {
+      type: '"top-left" | "top-right" | "bottom-left" | "bottom-right"',
+      default: '"bottom-right"',
+      description: "Position of the controls.",
+    },
+    className: {
+      type: "string",
+      description: "Additional classes for the root.",
+    },
+  }}
+/>
 
 ### MapControlGroup
 
@@ -77,9 +87,14 @@ Zooms the map out by one zoom level with a short animation.
 
 Uses the browser geolocation API, flies the map to the current location, and optionally reports the resolved coordinates.
 
-| Prop       | Type                                             | Default | Description                             |
-| ---------- | ------------------------------------------------ | ------- | --------------------------------------- |
-| `onLocate` | `(coords: { lng: number; lat: number }) => void` | -       | Called after the user location is used. |
+<TypeTable
+  type={{
+    onLocate: {
+      type: "(coords: { lng: number; lat: number }) => void",
+      description: "Called after the user location is used.",
+    },
+  }}
+/>
 
 ### MapCompass
 
@@ -93,10 +108,31 @@ Toggles fullscreen mode for the current map container.
 
 Switches between a flat 2D view and a pitched 3D view using MapLibre `easeTo`.
 
-| Prop           | Type                           | Default | Description                             |
-| -------------- | ------------------------------ | ------- | --------------------------------------- |
-| `pitch`        | `number`                       | `60`    | Pitch used when switching to 3D view.   |
-| `bearing`      | `number`                       | `-20`   | Bearing used when switching to 3D view. |
-| `duration`     | `number`                       | `600`   | Animation duration in milliseconds.     |
-| `threshold`    | `number`                       | `10`    | Pitch threshold for detecting 3D mode.  |
-| `onModeChange` | `(mode: "2d" \| "3d") => void` | -       | Called when a new mode is requested.    |
+<TypeTable
+  type={{
+    pitch: {
+      type: "number",
+      default: "60",
+      description: "Pitch used when switching to 3D view.",
+    },
+    bearing: {
+      type: "number",
+      default: "-20",
+      description: "Bearing used when switching to 3D view.",
+    },
+    duration: {
+      type: "number",
+      default: "600",
+      description: "Animation duration in milliseconds.",
+    },
+    threshold: {
+      type: "number",
+      default: "10",
+      description: "Pitch threshold for detecting 3D mode.",
+    },
+    onModeChange: {
+      type: '(mode: "2d" | "3d") => void',
+      description: "Called when a new mode is requested.",
+    },
+  }}
+/>

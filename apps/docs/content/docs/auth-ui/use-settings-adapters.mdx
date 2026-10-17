@@ -1,6 +1,6 @@
 ---
 title: Use Settings Adapters
-description: React hooks for integrating authentication and workspace settings into Notion's Settings Panel.
+description: Connect authentication and workspace data to the settings panel.
 ---
 
 ## Installation
@@ -69,24 +69,56 @@ Returns a [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters) ob
 
 It also provides an `uploadFile` handler for workspace icon uploads via Supabase Storage.
 
-Each adapter provides query (`getAll`) and mutation methods for its domain. All adapters are optional — include only the ones your application supports.
+Each adapter provides query (`getAll`) and mutation methods for its domain. Include the adapters your application supports.
 
 ### Individual Adapter Hooks
 
 You can also use individual adapter hooks for more granular control:
 
-| Hook                    | Returns                                                                 |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `useAccountAdapter`     | [`AccountAdapter`](/docs/blocks/settings-panel#account-adapter)         |
-| `useSessionsAdapter`    | [`SessionsAdapter`](/docs/blocks/settings-panel#sessions-adapter)       |
-| `usePasskeysAdapter`    | [`PasskeysAdapter`](/docs/blocks/settings-panel#passkeys-adapter)       |
-| `useConnectionsAdapter` | [`ConnectionsAdapter`](/docs/blocks/settings-panel#connections-adapter) |
-| `useWorkspaceAdapter`   | [`WorkspaceAdapter`](/docs/blocks/settings-panel#workspace-adapter)     |
-| `usePeopleAdapter`      | [`PeopleAdapter`](/docs/blocks/settings-panel#people-adapter)           |
-| `useInvitationsAdapter` | [`InvitationsAdapter`](/docs/blocks/settings-panel#invitations-adapter) |
-| `useTeamspacesAdapter`  | [`TeamspacesAdapter`](/docs/blocks/settings-panel#teamspaces-adapter)   |
-| `useBillingAdapter`     | [`BillingAdapter`](/docs/blocks/settings-panel#billing-adapter)         |
-| `useEmojiAdapter`       | [`EmojiAdapter`](/docs/blocks/settings-panel#emoji-adapter)             |
+<TypeTable
+  type={{
+    useAccountAdapter: {
+      type: "AccountAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#account-adapter",
+    },
+    useSessionsAdapter: {
+      type: "SessionsAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#sessions-adapter",
+    },
+    usePasskeysAdapter: {
+      type: "PasskeysAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#passkeys-adapter",
+    },
+    useConnectionsAdapter: {
+      type: "ConnectionsAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#connections-adapter",
+    },
+    useWorkspaceAdapter: {
+      type: "WorkspaceAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#workspace-adapter",
+    },
+    usePeopleAdapter: {
+      type: "PeopleAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#people-adapter",
+    },
+    useInvitationsAdapter: {
+      type: "InvitationsAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#invitations-adapter",
+    },
+    useTeamspacesAdapter: {
+      type: "TeamspacesAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#teamspaces-adapter",
+    },
+    useBillingAdapter: {
+      type: "BillingAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#billing-adapter",
+    },
+    useEmojiAdapter: {
+      type: "EmojiAdapter",
+      typeDescriptionLink: "/docs/blocks/settings-panel#emoji-adapter",
+    },
+  }}
+/>
 
 See schema definitions for:
 

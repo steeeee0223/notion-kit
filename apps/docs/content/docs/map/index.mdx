@@ -6,7 +6,7 @@ links:
     href: https://maplibre.org/maplibre-gl-js/docs/
 ---
 
-<ComponentPreview name="map-default" />
+<RegistryStory name="map-default" />
 
 ## Installation
 
@@ -45,11 +45,37 @@ Creates the MapLibre map instance, resolves the light/dark style, exposes the ma
 
 `Map` extends MapLibre `MapOptions`, except `container` and `style`.
 
-| Prop               | Type                                     | Default | Description                                     |
-| ------------------ | ---------------------------------------- | ------- | ----------------------------------------------- |
-| `theme`            | `"light" \| "dark"`                      | -       | Forces the map style theme.                     |
-| `styles`           | `{ light?: MapStyleOption; dark?: ... }` | -       | Custom style URLs or MapLibre style objects.    |
-| `projection`       | `ProjectionSpecification`                | -       | MapLibre projection configuration.              |
-| `viewport`         | `Partial<MapViewport>`                   | -       | Controlled center, zoom, bearing, and pitch.    |
-| `onViewportChange` | `(viewport: MapViewport) => void`        | -       | Called when the map viewport changes.           |
-| `loading`          | `boolean`                                | `false` | Shows the built-in loading overlay when `true`. |
+<TypeTable
+  type={{
+    theme: {
+      type: '"light" | "dark"',
+      description: "Forces the map style theme.",
+    },
+    styles: {
+      type: "{ light?: MapStyleOption; dark?: ... }",
+      description: "Custom style URLs or MapLibre style objects.",
+    },
+    projection: {
+      type: "ProjectionSpecification",
+      description: "MapLibre projection configuration.",
+    },
+    viewport: {
+      type: "Partial<MapViewport>",
+      description: "Controlled center, zoom, bearing, and pitch.",
+    },
+    onViewportChange: {
+      type: "(viewport: MapViewport) => void",
+      description: "Called when the map viewport changes.",
+    },
+    loading: {
+      type: "boolean",
+      default: "false",
+      description: (
+        <>
+          {" "}
+          Shows the built-in loading overlay when <code>true</code>.{" "}
+        </>
+      ),
+    },
+  }}
+/>

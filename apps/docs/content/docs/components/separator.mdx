@@ -6,7 +6,7 @@ links:
     href: https://ui.shadcn.com/docs/components/separator
 ---
 
-<ComponentPreview name="separator-demo" />
+<RegistryStory name="separator-demo" />
 
 ## Installation
 
@@ -16,7 +16,18 @@ links:
 
 ### Separator
 
-| Prop          | Type                         | Default        | Description                                                                                                                                                                          |
-| ------------- | ---------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | The orientation of the separator.                                                                                                                                                    |
-| `decorative`  | `boolean`                    | `true`         | Whether or not the component is purely decorative. When true, accessibility-related attributes are updated so that that the rendered element is removed from the accessibility tree. |
+<TypeTable
+  type={{
+    orientation: {
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+      description: "The orientation of the separator.",
+    },
+    decorative: {
+      type: "boolean",
+      default: "true",
+      description:
+        "Whether or not the component is purely decorative. When true, accessibility-related attributes are updated so that that the rendered element is removed from the accessibility tree.",
+    },
+  }}
+/>

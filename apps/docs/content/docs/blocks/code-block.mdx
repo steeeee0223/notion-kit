@@ -1,9 +1,9 @@
 ---
 title: Code Block
-description: A composable code block with syntax highlighting, language selection, code formatting, and Mermaid diagram support.
+description: Display and edit code with syntax highlighting, formatting, and Mermaid diagrams.
 ---
 
-<ComponentPreview name="code-block-default" hideCode />
+<RegistryStory name="code-block-default" />
 
 ## Supported Features
 
@@ -52,71 +52,73 @@ description: A composable code block with syntax highlighting, language selectio
 In uncontrolled mode, the component manages its own state internally.
 Use `defaultValue` to set the initial code and language.
 
-<ComponentPreview
-  name="code-block-default"
-  preview={`<CodeBlock
-    defaultValue={{
-      code: sampleCode,
-      lang: "typescript",
-    }}
-  >
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<RegistryStory name="code-block-default" />
+
+```tsx
+<CodeBlock
+  defaultValue={{
+    code: sampleCode,
+    lang: "typescript",
+  }}
+>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ### Controlled
 
 In controlled mode, use `value` and `onChange` to manage state externally.
 
-<ComponentPreview
-  name="code-block-controlled"
-  preview={`<CodeBlock value={value} onChange={setValue}>
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<RegistryStory name="code-block-controlled" />
+
+```tsx
+<CodeBlock value={value} onChange={setValue}>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ### Readonly
 
 Use the `readonly` prop to prevent editing code, changing language, and editing the caption.
 
-<ComponentPreview
-  name="code-block-readonly"
-  preview={`<CodeBlock
-    readonly
-    defaultValue={{
-      code: sampleCode,
-      lang: "typescript",
-      caption: "This code block is readonly",
-    }}
-  >
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<RegistryStory name="code-block-readonly" />
+
+```tsx
+<CodeBlock
+  readonly
+  defaultValue={{
+    code: sampleCode,
+    lang: "typescript",
+    caption: "This code block is readonly",
+  }}
+>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ### Mermaid Diagrams
 
 When language is set to `mermaid`, a live diagram preview is rendered alongside the code editor.
 
-<ComponentPreview
-  name="code-block-mermaid"
-  preview={`<CodeBlock
-    defaultValue={{ code: mermaidCode, lang: "mermaid" }}
-  >
-    <CodeBlockLang />
-    <CodeBlockToolbar />
-    <CodeBlockContent />
-    <CodeBlockCaption />
-  </CodeBlock>`}
-/>
+<RegistryStory name="code-block-mermaid" />
+
+```tsx
+<CodeBlock defaultValue={{ code: mermaidCode, lang: "mermaid" }}>
+  <CodeBlockLang />
+  <CodeBlockToolbar />
+  <CodeBlockContent />
+  <CodeBlockCaption />
+</CodeBlock>
+```
 
 ## API Reference
 
@@ -124,13 +126,38 @@ When language is set to `mermaid`, a live diagram preview is rendered alongside 
 
 The root component. Accepts all standard `<div>` props in addition to the following:
 
-| Prop           | Type                                     | Default | Description                                                        |
-| -------------- | ---------------------------------------- | ------- | ------------------------------------------------------------------ |
-| `value`        | [`CodeBlockValue`](#type-codeblockvalue) | -       | Controlled value. When provided, the component becomes controlled. |
-| `defaultValue` | `Partial<CodeBlockValue>`                | -       | Default value for uncontrolled mode.                               |
-| `onChange`     | `(value: CodeBlockValue) => void`        | -       | Callback when value changes (controlled mode).                     |
-| `readonly`     | `boolean`                                | -       | When `true`, prevents editing code, language, and caption.         |
-| `lastEditedBy` | `string`                                 | -       | Display name shown in the action menu footer.                      |
+<TypeTable
+  type={{
+    value: {
+      type: "CodeBlockValue",
+      typeDescriptionLink: "#type-codeblockvalue",
+      description:
+        "Controlled value. When provided, the component becomes controlled.",
+    },
+    defaultValue: {
+      type: "Partial<CodeBlockValue>",
+      description: "Default value for uncontrolled mode.",
+    },
+    onChange: {
+      type: "(value: CodeBlockValue) => void",
+      description: "Callback when value changes (controlled mode).",
+    },
+    readonly: {
+      type: "boolean",
+      description: (
+        <>
+          {" "}
+          When <code>true</code>, prevents editing code, language, and
+          caption.{" "}
+        </>
+      ),
+    },
+    lastEditedBy: {
+      type: "string",
+      description: "Display name shown in the action menu footer.",
+    },
+  }}
+/>
 
 ### CodeBlockContent
 
@@ -156,11 +183,38 @@ Renders a live Mermaid diagram preview. Only renders when the language is `merma
 
 ### `type` CodeBlockValue
 
-| Prop      | Type      | Default         | Description                             |
-| --------- | --------- | --------------- | --------------------------------------- |
-| `code`\*  | `string`  | `""`            | The source code content.                |
-| `lang`\*  | `string`  | `"text"`        | Programming language for highlighting.  |
-| `theme`   | `string`  | `"github-dark"` | Color theme for syntax highlighting.    |
-| `caption` | `string`  | -               | Optional caption text (HTML supported). |
-| `wrap`    | `boolean` | `false`         | Whether to wrap code lines.             |
-| `ts`      | `number`  | `Date.now()`    | Last edited timestamp in milliseconds.  |
+<TypeTable
+  type={{
+    code: {
+      type: "string",
+      required: true,
+      default: '""',
+      description: "The source code content.",
+    },
+    lang: {
+      type: "string",
+      required: true,
+      default: '"text"',
+      description: "Programming language for highlighting.",
+    },
+    theme: {
+      type: "string",
+      default: '"github-dark"',
+      description: "Color theme for syntax highlighting.",
+    },
+    caption: {
+      type: "string",
+      description: "Optional caption text (HTML supported).",
+    },
+    wrap: {
+      type: "boolean",
+      default: "false",
+      description: "Whether to wrap code lines.",
+    },
+    ts: {
+      type: "number",
+      default: "Date.now()",
+      description: "Last edited timestamp in milliseconds.",
+    },
+  }}
+/>

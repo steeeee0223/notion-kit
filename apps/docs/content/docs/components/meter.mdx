@@ -6,10 +6,11 @@ links:
     href: https://base-ui.com/react/components/meter
 ---
 
-<ComponentPreview
-  name="meter-demo"
-  preview={`<MeterBar value={72} trackColor="#2383e2" />`}
-/>
+<RegistryStory name="meter-demo" />
+
+```tsx
+<MeterBar value={72} trackColor="#2383e2" />
+```
 
 ## Installation
 
@@ -26,32 +27,58 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `Meter` extends the Base UI Meter root and renders a `<div>`.
 
-| Prop                | Type                                                  | Default          | Description                                                        |
-| ------------------- | ----------------------------------------------------- | ---------------- | ------------------------------------------------------------------ |
-| `value`             | `number`                                              | -                | The current value.                                                 |
-| `min`               | `number`                                              | `0`              | The minimum value.                                                 |
-| `max`               | `number`                                              | `100`            | The maximum value.                                                 |
-| `format`            | `Intl.NumberFormatOptions`                            | -                | Options used to format the value.                                  |
-| `locale`            | `Intl.LocalesArgument`                                | runtime locale   | Locale used by `Intl.NumberFormat` when formatting the value.      |
-| `aria-valuetext`    | `React.AriaAttributes["aria-valuetext"]`              | -                | Human-readable text for the current value.                         |
-| `getAriaValueText`  | `(formattedValue: string, value: number) => string`   | -                | Returns the human-readable text alternative for the current value. |
+<TypeTable
+  type={{
+    value: { type: "number", description: "The current value." },
+    min: { type: "number", default: "0", description: "The minimum value." },
+    max: { type: "number", default: "100", description: "The maximum value." },
+    format: {
+      type: "Intl.NumberFormatOptions",
+      description: "Options used to format the value.",
+    },
+    locale: {
+      type: "Intl.LocalesArgument",
+      default: "runtime locale",
+      description: (
+        <>
+          {" "}
+          Locale used by <code>Intl.NumberFormat</code> when formatting the
+          value.{" "}
+        </>
+      ),
+    },
+    "aria-valuetext": {
+      type: 'React.AriaAttributes["aria-valuetext"]',
+      description: "Human-readable text for the current value.",
+    },
+    getAriaValueText: {
+      type: "(formattedValue: string, value: number) => string",
+      description:
+        "Returns the human-readable text alternative for the current value.",
+    },
+  }}
+/>
 
 ### MeterBar
 
 `MeterBar` extends `Meter` and renders a horizontal track with an indicator.
 
-| Prop         | Type     | Default | Description                      |
-| ------------ | -------- | ------- | -------------------------------- |
-| `trackColor` | `string` | -       | CSS color for the indicator.     |
+<TypeTable
+  type={{
+    trackColor: { type: "string", description: "CSS color for the indicator." },
+  }}
+/>
 
 ### MeterRing
 
 `MeterRing` extends `Meter` and renders a circular SVG indicator.
 
-| Prop         | Type     | Default | Description                  |
-| ------------ | -------- | ------- | ---------------------------- |
-| `max`        | `number` | `100`   | The maximum value.           |
-| `trackColor` | `string` | -       | CSS color for the indicator. |
+<TypeTable
+  type={{
+    max: { type: "number", default: "100", description: "The maximum value." },
+    trackColor: { type: "string", description: "CSS color for the indicator." },
+  }}
+/>
 
 ### MeterLabel
 
@@ -61,6 +88,11 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `MeterValue` extends the Base UI Meter value and renders a `<span>`.
 
-| Prop       | Type                                                           | Default | Description                        |
-| ---------- | -------------------------------------------------------------- | ------- | ---------------------------------- |
-| `children` | `null \| ((formattedValue: string, value: number) => ReactNode)` | -       | Custom render function for value.  |
+<TypeTable
+  type={{
+    children: {
+      type: "null | ((formattedValue: string, value: number) => ReactNode)",
+      description: "Custom render function for value.",
+    },
+  }}
+/>
