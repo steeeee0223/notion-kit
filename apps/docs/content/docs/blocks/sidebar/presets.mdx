@@ -108,13 +108,8 @@ A page list is a component `DocList` showing a group of pages.
       description:
         "The default icon of the page within this group. This is useful when a page has no icon selected.",
     },
-    isLoading: {
-      type: "boolean",
-      description:
-        "The loading state of this group. It will show a skeleton if the group is loading.",
-    },
     onSelect: {
-      type: "(id: string) => void",
+      type: "(page: Page) => void",
       description: "Handler that is called when a page is active.",
     },
     onCreate: {
@@ -163,13 +158,8 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
       type: "string | null",
       description: "The active page in this group.",
     },
-    isLoading: {
-      type: "boolean",
-      description:
-        "The loading state of this group. It will show a skeleton if the group is loading.",
-    },
     onSelect: {
-      type: "(id: string) => void",
+      type: "(page: Page) => void",
       description: "Handler that is called when a page is active.",
     },
     onCreate: {
@@ -210,6 +200,14 @@ A `SearchCommand` is a command dialog for searching all non-archived pages.
       type: "string",
       required: true,
       description: "The name of current workspace.",
+    },
+    open: {
+      type: "boolean",
+      description: "The controlled open state of the search dialog.",
+    },
+    onOpenChange: {
+      type: "(open: boolean) => void",
+      description: "Called when the search dialog opens or closes.",
     },
     pages: {
       type: "Page[]",
@@ -280,7 +278,7 @@ A `TrashBox` is a popover menu for searching archived pages.
         'Handler that is called when the "Restore" button of the page is clicked.',
     },
     onDelete: {
-      type: "(page: Page) => void",
+      type: "(id: string) => void",
       description:
         'Handler that is called when the "Delete" button of the page is clicked.',
     },

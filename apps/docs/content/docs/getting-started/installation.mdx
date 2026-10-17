@@ -24,13 +24,13 @@ Add the CSS import to the top of your global stylesheet (e.g., `app/globals.css`
 
 ## Add Notion Components
 
-You can now start adding Notion components (or blocks) to your project.
+Install the UI package to use Notion Kit primitives and blocks:
 
 ```bash
-pnpm dlx shadcn@latest https://notion-ui.vercel.app/registry/notion-ui.json
+pnpm add @notion-kit/ui
 ```
 
-The command above will add the Notion primitive UIs to your project. You can then import it like this:
+You can then import the primitives:
 
 ```tsx
 import { Button } from "@notion-kit/ui/primitives";
@@ -43,3 +43,11 @@ export default function Home() {
   );
 }
 ```
+
+To copy an example into your project, use its registry installation command:
+
+```bash
+pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/button-default.json
+```
+
+Browse the [registry examples](/registry) for individual installation commands.

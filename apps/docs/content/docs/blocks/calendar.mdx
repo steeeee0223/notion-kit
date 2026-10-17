@@ -188,7 +188,7 @@ the hidden time portion. A completed gesture sends one callback.
   type={{
     events: {
       type: "readonly CalendarEventData[]",
-      default: "Required",
+      required: true,
       description: "Authoritative event values.",
     },
     range: { type: "CalendarRange", description: "Controlled period." },

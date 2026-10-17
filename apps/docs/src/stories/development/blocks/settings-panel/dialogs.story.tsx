@@ -113,7 +113,7 @@ export const ChangePasswordModal = defineStory({
 });
 export const Add2FAModal = defineStory({
   Component: blocksSettingsPanelDialogs.Add2FAModalExample,
-  displayName: "Add2 FAModal",
+  displayName: "Add 2FA Modal",
   args: { initial: {} },
   frame: {
     src: "/story/development/blocks/settings-panel/dialogs/Add2FAModal",
@@ -123,7 +123,7 @@ export const Add2FAModal = defineStory({
 });
 export const Enable2FAMethodModal = defineStory({
   Component: blocksSettingsPanelDialogs.Enable2FAMethodModalExample,
-  displayName: "Enable2 FAMethod Modal",
+  displayName: "Enable 2FA Method Modal",
   args: { initial: {} },
   frame: {
     src: "/story/development/blocks/settings-panel/dialogs/Enable2FAMethodModal",

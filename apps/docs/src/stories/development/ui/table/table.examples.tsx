@@ -14,10 +14,12 @@ export function DefaultExample() {
   return (
     <Table>
       <TableHeader>
-        <TableHead className="w-9">#</TableHead>
-        <TableHead className="min-w-20">Name</TableHead>
-        <TableHead className="w-40">Status</TableHead>
-        <TableHead className="min-w-20">User</TableHead>
+        <TableRow>
+          <TableHead className="w-9">#</TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
+        </TableRow>
       </TableHeader>
       <TableBody>
         {todos.map((todo) => (
@@ -39,10 +41,12 @@ export function EmptyExample() {
   return (
     <Table>
       <TableHeader>
-        <TableHead className="w-9">#</TableHead>
-        <TableHead className="min-w-20">Name</TableHead>
-        <TableHead className="w-40">Status</TableHead>
-        <TableHead className="min-w-20">User</TableHead>
+        <TableRow>
+          <TableHead className="w-9">#</TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
+        </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow>
@@ -57,12 +61,14 @@ export function PinnedExample() {
   return (
     <Table>
       <TableHeader>
-        <TableHead data-pinned="start" className="w-9">
-          #
-        </TableHead>
-        <TableHead className="min-w-20">Name</TableHead>
-        <TableHead className="w-40">Status</TableHead>
-        <TableHead className="min-w-20">User</TableHead>
+        <TableRow>
+          <TableHead data-pinned="start" className="w-9">
+            #
+          </TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
+        </TableRow>
       </TableHeader>
       <TableBody>
         {todos.map((todo) => (
@@ -84,10 +90,12 @@ export function StripedExample() {
   return (
     <Table variant="striped">
       <TableHeader>
-        <TableHead className="w-9">#</TableHead>
-        <TableHead className="min-w-20">Name</TableHead>
-        <TableHead className="w-40">Status</TableHead>
-        <TableHead className="min-w-20">User</TableHead>
+        <TableRow>
+          <TableHead className="w-9">#</TableHead>
+          <TableHead className="min-w-20">Name</TableHead>
+          <TableHead className="w-40">Status</TableHead>
+          <TableHead className="min-w-20">User</TableHead>
+        </TableRow>
       </TableHeader>
       <TableBody>
         {todos.map((todo) => (

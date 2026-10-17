@@ -12,17 +12,27 @@ const PLANS = [
   },
 ];
 
-export default function RadioGroupDefault() {
+export default function RadioGroupDefault({
+  disabled = false,
+}: {
+  disabled?: boolean;
+}) {
   return (
-    <RadioGroup aria-label="Plan" defaultValue="plus" className="w-100 gap-2">
+    <RadioGroup
+      aria-label="Plan"
+      defaultValue="plus"
+      disabled={disabled}
+      className="w-100 gap-2"
+    >
       {PLANS.map((plan) => (
         <label
           key={plan.value}
           htmlFor={`plan-${plan.value}`}
           className={cn(
             "flex h-[54px] cursor-pointer items-center gap-3 rounded-lg border border-border px-3 pr-4 transition-colors",
-            "has-data-[checked]:border-blue has-data-[checked]:bg-blue/5",
+            "has-data-checked:border-blue has-data-checked:bg-blue/5",
             "hover:bg-primary/5",
+            "has-disabled:cursor-default has-disabled:opacity-50 has-disabled:hover:bg-transparent",
           )}
         >
           <div className="flex flex-1 flex-col gap-0.5">

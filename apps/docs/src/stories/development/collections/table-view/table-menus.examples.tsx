@@ -82,9 +82,11 @@ const TableViewMenuContent = () => {
               <DropdownMenuContent
                 collisionPadding={12}
                 className="w-72"
-                finalFocus={() =>
-                  openingLogRef.current ? false : triggerRef.current
-                }
+                finalFocus={() => {
+                  const openingLog = openingLogRef.current;
+                  openingLogRef.current = false;
+                  return openingLog ? false : triggerRef.current;
+                }}
               >
                 <Menu.TableViewMenu
                   query={query}

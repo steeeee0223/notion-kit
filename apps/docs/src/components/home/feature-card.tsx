@@ -40,7 +40,7 @@ export function FeatureCard({ feature }: FeatureCardProps) {
         <div className="overflow-hidden rounded-lg border border-border shadow-sm">
           <img
             src={feature.img}
-            alt={feature.title}
+            alt=""
             className="w-full object-cover transition-transform hover:scale-105"
           />
         </div>

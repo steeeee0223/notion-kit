@@ -25,7 +25,7 @@ description: Add and remove tags in a text field.
 <TypeTable
   type={{
     value: {
-      type: "{ tags: string[]; input: string }",
+      type: "{ tags: (string | TagOption)[]; input: string }",
       required: true,
       description: "The current input value and current tags (controlled).",
     },
@@ -49,5 +49,17 @@ description: Add and remove tags in a text field.
       type: "(value: string) => void",
       description: "Handler that is called when the input value changes.",
     },
+  }}
+/>
+
+### TagOption
+
+Each tag can be a string or an object with a value and an optional color.
+`Color` is exported by `@notion-kit/utils`.
+
+<TypeTable
+  type={{
+    value: { type: "string", required: true, description: "The tag value." },
+    color: { type: "Color", description: "The tag background color." },
   }}
 />

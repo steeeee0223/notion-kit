@@ -95,7 +95,10 @@ function DraggableItem({
 export function BasicExample() {
   return (
     <TooltipProvider>
-      <FallingBlocks.Root className="relative h-105 w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
+      <FallingBlocks.Root
+        count={DEFAULT_LOGOS.length}
+        className="relative h-105 w-100 overflow-hidden rounded-lg border border-border bg-popover shadow-lg"
+      >
         {DEFAULT_LOGOS.map((block) => (
           <FallingBlocks.Item
             key={block.name}

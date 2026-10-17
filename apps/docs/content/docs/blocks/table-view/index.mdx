@@ -475,12 +475,14 @@ Shared by Calendar and Timeline through `view.dateView` or
   type={{
     range: {
       type: '"daily" | "weekly" | "monthly" | "quarterly"',
+      required: true,
       default: '"monthly"',
       description:
         "Calendar supports daily, weekly, and monthly. Timeline supports daily, monthly, and quarterly. An unsupported range becomes monthly.",
     },
     datePropertyId: {
       type: "string | null",
+      required: true,
       default: "null",
       description:
         "ID of the Date property used for event values. Resolves to an existing or newly created Date property when editable.",

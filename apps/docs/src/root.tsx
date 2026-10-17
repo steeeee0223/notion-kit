@@ -10,6 +10,8 @@ import {
   useRouteError,
 } from "react-router";
 
+export const meta = () => [{ title: "Notion UI" }];
+
 export function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>

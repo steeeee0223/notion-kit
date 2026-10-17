@@ -65,7 +65,6 @@ export const registryIndex = [
   "navbar-sharing",
   "navbar-title",
   "radio-group-default",
-  "radio-group-disabled",
   "resizable-demo",
   "select-custom",
   "select-default",

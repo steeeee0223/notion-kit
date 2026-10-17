@@ -27,6 +27,15 @@ pnpm --filter @notion-kit/docs start
 ## Add a registry example
 
 Add the example to `packages/registry` and its name to `registryIndex`.
+Rebuild the registry package before generating stories, because the generator
+reads its built exports:
+
+```sh
+pnpm --filter @notion-kit/registry build
+pnpm --filter @notion-kit/docs build:stories
+pnpm --filter @notion-kit/docs build:registry
+```
+
 The docs generator creates the registry page and lazy import.
 Use the example in MDX with:
 
@@ -84,3 +93,6 @@ pnpm --filter @notion-kit/docs build
 ```
 
 Check the affected pages and controls in the browser. Registry installation files are served at `/registry/<name>.json`.
+Development startup and type checks generate story artifacts only. Run
+`build:registry` separately to generate or refresh the installation JSON files;
+production builds include this step.

@@ -186,7 +186,7 @@ export default function HomePage() {
             <div className="mx-auto mb-16 max-w-4xl overflow-hidden rounded-lg">
               <img
                 src="https://images.ctfassets.net/spoqsaf9291f/6qIIIgDbblzxbMzQrUF2TK/f91004484b6846a1b25b6872a930eb22/Three_hands_drawing.png"
-                alt="Illustration"
+                alt="Three hands drawing together"
                 className="mx-auto h-auto max-w-full object-cover"
               />
             </div>

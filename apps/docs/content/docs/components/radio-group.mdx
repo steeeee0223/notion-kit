@@ -6,7 +6,9 @@ links:
     href: https://base-ui.com/react/components/radio-group
 ---
 
-<RegistryStory name="radio-group-default" />
+import { Default as RadioGroupStory } from "@/stories/development/ui/radio-group.story";
+
+<RadioGroupStory.WithControl />
 
 The preview renders each plan as a selectable card. The same primitives also support plain labels.
 
@@ -68,9 +70,8 @@ export default function PlanPicker() {
 
 ### Disabled items
 
-<RegistryStory name="radio-group-disabled" />
-
-The preview disables every item. An item-level `disabled` prop prevents selection of that option.
+Use the preview's `disabled` control to toggle the whole group.
+An item-level `disabled` prop prevents selection of that option.
 A group-level `disabled` prop disables the entire group.
 
 ```tsx
