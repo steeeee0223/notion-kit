@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { delay } from "msw";
 
 import { AlertModal } from "@notion-kit/ui/alert-modal";
 import { Button, Dialog, DialogTrigger } from "@notion-kit/ui/primitives";
 
-export function DefaultExample() {
+export default function DialogDefault() {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -14,7 +13,7 @@ export function DefaultExample() {
         primary="Continue"
         secondary="Cancel"
         onTrigger={async () => {
-          await delay(1500);
+          await new Promise((resolve) => setTimeout(resolve, 1500));
           setOpen(false);
         }}
       />

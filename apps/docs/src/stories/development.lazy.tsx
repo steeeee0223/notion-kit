@@ -615,14 +615,6 @@ export const uiCalendar = {
   ),
 };
 
-export const uiDialog = {
-  DefaultExample: lazy(() =>
-    import("./development/ui/dialog.examples").then((module) => ({
-      default: module.DefaultExample,
-    })),
-  ),
-};
-
 export const uiDropdownMenu = {
   InlineMenuExample: lazy(() =>
     import("./development/ui/dropdown-menu.examples").then((module) => ({
@@ -639,36 +631,10 @@ export const uiInput = {
   ),
 };
 
-export const uiMeter = {
-  BarExample: lazy(() =>
-    import("./development/ui/meter.examples").then((module) => ({
-      default: module.BarExample,
-    })),
-  ),
-  RingExample: lazy(() =>
-    import("./development/ui/meter.examples").then((module) => ({
-      default: module.RingExample,
-    })),
-  ),
-};
-
 export const uiPopover = {
   DetachExample: lazy(() =>
     import("./development/ui/popover.examples").then((module) => ({
       default: module.DetachExample,
-    })),
-  ),
-};
-
-export const uiRadioGroup = {
-  ExampleExample: lazy(() =>
-    import("./development/ui/radio-group.examples").then((module) => ({
-      default: module.ExampleExample,
-    })),
-  ),
-  DisabledExample: lazy(() =>
-    import("./development/ui/radio-group.examples").then((module) => ({
-      default: module.DisabledExample,
     })),
   ),
 };
@@ -708,14 +674,6 @@ export const uiSelectableSelectable = {
         default: module.WithDraggableItemsExample,
       }),
     ),
-  ),
-};
-
-export const uiSortable = {
-  ListWithItemHandleExample: lazy(() =>
-    import("./development/ui/sortable.examples").then((module) => ({
-      default: module.ListWithItemHandleExample,
-    })),
   ),
 };
 
