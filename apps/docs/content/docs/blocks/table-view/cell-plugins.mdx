@@ -24,27 +24,49 @@ ID.
     },
     fromValue: {
       type: "(value: ComparableValue, config: Config) => Data",
+      parameters: [
+        { name: "value", description: "ComparableValue. The new value." },
+        { name: "config", description: "Config. The property configuration." },
+      ],
+      returns: "Data",
       description: "Converts a comparable value into cell data.",
       required: true,
     },
     toValue: {
       type: "(data: Data, row: Row) => ComparableValue",
+      parameters: [
+        { name: "data", description: "Data. The cell data." },
+        { name: "row", description: "Row. The row containing the cell." },
+      ],
+      returns: "ComparableValue",
       description: "Converts cell data for sorting and grouping.",
       required: true,
     },
     toGroupValue: {
       type: "(data: Data, row: Row) => ComparableValue",
+      parameters: [
+        { name: "data", description: "Data. The cell data." },
+        { name: "row", description: "Row. The row containing the cell." },
+      ],
+      returns: "ComparableValue",
       description:
         "Optionally converts cell data to a grouping value; falls back to toValue.",
     },
     isEmpty: {
       type: "(data: Data) => boolean",
+      parameters: [{ name: "data", description: "Data. The cell data." }],
+      returns: "boolean",
       description:
         "Defines empty data for filters, counts, sorting, and grouping.",
       required: true,
     },
     toTextValue: {
       type: "(data: Data, row: Row) => string",
+      parameters: [
+        { name: "data", description: "Data. The cell data." },
+        { name: "row", description: "Row. The row containing the cell." },
+      ],
+      returns: "string",
       description: "Converts cell data to copyable text.",
       required: true,
     },
@@ -66,11 +88,25 @@ ID.
     },
     compare: {
       type: "(rowA: Row, rowB: Row, colId: string) => number",
+      parameters: [
+        { name: "rowA", description: "Row. The first row to compare." },
+        { name: "rowB", description: "Row. The second row to compare." },
+        { name: "colId", description: "string. The column ID to compare." },
+      ],
+      returns: "number",
       description:
         "Legacy row comparator used as a sorting fallback when no registered sorting method resolves.",
     },
     transferConfig: {
       type: "(column: ColumnInfo, data: Row[]) => Config",
+      parameters: [
+        {
+          name: "column",
+          description: "ColumnInfo. The property being converted.",
+        },
+        { name: "data", description: "Row[]. The cell data." },
+      ],
+      returns: "Config",
       description:
         "Optionally derives configuration when a property changes to this type, using its existing rows.",
     },
@@ -100,24 +136,64 @@ Data plugins do not render React, carry icons, or decide cell presentation.
     },
     renderCell: {
       type: "(props: CellProps) => ReactNode",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "CellProps. The cell or column context for the renderer.",
+        },
+      ],
+      returns: "ReactNode",
       description: "Returns the complete React UI for a cell surface.",
       required: true,
     },
     renderReadOnlyValue: {
       type: "(props: ReadOnlyValueProps) => ReactNode",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "ReadOnlyValueProps. The cell or column context for the renderer.",
+        },
+      ],
+      returns: "ReactNode",
       description:
         "Optional historical value renderer. Receives snapshots without a live cell or mutation callbacks.",
     },
     renderBulkEditor: {
       type: "(props: BulkEditorProps) => ReactNode",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "BulkEditorProps. The cell or column context for the renderer.",
+        },
+      ],
+      returns: "ReactNode",
       description: "Optional. Its presence enables bulk editing.",
     },
     renderConfigMenu: {
       type: "(props: ConfigMenuProps) => ReactNode",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "ConfigMenuProps. The cell or column context for the renderer.",
+        },
+      ],
+      returns: "ReactNode",
       description: "Optional property configuration UI.",
     },
     renderGroupingValue: {
       type: "(props: GroupingValueProps) => ReactNode",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "GroupingValueProps. The cell or column context for the renderer.",
+        },
+      ],
+      returns: "ReactNode",
       description: "Returns the grouped label UI.",
       required: true,
     },
@@ -217,27 +293,39 @@ combined-plugin registration path.
   type={{
     "CellPlugin<Key, Data, Config>": {
       type: "CellPlugin<Key, Data, Config>",
+      typeDescriptionLink:
+        "/docs/blocks/table-view/cell-plugins#data-plugin-definition",
       description: "Pure table-hook data semantics and capabilities.",
     },
     "TableUiPlugin<TPlugin>": {
       type: "TableUiPlugin<TPlugin>",
+      typeDescriptionLink:
+        "/docs/blocks/table-view/cell-plugins#ui-adapter-definition",
       description: "React adapter coupled to one data plugin.",
     },
     CellProps: {
       type: "CellProps",
+      typeDescriptionLink:
+        "/docs/blocks/table-view/cell-plugins#read-only-history-renderers",
       description: "A TanStack cell instance for direct rendering.",
     },
     BulkEditorProps: {
       type: "BulkEditorProps",
+      typeDescriptionLink:
+        "/docs/blocks/table-view/cell-plugins#ui-adapter-definition",
       description: "A TanStack column instance for bulk rendering.",
     },
     ReadOnlyValueProps: {
       type: "ReadOnlyValueProps",
+      typeDescriptionLink:
+        "/docs/blocks/table-view/cell-plugins#read-only-history-renderers",
       description:
         "Historical value, config, property metadata, and fallback text.",
     },
     ConfigMenuProps: {
       type: "ConfigMenuProps",
+      typeDescriptionLink:
+        "/docs/blocks/table-view/cell-plugins#ui-adapter-definition",
       description: "A TanStack column instance for configuration UI.",
     },
   }}

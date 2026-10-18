@@ -353,6 +353,7 @@ bulk editing.
   type={{
     plugins: {
       type: "TablePluginPair",
+      typeDescriptionLink: "/docs/blocks/table-view/cell-plugins#registration",
       description: (
         <>
           {" "}
@@ -383,29 +384,77 @@ bulk editing.
       description: "Initial view state for an uncontrolled table.",
     },
     onDataChange: {
-      type: "(change) => void",
+      type: "(change: ResourceChange<Row[], DataResourceAction>) => unknown",
+      parameters: [
+        {
+          name: "change",
+          description:
+            "ResourceChange<Row[], DataResourceAction>. The next resource and the action that produced it.",
+        },
+      ],
+      returns: "unknown",
       description: "Receives the next rows resource and its action.",
     },
     onPropertiesChange: {
-      type: "(change) => void",
+      type: "(change: ResourceChange<ColumnDefs, PropertiesResourceAction>) => unknown",
+      parameters: [
+        {
+          name: "change",
+          description:
+            "ResourceChange<ColumnDefs, PropertiesResourceAction>. The next resource and the action that produced it.",
+        },
+      ],
+      returns: "unknown",
       description: "Receives the next properties resource and its action.",
     },
     onViewChange: {
-      type: "(change) => void",
+      type: "(change: ResourceChange<TableViewState, ViewResourceAction>) => unknown",
+      parameters: [
+        {
+          name: "change",
+          description:
+            "ResourceChange<TableViewState, ViewResourceAction>. The next resource and the action that produced it.",
+        },
+      ],
+      returns: "unknown",
       description: "Receives the next view resource and its action.",
     },
     fetchTableEditLogs: {
       type: "FetchTableEditLogs",
+      typeDescription:
+        "(request: { cursor?: string; signal: AbortSignal }) => Promise<EditLogPage<TableEditLog>>",
+      parameters: [
+        {
+          name: "request",
+          description:
+            "{ cursor?: string; signal: AbortSignal }. The pagination request and abort signal.",
+        },
+      ],
+      returns: "Promise<EditLogPage<TableEditLog>>",
+      typeDescriptionLink: "/docs/blocks/table-view#edit-logs",
       description:
         "Optional paginated table history callback. Enables the table Edit log entry.",
     },
     fetchRowEditLogs: {
       type: "FetchRowEditLogs",
+      typeDescription:
+        "(request: { rowId: string; cursor?: string; signal: AbortSignal }) => Promise<EditLogPage<RowEditLog>>",
+      parameters: [
+        {
+          name: "request",
+          description:
+            "{ rowId: string; cursor?: string; signal: AbortSignal }. The pagination request and abort signal.",
+        },
+      ],
+      returns: "Promise<EditLogPage<RowEditLog>>",
+      typeDescriptionLink: "/docs/blocks/table-view#edit-logs",
       description:
         "Optional paginated row history callback. Enables row Edit log entries.",
     },
     getRowUrl: {
       type: "(rowId: string) => string",
+      parameters: [{ name: "rowId", description: "string. The row ID." }],
+      returns: "string",
       description: "Returns the URL used when opening a row in a new tab.",
     },
     weekStartsOn: {

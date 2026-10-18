@@ -36,7 +36,15 @@ pnpm add @notion-kit/ui
       description: "Whether the title is editable.",
     },
     onUpdate: {
-      type: "({ title?: string, icon?: IconData }) => void",
+      type: '(page: Pick<UpdatePageParams, "title" | "icon">) => void',
+      parameters: [
+        {
+          name: "page",
+          description:
+            'Pick<UpdatePageParams, "title" | "icon">. The updated page title and icon.',
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when new title or icon is submitted.",
     },
@@ -65,6 +73,14 @@ pnpm add @notion-kit/ui
     },
     onUpdate: {
       type: "(id: string, isPublished: boolean) => void",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+        {
+          name: "isPublished",
+          description: "boolean. Whether the page should be published.",
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the public state of the page is changed.",
     },
@@ -93,6 +109,15 @@ pnpm add @notion-kit/ui
     },
     onUpdate: {
       type: '(pageId: string, action: "archive" | "restore" | "delete") => void',
+      parameters: [
+        { name: "pageId", description: "string. The page ID." },
+        {
+          name: "action",
+          description:
+            '"archive" | "restore" | "delete". The action to perform on the page.',
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when an action is triggered from a menuitem.",
     },
@@ -120,6 +145,7 @@ pnpm add @notion-kit/ui
     },
     otherUsers: {
       type: "User[]",
+      typeDescriptionLink: "/docs/objects/user",
       default: "[]",
       description: "Other users on the page.",
     },

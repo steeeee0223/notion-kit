@@ -199,6 +199,13 @@ the hidden time portion. A completed gesture sends one callback.
     },
     onRangeChange: {
       type: "(range: CalendarRange) => void",
+      parameters: [
+        {
+          name: "range",
+          description: "CalendarRange. The next visible date range.",
+        },
+      ],
+      returns: "void",
       description: "Requests a period change.",
     },
     anchorDate: { type: "number", description: "Controlled viewed timestamp." },
@@ -209,6 +216,13 @@ the hidden time portion. A completed gesture sends one callback.
     },
     onAnchorDateChange: {
       type: "(date: number) => void",
+      parameters: [
+        {
+          name: "date",
+          description: "number. The date as a timestamp in milliseconds.",
+        },
+      ],
+      returns: "void",
       description: "Requests a viewed date.",
     },
     timeZone: {
@@ -228,14 +242,36 @@ the hidden time portion. A completed gesture sends one callback.
     },
     onCreate: {
       type: "(value: CalendarEventValue) => void",
+      parameters: [
+        {
+          name: "value",
+          description:
+            "CalendarEventValue. The dates of the new calendar event.",
+        },
+      ],
+      returns: "void",
       description: "Receives start, end, and all-day values without an ID.",
     },
     onEventClick: {
       type: "(event: CalendarEventData) => void",
+      parameters: [
+        {
+          name: "event",
+          description: "CalendarEventData. The clicked calendar event.",
+        },
+      ],
+      returns: "void",
       description: "Opens an event.",
     },
     onEventChange: {
       type: "(change: CalendarEventChange) => void",
+      parameters: [
+        {
+          name: "change",
+          description: "CalendarEventChange. The calendar event edit.",
+        },
+      ],
+      returns: "void",
       description: "Receives ID, full date values, and operation reason.",
     },
     className: {
@@ -274,6 +310,13 @@ props; `children` appear before the range select.
     },
     onRangeChange: {
       type: "(range: CalendarRange) => void",
+      parameters: [
+        {
+          name: "range",
+          description: "CalendarRange. The next visible date range.",
+        },
+      ],
+      returns: "void",
       description:
         "Overrides the provider's range-change handler for this toolbar.",
     },
@@ -290,6 +333,13 @@ props; `children` appear before the range select.
     },
     onChange: {
       type: "(range: CalendarRange) => void",
+      parameters: [
+        {
+          name: "range",
+          description: "CalendarRange. The next visible date range.",
+        },
+      ],
+      returns: "void",
       description: "Overrides the provider's range-change handler.",
     },
     disabled: { type: "boolean", description: "Disables selection." },

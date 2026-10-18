@@ -65,15 +65,22 @@ description: A page cover image with an image picker.
     alt: { type: "string", description: "The fallback text to display." },
     onSelect: {
       type: "(url: string) => void",
+      parameters: [
+        { name: "url", description: "string. The destination URL." },
+      ],
+      returns: "void",
       description:
         "Handler that is called when a cover image is selected or when a URL is submitted.",
     },
     onUpload: {
       type: "(file: File) => void",
+      parameters: [{ name: "file", description: "File. The selected file." }],
+      returns: "void",
       description: "Handler that is called when a cover image is submitted.",
     },
     onRemove: {
       type: "() => void",
+      returns: "void",
       description: "Handler that is called when the remove button is clicked.",
     },
   }}
@@ -97,15 +104,22 @@ description: A page cover image with an image picker.
     },
     onSelect: {
       type: "(url: string) => void",
+      parameters: [
+        { name: "url", description: "string. The destination URL." },
+      ],
+      returns: "void",
       description:
         "Handler that is called when a cover image is selected or when a URL is submitted.",
     },
     onUpload: {
       type: "(file: File) => void",
+      parameters: [{ name: "file", description: "File. The selected file." }],
+      returns: "void",
       description: "Handler that is called when a cover image is submitted.",
     },
     onRemove: {
       type: "() => void",
+      returns: "void",
       description: "Handler that is called when the remove button is clicked.",
     },
   }}

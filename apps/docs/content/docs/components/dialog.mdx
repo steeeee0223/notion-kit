@@ -99,10 +99,23 @@ Common root props are listed below. Other props follow [Base UI's root reference
     },
     onOpenChange: {
       type: "(open: boolean, eventDetails: DialogRoot.ChangeEventDetails) => void",
+      parameters: [
+        { name: "open", description: "boolean. The next open state." },
+        {
+          name: "eventDetails",
+          description:
+            "DialogRoot.ChangeEventDetails. The event reason and controls supplied by Base UI.",
+        },
+      ],
+      returns: "void",
       description: "Called when the dialog opens or closes.",
     },
     onOpenChangeComplete: {
       type: "(open: boolean) => void",
+      parameters: [
+        { name: "open", description: "boolean. The next open state." },
+      ],
+      returns: "void",
       description: "Called after the opening or closing animation finishes.",
     },
     modal: {
@@ -195,6 +208,7 @@ Resolving `onTrigger` does not close the dialog automatically.
     },
     onTrigger: {
       type: "() => void | Promise<void>",
+      returns: "void | Promise<void>",
       description: "Called when the primary action is activated.",
     },
   }}

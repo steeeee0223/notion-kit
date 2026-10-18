@@ -91,6 +91,14 @@ Uses the browser geolocation API, flies the map to the current location, and opt
   type={{
     onLocate: {
       type: "(coords: { lng: number; lat: number }) => void",
+      parameters: [
+        {
+          name: "coords",
+          description:
+            "{ lng: number; lat: number }. The detected longitude and latitude.",
+        },
+      ],
+      returns: "void",
       description: "Called after the user location is used.",
     },
   }}
@@ -132,6 +140,13 @@ Switches between a flat 2D view and a pitched 3D view using MapLibre `easeTo`.
     },
     onModeChange: {
       type: '(mode: "2d" | "3d") => void',
+      parameters: [
+        {
+          name: "mode",
+          description: '"2d" | "3d". The next map display mode.',
+        },
+      ],
+      returns: "void",
       description: "Called when a new mode is requested.",
     },
   }}

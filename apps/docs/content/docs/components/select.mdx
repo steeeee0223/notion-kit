@@ -94,6 +94,13 @@ prop when you want `SelectValue` to render item labels automatically.
     },
     onValueChange: {
       type: "(value: Value | Value[] | null) => void",
+      parameters: [
+        {
+          name: "value",
+          description: "Value | Value[] | null. The new value.",
+        },
+      ],
+      returns: "void",
       description: "Handler called when an option is selected.",
     },
   }}

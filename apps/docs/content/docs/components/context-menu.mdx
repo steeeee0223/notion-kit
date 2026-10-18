@@ -81,7 +81,19 @@ The area that activates the context menu on right-click or long-press.
 <TypeTable
   type={{
     render: {
-      type: "React.ReactElement | (props, state) => React.ReactElement",
+      type: "React.ReactElement | ((props: HTMLProps, state: ContextMenu.Trigger.State) => React.ReactElement)",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "HTMLProps. Props and ref to spread onto the rendered element.",
+        },
+        {
+          name: "state",
+          description: "ContextMenu.Trigger.State. The current trigger state.",
+        },
+      ],
+      returns: "React.ReactElement",
       description:
         "Renders a custom trigger element and merges trigger props onto it.",
     },
@@ -124,6 +136,14 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
     disabled: { type: "boolean", description: "Whether the item is disabled." },
     onClick: {
       type: "React.MouseEventHandler<HTMLElement>",
+      typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
+      parameters: [
+        {
+          name: "event",
+          description: "React.MouseEvent<HTMLElement>. The mouse event.",
+        },
+      ],
+      returns: "void",
       description: "Handler called when the item is clicked.",
     },
   }}
@@ -138,6 +158,10 @@ A menu item that can be toggled on and off. Extends `ContextMenuItem` props.
     checked: { type: "boolean", description: "Whether the item is checked." },
     onCheckedChange: {
       type: "(checked: boolean) => void",
+      parameters: [
+        { name: "checked", description: "boolean. The next checked state." },
+      ],
+      returns: "void",
       description: "Handler called when the checked state changes.",
     },
   }}

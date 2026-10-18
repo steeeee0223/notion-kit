@@ -52,11 +52,37 @@ Creates a clustered GeoJSON source for point data and renders cluster circles, c
       description: "Color for unclustered points.",
     },
     onPointClick: {
-      type: "(feature, coordinates) => void",
+      type: "(feature: GeoJSON.Feature<GeoJSON.Point, P>, coordinates: [number, number]) => void",
+      parameters: [
+        {
+          name: "feature",
+          description:
+            "GeoJSON.Feature<GeoJSON.Point, P>. The clicked unclustered GeoJSON point.",
+        },
+        {
+          name: "coordinates",
+          description:
+            "[number, number]. The point or cluster location as [longitude, latitude].",
+        },
+      ],
+      returns: "void",
       description: "Called when an unclustered point is clicked.",
     },
     onClusterClick: {
-      type: "(clusterId, coordinates, pointCount) => void",
+      type: "(clusterId: number, coordinates: [number, number], pointCount: number) => void",
+      parameters: [
+        { name: "clusterId", description: "number. The clicked cluster ID." },
+        {
+          name: "coordinates",
+          description:
+            "[number, number]. The point or cluster location as [longitude, latitude].",
+        },
+        {
+          name: "pointCount",
+          description: "number. The number of points in the cluster.",
+        },
+      ],
+      returns: "void",
       description: "Overrides the default cluster zoom behavior.",
     },
   }}

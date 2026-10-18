@@ -188,6 +188,7 @@ Root provider that manages timeline state, scroll position, and CSS variables.
   type={{
     range: {
       type: "TimelineRange",
+      typeDescriptionLink: "/docs/blocks/timeline#type-timelinerange",
       default: '"monthly"',
       description: "The active range granularity.",
     },
@@ -199,6 +200,13 @@ Root provider that manages timeline state, scroll position, and CSS variables.
     },
     onAnchorDateChange: {
       type: "(date: number) => void",
+      parameters: [
+        {
+          name: "date",
+          description: "number. The date as a timestamp in milliseconds.",
+        },
+      ],
+      returns: "void",
       description: "Receives the viewed timestamp after user scrolling.",
     },
     timeZone: {
@@ -226,6 +234,13 @@ Root provider that manages timeline state, scroll position, and CSS variables.
     },
     onAddItem: {
       type: "(ts: number) => void",
+      parameters: [
+        {
+          name: "ts",
+          description: "number. The date as a timestamp in milliseconds.",
+        },
+      ],
+      returns: "void",
       description: "Handler called when clicking to add a new item.",
     },
   }}
@@ -259,6 +274,19 @@ and the resize parts for a click-only row.
     },
     onMove: {
       type: "(id: string, start: number, end: number | null) => void",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+        {
+          name: "start",
+          description: "number. The new start timestamp in milliseconds.",
+        },
+        {
+          name: "end",
+          description:
+            "number | null. The new end timestamp in milliseconds, or null for an open-ended item.",
+        },
+      ],
+      returns: "void",
       description:
         "Enables moving/resizing and receives the committed timestamp range.",
     },
@@ -317,10 +345,18 @@ A pre-composed toolbar with sidebar trigger, range select, and jump-to buttons.
   type={{
     onSidebarOpen: {
       type: "() => void",
+      returns: "void",
       description: "Handler called when the sidebar open button is clicked.",
     },
     onRangeChange: {
       type: "(range: TimelineRange) => void",
+      parameters: [
+        {
+          name: "range",
+          description: "TimelineRange. The next visible date range.",
+        },
+      ],
+      returns: "void",
       description: "Handler called when the range is changed.",
     },
   }}
@@ -334,11 +370,16 @@ A select dropdown for switching between range granularities.
   type={{
     value: {
       type: "TimelineRange",
+      typeDescriptionLink: "/docs/blocks/timeline#type-timelinerange",
       required: true,
       description: "The currently selected range.",
     },
     onChange: {
       type: "(value: TimelineRange) => void",
+      parameters: [
+        { name: "value", description: "TimelineRange. The new value." },
+      ],
+      returns: "void",
       description: "Handler called when the range is changed.",
     },
   }}
@@ -360,6 +401,13 @@ A hover-activated trigger that follows the cursor and creates a marker on click.
   type={{
     onCreateMarker: {
       type: "(ts: number) => void",
+      parameters: [
+        {
+          name: "ts",
+          description: "number. The date as a timestamp in milliseconds.",
+        },
+      ],
+      returns: "void",
       description: "Handler called with the timestamp of the click position.",
     },
   }}
@@ -390,6 +438,7 @@ A button that hides the sidebar panel.
     },
     onClick: {
       type: "() => void",
+      returns: "void",
       description: "Handler called when clicked.",
     },
   }}
@@ -408,6 +457,7 @@ A button that opens the sidebar panel.
     },
     onClick: {
       type: "() => void",
+      returns: "void",
       description: "Handler called when clicked.",
     },
   }}

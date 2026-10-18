@@ -65,6 +65,13 @@ Creates the MapLibre map instance, resolves the light/dark style, exposes the ma
     },
     onViewportChange: {
       type: "(viewport: MapViewport) => void",
+      parameters: [
+        {
+          name: "viewport",
+          description: "MapViewport. The updated map viewport.",
+        },
+      ],
+      returns: "void",
       description: "Called when the map viewport changes.",
     },
     loading: {

@@ -320,10 +320,16 @@ The row data of the members table.
     },
     user: {
       type: "User",
+      typeDescriptionLink: "/docs/objects/user",
       required: true,
       description: "Information of the member.",
     },
-    role: { type: "Role", required: true, description: "Role of the member." },
+    role: {
+      type: "Role",
+      typeDescriptionLink: "/docs/objects/workspace#role",
+      required: true,
+      description: "Role of the member.",
+    },
     teamspaces: {
       type: "MemberTeamspace[]",
       required: true,
@@ -331,6 +337,7 @@ The row data of the members table.
     },
     groups: {
       type: "CellOptions<GroupOption>",
+      typeDescriptionLink: "/docs/blocks/settings-panel/objects#cell-options",
       required: true,
       description: "Available groups.",
     },
@@ -390,11 +397,13 @@ The row data of the guests table.
     },
     user: {
       type: "User",
+      typeDescriptionLink: "/docs/objects/user",
       required: true,
       description: "Information of the guest.",
     },
     access: {
       type: "PageAccess[]",
+      typeDescriptionLink: "/docs/blocks/settings-panel/objects#page-access",
       required: true,
       description: "Available pages for the guest.",
     },
@@ -457,6 +466,7 @@ The row data of the invitations table.
     },
     role: {
       type: "Role",
+      typeDescriptionLink: "/docs/objects/workspace#role",
       required: true,
       description: "Role of the invited user.",
     },
@@ -467,6 +477,7 @@ The row data of the invitations table.
     },
     invitedBy: {
       type: "User",
+      typeDescriptionLink: "/docs/objects/user",
       required: true,
       description: "The user who sent the invitation.",
     },
@@ -515,6 +526,7 @@ The row data of the teamspaces table.
     },
     icon: {
       type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
       required: true,
       description: "Icon of the teamspace.",
     },
@@ -534,6 +546,7 @@ The row data of the teamspaces table.
     },
     ownedBy: {
       type: 'Pick<User, "name" | "avatarUrl">',
+      typeDescriptionLink: "/docs/objects/user",
       required: true,
       description: "User who owns the teamspace.",
     },

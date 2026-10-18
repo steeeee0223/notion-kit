@@ -151,6 +151,10 @@ const tree = useTree<T>(data, options);
     },
     onSelectionChange: {
       type: "(id: string) => void",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+      ],
+      returns: "void",
       description: "Called when selection changes",
     },
   }}
@@ -207,6 +211,7 @@ A slottable button to expand/collapse a node.
   type={{
     onToggle: {
       type: "() => void",
+      returns: "void",
       description: "A handler that is called when the node is toggled",
     },
   }}
@@ -232,11 +237,20 @@ Renders tree nodes recursively.
       description: "Array of node IDs to render",
     },
     renderItem: {
-      type: "(props) => JSX",
+      type: "(props: TreeListItemProps<T>) => React.ReactNode",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "TreeListItemProps<T>. The tree node, tree instance, and item state.",
+        },
+      ],
+      returns: "React.ReactNode",
       description: "Custom renderer for tree items (optional)",
     },
     renderEmpty: {
-      type: "(props) => JSX",
+      type: "() => React.ReactNode",
+      returns: "React.ReactNode",
       description: "Custom renderer for empty children (optional)",
     },
   }}

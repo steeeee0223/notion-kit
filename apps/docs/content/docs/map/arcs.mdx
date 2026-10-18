@@ -23,6 +23,7 @@ Builds curved `LineString` features between coordinate pairs and renders them as
   type={{
     data: {
       type: "MapArcDatum[]",
+      typeDescriptionLink: "/docs/map/arcs#maparcdatum",
       required: true,
       description: (
         <>
@@ -57,10 +58,25 @@ Builds curved `LineString` features between coordinate pairs and renders them as
     },
     onClick: {
       type: "(event: MapArcEvent) => void",
+      parameters: [
+        {
+          name: "event",
+          description: "MapArcEvent. The arc pointer event.",
+        },
+      ],
+      returns: "void",
       description: "Called when an arc is clicked.",
     },
     onHover: {
       type: "(event: MapArcEvent | null) => void",
+      parameters: [
+        {
+          name: "event",
+          description:
+            "MapArcEvent | null. The arc pointer event, or null when the pointer leaves the arc.",
+        },
+      ],
+      returns: "void",
       description: "Called when the hovered arc changes.",
     },
     interactive: {
@@ -117,6 +133,7 @@ Payload passed to `onClick` and `onHover` callbacks.
   type={{
     arc: {
       type: "MapArcDatum",
+      typeDescriptionLink: "/docs/map/arcs#maparcdatum",
       required: true,
       description: "The arc datum under the pointer.",
     },

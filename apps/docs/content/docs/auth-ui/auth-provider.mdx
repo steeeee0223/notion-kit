@@ -30,6 +30,10 @@ See [Notion Auth](https://notion-authn.vercel.app/) for a complete example.
     },
     redirect: {
       type: "(url: string) => void",
+      parameters: [
+        { name: "url", description: "string. The destination URL." },
+      ],
+      returns: "void",
       description: "Your URL redirect function.",
     },
   }}

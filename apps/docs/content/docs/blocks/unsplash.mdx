@@ -49,6 +49,13 @@ Use `onSelect` to receive the full Unsplash image object and decide which URL si
     },
     onSelect: {
       type: "(image: UnsplashImage) => void",
+      parameters: [
+        {
+          name: "image",
+          description: "UnsplashImage. The selected Unsplash image.",
+        },
+      ],
+      returns: "void",
       description: (
         <>
           {" "}

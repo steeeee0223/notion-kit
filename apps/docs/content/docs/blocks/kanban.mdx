@@ -82,7 +82,20 @@ Registers a draggable column. Accepts `Sortable.Item` props in addition to the f
       description: "Current column index.",
     },
     render: {
-      type: "ReactElement",
+      type: "ReactElement | ((props: HTMLProps, state: SortableItemState) => ReactElement)",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "HTMLProps. Props and ref to spread onto the rendered element.",
+        },
+        {
+          name: "state",
+          description:
+            "SortableItemState. The dragging, dropping, dragSource, and dropTarget flags.",
+        },
+      ],
+      returns: "ReactElement",
       description: "Replaces the default column element.",
     },
   }}
@@ -104,7 +117,19 @@ Vertical sortable list and droppable target for cards in the current column.
       description: "Overrides the default vertical card list layout.",
     },
     render: {
-      type: "ReactElement",
+      type: "ReactElement | ((props: HTMLProps, state: {}) => ReactElement)",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "HTMLProps. Props and ref to spread onto the rendered element.",
+        },
+        {
+          name: "state",
+          description: "{}. This list does not expose component state.",
+        },
+      ],
+      returns: "ReactElement",
       description: "Replaces the default list element.",
     },
   }}

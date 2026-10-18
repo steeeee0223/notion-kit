@@ -91,7 +91,7 @@ A provider that supplies adapters for each settings domain.
   type={{
     adapters: {
       type: "SettingsAdapters",
-      typeDescriptionLink: "#settings-adapters",
+      typeDescriptionLink: "#settingsadapters",
       required: true,
       description: "Domain-specific adapter objects for each settings group.",
     },
@@ -156,6 +156,8 @@ Each adapter is optional; only include the ones your application supports.
     },
     uploadFile: {
       type: "(file: File) => Promise<void>",
+      parameters: [{ name: "file", description: "File. The selected file." }],
+      returns: "Promise<void>",
       description: "File upload handler.",
     },
   }}
@@ -167,31 +169,64 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<AccountStore>",
+      returns: "Promise<AccountStore>",
       required: true,
       description: "Retrieve the account data.",
     },
     update: {
       type: '(data: Partial<Omit<AccountStore, "id">>) => Promise<void>',
+      parameters: [
+        {
+          name: "data",
+          description:
+            'Partial<Omit<AccountStore, "id">>. The record or fields for the operation.',
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Update account fields.",
     },
     delete: {
       type: "(data: { accountId: string; email: string }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ accountId: string; email: string }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Delete the account.",
     },
     sendEmailVerification: {
       type: "(email: string) => Promise<void>",
+      parameters: [
+        { name: "email", description: "string. The email address." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Send email verification.",
     },
     changePassword: {
       type: "(data: { newPassword: string; currentPassword: string }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ newPassword: string; currentPassword: string }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Change the password.",
     },
     setPassword: {
       type: "(newPassword: string) => Promise<void>",
+      parameters: [
+        { name: "newPassword", description: "string. The new password." },
+      ],
+      returns: "Promise<void>",
       description: "Set password (for OAuth-only accounts).",
     },
   }}
@@ -203,16 +238,22 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<SessionRow[]>",
+      returns: "Promise<SessionRow[]>",
       required: true,
       description: "Retrieve all active sessions.",
     },
     delete: {
       type: "(token: string) => Promise<void>",
+      parameters: [
+        { name: "token", description: "string. The session token to revoke." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Revoke a specific session.",
     },
     deleteAll: {
       type: "() => Promise<void>",
+      returns: "Promise<void>",
       required: true,
       description: "Revoke all sessions except current.",
     },
@@ -225,21 +266,35 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<Passkey[]>",
+      returns: "Promise<Passkey[]>",
       required: true,
       description: "Retrieve all passkeys.",
     },
     add: {
       type: "() => Promise<boolean>",
+      returns: "Promise<boolean>",
       required: true,
       description: "Add a new passkey. Returns success.",
     },
     update: {
       type: "(data: { id: string; name: string }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ id: string; name: string }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Rename a passkey.",
     },
     delete: {
       type: "(id: string) => Promise<void>",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Delete a passkey.",
     },
@@ -252,16 +307,31 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<Connection[]>",
+      returns: "Promise<Connection[]>",
       required: true,
       description: "Retrieve all connections.",
     },
     add: {
       type: "(strategy: ConnectionStrategy) => Promise<void>",
+      parameters: [
+        {
+          name: "strategy",
+          description: "ConnectionStrategy. The connection strategy.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Add a new connection.",
     },
     delete: {
       type: "(connection: Connection) => Promise<void>",
+      parameters: [
+        {
+          name: "connection",
+          description: "Connection. The connection to remove.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Remove a connection.",
     },
@@ -274,26 +344,44 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<WorkspaceStore>",
+      returns: "Promise<WorkspaceStore>",
       required: true,
       description: "Retrieve workspace data.",
     },
     update: {
       type: '(data: Partial<Omit<WorkspaceStore, "id">>) => Promise<void>',
+      parameters: [
+        {
+          name: "data",
+          description:
+            'Partial<Omit<WorkspaceStore, "id">>. The record or fields for the operation.',
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Update workspace.",
     },
     delete: {
       type: "(id: string) => Promise<void>",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Delete workspace.",
     },
     leave: {
       type: "(id: string) => Promise<void>",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Leave workspace.",
     },
     resetLink: {
       type: "() => Promise<void>",
+      returns: "Promise<void>",
       required: true,
       description: "Reset the invite link.",
     },
@@ -306,16 +394,33 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<Memberships>",
+      returns: "Promise<Memberships>",
       required: true,
       description: "Retrieve all members.",
     },
     update: {
       type: "(data: { id: string; memberId: string; role: Role }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ id: string; memberId: string; role: Role }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Update a member's role.",
     },
     delete: {
       type: "(data: { id: string; memberId: string }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ id: string; memberId: string }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Remove a member.",
     },
@@ -328,16 +433,29 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<Invitations>",
+      returns: "Promise<Invitations>",
       required: true,
       description: "Retrieve all invitations.",
     },
     add: {
       type: "(data: { emails: string[]; role: Role }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ emails: string[]; role: Role }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Send invitations.",
     },
     cancel: {
       type: "(invitationId: string) => Promise<void>",
+      parameters: [
+        { name: "invitationId", description: "string. The invitation ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Cancel an invitation.",
     },
@@ -350,41 +468,90 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<Teamspaces>",
+      returns: "Promise<Teamspaces>",
       required: true,
       description: "Retrieve all teamspaces.",
     },
     add: {
       type: "(data: { name: string; icon: IconData; description?: string; permission: TeamspacePermission }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ name: string; icon: IconData; description?: string; permission: TeamspacePermission }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Create a teamspace.",
     },
     update: {
       type: "(data: { id: string; name?: string; icon?: IconData; description?: string; permission?: TeamspacePermission }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ id: string; name?: string; icon?: IconData; description?: string; permission?: TeamspacePermission }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Update a teamspace.",
     },
     delete: {
       type: "(teamspaceId: string) => Promise<void>",
+      parameters: [
+        { name: "teamspaceId", description: "string. The teamspace ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Delete a teamspace.",
     },
     leave: {
       type: "(teamspaceId: string) => Promise<void>",
+      parameters: [
+        { name: "teamspaceId", description: "string. The teamspace ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Leave a teamspace.",
     },
     addMembers: {
       type: "(data: { teamspaceId: string; userIds: string[]; role: TeamspaceRole }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ teamspaceId: string; userIds: string[]; role: TeamspaceRole }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Add members.",
     },
     updateMember: {
       type: "(data: { teamspaceId: string; userId: string; role: TeamspaceRole }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ teamspaceId: string; userId: string; role: TeamspaceRole }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Update a member's role.",
     },
     deleteMember: {
       type: "(data: { teamspaceId: string; userId: string }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ teamspaceId: string; userId: string }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Remove a member.",
     },
@@ -397,21 +564,42 @@ Each adapter is optional; only include the ones your application supports.
   type={{
     getAll: {
       type: "() => Promise<Emojis>",
+      returns: "Promise<Emojis>",
       required: true,
       description: "Retrieve all emojis.",
     },
     add: {
       type: "(data: { name: string; file: File }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ name: string; file: File }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Add a custom emoji.",
     },
     update: {
       type: "(data: { id: string; name?: string; file?: File }) => Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{ id: string; name?: string; file?: File }. The record or fields for the operation.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Update a custom emoji.",
     },
     delete: {
       type: "(id: string) => Promise<void>",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Delete a custom emoji.",
     },
@@ -428,40 +616,76 @@ Each adapter is optional; only include the ones your application supports.
     },
     getAll: {
       type: "() => Promise<BillingStore>",
+      returns: "Promise<BillingStore>",
       required: true,
       description: "Retrieve billing data.",
     },
     upgrade: {
       type: "(plan: Plan, annual: boolean) => Promise<void>",
+      parameters: [
+        { name: "plan", description: "Plan. The target plan." },
+        {
+          name: "annual",
+          description: "boolean. Whether to use annual billing.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Upgrade the plan.",
     },
     changePlan: {
       type: "(plan: Plan) => Promise<void>",
+      parameters: [{ name: "plan", description: "Plan. The target plan." }],
+      returns: "Promise<void>",
       required: true,
       description: "Change the plan.",
     },
     editMethod: {
       type: "() => Promise<void>",
+      returns: "Promise<void>",
       required: true,
       description: "Edit payment method.",
     },
     editBilledTo: {
       type: "(address: BillingAddress & { businessName: string }) => Promise<void>",
+      parameters: [
+        {
+          name: "address",
+          description:
+            "BillingAddress & { businessName: string }. The billing address and business name.",
+        },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Edit billing address.",
     },
     editEmail: {
       type: "(email: string) => Promise<void>",
+      parameters: [
+        { name: "email", description: "string. The email address." },
+      ],
+      returns: "Promise<void>",
       required: true,
       description: "Edit billing email.",
     },
     toggleInvoiceEmails: {
       type: "(checked: boolean) => void",
+      parameters: [
+        { name: "checked", description: "boolean. The next checked state." },
+      ],
+      returns: "void",
       description: "Toggle invoice email receipts.",
     },
-    editVat: { type: "() => void", description: "Edit VAT number." },
-    viewInvoice: { type: "() => void", description: "View invoices." },
+    editVat: {
+      type: "() => void",
+      returns: "void",
+      description: "Edit VAT number.",
+    },
+    viewInvoice: {
+      type: "() => void",
+      returns: "void",
+      description: "View invoices.",
+    },
   }}
 />
 
@@ -511,6 +735,7 @@ A `SettingsSidebarTitle` extends the `<div>` element.
     },
     onClick: {
       type: "() => void",
+      returns: "void",
       description: "Handler that is called when the tab is clicked.",
     },
   }}

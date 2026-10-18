@@ -40,6 +40,10 @@ description: A drag-and-drop area for uploading a single image with file validat
     },
     onChange: {
       type: "(file?: File) => void | Promise<void>",
+      parameters: [
+        { name: "file?", description: "File. Optional. The selected file." },
+      ],
+      returns: "void | Promise<void>",
       description: "Handler that is called when a file is dropped or selected.",
     },
   }}

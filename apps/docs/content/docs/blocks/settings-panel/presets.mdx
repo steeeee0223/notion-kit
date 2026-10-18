@@ -39,6 +39,14 @@ A table to display all active sessions in the workspace.
     },
     onLogout: {
       type: "(deviceName: string, token: string) => void",
+      parameters: [
+        {
+          name: "deviceName",
+          description: "string. The name of the device being logged out.",
+        },
+        { name: "token", description: "string. The session token to revoke." },
+      ],
+      returns: "void",
       description: "Handler that is called when a session is revoked.",
     },
   }}
@@ -100,15 +108,34 @@ A table to display all members (except guests) in the workspace.
     search: { type: "string", description: "Current search string." },
     onUpdate: {
       type: "(data: {id: string, memberId: string, role: Role}) => void",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{id: string, memberId: string, role: Role}. The record or fields for the operation.",
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the role of the member is changed.",
     },
     onDelete: {
       type: "(data: MemberRow) => void",
+      parameters: [
+        {
+          name: "data",
+          description: "MemberRow. The record or fields for the operation.",
+        },
+      ],
+      returns: "void",
       description: "Handler that is called when the member is removed.",
     },
     onTeamspaceSelect: {
       type: "(teamspaceId: string) => void",
+      parameters: [
+        { name: "teamspaceId", description: "string. The teamspace ID." },
+      ],
+      returns: "void",
       description: "Handler that is called when the teamspace is selected.",
     },
   }}
@@ -143,11 +170,26 @@ A table to display all guests in the workspace.
     search: { type: "string", description: "Current search string." },
     onUpdate: {
       type: "(data: {id: string, memberId: string, role: Role}) => void",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{id: string, memberId: string, role: Role}. The record or fields for the operation.",
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the role of the guest is changed.",
     },
     onDelete: {
       type: "(data: GuestRow) => void",
+      parameters: [
+        {
+          name: "data",
+          description: "GuestRow. The record or fields for the operation.",
+        },
+      ],
+      returns: "void",
       description: "Handler that is called when the guest is removed.",
     },
   }}
@@ -181,6 +223,10 @@ A table to display all invitations in the workspace.
     },
     onCancel: {
       type: "(id: string) => void",
+      parameters: [
+        { name: "id", description: "string. The target record ID." },
+      ],
+      returns: "void",
       description: "Handler that is called when the invitation is canceled.",
     },
   }}
@@ -213,18 +259,47 @@ A table to display all teamspaces in the workspace.
     },
     onRowSelect: {
       type: "(teamspace: TeamspaceRow) => void | Promise<void>",
+      parameters: [
+        {
+          name: "teamspace",
+          description: "TeamspaceRow. The selected teamspace record.",
+        },
+      ],
+      returns: "void | Promise<void>",
       description: "Handler that is called when the teamspace is selected.",
     },
     onUpdate: {
       type: "(data: {id: string, name?: string, icon?: IconData, description?: string, permission?: TeamspacePermission}) => void | Promise<void>",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "{id: string, name?: string, icon?: IconData, description?: string, permission?: TeamspacePermission}. The record or fields for the operation.",
+        },
+      ],
+      returns: "void | Promise<void>",
       description: "Handler that is called when the teamspace is updated.",
     },
     onArchive: {
       type: "(teamspace: TeamspaceRow) => void | Promise<void>",
+      parameters: [
+        {
+          name: "teamspace",
+          description: "TeamspaceRow. The selected teamspace record.",
+        },
+      ],
+      returns: "void | Promise<void>",
       description: "Handler that is called when the teamspace is archived.",
     },
     onLeave: {
       type: "(teamspace: TeamspaceRow) => void | Promise<void>",
+      parameters: [
+        {
+          name: "teamspace",
+          description: "TeamspaceRow. The selected teamspace record.",
+        },
+      ],
+      returns: "void | Promise<void>",
       description: "Handler that is called when the user leaves the teamspace.",
     },
   }}

@@ -70,6 +70,7 @@ Use `TypeTable` for API references:
   type={{
     icon: {
       type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
       required: true,
       description: "The icon to display.",
     },
@@ -77,11 +78,28 @@ Use `TypeTable` for API references:
       type: "string",
       description: "Text shown if the image fails to load.",
     },
+    onSelect: {
+      type: "(id: string) => void",
+      description: "Called when an item is selected.",
+      parameters: [
+        { name: "id", description: "string. The selected item ID." },
+      ],
+      returns: "void",
+    },
   }}
 />
 ```
 
 Keep comparison and data tables in Markdown.
+
+For function props, document each parameter with `name` and `description`, and
+include `returns`, even for `void`. Omit `parameters` for functions with no
+arguments. Apply the same rules to callback type aliases and function variants
+of union types. Keep parameter types and optionality in their descriptions.
+
+Use `typeDescription` for a full signature when `type` shows a short name or type
+alias. Use `typeDescriptionLink` to link the displayed `type` to its reference;
+it does not require `typeDescription`.
 
 ## Check changes
 

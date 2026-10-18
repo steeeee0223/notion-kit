@@ -37,6 +37,7 @@ Creates a popup anchored to map coordinates and renders React content into the M
     },
     onClose: {
       type: "() => void",
+      returns: "void",
       description: "Called when the popup closes.",
     },
     closeButton: {
@@ -55,6 +56,7 @@ Renders the close button used inside coordinate popups and marker popups. You us
   type={{
     onClick: {
       type: "() => void",
+      returns: "void",
       required: true,
       description: "Called when the button is used.",
     },

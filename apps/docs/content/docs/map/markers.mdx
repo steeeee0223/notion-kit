@@ -37,23 +37,62 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
     },
     onClick: {
       type: "(event: MouseEvent) => void",
+      parameters: [
+        { name: "event", description: "MouseEvent. The mouse event." },
+      ],
+      returns: "void",
       description: "Called when the marker is clicked.",
     },
     onMouseEnter: {
       type: "(event: MouseEvent) => void",
+      parameters: [
+        { name: "event", description: "MouseEvent. The mouse event." },
+      ],
+      returns: "void",
       description: "Called when the pointer enters.",
     },
     onMouseLeave: {
       type: "(event: MouseEvent) => void",
+      parameters: [
+        { name: "event", description: "MouseEvent. The mouse event." },
+      ],
+      returns: "void",
       description: "Called when the pointer leaves.",
     },
     onDragStart: {
-      type: "(lngLat) => void",
+      type: "(lngLat: { lng: number; lat: number }) => void",
+      parameters: [
+        {
+          name: "lngLat",
+          description:
+            "{ lng: number; lat: number }. The current marker longitude and latitude.",
+        },
+      ],
+      returns: "void",
       description: "Called when dragging starts.",
     },
-    onDrag: { type: "(lngLat) => void", description: "Called while dragging." },
+    onDrag: {
+      type: "(lngLat: { lng: number; lat: number }) => void",
+      parameters: [
+        {
+          name: "lngLat",
+          description:
+            "{ lng: number; lat: number }. The current marker longitude and latitude.",
+        },
+      ],
+      returns: "void",
+      description: "Called while dragging.",
+    },
     onDragEnd: {
-      type: "(lngLat) => void",
+      type: "(lngLat: { lng: number; lat: number }) => void",
+      parameters: [
+        {
+          name: "lngLat",
+          description:
+            "{ lng: number; lat: number }. The current marker longitude and latitude.",
+        },
+      ],
+      returns: "void",
       description: "Called when dragging ends.",
     },
     draggable: {
@@ -112,6 +151,7 @@ Renders the close button used by map popups. It is exported for custom popup com
   type={{
     onClick: {
       type: "() => void",
+      returns: "void",
       required: true,
       description: "Called when the button is used.",
     },

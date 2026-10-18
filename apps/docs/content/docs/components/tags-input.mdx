@@ -43,10 +43,18 @@ description: Add and remove tags in a text field.
     },
     onTagsChange: {
       type: "(value: string[]) => void",
+      parameters: [
+        { name: "value", description: "string[]. The updated tags." },
+      ],
+      returns: "void",
       description: "Handler that is called when the tags are updated.",
     },
     onInputChange: {
       type: "(value: string) => void",
+      parameters: [
+        { name: "value", description: "string. The updated input text." },
+      ],
+      returns: "void",
       description: "Handler that is called when the input value changes.",
     },
   }}

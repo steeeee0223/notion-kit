@@ -45,6 +45,10 @@ description: A login form with email and OAuth sign-in.
     },
     onModeChange: {
       type: "(mode: LoginMode) => void",
+      parameters: [
+        { name: "mode", description: "LoginMode. The next login mode." },
+      ],
+      returns: "void",
       description: "Handler that is called when the mode of the form changes.",
     },
   }}

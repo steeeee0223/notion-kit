@@ -55,6 +55,8 @@ props and the controlled value props below.
     },
     onValueChange: {
       type: "(value: TabValue) => void",
+      parameters: [{ name: "value", description: "TabValue. The new value." }],
+      returns: "void",
       description: "Handler called when a tab is selected.",
     },
     orientation: {

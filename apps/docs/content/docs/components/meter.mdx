@@ -53,6 +53,14 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
     },
     getAriaValueText: {
       type: "(formattedValue: string, value: number) => string",
+      parameters: [
+        {
+          name: "formattedValue",
+          description: "string. The formatted meter value.",
+        },
+        { name: "value", description: "number. The numeric meter value." },
+      ],
+      returns: "string",
       description:
         "Returns the human-readable text alternative for the current value.",
     },
@@ -92,6 +100,14 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
   type={{
     children: {
       type: "null | ((formattedValue: string, value: number) => ReactNode)",
+      parameters: [
+        {
+          name: "formattedValue",
+          description: "string. The formatted meter value.",
+        },
+        { name: "value", description: "number. The numeric meter value." },
+      ],
+      returns: "ReactNode",
       description: "Custom render function for value.",
     },
   }}

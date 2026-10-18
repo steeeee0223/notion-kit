@@ -66,7 +66,15 @@ Wraps `DragDropProvider` and provides orientation, disabled state, sensors, and 
       description: "Disables sortable items inside the root.",
     },
     sensors: {
-      type: 'DragDropProvider["sensors"]',
+      type: 'React.ComponentProps<typeof DragDropProvider>["sensors"]',
+      typeDescription: "Sensors | ((defaults: Sensors) => Sensors)",
+      parameters: [
+        {
+          name: "defaults",
+          description: "Sensors. The default dnd-kit sensor list.",
+        },
+      ],
+      returns: "Sensors",
       description: "Custom dnd-kit sensors. Defaults to pointer/touch sensors.",
     },
   }}
@@ -83,7 +91,19 @@ Renders the sortable item container. Accepts standard `<div>` props and Base UI 
       description: "Overrides the root orientation for this list.",
     },
     render: {
-      type: "ReactElement",
+      type: "ReactElement | ((props: HTMLProps, state: {}) => ReactElement)",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "HTMLProps. Props and ref to spread onto the rendered element.",
+        },
+        {
+          name: "state",
+          description: "{}. This list does not expose component state.",
+        },
+      ],
+      returns: "ReactElement",
       description: (
         <>
           {" "}
@@ -116,7 +136,20 @@ Registers one draggable item. Accepts dnd-kit sortable options in addition to re
       description: "Optional group id for grouped sortable layouts.",
     },
     render: {
-      type: "(state) => ReactNode",
+      type: "ReactElement | ((props: HTMLProps, state: SortableItemState) => ReactElement)",
+      parameters: [
+        {
+          name: "props",
+          description:
+            "HTMLProps. Props and ref to spread onto the rendered element.",
+        },
+        {
+          name: "state",
+          description:
+            "SortableItemState. The dragging, dropping, dragSource, and dropTarget flags.",
+        },
+      ],
+      returns: "ReactElement",
       description: "Custom item render with drag/drop state.",
     },
   }}
@@ -138,7 +171,17 @@ Renders dnd-kit's `DragOverlay` in a portal. Use it when you need a custom drag 
       description: "Portal target for the drag overlay.",
     },
     dropAnimation: {
-      type: 'DragOverlay["dropAnimation"]',
+      type: 'React.ComponentProps<typeof DragOverlay>["dropAnimation"]',
+      typeDescription:
+        "DropAnimationOptions | ((context: { source: Draggable; element: Element; feedbackElement: Element; placeholder: Element | null | undefined; translate: Coordinates; moved: boolean }) => Promise<void> | void) | null",
+      parameters: [
+        {
+          name: "context",
+          description:
+            "The drag source, rendered element, feedback element, placeholder, translation, and whether the source moved.",
+        },
+      ],
+      returns: "Promise<void> | void",
       default: "null",
       description: "Drop animation configuration.",
     },

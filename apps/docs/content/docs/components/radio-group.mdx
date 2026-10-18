@@ -104,6 +104,17 @@ The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
     },
     onValueChange: {
       type: 'RadioGroupPrimitive.Props["onValueChange"]',
+      typeDescription:
+        "(value: Value, eventDetails: RadioGroupPrimitive.ChangeEventDetails) => void",
+      parameters: [
+        { name: "value", description: "Value. The new value." },
+        {
+          name: "eventDetails",
+          description:
+            "RadioGroupPrimitive.ChangeEventDetails. The event reason and controls supplied by Base UI.",
+        },
+      ],
+      returns: "void",
       description:
         "Called with the selected value and event details when the selection changes.",
     },
@@ -132,6 +143,16 @@ The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
     },
     inputRef: {
       type: "React.Ref<HTMLInputElement>",
+      typeDescription:
+        "React.RefObject<HTMLInputElement | null> | ((instance: HTMLInputElement | null) => void | (() => void)) | null",
+      parameters: [
+        {
+          name: "instance",
+          description:
+            "HTMLInputElement | null. The hidden input element, or null when its ref is detached without a cleanup function.",
+        },
+      ],
+      returns: "void | (() => void)",
       description: "A ref to the hidden input element.",
     },
   }}
@@ -163,6 +184,16 @@ The value type below uses `RadioPrimitive` for `Radio` from `@base-ui/react/radi
     },
     inputRef: {
       type: "React.Ref<HTMLInputElement>",
+      typeDescription:
+        "React.RefObject<HTMLInputElement | null> | ((instance: HTMLInputElement | null) => void | (() => void)) | null",
+      parameters: [
+        {
+          name: "instance",
+          description:
+            "HTMLInputElement | null. The hidden input element, or null when its ref is detached without a cleanup function.",
+        },
+      ],
+      returns: "void | (() => void)",
       description: "A ref to this item's hidden input.",
     },
   }}

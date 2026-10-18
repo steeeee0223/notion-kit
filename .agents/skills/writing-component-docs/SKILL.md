@@ -49,7 +49,7 @@ Do not hand-edit these generated outputs:
 4. For a new example, add its name to `registryIndex`. Use a name that matches a group in `build-stories.ts`. If the component needs a new group, update the script's `groups` list.
 5. Write MDX in this order: frontmatter, `RegistryStory`, a short usage snippet, Installation, Anatomy when useful, Examples, API reference.
 6. Use a registered example name for both `RegistryStory.name` and `Installation.registryName`. Set `Installation.packages` to the packages needed for the usage snippet.
-7. Describe public props with `TypeTable`. Copy exact types, required status, and defaults from the implementation. Omit defaults the component does not define.
+7. Describe public props with `TypeTable`. Follow the TypeTable rules below. Copy exact types, required status, and defaults from the implementation. Omit defaults the component does not define.
 8. Run the checks below and inspect the affected pages in the browser.
 
 ## Write the MDX page
@@ -89,6 +89,52 @@ import { Button } from "@notion-kit/ui/primitives";
 ````
 
 Extend the API reference to cover the component's public props. Inside `TypeTable` strings, union pipes need no escaping. Escape pipes as `\|` in Markdown tables.
+
+### Document TypeTable props
+
+Use `description` to explain what the prop does. Keep the displayed type in `type`.
+When `type` shows a short name or alias, use `typeDescription` for the full signature.
+For `React.MouseEventHandler<HTMLElement>`, set `typeDescription` to `(event: React.MouseEvent<HTMLElement>) => void`.
+
+For function props, apply these rules:
+
+- Add `parameters` in declaration order. Give each parameter a `name` and `description`.
+- Include the parameter's type, purpose, and optionality in its description.
+- For functions with no arguments, omit `parameters`.
+- Add `returns` with the exact return type, including `void`, promises, and unions.
+- For callback aliases, inspect the underlying signature before adding parameter and return information.
+- For unions that accept a function, preserve the union in `type` or `typeDescription`. Describe the function variant with `parameters` and `returns`.
+
+For named types, use `typeDescriptionLink` to link the displayed `type` to its reference.
+This field works without `typeDescription`. It does not link the expanded `typeDescription` text.
+Use the definition's page or heading anchor. Check the rendered anchor before adding the link.
+
+For example, document a page-selection callback and link its `Page` type:
+
+```mdx
+<TypeTable
+	type={{
+		page: {
+			type: "Page",
+			typeDescriptionLink: "/docs/objects/page",
+			description: "The selected page.",
+		},
+		onSelect: {
+			type: "(page: Page) => void",
+			parameters: [
+				{ name: "page", description: "Page. The selected page." },
+			],
+			returns: "void",
+			description: "Called when a page is selected.",
+		},
+		onClose: {
+			type: "() => void",
+			returns: "void",
+			description: "Called when the popup closes.",
+		},
+	}}
+/>
+```
 
 ## Add a development story when needed
 
@@ -133,5 +179,9 @@ Handle generator failures at their source:
 - If a check fails, report the command and error. Follow the diagnostics in `AGENTS.md` before changing the package-manager setup.
 
 Before claiming the page works, open the authored `/docs/...` page and exercise its previews. Registry frames use `/story/registry/<name>/story`. Check `/registry/<group>` for new registry examples and `/development/<path>` for new development stories. For installation changes, inspect `/registry/<name>.json` after the build.
+
+For TypeTable changes, expand the affected rows. Check parameter order, optionality, and return types against the source.
+For callback aliases and function unions, check the full signature in the expanded row.
+Follow each changed type link and confirm that its page and heading exist.
 
 Confirm that previews load, controls respond, code matches the example, and installation tabs show the intended commands. Report any checks you could not run.

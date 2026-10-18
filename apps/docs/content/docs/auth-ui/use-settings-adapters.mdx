@@ -65,7 +65,7 @@ function Settings() {
   It should be used within the `<AuthProvider>` context.
 </Callout>
 
-Returns a [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters) object containing domain-specific adapters for account, sessions, passkeys, connections, workspace, people, invitations, teamspaces, emoji, and billing.
+Returns a [`SettingsAdapters`](/docs/blocks/settings-panel#settingsadapters) object containing domain-specific adapters for account, sessions, passkeys, connections, workspace, people, invitations, teamspaces, emoji, and billing.
 
 It also provides an `uploadFile` handler for workspace icon uploads via Supabase Storage.
 
@@ -122,7 +122,7 @@ You can also use individual adapter hooks for more granular control:
 
 See schema definitions for:
 
-- [`SettingsAdapters`](/docs/blocks/settings-panel#settings-adapters)
+- [`SettingsAdapters`](/docs/blocks/settings-panel#settingsadapters)
 - [`AccountStore`](/docs/blocks/settings-panel/objects#account-store)
 - [`WorkspaceStore`](/docs/blocks/settings-panel/objects#workspace-store)
 - [`BillingStore`](/docs/blocks/settings-panel/objects#billing-store)

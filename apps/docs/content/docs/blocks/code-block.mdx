@@ -136,10 +136,18 @@ The root component. Accepts all standard `<div>` props in addition to the follow
     },
     defaultValue: {
       type: "Partial<CodeBlockValue>",
+      typeDescriptionLink: "/docs/blocks/code-block#type-codeblockvalue",
       description: "Default value for uncontrolled mode.",
     },
     onChange: {
       type: "(value: CodeBlockValue) => void",
+      parameters: [
+        {
+          name: "value",
+          description: "CodeBlockValue. The updated code block value.",
+        },
+      ],
+      returns: "void",
       description: "Callback when value changes (controlled mode).",
     },
     readonly: {

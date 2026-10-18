@@ -150,15 +150,29 @@ The Base UI autocomplete root. It owns the input value, filtering, highlight sta
     },
     itemToStringValue: {
       type: "(item: Item) => string",
+      parameters: [{ name: "item", description: "Item. The collection item." }],
+      returns: "string",
       description: "Converts object items to searchable text.",
     },
     value: { type: "string", description: "Controlled input value." },
     onValueChange: {
       type: "(value: string) => void",
+      parameters: [{ name: "value", description: "string. The new value." }],
+      returns: "void",
       description: "Handler called when the input value changes.",
     },
     filter: {
-      type: "Base UI filter function",
+      type: "null | ((item: Item, query: string, itemToString?: (item: Item) => string) => boolean)",
+      parameters: [
+        { name: "item", description: "Item. The collection item." },
+        { name: "query", description: "string. The search text." },
+        {
+          name: "itemToString?",
+          description:
+            "(item: Item) => string. Optional. Converts an item to searchable text.",
+        },
+      ],
+      returns: "boolean",
       description:
         "Optional custom filter. Prefer the internal filter by default.",
     },
@@ -231,12 +245,32 @@ The popup surface. Floating content is positioned by Base UI; inline content ren
       description: "Preferred alignment for floating content.",
     },
     sideOffset: {
-      type: "number",
+      type: "number | OffsetFunction",
+      typeDescription:
+        "number | ((data: { side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }) => number)",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "The resolved side, alignment, anchor dimensions, and popup dimensions.",
+        },
+      ],
+      returns: "number",
       default: "4",
       description: "Distance from the anchor for floating content.",
     },
     alignOffset: {
-      type: "number",
+      type: "number | OffsetFunction",
+      typeDescription:
+        "number | ((data: { side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }) => number)",
+      parameters: [
+        {
+          name: "data",
+          description:
+            "The resolved side, alignment, anchor dimensions, and popup dimensions.",
+        },
+      ],
+      returns: "number",
       description: "Alignment offset for floating content.",
     },
     collisionPadding: {
@@ -244,7 +278,10 @@ The popup surface. Floating content is positioned by Base UI; inline content ren
       description: "Padding used when avoiding viewport collisions.",
     },
     anchor: {
-      type: "Base UI anchor",
+      type: 'AutocompletePrimitive.Positioner.Props["anchor"]',
+      typeDescription:
+        "Element | null | VirtualElement | React.RefObject<Element | null> | (() => Element | VirtualElement | null)",
+      returns: "Element | VirtualElement | null",
       description: "Custom anchor for floating content.",
     },
   }}
@@ -257,7 +294,12 @@ The scrollable list viewport. When the root receives grouped items, pass a rende
 <TypeTable
   type={{
     children: {
-      type: "React.ReactNode | ((item, index) => ReactNode)",
+      type: "React.ReactNode | ((item: Item, index: number) => ReactNode)",
+      parameters: [
+        { name: "item", description: "Item. The collection item." },
+        { name: "index", description: "number. The zero-based item index." },
+      ],
+      returns: "ReactNode",
       description: "Static content or a Base UI item/group renderer.",
     },
   }}
@@ -270,7 +312,12 @@ Renders the filtered items from the nearest root or group.
 <TypeTable
   type={{
     children: {
-      type: "(item, index) => ReactNode",
+      type: "(item: Item, index: number) => ReactNode",
+      parameters: [
+        { name: "item", description: "Item. The collection item." },
+        { name: "index", description: "number. The zero-based item index." },
+      ],
+      returns: "ReactNode",
       description: "Renderer for each filtered item.",
     },
   }}
@@ -332,6 +379,14 @@ A single selectable autocomplete row. Extends the shared `MenuItem` visual props
     disabled: { type: "boolean", description: "Whether the item is disabled." },
     onClick: {
       type: "React.MouseEventHandler<HTMLElement>",
+      typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
+      parameters: [
+        {
+          name: "event",
+          description: "React.MouseEvent<HTMLElement>. The mouse event.",
+        },
+      ],
+      returns: "void",
       description: "Handler called when the item is clicked.",
     },
   }}

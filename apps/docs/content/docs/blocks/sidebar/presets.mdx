@@ -51,20 +51,27 @@ A `WorkspaceSwitcher` is a dropdown menu that controls workspaces and user's log
     },
     onSelect: {
       type: "(id: string) => void",
+      parameters: [
+        { name: "id", description: "string. The target workspace ID." },
+      ],
+      returns: "void",
       description: "Handler that is called when a workspace is selected.",
     },
     onCreateAccount: {
       type: "() => void",
+      returns: "void",
       description:
         'Handler that is called when the "Create Account" button is clicked.',
     },
     onCreateWorkspace: {
       type: "() => void",
+      returns: "void",
       description:
         'Handler that is called when the "Create or Join Workspace" button is clicked.',
     },
     onLogout: {
       type: "() => void",
+      returns: "void",
       description:
         'Handler that is called when the "Logout" button is clicked.',
     },
@@ -110,20 +117,41 @@ A page list is a component `DocList` showing a group of pages.
     },
     onSelect: {
       type: "(page: Page) => void",
+      parameters: [{ name: "page", description: "Page. The selected page." }],
+      returns: "void",
       description: "Handler that is called when a page is active.",
     },
     onCreate: {
       type: "(group: string, parentId?: string) => void",
+      parameters: [
+        { name: "group", description: "string. The page group identifier." },
+        {
+          name: "parentId?",
+          description:
+            "string. Optional. The parent page ID, when creating a nested page.",
+        },
+      ],
+      returns: "void",
       description:
         'Handler that is called when the "Create" button is triggered in this group.',
     },
     onDuplicate: {
       type: "(id: string) => void",
+      parameters: [{ name: "id", description: "string. The target page ID." }],
+      returns: "void",
       description:
         'Handler that is called when the "Duplicate" action is triggered.',
     },
     onUpdate: {
       type: "(id: string, data: UpdatePageParams) => void",
+      parameters: [
+        { name: "id", description: "string. The target page ID." },
+        {
+          name: "data",
+          description: "UpdatePageParams. The page fields to update.",
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the page data or page state is updated.",
     },
@@ -160,20 +188,41 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
     },
     onSelect: {
       type: "(page: Page) => void",
+      parameters: [{ name: "page", description: "Page. The selected page." }],
+      returns: "void",
       description: "Handler that is called when a page is active.",
     },
     onCreate: {
       type: "(group: string, parentId?: string) => void",
+      parameters: [
+        { name: "group", description: "string. The page group identifier." },
+        {
+          name: "parentId?",
+          description:
+            "string. Optional. The parent page ID, when creating a nested page.",
+        },
+      ],
+      returns: "void",
       description:
         'Handler that is called when the "Create" button is triggered in this group.',
     },
     onDuplicate: {
       type: "(id: string) => void",
+      parameters: [{ name: "id", description: "string. The target page ID." }],
+      returns: "void",
       description:
         'Handler that is called when the "Duplicate" action is triggered.',
     },
     onUpdate: {
       type: "(id: string, data: UpdatePageParams) => void",
+      parameters: [
+        { name: "id", description: "string. The target page ID." },
+        {
+          name: "data",
+          description: "UpdatePageParams. The page fields to update.",
+        },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the page data or page state is updated.",
     },
@@ -207,6 +256,10 @@ A `SearchCommand` is a command dialog for searching all non-archived pages.
     },
     onOpenChange: {
       type: "(open: boolean) => void",
+      parameters: [
+        { name: "open", description: "boolean. The next open state." },
+      ],
+      returns: "void",
       description: "Called when the search dialog opens or closes.",
     },
     pages: {
@@ -217,10 +270,13 @@ A `SearchCommand` is a command dialog for searching all non-archived pages.
     },
     onSelect: {
       type: "(page: Page) => void",
+      parameters: [{ name: "page", description: "Page. The selected page." }],
+      returns: "void",
       description: "Handler that is called when a page is selected.",
     },
     onOpenTrash: {
       type: "() => void",
+      returns: "void",
       description:
         'Handler that is called when the "Open in Trash" button is clicked.',
     },
@@ -265,20 +321,30 @@ A `TrashBox` is a popover menu for searching archived pages.
     },
     onOpenChange: {
       type: "(open: boolean) => void",
+      parameters: [
+        { name: "open", description: "boolean. The next open state." },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the open state of the trash box changes.",
     },
     onSelect: {
       type: "(page: Page) => void",
+      parameters: [{ name: "page", description: "Page. The selected page." }],
+      returns: "void",
       description: "Handler that is called when a page is selected.",
     },
     onRestore: {
       type: "(id: string) => void",
+      parameters: [{ name: "id", description: "string. The target page ID." }],
+      returns: "void",
       description:
         'Handler that is called when the "Restore" button of the page is clicked.',
     },
     onDelete: {
       type: "(id: string) => void",
+      parameters: [{ name: "id", description: "string. The target page ID." }],
+      returns: "void",
       description:
         'Handler that is called when the "Delete" button of the page is clicked.',
     },

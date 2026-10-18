@@ -62,6 +62,10 @@ links:
     },
     onOpenChange: {
       type: "(open: boolean) => void",
+      parameters: [
+        { name: "open", description: "boolean. The next open state." },
+      ],
+      returns: "void",
       description:
         "Handler that is called when the open state of the sidebar changes.",
     },
