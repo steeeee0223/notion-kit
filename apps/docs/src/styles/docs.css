@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Compile UI sources with docs so responsive utilities keep their cascade order. */
+@import "../../../../packages/ui/src/style.css";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 @import "@fumadocs/story/css/preset.css";

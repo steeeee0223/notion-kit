@@ -471,14 +471,6 @@ export const hooksUseRect = {
   ),
 };
 
-export const iconsNotion = {
-  IconGallery: lazy(() =>
-    import("./development/icons/notion.examples").then((module) => ({
-      default: module.IconGallery,
-    })),
-  ),
-};
-
 export const mapMapArc = {
   CustomStylingExample: lazy(() =>
     import("./development/map/map-arc.examples").then((module) => ({

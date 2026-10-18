@@ -49,7 +49,11 @@ export default function Page() {
       githubUrl="https://github.com/steeeee0223/notion-kit"
       tabs={[...sections]}
     >
-      <DocsPage toc={content.toc} full={page.data.full}>
+      <DocsPage
+        toc={content.toc}
+        full={page.data.full}
+        className={page.data.full ? "max-w-none" : undefined}
+      >
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription>{page.data.description}</DocsDescription>
         {page.data.links && (
