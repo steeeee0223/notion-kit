@@ -58,9 +58,9 @@ function AutocompleteInput({
     <div
       data-slot="autocomplete-input-wrapper"
       className={cn(
-        "sticky top-0 flex min-w-0 flex-col bg-popover",
+        "sticky top-0 z-10 flex min-w-0 flex-col bg-inherit",
         variant === "flat"
-          ? "z-10 h-12 w-full shrink-0 grow-0 border-b px-1"
+          ? "h-12 w-full shrink-0 grow-0 border-b px-1"
           : "flex-auto px-3 pt-3 pb-2",
       )}
     >

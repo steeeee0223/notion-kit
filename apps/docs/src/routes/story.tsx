@@ -50,7 +50,7 @@ export default function StoryPage({ loaderData }: Route.ComponentProps) {
   const Frame = loaderData.story.Frame;
   return (
     <I18nProvider language="en">
-      <main className="flex min-h-screen w-full items-center justify-center p-6">
+      <main className="flex min-h-screen w-full items-center justify-center bg-main p-6">
         <Frame />
       </main>
       <Toaster />
