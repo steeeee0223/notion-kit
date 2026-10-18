@@ -36,7 +36,7 @@ Do not hand-edit these generated outputs:
 
 - `apps/docs/content/registry/`
 - `apps/docs/content/development/`
-- `apps/docs/src/stories/registry.lazy.tsx`
+- `apps/docs/src/stories/registry.story.tsx`
 - `apps/docs/public/registry/`
 
 `apps/docs/src/stories/development.lazy.tsx` is maintained manually. It is not a generated output.

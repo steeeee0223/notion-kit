@@ -1,13 +1,5 @@
 import { lazy } from "react";
 
-export const uiRadioGroup = {
-  DefaultExample: lazy(() =>
-    import("./development/ui/radio-group.examples").then((module) => ({
-      default: module.DefaultExample,
-    })),
-  ),
-};
-
 export const authAcceptInvitationForm = {
   DefaultExample: lazy(() =>
     import("./development/auth/accept-invitation-form.examples").then(

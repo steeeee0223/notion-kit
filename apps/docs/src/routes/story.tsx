@@ -5,7 +5,7 @@ import { I18nProvider } from "@notion-kit/i18n";
 import { registryIndex } from "@notion-kit/registry";
 import { Toaster } from "@notion-kit/ui/primitives";
 
-import { buildRegistryStory } from "@/lib/registry-story";
+import { registryStories } from "@/stories/registry.story";
 import styles from "@/styles/story.css?url";
 
 import type { Route } from "./+types/story";
@@ -29,7 +29,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const index = registryName.safeParse(segments[1]);
     if (!index.success)
       throw new Response("Not Found", { status: 404, statusText: "Not Found" });
-    return { story: buildRegistryStory(index.data) };
+    return { story: registryStories[index.data] };
   }
   const load = modules[`../stories/${segments.join("/")}.story.tsx`];
   if (!load || !exportName)

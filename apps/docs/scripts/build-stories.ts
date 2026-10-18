@@ -52,15 +52,36 @@ const groups = [
 const output = new Map<string, string>();
 const page = (title: string, body: string) =>
   `---\ntitle: ${title}\n---\n\n${body}`;
+const exportName = (name: string) =>
+  name.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 
 output.set(
-  "src/stories/registry.lazy.tsx",
-  `import type { ComponentType } from 'react';
+  "src/stories/registry.story.tsx",
+  `import { lazy } from 'react';
+import type { Story } from '@fumadocs/story/vite/client';
 import type { RegistryIndex } from '@notion-kit/registry';
+import { defineStory } from '@/lib/story';
 
-export const registryExamples: Record<RegistryIndex, () => Promise<{ default: ComponentType }>> = {
-${registryIndex.map((name) => `  '${name}': () => import('@notion-kit/registry/${name}'),`).join("\n")}
-};`,
+${registryIndex
+  .map((name) => {
+    const height =
+      /^(calendar|settings-panel|sidebar|table-view|timeline|kanban)/.test(name)
+        ? 800
+        : name.startsWith("map-")
+          ? 600
+          : 320;
+    return `export const ${exportName(name)} = defineStory({
+  Component: lazy(() => import('@notion-kit/registry/${name}')),
+  displayName: ${JSON.stringify(storyTitle(name))},
+  args: { initial: {} },
+  frame: { src: '/story/registry/${name}/story', height: ${height} },
+});`;
+  })
+  .join("\n\n")}
+
+export const registryStories = {
+${registryIndex.map((name) => `  '${name}': ${exportName(name)},`).join("\n")}
+} satisfies Record<RegistryIndex, Story>;`,
 );
 
 const ungrouped = new Set<string>(registryIndex);
