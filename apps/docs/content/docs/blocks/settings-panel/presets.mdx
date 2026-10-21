@@ -42,9 +42,14 @@ A table to display all active sessions in the workspace.
       parameters: [
         {
           name: "deviceName",
-          description: "string. The name of the device being logged out.",
+          type: "string",
+          description: "The name of the device being logged out.",
         },
-        { name: "token", description: "string. The session token to revoke." },
+        {
+          name: "token",
+          type: "string",
+          description: "The session token to revoke.",
+        },
       ],
       returns: "void",
       description: "Handler that is called when a session is revoked.",
@@ -105,14 +110,17 @@ A table to display all members (except guests) in the workspace.
       type: "string",
       description: "Unique identifier of the current user.",
     },
-    search: { type: "string", description: "Current search string." },
+    search: {
+      type: "string",
+      description: "Current search string.",
+    },
     onUpdate: {
       type: "(data: {id: string, memberId: string, role: Role}) => void",
       parameters: [
         {
           name: "data",
-          description:
-            "{id: string, memberId: string, role: Role}. The record or fields for the operation.",
+          type: "{id: string, memberId: string, role: Role}",
+          description: "The record or fields for the operation.",
         },
       ],
       returns: "void",
@@ -124,7 +132,8 @@ A table to display all members (except guests) in the workspace.
       parameters: [
         {
           name: "data",
-          description: "MemberRow. The record or fields for the operation.",
+          type: "MemberRow",
+          description: "The record or fields for the operation.",
         },
       ],
       returns: "void",
@@ -133,7 +142,11 @@ A table to display all members (except guests) in the workspace.
     onTeamspaceSelect: {
       type: "(teamspaceId: string) => void",
       parameters: [
-        { name: "teamspaceId", description: "string. The teamspace ID." },
+        {
+          name: "teamspaceId",
+          type: "string",
+          description: "The teamspace ID.",
+        },
       ],
       returns: "void",
       description: "Handler that is called when the teamspace is selected.",
@@ -167,14 +180,17 @@ A table to display all guests in the workspace.
       required: true,
       description: "Current guests.",
     },
-    search: { type: "string", description: "Current search string." },
+    search: {
+      type: "string",
+      description: "Current search string.",
+    },
     onUpdate: {
       type: "(data: {id: string, memberId: string, role: Role}) => void",
       parameters: [
         {
           name: "data",
-          description:
-            "{id: string, memberId: string, role: Role}. The record or fields for the operation.",
+          type: "{id: string, memberId: string, role: Role}",
+          description: "The record or fields for the operation.",
         },
       ],
       returns: "void",
@@ -186,7 +202,8 @@ A table to display all guests in the workspace.
       parameters: [
         {
           name: "data",
-          description: "GuestRow. The record or fields for the operation.",
+          type: "GuestRow",
+          description: "The record or fields for the operation.",
         },
       ],
       returns: "void",
@@ -224,7 +241,11 @@ A table to display all invitations in the workspace.
     onCancel: {
       type: "(id: string) => void",
       parameters: [
-        { name: "id", description: "string. The target record ID." },
+        {
+          name: "id",
+          type: "string",
+          description: "The target record ID.",
+        },
       ],
       returns: "void",
       description: "Handler that is called when the invitation is canceled.",
@@ -262,7 +283,8 @@ A table to display all teamspaces in the workspace.
       parameters: [
         {
           name: "teamspace",
-          description: "TeamspaceRow. The selected teamspace record.",
+          type: "TeamspaceRow",
+          description: "The selected teamspace record.",
         },
       ],
       returns: "void | Promise<void>",
@@ -273,8 +295,8 @@ A table to display all teamspaces in the workspace.
       parameters: [
         {
           name: "data",
-          description:
-            "{id: string, name?: string, icon?: IconData, description?: string, permission?: TeamspacePermission}. The record or fields for the operation.",
+          type: "{id: string, name?: string, icon?: IconData, description?: string, permission?: TeamspacePermission}",
+          description: "The record or fields for the operation.",
         },
       ],
       returns: "void | Promise<void>",
@@ -285,7 +307,8 @@ A table to display all teamspaces in the workspace.
       parameters: [
         {
           name: "teamspace",
-          description: "TeamspaceRow. The selected teamspace record.",
+          type: "TeamspaceRow",
+          description: "The selected teamspace record.",
         },
       ],
       returns: "void | Promise<void>",
@@ -296,7 +319,8 @@ A table to display all teamspaces in the workspace.
       parameters: [
         {
           name: "teamspace",
-          description: "TeamspaceRow. The selected teamspace record.",
+          type: "TeamspaceRow",
+          description: "The selected teamspace record.",
         },
       ],
       returns: "void | Promise<void>",

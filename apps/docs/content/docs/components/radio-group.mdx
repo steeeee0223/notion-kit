@@ -96,22 +96,32 @@ The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
   type={{
     value: {
       type: 'RadioGroupPrimitive.Props["value"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-value",
       description: "The controlled selected value.",
     },
     defaultValue: {
       type: 'RadioGroupPrimitive.Props["defaultValue"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-defaultValue",
       description: "The initial selected value of an uncontrolled group.",
     },
     onValueChange: {
       type: 'RadioGroupPrimitive.Props["onValueChange"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-onValueChange",
       typeDescription:
         "(value: Value, eventDetails: RadioGroupPrimitive.ChangeEventDetails) => void",
       parameters: [
-        { name: "value", description: "Value. The new value." },
+        {
+          name: "value",
+          type: "Value",
+          description: "The new value.",
+        },
         {
           name: "eventDetails",
-          description:
-            "RadioGroupPrimitive.ChangeEventDetails. The event reason and controls supplied by Base UI.",
+          type: "RadioGroupPrimitive.ChangeEventDetails",
+          description: "The event reason and controls supplied by Base UI.",
         },
       ],
       returns: "void",
@@ -120,36 +130,49 @@ The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
     },
     name: {
       type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-name",
       description: "The field name used in form submissions.",
     },
     form: {
       type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-form",
       description: "The id of the form that owns the radio inputs.",
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-disabled",
       default: "false",
       description: "Disables interaction with the entire group.",
     },
     readOnly: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-readOnly",
       default: "false",
       description: "Prevents changes to the selected value.",
     },
     required: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-required",
       default: "false",
       description: "Requires a selection before form submission.",
     },
     inputRef: {
       type: "React.Ref<HTMLInputElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-inputRef",
       typeDescription:
         "React.RefObject<HTMLInputElement | null> | ((instance: HTMLInputElement | null) => void | (() => void)) | null",
       parameters: [
         {
           name: "instance",
+          type: "HTMLInputElement | null",
           description:
-            "HTMLInputElement | null. The hidden input element, or null when its ref is detached without a cleanup function.",
+            "The hidden input element, or null when its ref is detached without a cleanup function.",
         },
       ],
       returns: "void | (() => void)",
@@ -167,30 +190,41 @@ The value type below uses `RadioPrimitive` for `Radio` from `@base-ui/react/radi
   type={{
     value: {
       type: 'RadioPrimitive.Root.Props["value"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-value",
       required: true,
       description: "The unique value that identifies this option.",
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-disabled",
       description: "Disables this item. The group can also disable all items.",
     },
     readOnly: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-readOnly",
       description: "Prevents selection of this item.",
     },
     required: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-required",
       description: "Requires a selection before form submission.",
     },
     inputRef: {
       type: "React.Ref<HTMLInputElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-inputRef",
       typeDescription:
         "React.RefObject<HTMLInputElement | null> | ((instance: HTMLInputElement | null) => void | (() => void)) | null",
       parameters: [
         {
           name: "instance",
+          type: "HTMLInputElement | null",
           description:
-            "HTMLInputElement | null. The hidden input element, or null when its ref is detached without a cleanup function.",
+            "The hidden input element, or null when its ref is detached without a cleanup function.",
         },
       ],
       returns: "void | (() => void)",

@@ -56,13 +56,14 @@ Creates a clustered GeoJSON source for point data and renders cluster circles, c
       parameters: [
         {
           name: "feature",
-          description:
-            "GeoJSON.Feature<GeoJSON.Point, P>. The clicked unclustered GeoJSON point.",
+          type: "GeoJSON.Feature<GeoJSON.Point, P>",
+          description: "The clicked unclustered GeoJSON point.",
         },
         {
           name: "coordinates",
+          type: "[number, number]",
           description:
-            "[number, number]. The point or cluster location as [longitude, latitude].",
+            "The point or cluster location as [longitude, latitude].",
         },
       ],
       returns: "void",
@@ -71,15 +72,21 @@ Creates a clustered GeoJSON source for point data and renders cluster circles, c
     onClusterClick: {
       type: "(clusterId: number, coordinates: [number, number], pointCount: number) => void",
       parameters: [
-        { name: "clusterId", description: "number. The clicked cluster ID." },
+        {
+          name: "clusterId",
+          type: "number",
+          description: "The clicked cluster ID.",
+        },
         {
           name: "coordinates",
+          type: "[number, number]",
           description:
-            "[number, number]. The point or cluster location as [longitude, latitude].",
+            "The point or cluster location as [longitude, latitude].",
         },
         {
           name: "pointCount",
-          description: "number. The number of points in the cluster.",
+          type: "number",
+          description: "The number of points in the cluster.",
         },
       ],
       returns: "void",

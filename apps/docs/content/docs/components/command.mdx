@@ -73,34 +73,65 @@ Use `CommandDialog` for command palettes. Use `Autocomplete` directly for popove
 
 <TypeTable
   type={{
-    open: { type: "boolean", description: "Whether the dialog is open." },
+    open: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-open",
+      description: "Whether the dialog is open.",
+    },
     onOpenChange: {
       type: "(open: boolean) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-onOpenChange",
       parameters: [
-        { name: "open", description: "boolean. The next open state." },
+        {
+          name: "open",
+          type: "boolean",
+          description: "The next open state.",
+        },
       ],
       returns: "void",
       description: "Handler called when the dialog opens or closes.",
     },
     items: {
       type: "Item[] | { items: Item[] }[]",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-items",
       description: "Items filtered by the internal autocomplete.",
     },
     itemToStringValue: {
       type: "(item: Item) => string",
-      parameters: [{ name: "item", description: "Item. The collection item." }],
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-itemToStringValue",
+      parameters: [
+        {
+          name: "item",
+          type: "Item",
+          description: "The collection item.",
+        },
+      ],
       returns: "string",
       description: "Converts object items to searchable text.",
     },
     filter: {
       type: "null | ((item: Item, query: string, itemToString?: (item: Item) => string) => boolean)",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-filter",
       parameters: [
-        { name: "item", description: "Item. The collection item." },
-        { name: "query", description: "string. The search text." },
+        {
+          name: "item",
+          type: "Item",
+          description: "The collection item.",
+        },
+        {
+          name: "query",
+          type: "string",
+          description: "The search text.",
+        },
         {
           name: "itemToString?",
-          description:
-            "(item: Item) => string. Optional. Converts an item to searchable text.",
+          type: "(item: Item) => string",
+          description: "Optional. Converts an item to searchable text.",
         },
       ],
       returns: "boolean",
@@ -109,6 +140,8 @@ Use `CommandDialog` for command palettes. Use `Autocomplete` directly for popove
     },
     filteredItems: {
       type: "Item[] | { items: Item[] }[]",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-filteredItems",
       description: "Controlled filtered result set.",
     },
     title: {
@@ -144,6 +177,8 @@ The command search input extends `AutocompleteInput`, including its built-in sea
   type={{
     placeholder: {
       type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#input",
       description: "Placeholder text for the command input.",
     },
     variant: {
@@ -172,9 +207,19 @@ Renders filtered command items from `CommandDialog`.
   type={{
     children: {
       type: "(item: Item, index: number) => ReactNode",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteCollection-children",
       parameters: [
-        { name: "item", description: "Item. The collection item." },
-        { name: "index", description: "number. The zero-based item index." },
+        {
+          name: "item",
+          type: "Item",
+          description: "The collection item.",
+        },
+        {
+          name: "index",
+          type: "number",
+          description: "The zero-based item index.",
+        },
       ],
       returns: "ReactNode",
       description: "Renderer for each filtered item.",
@@ -194,6 +239,8 @@ Groups related command items.
     },
     items: {
       type: "Item[]",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteGroup-items",
       description: "Group items for grouped root data.",
     },
   }}
@@ -209,6 +256,8 @@ A single command row. Extends `AutocompleteItem`.
   type={{
     value: {
       type: "Item",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteItem-value",
       description: "The command value selected by Base UI.",
     },
     label: {
@@ -216,7 +265,10 @@ A single command row. Extends `AutocompleteItem`.
       default: "String(value)",
       description: "The main command label.",
     },
-    icon: { type: "React.ReactNode", description: "An optional leading icon." },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
     desc: {
       type: "string",
       description: "An optional description below the label.",
@@ -237,15 +289,20 @@ A single command row. Extends `AutocompleteItem`.
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteItem-disabled",
       description: "Whether the command is disabled.",
     },
     onClick: {
       type: "React.MouseEventHandler<HTMLElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteItem-onClick",
       typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
       parameters: [
         {
           name: "event",
-          description: "React.MouseEvent<HTMLElement>. The mouse event.",
+          type: "React.MouseEvent<HTMLElement>",
+          description: "The mouse event.",
         },
       ],
       returns: "void",

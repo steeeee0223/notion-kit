@@ -75,7 +75,11 @@ Registers a draggable column. Accepts `Sortable.Item` props in addition to the f
 
 <TypeTable
   type={{
-    id: { type: "string", required: true, description: "Stable column id." },
+    id: {
+      type: "string",
+      required: true,
+      description: "Stable column id.",
+    },
     index: {
       type: "number",
       required: true,
@@ -86,13 +90,14 @@ Registers a draggable column. Accepts `Sortable.Item` props in addition to the f
       parameters: [
         {
           name: "props",
-          description:
-            "HTMLProps. Props and ref to spread onto the rendered element.",
+          type: "HTMLProps",
+          description: "Props and ref to spread onto the rendered element.",
         },
         {
           name: "state",
+          type: "SortableItemState",
           description:
-            "SortableItemState. The dragging, dropping, dragSource, and dropTarget flags.",
+            "The dragging, dropping, dragSource, and dropTarget flags.",
         },
       ],
       returns: "ReactElement",
@@ -121,12 +126,13 @@ Vertical sortable list and droppable target for cards in the current column.
       parameters: [
         {
           name: "props",
-          description:
-            "HTMLProps. Props and ref to spread onto the rendered element.",
+          type: "HTMLProps",
+          description: "Props and ref to spread onto the rendered element.",
         },
         {
           name: "state",
-          description: "{}. This list does not expose component state.",
+          type: "{}",
+          description: "This list does not expose component state.",
         },
       ],
       returns: "ReactElement",
@@ -141,7 +147,11 @@ Registers a draggable card.
 
 <TypeTable
   type={{
-    id: { type: "string", required: true, description: "Stable card id." },
+    id: {
+      type: "string",
+      required: true,
+      description: "Stable card id.",
+    },
     index: {
       type: "number",
       required: true,

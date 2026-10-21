@@ -152,7 +152,11 @@ const tree = useTree<T>(data, options);
     onSelectionChange: {
       type: "(id: string) => void",
       parameters: [
-        { name: "id", description: "string. The target record ID." },
+        {
+          name: "id",
+          type: "string",
+          description: "The target record ID.",
+        },
       ],
       returns: "void",
       description: "Called when selection changes",
@@ -195,7 +199,10 @@ Root container providing tree context.
         </>
       ),
     },
-    className: { type: "string", description: "Additional CSS classes" },
+    className: {
+      type: "string",
+      description: "Additional CSS classes",
+    },
   }}
 />
 
@@ -241,8 +248,8 @@ Renders tree nodes recursively.
       parameters: [
         {
           name: "props",
-          description:
-            "TreeListItemProps<T>. The tree node, tree instance, and item state.",
+          type: "TreeListItemProps<T>",
+          description: "The tree node, tree instance, and item state.",
         },
       ],
       returns: "React.ReactNode",

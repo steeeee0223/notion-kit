@@ -158,15 +158,18 @@ The element that toggles the dropdown menu.
   type={{
     render: {
       type: "React.ReactElement | ((props: HTMLProps, state: Menu.Trigger.State) => React.ReactElement)",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuTrigger-render",
       parameters: [
         {
           name: "props",
-          description:
-            "HTMLProps. Props and ref to spread onto the rendered element.",
+          type: "HTMLProps",
+          description: "Props and ref to spread onto the rendered element.",
         },
         {
           name: "state",
-          description: "Menu.Trigger.State. The current trigger state.",
+          type: "Menu.Trigger.State",
+          description: "The current trigger state.",
         },
       ],
       returns: "React.ReactElement",
@@ -184,11 +187,14 @@ The popover panel that appears when the menu is open.
   type={{
     sideOffset: {
       type: "number | OffsetFunction",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuPositioner-sideOffset",
       typeDescription:
         "number | ((data: { side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }) => number)",
       parameters: [
         {
           name: "data",
+          type: "{ side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }",
           description:
             "The resolved side, alignment, anchor dimensions, and popup dimensions.",
         },
@@ -210,7 +216,10 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
       type: "React.ReactNode",
       description: "The label text or content of the item.",
     },
-    icon: { type: "React.ReactNode", description: "An optional leading icon." },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
     desc: {
       type: "string",
       description: "An optional description below the label.",
@@ -220,14 +229,22 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
       default: '"default"',
       description: "The visual style of the item.",
     },
-    disabled: { type: "boolean", description: "Whether the item is disabled." },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuItem-disabled",
+      description: "Whether the item is disabled.",
+    },
     onClick: {
       type: "React.MouseEventHandler<HTMLElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuItem-onClick",
       typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
       parameters: [
         {
           name: "event",
-          description: "React.MouseEvent<HTMLElement>. The mouse event.",
+          type: "React.MouseEvent<HTMLElement>",
+          description: "The mouse event.",
         },
       ],
       returns: "void",
@@ -242,11 +259,22 @@ A menu item that can be toggled on and off. Extends `DropdownMenuItem` props.
 
 <TypeTable
   type={{
-    checked: { type: "boolean", description: "Whether the item is checked." },
+    checked: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuCheckboxItem-checked",
+      description: "Whether the item is checked.",
+    },
     onCheckedChange: {
       type: "(checked: boolean) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuCheckboxItem-onCheckedChange",
       parameters: [
-        { name: "checked", description: "boolean. The next checked state." },
+        {
+          name: "checked",
+          type: "boolean",
+          description: "The next checked state.",
+        },
       ],
       returns: "void",
       description: "Handler called when the checked state changes.",
@@ -262,20 +290,30 @@ Groups related radio items and manages their mutually exclusive value.
   type={{
     value: {
       type: "any",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-value",
       description: "The controlled value of the selected radio item.",
     },
     defaultValue: {
       type: "any",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-defaultValue",
       description: "The initially selected value when uncontrolled.",
     },
     onValueChange: {
       type: "(value: any, eventDetails: Menu.RadioGroup.ChangeEventDetails) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-onValueChange",
       parameters: [
-        { name: "value", description: "any. The new value." },
+        {
+          name: "value",
+          type: "any",
+          description: "The new value.",
+        },
         {
           name: "eventDetails",
-          description:
-            "Menu.RadioGroup.ChangeEventDetails. The event reason and controls supplied by Base UI.",
+          type: "Menu.RadioGroup.ChangeEventDetails",
+          description: "The event reason and controls supplied by Base UI.",
         },
       ],
       returns: "void",
@@ -283,6 +321,8 @@ Groups related radio items and manages their mutually exclusive value.
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-disabled",
       default: "false",
       description: "Whether the group ignores user interaction.",
     },
@@ -297,10 +337,20 @@ A menu item representing one value in a `DropdownMenuRadioGroup`. Extends the sh
   type={{
     value: {
       type: "any",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-value",
       description: "The value selected when the item is activated.",
     },
-    label: { type: "string", description: "The label text of the item." },
-    icon: { type: "React.ReactNode", description: "An optional leading icon." },
+    label: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-label",
+      description: "The label text of the item.",
+    },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
     desc: {
       type: "string",
       description: "An optional description below the label.",
@@ -312,11 +362,15 @@ A menu item representing one value in a `DropdownMenuRadioGroup`. Extends the sh
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-disabled",
       default: "false",
       description: "Whether the item ignores user interaction.",
     },
     closeOnClick: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-closeOnClick",
       default: "false",
       description: "Whether selecting the item closes the menu.",
     },
@@ -329,7 +383,10 @@ A non-interactive label used to title a group of items.
 
 <TypeTable
   type={{
-    title: { type: "string", description: "The group label text." },
+    title: {
+      type: "string",
+      description: "The group label text.",
+    },
   }}
 />
 

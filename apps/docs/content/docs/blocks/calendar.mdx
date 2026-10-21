@@ -191,7 +191,10 @@ the hidden time portion. A completed gesture sends one callback.
       required: true,
       description: "Authoritative event values.",
     },
-    range: { type: "CalendarRange", description: "Controlled period." },
+    range: {
+      type: "CalendarRange",
+      description: "Controlled period.",
+    },
     defaultRange: {
       type: "CalendarRange",
       default: "monthly",
@@ -202,13 +205,17 @@ the hidden time portion. A completed gesture sends one callback.
       parameters: [
         {
           name: "range",
-          description: "CalendarRange. The next visible date range.",
+          type: "CalendarRange",
+          description: "The next visible date range.",
         },
       ],
       returns: "void",
       description: "Requests a period change.",
     },
-    anchorDate: { type: "number", description: "Controlled viewed timestamp." },
+    anchorDate: {
+      type: "number",
+      description: "Controlled viewed timestamp.",
+    },
     defaultAnchorDate: {
       type: "number",
       default: "Today",
@@ -219,7 +226,8 @@ the hidden time portion. A completed gesture sends one callback.
       parameters: [
         {
           name: "date",
-          description: "number. The date as a timestamp in milliseconds.",
+          type: "number",
+          description: "The date as a timestamp in milliseconds.",
         },
       ],
       returns: "void",
@@ -245,8 +253,8 @@ the hidden time portion. A completed gesture sends one callback.
       parameters: [
         {
           name: "value",
-          description:
-            "CalendarEventValue. The dates of the new calendar event.",
+          type: "CalendarEventValue",
+          description: "The dates of the new calendar event.",
         },
       ],
       returns: "void",
@@ -257,7 +265,8 @@ the hidden time portion. A completed gesture sends one callback.
       parameters: [
         {
           name: "event",
-          description: "CalendarEventData. The clicked calendar event.",
+          type: "CalendarEventData",
+          description: "The clicked calendar event.",
         },
       ],
       returns: "void",
@@ -268,7 +277,8 @@ the hidden time portion. A completed gesture sends one callback.
       parameters: [
         {
           name: "change",
-          description: "CalendarEventChange. The calendar event edit.",
+          type: "CalendarEventChange",
+          description: "The calendar event edit.",
         },
       ],
       returns: "void",
@@ -313,7 +323,8 @@ props; `children` appear before the range select.
       parameters: [
         {
           name: "range",
-          description: "CalendarRange. The next visible date range.",
+          type: "CalendarRange",
+          description: "The next visible date range.",
         },
       ],
       returns: "void",
@@ -336,13 +347,17 @@ props; `children` appear before the range select.
       parameters: [
         {
           name: "range",
-          description: "CalendarRange. The next visible date range.",
+          type: "CalendarRange",
+          description: "The next visible date range.",
         },
       ],
       returns: "void",
       description: "Overrides the provider's range-change handler.",
     },
-    disabled: { type: "boolean", description: "Disables selection." },
+    disabled: {
+      type: "boolean",
+      description: "Disables selection.",
+    },
   }}
 />
 

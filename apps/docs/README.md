@@ -82,7 +82,11 @@ Use `TypeTable` for API references:
       type: "(id: string) => void",
       description: "Called when an item is selected.",
       parameters: [
-        { name: "id", description: "string. The selected item ID." },
+        {
+          name: "id",
+          type: "string",
+          description: "The selected item ID.",
+        },
       ],
       returns: "void",
     },
@@ -92,14 +96,25 @@ Use `TypeTable` for API references:
 
 Keep comparison and data tables in Markdown.
 
-For function props, document each parameter with `name` and `description`, and
+The shared `TypeTable` wraps Fumadocs' table. Supply strings for `type`,
+`typeDescription`, `default`, `returns`, and each parameter's `type`. The
+component renders them with Fumadocs' default `Pre` styles and applies the
+parameter layout consistently. `description` fields accept text or React nodes.
+
+For function props, document each parameter with `name`, `type`, and `description`, and
 include `returns`, even for `void`. Omit `parameters` for functions with no
 arguments. Apply the same rules to callback type aliases and function variants
-of union types. Keep parameter types and optionality in their descriptions.
+of union types. Mark optional parameters with `?` in their names and explain
+their optional behavior in their descriptions.
 
 Use `typeDescription` for a full signature when `type` shows a short name or type
 alias. Use `typeDescriptionLink` to link the displayed `type` to its reference;
 it does not require `typeDescription`.
+
+For props inherited from Base UI, link directly to the corresponding property
+in its API reference. For example, use
+`https://base-ui.com/react/components/autocomplete#AutocompletePositioner-sideOffset`
+for `AutocompleteContent.sideOffset`. Keep Notion Kit additions documented locally.
 
 ## Check changes
 

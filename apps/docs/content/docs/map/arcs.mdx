@@ -33,7 +33,10 @@ Builds curved `LineString` features between coordinate pairs and renders them as
         </>
       ),
     },
-    id: { type: "string", description: "Optional source and layer id prefix." },
+    id: {
+      type: "string",
+      description: "Optional source and layer id prefix.",
+    },
     curvature: {
       type: "number",
       default: "0.2",
@@ -61,7 +64,8 @@ Builds curved `LineString` features between coordinate pairs and renders them as
       parameters: [
         {
           name: "event",
-          description: "MapArcEvent. The arc pointer event.",
+          type: "MapArcEvent",
+          description: "The arc pointer event.",
         },
       ],
       returns: "void",
@@ -72,8 +76,9 @@ Builds curved `LineString` features between coordinate pairs and renders them as
       parameters: [
         {
           name: "event",
+          type: "MapArcEvent | null",
           description:
-            "MapArcEvent | null. The arc pointer event, or null when the pointer leaves the arc.",
+            "The arc pointer event, or null when the pointer leaves the arc.",
         },
       ],
       returns: "void",

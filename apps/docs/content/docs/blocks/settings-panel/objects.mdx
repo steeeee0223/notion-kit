@@ -36,8 +36,16 @@ The core object for settings panel.
       required: true,
       description: "Unique identifier of the user.",
     },
-    name: { type: "string", required: true, description: "User's name." },
-    email: { type: "string", required: true, description: "User's email." },
+    name: {
+      type: "string",
+      required: true,
+      description: "User's name.",
+    },
+    email: {
+      type: "string",
+      required: true,
+      description: "User's email.",
+    },
     avatarUrl: {
       type: "string",
       required: true,
@@ -98,7 +106,11 @@ The core object for settings panel.
       required: true,
       description: "Icon of the workspace.",
     },
-    domain: { type: "string", required: true, description: "Public domain." },
+    domain: {
+      type: "string",
+      required: true,
+      description: "Public domain.",
+    },
     inviteLink: {
       type: "string",
       required: true,
@@ -274,7 +286,11 @@ The row data of the emojis table.
       required: true,
       description: "Unique identifier of the emoji.",
     },
-    name: { type: "string", required: true, description: "Name of the emoji." },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the emoji.",
+    },
     src: {
       type: "string",
       required: true,
@@ -603,7 +619,11 @@ See schema definitions for:
       required: true,
       description: "The unique identifier of the group.",
     },
-    name: { type: "string", required: true, description: "Name of the group." },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the group.",
+    },
     memberCount: {
       type: "number",
       required: true,
@@ -641,7 +661,11 @@ A `CellOptions` is a generic type `CellOptions<T>`, where `T` extends `{ id: str
         </>
       ),
     },
-    options: { type: "T[]", required: true, description: "Available options." },
+    options: {
+      type: "T[]",
+      required: true,
+      description: "Available options.",
+    },
   }}
 />
 
@@ -671,7 +695,11 @@ An example for `CellOptions<{ id: string, title: string }>`
       required: true,
       description: "The unique identifier of the page.",
     },
-    name: { type: "string", required: true, description: "Name of the page." },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the page.",
+    },
     scope: {
       type: "string",
       required: true,
@@ -704,12 +732,18 @@ An example for `CellOptions<{ id: string, title: string }>`
       type: "string",
       description: "Business name / billed to name.",
     },
-    billingEmail: { type: "string", description: "Billing email address." },
+    billingEmail: {
+      type: "string",
+      description: "Billing email address.",
+    },
     invoiceEmails: {
       type: "boolean",
       description: "Whether invoice emails are on.",
     },
-    vatNumber: { type: "string", description: "VAT / tax ID number." },
+    vatNumber: {
+      type: "string",
+      description: "VAT / tax ID number.",
+    },
     upcomingInvoice: {
       type: "string",
       description: "Upcoming invoice description.",
@@ -736,7 +770,11 @@ An example for `CellOptions<{ id: string, title: string }>`
 
 <TypeTable
   type={{
-    name: { type: "string", required: true, description: "Full name." },
+    name: {
+      type: "string",
+      required: true,
+      description: "Full name.",
+    },
     address: {
       type: "object",
       required: true,
@@ -749,16 +787,35 @@ An example for `CellOptions<{ id: string, title: string }>`
 
 <TypeTable
   type={{
-    line1: { type: "string", required: true, description: "Address line 1." },
-    line2: { type: "string | null", description: "Address line 2." },
-    city: { type: "string", required: true, description: "City." },
-    state: { type: "string", required: true, description: "State / region." },
+    line1: {
+      type: "string",
+      required: true,
+      description: "Address line 1.",
+    },
+    line2: {
+      type: "string | null",
+      description: "Address line 2.",
+    },
+    city: {
+      type: "string",
+      required: true,
+      description: "City.",
+    },
+    state: {
+      type: "string",
+      required: true,
+      description: "State / region.",
+    },
     postal_code: {
       type: "string",
       required: true,
       description: "Postal code.",
     },
-    country: { type: "string", required: true, description: "Country code." },
+    country: {
+      type: "string",
+      required: true,
+      description: "Country code.",
+    },
   }}
 />
 

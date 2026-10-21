@@ -71,7 +71,8 @@ Wraps `DragDropProvider` and provides orientation, disabled state, sensors, and 
       parameters: [
         {
           name: "defaults",
-          description: "Sensors. The default dnd-kit sensor list.",
+          type: "Sensors",
+          description: "The default dnd-kit sensor list.",
         },
       ],
       returns: "Sensors",
@@ -95,12 +96,13 @@ Renders the sortable item container. Accepts standard `<div>` props and Base UI 
       parameters: [
         {
           name: "props",
-          description:
-            "HTMLProps. Props and ref to spread onto the rendered element.",
+          type: "HTMLProps",
+          description: "Props and ref to spread onto the rendered element.",
         },
         {
           name: "state",
-          description: "{}. This list does not expose component state.",
+          type: "{}",
+          description: "This list does not expose component state.",
         },
       ],
       returns: "ReactElement",
@@ -140,13 +142,14 @@ Registers one draggable item. Accepts dnd-kit sortable options in addition to re
       parameters: [
         {
           name: "props",
-          description:
-            "HTMLProps. Props and ref to spread onto the rendered element.",
+          type: "HTMLProps",
+          description: "Props and ref to spread onto the rendered element.",
         },
         {
           name: "state",
+          type: "SortableItemState",
           description:
-            "SortableItemState. The dragging, dropping, dragSource, and dropTarget flags.",
+            "The dragging, dropping, dragSource, and dropTarget flags.",
         },
       ],
       returns: "ReactElement",
@@ -177,6 +180,7 @@ Renders dnd-kit's `DragOverlay` in a portal. Use it when you need a custom drag 
       parameters: [
         {
           name: "context",
+          type: "{ source: Draggable; element: Element; feedbackElement: Element; placeholder: Element | null | undefined; translate: Coordinates; moved: boolean }",
           description:
             "The drag source, rendered element, feedback element, placeholder, translation, and whether the source moved.",
         },

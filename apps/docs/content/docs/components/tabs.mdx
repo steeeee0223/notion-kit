@@ -46,21 +46,35 @@ props and the controlled value props below.
   type={{
     defaultValue: {
       type: "TabValue",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsRoot-defaultValue",
       default: "First tab",
       description: "The uncontrolled initial tab value.",
     },
     value: {
       type: "TabValue",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsRoot-value",
       description: "The controlled selected tab value.",
     },
     onValueChange: {
       type: "(value: TabValue) => void",
-      parameters: [{ name: "value", description: "TabValue. The new value." }],
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsRoot-onValueChange",
+      parameters: [
+        {
+          name: "value",
+          type: "TabValue",
+          description: "The new value.",
+        },
+      ],
       returns: "void",
       description: "Handler called when a tab is selected.",
     },
     orientation: {
       type: '"horizontal" | "vertical"',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsRoot-orientation",
       default: '"horizontal"',
       description: "The tab navigation orientation.",
     },
@@ -75,11 +89,15 @@ The container for tab triggers.
   type={{
     activateOnFocus: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsList-activateOnFocus",
       default: "false",
       description: "Whether arrow-key focus also activates the tab.",
     },
     loopFocus: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsList-loopFocus",
       default: "true",
       description: "Whether keyboard focus loops through the list.",
     },
@@ -94,10 +112,14 @@ A selectable tab. Its `value` must match a `TabsContent` value.
   type={{
     value: {
       type: "TabValue",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsTab-value",
       description: "The value selected by the trigger.",
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsTab-disabled",
       description: "Whether this trigger is disabled.",
     },
   }}
@@ -111,10 +133,14 @@ The panel associated with a tab trigger.
   type={{
     value: {
       type: "TabValue",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsPanel-value",
       description: "The trigger value that shows this panel.",
     },
     keepMounted: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/tabs#TabsPanel-keepMounted",
       default: "false",
       description: "Whether the panel remains mounted when hidden.",
     },

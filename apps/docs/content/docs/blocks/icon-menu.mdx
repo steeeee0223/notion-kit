@@ -74,11 +74,18 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
       description:
         "Icon factory hooks to use. Falls back to built-in defaults when omitted.",
     },
-    disabled: { type: "boolean", description: "Whether the menu is disabled." },
+    disabled: {
+      type: "boolean",
+      description: "Whether the menu is disabled.",
+    },
     onSelect: {
       type: "(icon: IconData) => void",
       parameters: [
-        { name: "icon", description: "IconData. The selected icon." },
+        {
+          name: "icon",
+          type: "IconData",
+          description: "The selected icon.",
+        },
       ],
       returns: "void",
       description:
@@ -86,7 +93,13 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
     },
     onUpload: {
       type: "(file: File) => void",
-      parameters: [{ name: "file", description: "File. The selected file." }],
+      parameters: [
+        {
+          name: "file",
+          type: "File",
+          description: "The selected file.",
+        },
+      ],
       returns: "void",
       description: "Handler that is called when an image file is submitted.",
     },
@@ -108,7 +121,10 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
       type: "string",
       description: "Unique factory id used for the tab value and storage keys.",
     },
-    label: { type: "string", description: "Tab label shown in the menu." },
+    label: {
+      type: "string",
+      description: "Tab label shown in the menu.",
+    },
     sections: {
       type: "IconSection[]",
       description:
@@ -116,26 +132,48 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
     },
     getItem: {
       type: "(id: string) => IconItem",
-      parameters: [{ name: "id", description: "string. The target icon ID." }],
+      parameters: [
+        {
+          name: "id",
+          type: "string",
+          description: "The target icon ID.",
+        },
+      ],
       returns: "IconItem",
       description: "Resolves an icon id into the item rendered by the grid.",
     },
     select: {
       type: "(id: string) => void",
-      parameters: [{ name: "id", description: "string. The target icon ID." }],
+      parameters: [
+        {
+          name: "id",
+          type: "string",
+          description: "The target icon ID.",
+        },
+      ],
       returns: "void",
       description: "Optional selection side effect, commonly used for recents.",
     },
     search: {
       type: "(query: string) => string[]",
-      parameters: [{ name: "query", description: "string. The search text." }],
+      parameters: [
+        {
+          name: "query",
+          type: "string",
+          description: "The search text.",
+        },
+      ],
       returns: "string[]",
       description: "Returns matching icon ids for the current query.",
     },
     toIconData: {
       type: "(item: IconItem) => IconData",
       parameters: [
-        { name: "item", description: "IconItem. The factory icon item." },
+        {
+          name: "item",
+          type: "IconItem",
+          description: "The factory icon item.",
+        },
       ],
       returns: "IconData",
       description: (
@@ -149,7 +187,11 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
     renderIcon: {
       type: "(item: IconItem) => React.ReactNode",
       parameters: [
-        { name: "item", description: "IconItem. The factory icon item." },
+        {
+          name: "item",
+          type: "IconItem",
+          description: "The factory icon item.",
+        },
       ],
       returns: "React.ReactNode",
       description: "Renders the visual icon inside the grid button.",
@@ -164,13 +206,13 @@ Icon Menu uses a factory pattern that lets each source define its tab, searchabl
       parameters: [
         {
           name: "scrollToSection",
-          description:
-            "(id: string) => void. Scrolls to the section with the given ID.",
+          type: "(id: string) => void",
+          description: "Scrolls to the section with the given ID.",
         },
         {
           name: "activeSectionId",
-          description:
-            "string | null. The active section ID, or null when none is active.",
+          type: "string | null",
+          description: "The active section ID, or null when none is active.",
         },
       ],
       returns: "ReactNode",
@@ -259,9 +301,18 @@ const upload = useUploadFactory();
 
 <TypeTable
   type={{
-    id: { type: "string", description: "Unique ID for the factory tab." },
-    label: { type: "string", description: "Tab label shown in the menu." },
-    icons: { type: "CustomIcon[]", description: "Array of icon definitions." },
+    id: {
+      type: "string",
+      description: "Unique ID for the factory tab.",
+    },
+    label: {
+      type: "string",
+      description: "Tab label shown in the menu.",
+    },
+    icons: {
+      type: "CustomIcon[]",
+      description: "Array of icon definitions.",
+    },
     recentLimit: {
       type: "number",
       description: "Max recent icons to track (default: 20).",

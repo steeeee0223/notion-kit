@@ -21,19 +21,30 @@ Renders a `LineString` GeoJSON source and a MapLibre line layer from an array of
 
 <TypeTable
   type={{
-    id: { type: "string", description: "Optional route layer id." },
+    id: {
+      type: "string",
+      description: "Optional route layer id.",
+    },
     coordinates: {
       type: "[number, number][]",
       required: true,
       description: "Route coordinates as lng/lat pairs.",
     },
-    color: { type: "string", default: '"#4285F4"', description: "Line color." },
+    color: {
+      type: "string",
+      default: '"#4285F4"',
+      description: "Line color.",
+    },
     width: {
       type: "number",
       default: "3",
       description: "Line width in pixels.",
     },
-    opacity: { type: "number", default: "0.8", description: "Line opacity." },
+    opacity: {
+      type: "number",
+      default: "0.8",
+      description: "Line opacity.",
+    },
     dashArray: {
       type: "[number, number]",
       description: "Dash pattern for dashed lines.",

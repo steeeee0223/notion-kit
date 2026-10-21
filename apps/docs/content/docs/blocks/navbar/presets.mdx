@@ -40,8 +40,8 @@ pnpm add @notion-kit/ui
       parameters: [
         {
           name: "page",
-          description:
-            'Pick<UpdatePageParams, "title" | "icon">. The updated page title and icon.',
+          type: 'Pick<UpdatePageParams, "title" | "icon">',
+          description: "The updated page title and icon.",
         },
       ],
       returns: "void",
@@ -74,10 +74,15 @@ pnpm add @notion-kit/ui
     onUpdate: {
       type: "(id: string, isPublished: boolean) => void",
       parameters: [
-        { name: "id", description: "string. The target record ID." },
+        {
+          name: "id",
+          type: "string",
+          description: "The target record ID.",
+        },
         {
           name: "isPublished",
-          description: "boolean. Whether the page should be published.",
+          type: "boolean",
+          description: "Whether the page should be published.",
         },
       ],
       returns: "void",
@@ -110,11 +115,15 @@ pnpm add @notion-kit/ui
     onUpdate: {
       type: '(pageId: string, action: "archive" | "restore" | "delete") => void',
       parameters: [
-        { name: "pageId", description: "string. The page ID." },
+        {
+          name: "pageId",
+          type: "string",
+          description: "The page ID.",
+        },
         {
           name: "action",
-          description:
-            '"archive" | "restore" | "delete". The action to perform on the page.',
+          type: '"archive" | "restore" | "delete"',
+          description: "The action to perform on the page.",
         },
       ],
       returns: "void",

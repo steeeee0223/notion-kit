@@ -25,8 +25,16 @@ ID.
     fromValue: {
       type: "(value: ComparableValue, config: Config) => Data",
       parameters: [
-        { name: "value", description: "ComparableValue. The new value." },
-        { name: "config", description: "Config. The property configuration." },
+        {
+          name: "value",
+          type: "ComparableValue",
+          description: "The new value.",
+        },
+        {
+          name: "config",
+          type: "Config",
+          description: "The property configuration.",
+        },
       ],
       returns: "Data",
       description: "Converts a comparable value into cell data.",
@@ -35,8 +43,16 @@ ID.
     toValue: {
       type: "(data: Data, row: Row) => ComparableValue",
       parameters: [
-        { name: "data", description: "Data. The cell data." },
-        { name: "row", description: "Row. The row containing the cell." },
+        {
+          name: "data",
+          type: "Data",
+          description: "The cell data.",
+        },
+        {
+          name: "row",
+          type: "Row",
+          description: "The row containing the cell.",
+        },
       ],
       returns: "ComparableValue",
       description: "Converts cell data for sorting and grouping.",
@@ -45,8 +61,16 @@ ID.
     toGroupValue: {
       type: "(data: Data, row: Row) => ComparableValue",
       parameters: [
-        { name: "data", description: "Data. The cell data." },
-        { name: "row", description: "Row. The row containing the cell." },
+        {
+          name: "data",
+          type: "Data",
+          description: "The cell data.",
+        },
+        {
+          name: "row",
+          type: "Row",
+          description: "The row containing the cell.",
+        },
       ],
       returns: "ComparableValue",
       description:
@@ -54,7 +78,13 @@ ID.
     },
     isEmpty: {
       type: "(data: Data) => boolean",
-      parameters: [{ name: "data", description: "Data. The cell data." }],
+      parameters: [
+        {
+          name: "data",
+          type: "Data",
+          description: "The cell data.",
+        },
+      ],
       returns: "boolean",
       description:
         "Defines empty data for filters, counts, sorting, and grouping.",
@@ -63,8 +93,16 @@ ID.
     toTextValue: {
       type: "(data: Data, row: Row) => string",
       parameters: [
-        { name: "data", description: "Data. The cell data." },
-        { name: "row", description: "Row. The row containing the cell." },
+        {
+          name: "data",
+          type: "Data",
+          description: "The cell data.",
+        },
+        {
+          name: "row",
+          type: "Row",
+          description: "The row containing the cell.",
+        },
       ],
       returns: "string",
       description: "Converts cell data to copyable text.",
@@ -89,9 +127,21 @@ ID.
     compare: {
       type: "(rowA: Row, rowB: Row, colId: string) => number",
       parameters: [
-        { name: "rowA", description: "Row. The first row to compare." },
-        { name: "rowB", description: "Row. The second row to compare." },
-        { name: "colId", description: "string. The column ID to compare." },
+        {
+          name: "rowA",
+          type: "Row",
+          description: "The first row to compare.",
+        },
+        {
+          name: "rowB",
+          type: "Row",
+          description: "The second row to compare.",
+        },
+        {
+          name: "colId",
+          type: "string",
+          description: "The column ID to compare.",
+        },
       ],
       returns: "number",
       description:
@@ -102,9 +152,14 @@ ID.
       parameters: [
         {
           name: "column",
-          description: "ColumnInfo. The property being converted.",
+          type: "ColumnInfo",
+          description: "The property being converted.",
         },
-        { name: "data", description: "Row[]. The cell data." },
+        {
+          name: "data",
+          type: "Row[]",
+          description: "The cell data.",
+        },
       ],
       returns: "Config",
       description:
@@ -139,8 +194,8 @@ Data plugins do not render React, carry icons, or decide cell presentation.
       parameters: [
         {
           name: "props",
-          description:
-            "CellProps. The cell or column context for the renderer.",
+          type: "CellProps",
+          description: "The cell or column context for the renderer.",
         },
       ],
       returns: "ReactNode",
@@ -152,8 +207,8 @@ Data plugins do not render React, carry icons, or decide cell presentation.
       parameters: [
         {
           name: "props",
-          description:
-            "ReadOnlyValueProps. The cell or column context for the renderer.",
+          type: "ReadOnlyValueProps",
+          description: "The cell or column context for the renderer.",
         },
       ],
       returns: "ReactNode",
@@ -165,8 +220,8 @@ Data plugins do not render React, carry icons, or decide cell presentation.
       parameters: [
         {
           name: "props",
-          description:
-            "BulkEditorProps. The cell or column context for the renderer.",
+          type: "BulkEditorProps",
+          description: "The cell or column context for the renderer.",
         },
       ],
       returns: "ReactNode",
@@ -177,8 +232,8 @@ Data plugins do not render React, carry icons, or decide cell presentation.
       parameters: [
         {
           name: "props",
-          description:
-            "ConfigMenuProps. The cell or column context for the renderer.",
+          type: "ConfigMenuProps",
+          description: "The cell or column context for the renderer.",
         },
       ],
       returns: "ReactNode",
@@ -189,8 +244,8 @@ Data plugins do not render React, carry icons, or decide cell presentation.
       parameters: [
         {
           name: "props",
-          description:
-            "GroupingValueProps. The cell or column context for the renderer.",
+          type: "GroupingValueProps",
+          description: "The cell or column context for the renderer.",
         },
       ],
       returns: "ReactNode",

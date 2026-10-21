@@ -91,20 +91,33 @@ Common root props are listed below. Other props follow [Base UI's root reference
 
 <TypeTable
   type={{
-    open: { type: "boolean", description: "The controlled open state." },
+    open: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-open",
+      description: "The controlled open state.",
+    },
     defaultOpen: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-defaultOpen",
       default: "false",
       description: "The initial open state of an uncontrolled dialog.",
     },
     onOpenChange: {
       type: "(open: boolean, eventDetails: DialogRoot.ChangeEventDetails) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-onOpenChange",
       parameters: [
-        { name: "open", description: "boolean. The next open state." },
+        {
+          name: "open",
+          type: "boolean",
+          description: "The next open state.",
+        },
         {
           name: "eventDetails",
-          description:
-            "DialogRoot.ChangeEventDetails. The event reason and controls supplied by Base UI.",
+          type: "DialogRoot.ChangeEventDetails",
+          description: "The event reason and controls supplied by Base UI.",
         },
       ],
       returns: "void",
@@ -112,20 +125,30 @@ Common root props are listed below. Other props follow [Base UI's root reference
     },
     onOpenChangeComplete: {
       type: "(open: boolean) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-onOpenChangeComplete",
       parameters: [
-        { name: "open", description: "boolean. The next open state." },
+        {
+          name: "open",
+          type: "boolean",
+          description: "The next open state.",
+        },
       ],
       returns: "void",
       description: "Called after the opening or closing animation finishes.",
     },
     modal: {
       type: 'boolean | "trap-focus"',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-modal",
       default: "true",
       description:
         "Controls focus trapping and interaction outside the dialog.",
     },
     disablePointerDismissal: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogRoot-disablePointerDismissal",
       default: "false",
       description: "Prevents outside presses from closing the dialog.",
     },
@@ -152,6 +175,8 @@ Accepts Base UI's `Dialog.Popup` props and these additions.
     },
     container: {
       type: 'DialogPrimitive.Portal.Props["container"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/dialog#DialogPortal-container",
       description:
         "The element or ref that receives the portal. Defaults to the document body.",
     },

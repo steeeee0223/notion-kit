@@ -192,7 +192,10 @@ Root provider that manages timeline state, scroll position, and CSS variables.
       default: '"monthly"',
       description: "The active range granularity.",
     },
-    anchorDate: { type: "number", description: "Controlled center timestamp." },
+    anchorDate: {
+      type: "number",
+      description: "Controlled center timestamp.",
+    },
     defaultAnchorDate: {
       type: "number",
       default: "Today",
@@ -203,7 +206,8 @@ Root provider that manages timeline state, scroll position, and CSS variables.
       parameters: [
         {
           name: "date",
-          description: "number. The date as a timestamp in milliseconds.",
+          type: "number",
+          description: "The date as a timestamp in milliseconds.",
         },
       ],
       returns: "void",
@@ -237,7 +241,8 @@ Root provider that manages timeline state, scroll position, and CSS variables.
       parameters: [
         {
           name: "ts",
-          description: "number. The date as a timestamp in milliseconds.",
+          type: "number",
+          description: "The date as a timestamp in milliseconds.",
         },
       ],
       returns: "void",
@@ -275,15 +280,21 @@ and the resize parts for a click-only row.
     onMove: {
       type: "(id: string, start: number, end: number | null) => void",
       parameters: [
-        { name: "id", description: "string. The target record ID." },
+        {
+          name: "id",
+          type: "string",
+          description: "The target record ID.",
+        },
         {
           name: "start",
-          description: "number. The new start timestamp in milliseconds.",
+          type: "number",
+          description: "The new start timestamp in milliseconds.",
         },
         {
           name: "end",
+          type: "number | null",
           description:
-            "number | null. The new end timestamp in milliseconds, or null for an open-ended item.",
+            "The new end timestamp in milliseconds, or null for an open-ended item.",
         },
       ],
       returns: "void",
@@ -353,7 +364,8 @@ A pre-composed toolbar with sidebar trigger, range select, and jump-to buttons.
       parameters: [
         {
           name: "range",
-          description: "TimelineRange. The next visible date range.",
+          type: "TimelineRange",
+          description: "The next visible date range.",
         },
       ],
       returns: "void",
@@ -377,7 +389,11 @@ A select dropdown for switching between range granularities.
     onChange: {
       type: "(value: TimelineRange) => void",
       parameters: [
-        { name: "value", description: "TimelineRange. The new value." },
+        {
+          name: "value",
+          type: "TimelineRange",
+          description: "The new value.",
+        },
       ],
       returns: "void",
       description: "Handler called when the range is changed.",
@@ -404,7 +420,8 @@ A hover-activated trigger that follows the cursor and creates a marker on click.
       parameters: [
         {
           name: "ts",
-          description: "number. The date as a timestamp in milliseconds.",
+          type: "number",
+          description: "The date as a timestamp in milliseconds.",
         },
       ],
       returns: "void",

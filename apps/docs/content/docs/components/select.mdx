@@ -78,26 +78,37 @@ prop when you want `SelectValue` to render item labels automatically.
   type={{
     items: {
       type: 'Select.Root.Props["items"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectRoot-items",
       description: "Optional item data used by Base UI value lookup.",
     },
     value: {
       type: "Value | Value[] | null",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectRoot-value",
       description: "The selected value.",
     },
     defaultValue: {
       type: "Value | Value[] | null",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectRoot-defaultValue",
       description: "The uncontrolled initial value.",
     },
     disabled: {
       type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectRoot-disabled",
       description: "Whether the select is disabled.",
     },
     onValueChange: {
       type: "(value: Value | Value[] | null) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectRoot-onValueChange",
       parameters: [
         {
           name: "value",
-          description: "Value | Value[] | null. The new value.",
+          type: "Value | Value[] | null",
+          description: "The new value.",
         },
       ],
       returns: "void",
@@ -112,7 +123,11 @@ Groups related options. Every `SelectItem` must be rendered inside a `SelectGrou
 
 <TypeTable
   type={{
-    children: { type: "React.ReactNode", description: "The grouped items." },
+    children: {
+      type: "React.ReactNode",
+      typeDescriptionLink: "https://base-ui.com/react/components/select#group",
+      description: "The grouped items.",
+    },
   }}
 />
 
@@ -122,7 +137,10 @@ A non-interactive label used to title a group of options.
 
 <TypeTable
   type={{
-    title: { type: "string", description: "The group label text." },
+    title: {
+      type: "string",
+      description: "The group label text.",
+    },
   }}
 />
 
@@ -132,9 +150,22 @@ A single selectable option.
 
 <TypeTable
   type={{
-    value: { type: "string", description: "The option value." },
-    label: { type: "string", description: "The option label." },
-    icon: { type: "React.ReactNode", description: "An optional leading icon." },
+    value: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectItem-value",
+      description: "The option value.",
+    },
+    label: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/select#SelectItem-label",
+      description: "The option label.",
+    },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
     desc: {
       type: "string",
       description: "An optional description below the label.",

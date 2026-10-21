@@ -22,13 +22,22 @@ description: A drag-and-drop area for uploading a single image with file validat
 
 <TypeTable
   type={{
-    width: { type: "number", description: "The width of the dropzone." },
-    height: { type: "number", description: "The height of the dropzone." },
+    width: {
+      type: "number",
+      description: "The width of the dropzone.",
+    },
+    height: {
+      type: "number",
+      description: "The height of the dropzone.",
+    },
     disabled: {
       type: "boolean",
       description: "Whether the dropzone is disabled.",
     },
-    value: { type: "string | File", description: "The dropped image file." },
+    value: {
+      type: "string | File",
+      description: "The dropped image file.",
+    },
     dropzoneOptions: {
       type: 'Omit<DropzoneOptions, "disabled">',
       description: (
@@ -41,7 +50,11 @@ description: A drag-and-drop area for uploading a single image with file validat
     onChange: {
       type: "(file?: File) => void | Promise<void>",
       parameters: [
-        { name: "file?", description: "File. Optional. The selected file." },
+        {
+          name: "file?",
+          type: "File",
+          description: "Optional. The selected file.",
+        },
       ],
       returns: "void | Promise<void>",
       description: "Handler that is called when a file is dropped or selected.",

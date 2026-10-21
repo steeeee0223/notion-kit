@@ -29,15 +29,36 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 <TypeTable
   type={{
-    value: { type: "number", description: "The current value." },
-    min: { type: "number", default: "0", description: "The minimum value." },
-    max: { type: "number", default: "100", description: "The maximum value." },
+    value: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-value",
+      description: "The current value.",
+    },
+    min: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-min",
+      default: "0",
+      description: "The minimum value.",
+    },
+    max: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-max",
+      default: "100",
+      description: "The maximum value.",
+    },
     format: {
       type: "Intl.NumberFormatOptions",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-format",
       description: "Options used to format the value.",
     },
     locale: {
       type: "Intl.LocalesArgument",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-locale",
       default: "runtime locale",
       description: (
         <>
@@ -49,16 +70,25 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
     },
     "aria-valuetext": {
       type: 'React.AriaAttributes["aria-valuetext"]',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-aria-valuetext",
       description: "Human-readable text for the current value.",
     },
     getAriaValueText: {
       type: "(formattedValue: string, value: number) => string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-getAriaValueText",
       parameters: [
         {
           name: "formattedValue",
-          description: "string. The formatted meter value.",
+          type: "string",
+          description: "The formatted meter value.",
         },
-        { name: "value", description: "number. The numeric meter value." },
+        {
+          name: "value",
+          type: "number",
+          description: "The numeric meter value.",
+        },
       ],
       returns: "string",
       description:
@@ -73,7 +103,10 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 <TypeTable
   type={{
-    trackColor: { type: "string", description: "CSS color for the indicator." },
+    trackColor: {
+      type: "string",
+      description: "CSS color for the indicator.",
+    },
   }}
 />
 
@@ -83,8 +116,17 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 <TypeTable
   type={{
-    max: { type: "number", default: "100", description: "The maximum value." },
-    trackColor: { type: "string", description: "CSS color for the indicator." },
+    max: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-max",
+      default: "100",
+      description: "The maximum value.",
+    },
+    trackColor: {
+      type: "string",
+      description: "CSS color for the indicator.",
+    },
   }}
 />
 
@@ -100,12 +142,19 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
   type={{
     children: {
       type: "null | ((formattedValue: string, value: number) => ReactNode)",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterValue-children",
       parameters: [
         {
           name: "formattedValue",
-          description: "string. The formatted meter value.",
+          type: "string",
+          description: "The formatted meter value.",
         },
-        { name: "value", description: "number. The numeric meter value." },
+        {
+          name: "value",
+          type: "number",
+          description: "The numeric meter value.",
+        },
       ],
       returns: "ReactNode",
       description: "Custom render function for value.",

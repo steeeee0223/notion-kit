@@ -38,7 +38,11 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
     onClick: {
       type: "(event: MouseEvent) => void",
       parameters: [
-        { name: "event", description: "MouseEvent. The mouse event." },
+        {
+          name: "event",
+          type: "MouseEvent",
+          description: "The mouse event.",
+        },
       ],
       returns: "void",
       description: "Called when the marker is clicked.",
@@ -46,7 +50,11 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
     onMouseEnter: {
       type: "(event: MouseEvent) => void",
       parameters: [
-        { name: "event", description: "MouseEvent. The mouse event." },
+        {
+          name: "event",
+          type: "MouseEvent",
+          description: "The mouse event.",
+        },
       ],
       returns: "void",
       description: "Called when the pointer enters.",
@@ -54,7 +62,11 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
     onMouseLeave: {
       type: "(event: MouseEvent) => void",
       parameters: [
-        { name: "event", description: "MouseEvent. The mouse event." },
+        {
+          name: "event",
+          type: "MouseEvent",
+          description: "The mouse event.",
+        },
       ],
       returns: "void",
       description: "Called when the pointer leaves.",
@@ -64,8 +76,8 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
       parameters: [
         {
           name: "lngLat",
-          description:
-            "{ lng: number; lat: number }. The current marker longitude and latitude.",
+          type: "{ lng: number; lat: number }",
+          description: "The current marker longitude and latitude.",
         },
       ],
       returns: "void",
@@ -76,8 +88,8 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
       parameters: [
         {
           name: "lngLat",
-          description:
-            "{ lng: number; lat: number }. The current marker longitude and latitude.",
+          type: "{ lng: number; lat: number }",
+          description: "The current marker longitude and latitude.",
         },
       ],
       returns: "void",
@@ -88,8 +100,8 @@ Creates a MapLibre DOM marker at a longitude and latitude, then provides marker 
       parameters: [
         {
           name: "lngLat",
-          description:
-            "{ lng: number; lat: number }. The current marker longitude and latitude.",
+          type: "{ lng: number; lat: number }",
+          description: "The current marker longitude and latitude.",
         },
       ],
       returns: "void",

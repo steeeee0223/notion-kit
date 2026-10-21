@@ -44,7 +44,11 @@ description: Add and remove tags in a text field.
     onTagsChange: {
       type: "(value: string[]) => void",
       parameters: [
-        { name: "value", description: "string[]. The updated tags." },
+        {
+          name: "value",
+          type: "string[]",
+          description: "The updated tags.",
+        },
       ],
       returns: "void",
       description: "Handler that is called when the tags are updated.",
@@ -52,7 +56,11 @@ description: Add and remove tags in a text field.
     onInputChange: {
       type: "(value: string) => void",
       parameters: [
-        { name: "value", description: "string. The updated input text." },
+        {
+          name: "value",
+          type: "string",
+          description: "The updated input text.",
+        },
       ],
       returns: "void",
       description: "Handler that is called when the input value changes.",
@@ -67,7 +75,14 @@ Each tag can be a string or an object with a value and an optional color.
 
 <TypeTable
   type={{
-    value: { type: "string", required: true, description: "The tag value." },
-    color: { type: "Color", description: "The tag background color." },
+    value: {
+      type: "string",
+      required: true,
+      description: "The tag value.",
+    },
+    color: {
+      type: "Color",
+      description: "The tag background color.",
+    },
   }}
 />

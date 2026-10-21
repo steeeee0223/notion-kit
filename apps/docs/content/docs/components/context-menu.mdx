@@ -82,15 +82,18 @@ The area that activates the context menu on right-click or long-press.
   type={{
     render: {
       type: "React.ReactElement | ((props: HTMLProps, state: ContextMenu.Trigger.State) => React.ReactElement)",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/context-menu#ContextMenuTrigger-render",
       parameters: [
         {
           name: "props",
-          description:
-            "HTMLProps. Props and ref to spread onto the rendered element.",
+          type: "HTMLProps",
+          description: "Props and ref to spread onto the rendered element.",
         },
         {
           name: "state",
-          description: "ContextMenu.Trigger.State. The current trigger state.",
+          type: "ContextMenu.Trigger.State",
+          description: "The current trigger state.",
         },
       ],
       returns: "React.ReactElement",
@@ -108,6 +111,8 @@ The popover panel that appears at the pointer position.
   type={{
     side: {
       type: '"top" | "right" | "bottom" | "left"',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/context-menu#ContextMenuPositioner-side",
       description: "Forces the panel to a specific side.",
     },
   }}
@@ -123,7 +128,10 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
       type: "React.ReactNode",
       description: "The label text or content of the item.",
     },
-    icon: { type: "React.ReactNode", description: "An optional leading icon." },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
     desc: {
       type: "string",
       description: "An optional description below the label.",
@@ -133,14 +141,22 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
       default: '"default"',
       description: "The visual style of the item.",
     },
-    disabled: { type: "boolean", description: "Whether the item is disabled." },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/context-menu#ContextMenuItem-disabled",
+      description: "Whether the item is disabled.",
+    },
     onClick: {
       type: "React.MouseEventHandler<HTMLElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/context-menu#ContextMenuItem-onClick",
       typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
       parameters: [
         {
           name: "event",
-          description: "React.MouseEvent<HTMLElement>. The mouse event.",
+          type: "React.MouseEvent<HTMLElement>",
+          description: "The mouse event.",
         },
       ],
       returns: "void",
@@ -155,11 +171,22 @@ A menu item that can be toggled on and off. Extends `ContextMenuItem` props.
 
 <TypeTable
   type={{
-    checked: { type: "boolean", description: "Whether the item is checked." },
+    checked: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/context-menu#ContextMenuCheckboxItem-checked",
+      description: "Whether the item is checked.",
+    },
     onCheckedChange: {
       type: "(checked: boolean) => void",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/context-menu#ContextMenuCheckboxItem-onCheckedChange",
       parameters: [
-        { name: "checked", description: "boolean. The next checked state." },
+        {
+          name: "checked",
+          type: "boolean",
+          description: "The next checked state.",
+        },
       ],
       returns: "void",
       description: "Handler called when the checked state changes.",
@@ -173,7 +200,10 @@ A non-interactive label used to title a group of items.
 
 <TypeTable
   type={{
-    title: { type: "string", description: "The group label text." },
+    title: {
+      type: "string",
+      description: "The group label text.",
+    },
   }}
 />
 
