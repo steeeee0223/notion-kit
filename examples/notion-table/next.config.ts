@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const config = {
+  basePath: "/example/table",
   reactStrictMode: true,
   reactCompiler: true,
 

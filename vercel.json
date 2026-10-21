@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "experimentalServices": {
+    "docs": {
+      "entrypoint": "apps/docs",
+      "framework": "nextjs",
+      "routePrefix": "/"
+    },
+    "storybook": {
+      "entrypoint": "apps/storybook",
+      "framework": "storybook",
+      "routePrefix": "/storybook"
+    },
+    "auth": {
+      "entrypoint": "apps/auth-server",
+      "framework": "fastify",
+      "routePrefix": "/api/auth"
+    },
+    "table": {
+      "entrypoint": "examples/notion-table",
+      "framework": "nextjs",
+      "routePrefix": "/example/table"
+    },
+    "viewer": {
+      "entrypoint": "examples/notion-clone",
+      "framework": "nextjs",
+      "routePrefix": "/v"
+    }
+  }
+}

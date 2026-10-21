@@ -5,10 +5,10 @@
   "scripts": {
     "build": "pnpm with-env next build",
     "clean": "git clean -xdf .cache .next .turbo node_modules",
-    "dev": "pnpm with-env next dev -p 3001",
+    "dev": "pnpm with-env next dev -p 3002",
     "format": "prettier --check . \"!**/*.{md,mdx}\" --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "start": "pnpm with-env next start -p 3001",
+    "start": "pnpm with-env next start -p 3002",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },
