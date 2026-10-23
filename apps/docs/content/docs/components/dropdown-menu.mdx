@@ -1,6 +1,6 @@
 ---
 title: Dropdown Menu
-description: Displays a menu of actions or options that the user can choose from, triggered by a button.
+description: A button that opens a menu of actions or options.
 links:
   - label: Base UI
     href: https://base-ui.com/react/components/menu
@@ -8,7 +8,7 @@ links:
     href: https://ui.shadcn.com/docs/components/dropdown-menu
 ---
 
-<ComponentPreview name="dropdown-menu" hideCode />
+<RegistryStory name="dropdown-menu" />
 
 ## Installation
 
@@ -51,9 +51,10 @@ links:
 
 A dropdown menu with groups, shortcuts, submenus, and a warning item.
 
-<ComponentPreview
-  name="dropdown-menu"
-  preview={`<DropdownMenu>
+<RegistryStory name="dropdown-menu" />
+
+```tsx
+<DropdownMenu>
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
@@ -63,20 +64,24 @@ A dropdown menu with groups, shortcuts, submenus, and a warning item.
       </DropdownMenuItem>
     </DropdownMenuGroup>
   </DropdownMenuContent>
-</DropdownMenu>`}
-/>
+</DropdownMenu>
+```
 
 ### Filtering
 
 Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Place the input outside `DropdownMenuList`, which contains the groups and actions. The list defaults to `max-h-75 overflow-x-hidden overflow-y-auto`. Add `className` only when the menu requires different styling.
 
-<ComponentPreview
-  name="dropdown-menu-filter"
-  preview={`<DropdownMenuFilter>
+<RegistryStory name="dropdown-menu-filter" />
+
+```tsx
+<DropdownMenuFilter>
   <DropdownMenu>
     <DropdownMenuTrigger render={<Button>Open</Button>} />
     <DropdownMenuContent>
-      <DropdownMenuInput aria-label="Search actions" placeholder="Search actions..." />
+      <DropdownMenuInput
+        aria-label="Search actions"
+        placeholder="Search actions..."
+      />
       <DropdownMenuEmpty>No matches found.</DropdownMenuEmpty>
       <DropdownMenuList>
         <DropdownMenuGroup>
@@ -86,8 +91,8 @@ Wrap the owning dropdown root or searchable submenu in `DropdownMenuFilter`. Pla
       </DropdownMenuList>
     </DropdownMenuContent>
   </DropdownMenu>
-</DropdownMenuFilter>`}
-/>
+</DropdownMenuFilter>
+```
 
 `DropdownMenuFilter` forwards Base UI FilterProvider props and uses its defaults. Prefer uncontrolled query state. Pass `value` and `onValueChange` when the query also drives application behavior. Use `filter={null}` when the application renders its own matching rows.
 
@@ -101,9 +106,10 @@ Base UI renders a filtered popup as a dialog, its input as a searchbox, and its 
 
 Use `DropdownMenuCheckboxItem` for toggling options on and off.
 
-<ComponentPreview
-  name="dropdown-menu-checkbox"
-  preview={`<DropdownMenu>
+<RegistryStory name="dropdown-menu-checkbox" />
+
+```tsx
+<DropdownMenu>
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuGroup>
@@ -115,16 +121,17 @@ Use `DropdownMenuCheckboxItem` for toggling options on and off.
       />
     </DropdownMenuGroup>
   </DropdownMenuContent>
-</DropdownMenu>`}
-/>
+</DropdownMenu>
+```
 
 ### Radio Items
 
 Use `DropdownMenuRadioGroup` and `DropdownMenuRadioItem` for mutually exclusive options.
 
-<ComponentPreview
-  name="dropdown-menu-radio"
-  preview={`<DropdownMenu>
+<RegistryStory name="dropdown-menu-radio" />
+
+```tsx
+<DropdownMenu>
   <DropdownMenuTrigger render={<Button>Open</Button>} />
   <DropdownMenuContent>
     <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
@@ -134,8 +141,8 @@ Use `DropdownMenuRadioGroup` and `DropdownMenuRadioItem` for mutually exclusive 
       <DropdownMenuRadioItem value="right" label="Right" />
     </DropdownMenuRadioGroup>
   </DropdownMenuContent>
-</DropdownMenu>`}
-/>
+</DropdownMenu>
+```
 
 ## API Reference
 
@@ -147,72 +154,187 @@ The root component. Wraps the trigger and content.
 
 The element that toggles the dropdown menu.
 
-| Prop     | Type                                                         | Default | Description                                                        |
-| -------- | ------------------------------------------------------------ | ------- | ------------------------------------------------------------------ |
-| `render` | `React.ReactElement \| (props, state) => React.ReactElement` | -       | Renders a custom trigger element and merges trigger props onto it. |
+<TypeTable
+  type={{
+    render: {
+      type: "React.ReactElement | function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuTrigger-render",
+      description:
+        "Renders a custom trigger element and merges trigger props onto it.",
+    },
+  }}
+/>
 
 ### DropdownMenuContent
 
 The popover panel that appears when the menu is open.
 
-| Prop         | Type     | Default | Description                          |
-| ------------ | -------- | ------- | ------------------------------------ |
-| `sideOffset` | `number` | `4`     | Distance in pixels from the trigger. |
+<TypeTable
+  type={{
+    sideOffset: {
+      type: "number | OffsetFunction",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuPositioner-sideOffset",
+      default: "4",
+      description: "Distance in pixels from the trigger.",
+    },
+  }}
+/>
 
 ### DropdownMenuItem
 
 A single actionable item in the menu. Extends the shared `MenuItem` props.
 
-| Prop       | Type                                                            | Default     | Description                              |
-| ---------- | --------------------------------------------------------------- | ----------- | ---------------------------------------- |
-| `label`    | `React.ReactNode`                                               | -           | The label text or content of the item.   |
-| `icon`     | `React.ReactNode`                                               | -           | An optional leading icon.                |
-| `desc`     | `string`                                                        | -           | An optional description below the label. |
-| `variant`  | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"` | The visual style of the item.            |
-| `disabled` | `boolean`                                                       | -           | Whether the item is disabled.            |
-| `onClick`  | `React.MouseEventHandler<HTMLElement>`                          | -           | Handler called when the item is clicked. |
+<TypeTable
+  type={{
+    label: {
+      type: "React.ReactNode",
+      description: "The label text or content of the item.",
+    },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
+    desc: {
+      type: "string",
+      description: "An optional description below the label.",
+    },
+    variant: {
+      type: '"default" | "secondary" | "sidebar" | "warning" | "error"',
+      default: '"default"',
+      description: "The visual style of the item.",
+    },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuItem-disabled",
+      description: "Whether the item is disabled.",
+    },
+    onClick: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuItem-onClick",
+      description: "Handler called when the item is clicked.",
+    },
+  }}
+/>
 
 ### DropdownMenuCheckboxItem
 
 A menu item that can be toggled on and off. Extends `DropdownMenuItem` props.
 
-| Prop              | Type                         | Default | Description                                    |
-| ----------------- | ---------------------------- | ------- | ---------------------------------------------- |
-| `checked`         | `boolean`                    | -       | Whether the item is checked.                   |
-| `onCheckedChange` | `(checked: boolean) => void` | -       | Handler called when the checked state changes. |
+<TypeTable
+  type={{
+    checked: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuCheckboxItem-checked",
+      description: "Whether the item is checked.",
+    },
+    onCheckedChange: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuCheckboxItem-onCheckedChange",
+      description: "Handler called when the checked state changes.",
+    },
+  }}
+/>
 
 ### DropdownMenuRadioGroup
 
 Groups related radio items and manages their mutually exclusive value.
 
-| Prop            | Type                                 | Default | Description                                      |
-| --------------- | ------------------------------------ | ------- | ------------------------------------------------ |
-| `value`         | `any`                                | -       | The controlled value of the selected radio item. |
-| `defaultValue`  | `any`                                | -       | The initially selected value when uncontrolled.  |
-| `onValueChange` | `(value: any, eventDetails) => void` | -       | Handler called when the selected value changes.  |
-| `disabled`      | `boolean`                            | `false` | Whether the group ignores user interaction.      |
+<TypeTable
+  type={{
+    value: {
+      type: "any",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-value",
+      description: "The controlled value of the selected radio item.",
+    },
+    defaultValue: {
+      type: "any",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-defaultValue",
+      description: "The initially selected value when uncontrolled.",
+    },
+    onValueChange: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-onValueChange",
+      description: "Handler called when the selected value changes.",
+    },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioGroup-disabled",
+      default: "false",
+      description: "Whether the group ignores user interaction.",
+    },
+  }}
+/>
 
 ### DropdownMenuRadioItem
 
 A menu item representing one value in a `DropdownMenuRadioGroup`. Extends the shared `MenuItem` visual props.
 
-| Prop           | Type                                                            | Default     | Description                                    |
-| -------------- | --------------------------------------------------------------- | ----------- | ---------------------------------------------- |
-| `value`        | `any`                                                           | -           | The value selected when the item is activated. |
-| `label`        | `string`                                                        | -           | The label text of the item.                    |
-| `icon`         | `React.ReactNode`                                               | -           | An optional leading icon.                      |
-| `desc`         | `string`                                                        | -           | An optional description below the label.       |
-| `variant`      | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"` | The visual style of the item.                  |
-| `disabled`     | `boolean`                                                       | `false`     | Whether the item ignores user interaction.     |
-| `closeOnClick` | `boolean`                                                       | `false`     | Whether selecting the item closes the menu.    |
+<TypeTable
+  type={{
+    value: {
+      type: "any",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-value",
+      description: "The value selected when the item is activated.",
+    },
+    label: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-label",
+      description: "The label text of the item.",
+    },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
+    desc: {
+      type: "string",
+      description: "An optional description below the label.",
+    },
+    variant: {
+      type: '"default" | "secondary" | "sidebar" | "warning" | "error"',
+      default: '"default"',
+      description: "The visual style of the item.",
+    },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-disabled",
+      default: "false",
+      description: "Whether the item ignores user interaction.",
+    },
+    closeOnClick: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/menu#MenuRadioItem-closeOnClick",
+      default: "false",
+      description: "Whether selecting the item closes the menu.",
+    },
+  }}
+/>
 
 ### DropdownMenuLabel
 
 A non-interactive label used to title a group of items.
 
-| Prop    | Type     | Default | Description           |
-| ------- | -------- | ------- | --------------------- |
-| `title` | `string` | -       | The group label text. |
+<TypeTable
+  type={{
+    title: {
+      type: "string",
+      description: "The group label text.",
+    },
+  }}
+/>
 
 ### DropdownMenuSeparator
 

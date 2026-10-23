@@ -1,19 +1,17 @@
 ---
 title: Icon Block
-description: A block for icon, emoji, or image display.
+description: Display an icon, emoji, image, or text.
 ---
 
-<ComponentPreview
-  name="icon-block-emoji"
-  preview={`<IconBlock size="md" icon={{ type: "emoji", src: "🚀" }} />`}
-/>
+<RegistryStory name="icon-block-emoji" />
+
+```tsx
+<IconBlock size="md" icon={{ type: "emoji", src: "🚀" }} />
+```
 
 ## Installation
 
-<Installation
-  packages="@notion-kit/ui"
-  registryName="icon-block-emoji"
-/>
+<Installation packages="@notion-kit/ui" registryName="icon-block-emoji" />
 
 ## Options
 
@@ -23,13 +21,14 @@ description: A block for icon, emoji, or image display.
 
 Use the `size` prop to control the size of the button.
 
-<ComponentPreview
-  name="icon-block-sizes"
-  preview={`<IconBlock size="sm" icon={icon} />
-  <IconBlock size="md" icon={icon} />
-  <IconBlock size="lg" icon={icon} />
-  <IconBlock size="xl" icon={icon} />`}
-/>
+<RegistryStory name="icon-block-sizes" />
+
+```tsx
+<IconBlock size="sm" icon={icon} />
+<IconBlock size="md" icon={icon} />
+<IconBlock size="lg" icon={icon} />
+<IconBlock size="xl" icon={icon} />
+```
 
 ## Examples
 
@@ -37,52 +36,82 @@ Use the `size` prop to control the size of the button.
 
 ### Lucide Icon
 
-<ComponentPreview
-  name="icon-block-lucide"
-  preview={`<IconBlock
-    size="md"
-    icon={{ type: "lucide", src: "badge-euro", color: "#3e9392" }}
-  />`}
+<RegistryStory name="icon-block-lucide" />
+
+```tsx
+<IconBlock
+  size="md"
+  icon={{ type: "lucide", src: "badge-euro", color: "#3e9392" }}
 />
+```
 
 ### Image Url
 
-<ComponentPreview
-  name="icon-block-url"
-  preview={`<IconBlock
-    size="md"
-    icon={{ type: "file", src: "https://github.com/shadcn.png" }}
-  />`}
+<RegistryStory name="icon-block-url" />
+
+```tsx
+<IconBlock
+  size="md"
+  icon={{ type: "url", src: "https://github.com/shadcn.png" }}
 />
+```
 
 ### Text
 
-<ComponentPreview
-  name="icon-block-text"
-  preview={`<IconBlock size="md" icon={{ type: "text", src: "John" }} />`}
-/>
+<RegistryStory name="icon-block-text" />
+
+```tsx
+<IconBlock size="md" icon={{ type: "text", src: "John" }} />
+```
 
 ## API Reference
 
 ### IconBlock
 
-| Prop       | Type                           | Default | Description                                                     |
-| ---------- | ------------------------------ | ------- | --------------------------------------------------------------- |
-| `icon`\*   | `IconData`                     | -       | The icon data.                                                  |
-| `size`     | `"sm" \| "md" \| "lg" \| "xl"` | `"sm"`  | The size of the block.                                          |
-| `fallback` | `string`                       | -       | The fallback string to display when an image can not be loaded. |
+<TypeTable
+  type={{
+    icon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      required: true,
+      description: "The icon data.",
+    },
+    size: {
+      type: '"sm" | "md" | "lg" | "xl"',
+      default: '"sm"',
+      description: "The size of the block.",
+    },
+    fallback: {
+      type: "string",
+      description: "Text shown when the image fails to load.",
+    },
+  }}
+/>
 
 ### `type` IconData
 
 There are 4 types of icons:
 
-1. `emoji`: An emoji icon, whose `src` is simply the emoji string. See [Emoji Cheat Sheet](https://emojipedia.org/).
+1. `emoji`: An emoji icon, whose `src` is the emoji string. See [Emoji Cheat Sheet](https://emojipedia.org/).
 2. `lucide`: A Lucide icon, whose `src` is the name of the icon. See [Lucide Icons](https://lucide.dev/icons).
 3. `url`: An image URL. The image will be displayed in the block.
 4. `text`: A text string. Only the first letter of `src` will be displayed in the block.
 
-| Prop     | Type                                     | Description                     |
-| -------- | ---------------------------------------- | ------------------------------- |
-| `type`\* | `"emoji" \| "lucide" \| "url" \| "text"` | The icon type.                  |
-| `src`\*  | `string`                                 | The source of the icon.         |
-| `color`  | `string`                                 | The color of the `lucide` icon. |
+<TypeTable
+  type={{
+    type: {
+      type: '"emoji" | "lucide" | "url" | "text"',
+      required: true,
+      description: "The icon type.",
+    },
+    src: {
+      type: "string",
+      required: true,
+      description: "The source of the icon.",
+    },
+    color: {
+      type: "string",
+      description: "The color of the lucide icon.",
+    },
+  }}
+/>

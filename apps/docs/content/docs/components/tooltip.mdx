@@ -1,12 +1,12 @@
 ---
 title: Tooltip
-description: A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
+description: Show a description when an element is hovered or focused.
 links:
   - label: Base UI
     href: https://base-ui.com/react/components/tooltip
 ---
 
-<ComponentPreview name="tooltip-demo" />
+<RegistryStory name="tooltip-demo" />
 
 ## Installation
 
@@ -42,23 +42,53 @@ positioning. Use `render` to merge the trigger behavior into your button.
 
 ### TooltipProvider
 
-Uses Base UI provider props. The default `delay` is `600` milliseconds. Use
-`timeout` to control how long subsequent tooltips skip the opening delay.
+Uses [Base UI provider props](https://base-ui.com/react/components/tooltip#provider).
+The default [`delay`](https://base-ui.com/react/components/tooltip#TooltipProvider-delay)
+is `600` milliseconds. Use
+[`timeout`](https://base-ui.com/react/components/tooltip#TooltipProvider-timeout)
+to control how long subsequent tooltips skip the opening delay.
+
+### Tooltip
+
+Uses [Base UI root props](https://base-ui.com/react/components/tooltip#root),
+including [`open`](https://base-ui.com/react/components/tooltip#TooltipRoot-open)
+and [`onOpenChange`](https://base-ui.com/react/components/tooltip#TooltipRoot-onOpenChange).
 
 ### TooltipTrigger
 
-Uses Base UI trigger props. Pass a React element to `render` to avoid adding a
-wrapper around the trigger.
+Uses [Base UI trigger props](https://base-ui.com/react/components/tooltip#trigger).
+Pass a React element to
+[`render`](https://base-ui.com/react/components/tooltip#TooltipTrigger-render)
+to avoid adding a wrapper around the trigger.
 
 ### TooltipContent
 
-Accepts Base UI popup props plus `align`, `alignOffset`, `anchor`,
-`collisionPadding`, `side`, and `sideOffset`. Its default `sideOffset` is `4`.
+Accepts [Base UI popup props](https://base-ui.com/react/components/tooltip#popup)
+plus [`align`](https://base-ui.com/react/components/tooltip#TooltipPositioner-align),
+[`alignOffset`](https://base-ui.com/react/components/tooltip#TooltipPositioner-alignOffset),
+[`anchor`](https://base-ui.com/react/components/tooltip#TooltipPositioner-anchor),
+[`collisionPadding`](https://base-ui.com/react/components/tooltip#TooltipPositioner-collisionPadding),
+[`side`](https://base-ui.com/react/components/tooltip#TooltipPositioner-side), and
+[`sideOffset`](https://base-ui.com/react/components/tooltip#TooltipPositioner-sideOffset).
+Its default `sideOffset` is `4`.
 
 ### TooltipDescription
 
-| Prop        | Type                                  | Default     | Description                         |
-| ----------- | ------------------------------------- | ----------- | ----------------------------------- |
-| `text`\*    | `string`                              | -           | Text content or the image URL.      |
-| `type`      | `"primary" \| "secondary" \| "image"` | `"primary"` | Controls the description treatment. |
-| `className` | `string`                              | -           | Adds local presentation classes.    |
+<TypeTable
+  type={{
+    text: {
+      type: "string",
+      required: true,
+      description: "Text content or the image URL.",
+    },
+    type: {
+      type: '"primary" | "secondary" | "image"',
+      default: '"primary"',
+      description: "Controls the description treatment.",
+    },
+    className: {
+      type: "string",
+      description: "Adds local presentation classes.",
+    },
+  }}
+/>

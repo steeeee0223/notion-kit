@@ -1,9 +1,9 @@
 ---
 title: Table View
-description: A composable, editable data table with multiple layouts.
+description: An editable table with list, board, timeline, and calendar layouts.
 ---
 
-<ComponentPreview name="table-view-uncontrolled" hideCode />
+<RegistryStory name="table-view-uncontrolled" />
 
 ## Installation
 
@@ -36,30 +36,29 @@ Use `defaultData`, `defaultProperties`, and `defaultView` when the table owns
 its state. These defaults are read once when the component mounts; remount with
 a different `key` to reset the table.
 
-<ComponentPreview
-  name="table-view-uncontrolled"
-  preview={`<TableView
-    defaultProperties={properties}
-    defaultData={data}
-  />`}
-/>
+<RegistryStory name="table-view-uncontrolled" />
+
+```tsx
+<TableView defaultProperties={properties} defaultData={data} />
+```
 
 ### Controlled Table
 
 Pass a resource and apply each callback's `next` value to keep it authoritative.
 Rows, properties, and view state can be controlled independently.
 
-<ComponentPreview
-  name="table-view-controlled"
-  preview={`<TableView
-    properties={properties}
-    data={data}
-    onDataChange={({ next }) => setData(next)}
-    onPropertiesChange={({ next }) => setProperties(next)}
-    view={view}
-    onViewChange={({ next }) => setView(next)}
-  />`}
+<RegistryStory name="table-view-controlled" />
+
+```tsx
+<TableView
+  properties={properties}
+  data={data}
+  onDataChange={({ next }) => setData(next)}
+  onPropertiesChange={({ next }) => setProperties(next)}
+  view={view}
+  onViewChange={({ next }) => setView(next)}
 />
+```
 
 Do not switch a resource between controlled and uncontrolled during one mount.
 
@@ -243,17 +242,18 @@ to open its row. Click an empty date or time to create a row and its initial
 date in one data update. Drag events to move them, resize their true edges,
 or move between the all-day area and time grid.
 
-<ComponentPreview
-  name="table-view-calendar"
-  preview={`<TableView
+<RegistryStory name="table-view-calendar" />
+
+```tsx
+<TableView
   defaultProperties={properties}
   defaultData={data}
   defaultView={{
     layout: "calendar",
     dateView: { range: "monthly", datePropertyId: "date" },
   }}
-/>`}
 />
+```
 
 Set `dateView.datePropertyId` to the ID of a property whose type is `"date"`.
 The calendar uses that property's `config.tz` as the display timezone and
@@ -288,7 +288,7 @@ const timed: DateData = {
 ```
 
 With `config.tz: "UTC"`, the all-day value covers September 16 through
-September 18, including the end date. The timed value covers 10:00–11:00 UTC.
+September 18, including the end date. The timed value covers 10:00 to 11:00 UTC.
 Set `endDate: false` to store a date without an explicit end. Calendar displays
 one day for an all-day value or one hour for a timed value in that case.
 
@@ -349,46 +349,204 @@ bulk editing.
 
 ### TableView
 
-| Prop                 | Type                        | Description                                                                  |
-| -------------------- | --------------------------- | ---------------------------------------------------------------------------- |
-| `plugins`            | `TablePluginPair`           | Paired data/UI plugin registration. Defaults to `DEFAULT_PLUGINS`.           |
-| `data`               | `Row[]`                     | Controlled rows resource.                                                    |
-| `defaultData`        | `Row[]`                     | Initial rows for an uncontrolled table.                                      |
-| `properties`         | `ColumnDefs`                | Controlled properties resource.                                              |
-| `defaultProperties`  | `ColumnDefs`                | Initial properties for an uncontrolled table.                                |
-| `view`               | `PartialTableViewState`     | Controlled layout and presentation state.                                    |
-| `defaultView`        | `PartialTableViewState`     | Initial view state for an uncontrolled table.                                |
-| `onDataChange`       | `(change) => void`          | Receives the next rows resource and its action.                              |
-| `onPropertiesChange` | `(change) => void`          | Receives the next properties resource and its action.                        |
-| `onViewChange`       | `(change) => void`          | Receives the next view resource and its action.                              |
-| `fetchTableEditLogs` | `FetchTableEditLogs`        | Optional paginated table history callback. Enables the table Edit log entry. |
-| `fetchRowEditLogs`   | `FetchRowEditLogs`          | Optional paginated row history callback. Enables row Edit log entries.       |
-| `getRowUrl`          | `(rowId: string) => string` | Returns the URL used when opening a row in a new tab.                        |
-| `weekStartsOn`       | `Weekday`                   | Sets the first day of the week for date-based features.                      |
-| `defaultColumn`      | `Partial<ColumnDef>`        | Overrides the default TanStack Table column options.                         |
-| `children`           | `ReactNode`                 | Content rendered inside the Table View provider.                             |
+<TypeTable
+  type={{
+    plugins: {
+      type: "TablePluginPair",
+      typeDescriptionLink: "/docs/blocks/table-view/cell-plugins#registration",
+      description: (
+        <>
+          {" "}
+          Paired data/UI plugin registration. Defaults to{" "}
+          <code>DEFAULT_PLUGINS</code>.{" "}
+        </>
+      ),
+    },
+    data: {
+      type: "Row[]",
+      description: "Controlled rows resource.",
+    },
+    defaultData: {
+      type: "Row[]",
+      description: "Initial rows for an uncontrolled table.",
+    },
+    properties: {
+      type: "ColumnDefs",
+      description: "Controlled properties resource.",
+    },
+    defaultProperties: {
+      type: "ColumnDefs",
+      description: "Initial properties for an uncontrolled table.",
+    },
+    view: {
+      type: "PartialTableViewState",
+      description: "Controlled layout and presentation state.",
+    },
+    defaultView: {
+      type: "PartialTableViewState",
+      description: "Initial view state for an uncontrolled table.",
+    },
+    onDataChange: {
+      type: "(change: ResourceChange<Row[], DataResourceAction>) => unknown",
+      parameters: [
+        {
+          name: "change",
+          type: "ResourceChange<Row[], DataResourceAction>",
+          description: "The next resource and the action that produced it.",
+        },
+      ],
+      returns: "unknown",
+      description: "Receives the next rows resource and its action.",
+    },
+    onPropertiesChange: {
+      type: "(change: ResourceChange<ColumnDefs, PropertiesResourceAction>) => unknown",
+      parameters: [
+        {
+          name: "change",
+          type: "ResourceChange<ColumnDefs, PropertiesResourceAction>",
+          description: "The next resource and the action that produced it.",
+        },
+      ],
+      returns: "unknown",
+      description: "Receives the next properties resource and its action.",
+    },
+    onViewChange: {
+      type: "(change: ResourceChange<TableViewState, ViewResourceAction>) => unknown",
+      parameters: [
+        {
+          name: "change",
+          type: "ResourceChange<TableViewState, ViewResourceAction>",
+          description: "The next resource and the action that produced it.",
+        },
+      ],
+      returns: "unknown",
+      description: "Receives the next view resource and its action.",
+    },
+    fetchTableEditLogs: {
+      type: "FetchTableEditLogs",
+      typeDescription:
+        "(request: { cursor?: string; signal: AbortSignal }) => Promise<EditLogPage<TableEditLog>>",
+      parameters: [
+        {
+          name: "request",
+          type: "{ cursor?: string; signal: AbortSignal }",
+          description: "The pagination request and abort signal.",
+        },
+      ],
+      returns: "Promise<EditLogPage<TableEditLog>>",
+      typeDescriptionLink: "/docs/blocks/table-view#edit-logs",
+      description:
+        "Optional paginated table history callback. Enables the table Edit log entry.",
+    },
+    fetchRowEditLogs: {
+      type: "FetchRowEditLogs",
+      typeDescription:
+        "(request: { rowId: string; cursor?: string; signal: AbortSignal }) => Promise<EditLogPage<RowEditLog>>",
+      parameters: [
+        {
+          name: "request",
+          type: "{ rowId: string; cursor?: string; signal: AbortSignal }",
+          description: "The pagination request and abort signal.",
+        },
+      ],
+      returns: "Promise<EditLogPage<RowEditLog>>",
+      typeDescriptionLink: "/docs/blocks/table-view#edit-logs",
+      description:
+        "Optional paginated row history callback. Enables row Edit log entries.",
+    },
+    getRowUrl: {
+      type: "(rowId: string) => string",
+      parameters: [
+        {
+          name: "rowId",
+          type: "string",
+          description: "The row ID.",
+        },
+      ],
+      returns: "string",
+      description: "Returns the URL used when opening a row in a new tab.",
+    },
+    weekStartsOn: {
+      type: "Weekday",
+      description: "Sets the first day of the week for date-based features.",
+    },
+    defaultColumn: {
+      type: "Partial<ColumnDef>",
+      description: "Overrides the default TanStack Table column options.",
+    },
+    children: {
+      type: "ReactNode",
+      description: "Content rendered inside the Table View provider.",
+    },
+  }}
+/>
 
 ### TableViewState
 
-| Field           | Description                                                                                                                                   |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `layout`        | The active layout. Table, List, Board, Timeline, and Calendar have dedicated renderers; other layout values currently use the table renderer. |
-| `locked`        | Prevents table edits while leaving existing rows navigable.                                                                                   |
-| `rowView`       | Where an opened row appears: `center`, `side`, or `full`.                                                                                     |
-| `openedRowId`   | The currently opened row, or `null`.                                                                                                          |
-| `dateView`      | Shared Calendar and Timeline configuration containing `range` and `datePropertyId`.                                                           |
-| `pluginMethods` | Persisted sorting, grouping, and group-sort choices for plugins.                                                                              |
-| `filters`       | Persisted advanced filter tree (`TableFilterState`); use `null` to clear all filters.                                                         |
+<TypeTable
+  type={{
+    layout: {
+      type: "LayoutType",
+      description:
+        "The active layout. Table, List, Board, Timeline, and Calendar have dedicated renderers; other layout values currently use the table renderer.",
+      required: true,
+    },
+    locked: {
+      type: "boolean",
+      description:
+        "Prevents table edits while leaving existing rows navigable.",
+    },
+    rowView: {
+      type: "RowViewType",
+      description: "Where an opened row appears: center, side, or full.",
+      required: true,
+    },
+    openedRowId: {
+      type: "string | null",
+      description: "The currently opened row, or null.",
+      required: true,
+    },
+    dateView: {
+      type: "DateViewState",
+      description:
+        "Shared Calendar and Timeline configuration containing range and datePropertyId.",
+    },
+    pluginMethods: {
+      type: "Partial<PluginMethodState>",
+      description:
+        "Persisted sorting, grouping, and group-sort choices for plugins.",
+    },
+    filters: {
+      type: "TableFilterState",
+      description:
+        "Persisted advanced filter tree (TableFilterState); use null to clear all filters.",
+    },
+  }}
+/>
 
 ### DateViewState
 
 Shared by Calendar and Timeline through `view.dateView` or
 `defaultView.dateView`. Both fields can be omitted in `PartialTableViewState`.
 
-| Field            | Type                                              | Default     | Description                                                                                                                          |
-| ---------------- | ------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `range`          | `"daily" \| "weekly" \| "monthly" \| "quarterly"` | `"monthly"` | Calendar supports daily, weekly, and monthly. Timeline supports daily, monthly, and quarterly. An unsupported range becomes monthly. |
-| `datePropertyId` | `string \| null`                                  | `null`      | ID of the Date property used for event values. Resolves to an existing or newly created Date property when editable.                 |
+<TypeTable
+  type={{
+    range: {
+      type: '"daily" | "weekly" | "monthly" | "quarterly"',
+      required: true,
+      default: '"monthly"',
+      description:
+        "Calendar supports daily, weekly, and monthly. Timeline supports daily, monthly, and quarterly. An unsupported range becomes monthly.",
+    },
+    datePropertyId: {
+      type: "string | null",
+      required: true,
+      default: "null",
+      description:
+        "ID of the Date property used for event values. Resolves to an existing or newly created Date property when editable.",
+    },
+  }}
+/>
 
 The viewed date is navigation state within the mounted table. It is not a
 field in `DateViewState` and is not persisted by `onViewChange`.

@@ -1,57 +1,25 @@
-"use client";
-
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { PackageIcon, RocketIcon } from "lucide-react";
-import { tv } from "tailwind-variants";
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
-import { cn } from "@notion-kit/cn";
 import type { RegistryIndex } from "@notion-kit/registry";
-import {
-  TabsTrigger as Tab,
-  Tabs,
-  TabsContent,
-  TabsList,
-} from "@notion-kit/ui/primitives";
-
-import { ibm_plex_mono } from "@/lib/fonts";
-
-const installationStyles = tv({
-  slots: {
-    tab: cn(ibm_plex_mono.className, "font-normal"),
-    content:
-      "bg-main text-xs [&_figure]:rounded-none [&_figure]:rounded-b-lg [&_figure]:border-none",
-  },
-});
 
 interface InstallationProps {
   packages: string;
   registryName: RegistryIndex;
 }
 
-function Installation({ packages, registryName }: InstallationProps) {
-  const { tab, content } = installationStyles();
-
+export function Installation({ packages, registryName }: InstallationProps) {
   return (
-    <Tabs defaultValue="notion-kit">
-      <TabsList>
-        <Tab value="notion-kit" className={tab()}>
-          <RocketIcon /> Notion Kit
-        </Tab>
-        <Tab value="shadcn" className={tab()}>
-          <PackageIcon /> Shadcn
-        </Tab>
-      </TabsList>
-      <TabsContent value="notion-kit" className={content()}>
+    <Tabs items={["Notion Kit", "Shadcn"]}>
+      <Tab value="Notion Kit">
         <DynamicCodeBlock lang="bash" code={`pnpm add ${packages}`} />
-      </TabsContent>
-      <TabsContent value="shadcn" className={content()}>
+      </Tab>
+      <Tab value="Shadcn">
         <DynamicCodeBlock
           lang="bash"
           code={`pnpm dlx shadcn@latest add https://notion-ui.vercel.app/registry/${registryName}.json`}
         />
-      </TabsContent>
+      </Tab>
     </Tabs>
   );
 }
-
-export { Installation };

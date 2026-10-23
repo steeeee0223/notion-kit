@@ -1,11 +1,19 @@
 {
   "name": "@notion-kit/tailwind-config",
   "version": "1.2.0",
+  "bugs": {
+    "url": "https://github.com/steeeee0223/notion-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steeeee0223/notion-kit.git",
+    "directory": "tooling/tailwind"
+  },
+  "license": "MIT",
   "type": "module",
   "exports": {
     "./base.css": "./base.css"
   },
-  "license": "MIT",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore"

@@ -1,85 +1,86 @@
-import childProcess from "node:child_process";
-import { existsSync, promises as fs } from "node:fs";
-import path from "path";
-import { rimraf } from "rimraf";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 import { registryIndex } from "@notion-kit/registry";
 import type { RegistryItem } from "@notion-kit/validators";
 import { RegistryIndexSchema } from "@notion-kit/validators";
 
-import { getRegistryPath } from "@/lib/get-file-source";
-import { getDemoFilesAndDependencies } from "@/lib/registry";
 import { theme } from "@/registry/theme";
 
-const REGISTRY_PATH = path.join(process.cwd(), "public/registry");
-const REGISTRY_SRC_PATH = path.join(
-  process.cwd(),
-  "../../packages/registry/src",
-);
-
-function toTitle(name: string): string {
-  return name
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-}
-
-async function buildDemoItems(): Promise<RegistryItem[]> {
-  const items: RegistryItem[] = [];
-
-  for (const name of registryIndex) {
-    const { files, dependencies } = await getDemoFilesAndDependencies(name);
-
-    items.push({
-      $schema: "https://ui.shadcn.com/schema/registry-item.json",
-      name,
-      title: toTitle(name),
-      type: "registry:component",
-      dependencies,
-      files: files.map((file) => ({
-        type: "registry:component",
-        path: path.join(REGISTRY_SRC_PATH, name, file),
-        target: `components/${name}/${file}`,
-      })),
-      registryDependencies: [getRegistryPath("notion-theme")],
-    });
-  }
-
-  return items;
-}
-
-const buildRegistry = async () => {
-  const targetPath = REGISTRY_PATH;
-  rimraf.sync(targetPath);
-  if (!existsSync(targetPath)) {
-    await fs.mkdir(targetPath, { recursive: true });
-  }
-
-  const items = await buildDemoItems();
-
-  const registry = RegistryIndexSchema.parse({
-    $schema: "https://ui.shadcn.com/schema/registry.json",
-    name: "notion-ui",
-    homepage: "https://notion-ui.vercel.app/",
-    items: [theme, ...items],
-  });
-
-  const registryJson = JSON.stringify(registry, null, 2);
-  await fs.writeFile(path.join(targetPath, "index.json"), registryJson, "utf8");
-
-  childProcess.execSync(
-    `pnpx shadcn@latest build ${targetPath}/index.json --output ${targetPath}`,
+async function getDemoFilesAndDependencies(demoName: string) {
+  const directory = path.join("../../packages/registry/src", demoName);
+  const files = (await readdir(directory)).filter(
+    (file) => file !== "index.ts",
   );
-};
+  const dependencies = new Set<string>();
 
-const run = async () => {
-  try {
-    await buildRegistry();
-    console.log("✅ Done!");
-  } catch (error) {
-    console.error("❌ Error:", error);
-    process.exit(1);
+  for (const file of files) {
+    const content = await readFile(path.join(directory, file), "utf8");
+    for (const match of content.matchAll(/from\s+["']([^"']+)["']/g)) {
+      const dependency = match[1];
+      if (dependency?.startsWith("@notion-kit/"))
+        dependencies.add(dependency.split("/").slice(0, 2).join("/"));
+    }
   }
-};
 
-void run();
+  return { files, dependencies: [...dependencies] };
+}
+
+const output = "public/registry";
+const items: RegistryItem[] = [theme];
+
+for (const name of registryIndex) {
+  const { files, dependencies } = await getDemoFilesAndDependencies(name);
+  items.push({
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    name,
+    title: name
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
+    type: "registry:component",
+    dependencies,
+    registryDependencies: [
+      "https://notion-ui.vercel.app/registry/notion-theme.json",
+    ],
+    files: files.map((file) => ({
+      type: "registry:component",
+      path: `components/${name}/${file}`,
+      target: `components/${name}/${file}`,
+    })),
+  });
+}
+
+const registry = RegistryIndexSchema.parse({
+  $schema: "https://ui.shadcn.com/schema/registry.json",
+  name: "notion-ui",
+  homepage: "https://notion-ui.vercel.app/",
+  items,
+});
+
+await rm(output, { recursive: true, force: true });
+await mkdir(output, { recursive: true });
+await writeFile(
+  path.join(output, "index.json"),
+  JSON.stringify(registry, null, 2),
+);
+for (const item of registry.items) {
+  const files = await Promise.all(
+    item.files.map(async (file) => ({
+      ...file,
+      content: await readFile(
+        path.join(
+          "../../packages/registry/src",
+          item.name,
+          path.basename(file.path),
+        ),
+        "utf8",
+      ),
+    })),
+  );
+  await writeFile(
+    path.join(output, `${item.name}.json`),
+    JSON.stringify({ ...item, files }, null, 2),
+  );
+}
+console.log(`Built ${registry.items.length} installable registry items.`);

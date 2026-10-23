@@ -1,27 +1,90 @@
 ---
 title: Page
-description: The Page object contains the page states of a single Notion page.
+description: Page metadata and state.
 ---
 
 ## Properties
 
-| Prop             | Type                                      | Description                                                            |
-| ---------------- | ----------------------------------------- | ---------------------------------------------------------------------- |
-| `id`\*           | `string`                                  | Unique identifier of the page.                                         |
-| `title`\*        | `string`                                  | Title of the page.                                                     |
-| `parentId`\*     | `string \| null`                          | Information about the page's parent.                                   |
-| `type`\*         | `string`                                  | Type of the page. Could be useful for grouping.                        |
-| `isArchived`\*   | `boolean`                                 | Whether the page is in Trash.                                          |
-| `isPublished`\*  | `boolean`                                 | Whether the page is publised to Web.                                   |
-| `isFavorite`\*   | `boolean`                                 | Whether the page is in your favorite list.                             |
-| `icon`           | [`IconData`](/docs/objects/icon)          | Page icon.                                                             |
-| `coverImage`     | [`CoverImage`](/docs/objects/cover-image) | Page icon.                                                             |
-| `url`            | `string`                                  | The URL of the Notion page.                                            |
-| `publicUrl`      | `string`                                  | The public page URL if the page has been published to the web.         |
-| `createdBy`\*    | `string`                                  | User who created the page. The value is the user's ID.                 |
-| `lastEditedBy`\* | `string`                                  | User who last edited the page. The value is the user's ID.             |
-| `createdAt`\*    | `number`                                  | Date and time when this page was created. Formatted as timestamp (ms). |
-| `lastEditedAt`\* | `number`                                  | Date and time when this page was updated. Formatted as timestamp (ms). |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the page.",
+    },
+    title: {
+      type: "string",
+      required: true,
+      description: "Title of the page.",
+    },
+    parentId: {
+      type: "string | null",
+      required: true,
+      description: "Information about the page's parent.",
+    },
+    type: {
+      type: "string",
+      required: true,
+      description: "Type of the page. Could be useful for grouping.",
+    },
+    isArchived: {
+      type: "boolean",
+      required: true,
+      description: "Whether the page is in Trash.",
+    },
+    isPublished: {
+      type: "boolean",
+      required: true,
+      description: "Whether the page is published to Web.",
+    },
+    isFavorite: {
+      type: "boolean",
+      required: true,
+      description: "Whether the page is in your favorite list.",
+    },
+    icon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      description: "Page icon.",
+    },
+    coverImage: {
+      type: "CoverImage",
+      typeDescriptionLink: "/docs/objects/cover-image",
+      description: "Page cover image.",
+    },
+    url: {
+      type: "string",
+      description: "The URL of the Notion page.",
+    },
+    publicUrl: {
+      type: "string",
+      description:
+        "The public page URL if the page has been published to the web.",
+    },
+    createdBy: {
+      type: "string",
+      required: true,
+      description: "User who created the page. The value is the user's ID.",
+    },
+    lastEditedBy: {
+      type: "string",
+      required: true,
+      description: "User who last edited the page. The value is the user's ID.",
+    },
+    createdAt: {
+      type: "number",
+      required: true,
+      description:
+        "Date and time when this page was created. Formatted as timestamp (ms).",
+    },
+    lastEditedAt: {
+      type: "number",
+      required: true,
+      description:
+        "Date and time when this page was updated. Formatted as timestamp (ms).",
+    },
+  }}
+/>
 
 ## Example
 

@@ -6,10 +6,11 @@ links:
     href: https://base-ui.com/react/components/meter
 ---
 
-<ComponentPreview
-  name="meter-demo"
-  preview={`<MeterBar value={72} trackColor="#2383e2" />`}
-/>
+<RegistryStory name="meter-demo" />
+
+```tsx
+<MeterBar value={72} trackColor="#2383e2" />
+```
 
 ## Installation
 
@@ -26,32 +27,95 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `Meter` extends the Base UI Meter root and renders a `<div>`.
 
-| Prop                | Type                                                  | Default          | Description                                                        |
-| ------------------- | ----------------------------------------------------- | ---------------- | ------------------------------------------------------------------ |
-| `value`             | `number`                                              | -                | The current value.                                                 |
-| `min`               | `number`                                              | `0`              | The minimum value.                                                 |
-| `max`               | `number`                                              | `100`            | The maximum value.                                                 |
-| `format`            | `Intl.NumberFormatOptions`                            | -                | Options used to format the value.                                  |
-| `locale`            | `Intl.LocalesArgument`                                | runtime locale   | Locale used by `Intl.NumberFormat` when formatting the value.      |
-| `aria-valuetext`    | `React.AriaAttributes["aria-valuetext"]`              | -                | Human-readable text for the current value.                         |
-| `getAriaValueText`  | `(formattedValue: string, value: number) => string`   | -                | Returns the human-readable text alternative for the current value. |
+<TypeTable
+  type={{
+    value: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-value",
+      description: "The current value.",
+    },
+    min: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-min",
+      default: "0",
+      description: "The minimum value.",
+    },
+    max: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-max",
+      default: "100",
+      description: "The maximum value.",
+    },
+    format: {
+      type: "Intl.NumberFormatOptions",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-format",
+      description: "Options used to format the value.",
+    },
+    locale: {
+      type: "Intl.LocalesArgument",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-locale",
+      default: "runtime locale",
+      description: (
+        <>
+          {" "}
+          Locale used by <code>Intl.NumberFormat</code> when formatting the
+          value.{" "}
+        </>
+      ),
+    },
+    "aria-valuetext": {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-aria-valuetext",
+      description: "Human-readable text for the current value.",
+    },
+    getAriaValueText: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-getAriaValueText",
+      description:
+        "Returns the human-readable text alternative for the current value.",
+    },
+  }}
+/>
 
 ### MeterBar
 
 `MeterBar` extends `Meter` and renders a horizontal track with an indicator.
 
-| Prop         | Type     | Default | Description                      |
-| ------------ | -------- | ------- | -------------------------------- |
-| `trackColor` | `string` | -       | CSS color for the indicator.     |
+<TypeTable
+  type={{
+    trackColor: {
+      type: "string",
+      description: "CSS color for the indicator.",
+    },
+  }}
+/>
 
 ### MeterRing
 
 `MeterRing` extends `Meter` and renders a circular SVG indicator.
 
-| Prop         | Type     | Default | Description                  |
-| ------------ | -------- | ------- | ---------------------------- |
-| `max`        | `number` | `100`   | The maximum value.           |
-| `trackColor` | `string` | -       | CSS color for the indicator. |
+<TypeTable
+  type={{
+    max: {
+      type: "number",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterRoot-max",
+      default: "100",
+      description: "The maximum value.",
+    },
+    trackColor: {
+      type: "string",
+      description: "CSS color for the indicator.",
+    },
+  }}
+/>
 
 ### MeterLabel
 
@@ -61,6 +125,13 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 
 `MeterValue` extends the Base UI Meter value and renders a `<span>`.
 
-| Prop       | Type                                                           | Default | Description                        |
-| ---------- | -------------------------------------------------------------- | ------- | ---------------------------------- |
-| `children` | `null \| ((formattedValue: string, value: number) => ReactNode)` | -       | Custom render function for value.  |
+<TypeTable
+  type={{
+    children: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/meter#MeterValue-children",
+      description: "Custom render function for value.",
+    },
+  }}
+/>

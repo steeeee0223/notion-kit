@@ -6,7 +6,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "storybook-static/**"],
+      "outputs": [".next/**", "dist/**", "build/**"],
       "outputLogs": "errors-only",
       "env": [
         "POSTGRES_URL",
@@ -72,7 +72,7 @@
     "VERCEL_URL",
     "PORT",
     "E2E_COVERAGE",
-    "STORYBOOK_STRIPE_PUBLISHABLE_KEY",
+    "VITE_STRIPE_PUBLISHABLE_KEY",
     "npm_lifecycle_event"
   ]
 }

@@ -1,0 +1,199 @@
+---
+title: Radio Group
+description: Selects one option from a group of labeled choices.
+links:
+  - label: Base UI
+    href: https://base-ui.com/react/components/radio-group
+---
+
+<RegistryStory name="radio-group-default" />
+
+The preview renders each plan as a selectable card. The same primitives also support plain labels.
+
+```tsx
+import { RadioGroup, RadioGroupItem } from "@notion-kit/ui/primitives";
+
+<RadioGroup aria-label="Plan" name="plan" defaultValue="plus">
+  <label>
+    <RadioGroupItem value="free" />
+    Free
+  </label>
+  <label>
+    <RadioGroupItem value="plus" />
+    Plus
+  </label>
+</RadioGroup>;
+```
+
+## Installation
+
+<Installation packages="@notion-kit/ui" registryName="radio-group-default" />
+
+## Anatomy
+
+`RadioGroup` owns the selected value and keyboard navigation. Each `RadioGroupItem` has a unique value within the group.
+The item includes its own selection indicator and hidden form input.
+
+A wrapping `<label>` supplies each item's accessible name. The group's accessible name comes from `aria-label` or `aria-labelledby`.
+The group `name` identifies the selected value in form submissions.
+
+## Examples
+
+### Controlled selection
+
+`value` and `onValueChange` expose the selection to application state.
+`defaultValue` sets the initial selection when the group manages its own state.
+
+```tsx
+import { useState } from "react";
+
+import { RadioGroup, RadioGroupItem } from "@notion-kit/ui/primitives";
+
+export default function PlanPicker() {
+  const [plan, setPlan] = useState("plus");
+  return (
+    <RadioGroup aria-label="Plan" value={plan} onValueChange={setPlan}>
+      <label>
+        <RadioGroupItem value="free" />
+        Free
+      </label>
+      <label>
+        <RadioGroupItem value="plus" />
+        Plus
+      </label>
+    </RadioGroup>
+  );
+}
+```
+
+### Disabled items
+
+Use the preview's `disabled` control to toggle the whole group.
+An item-level `disabled` prop prevents selection of that option.
+A group-level `disabled` prop disables the entire group.
+
+```tsx
+<RadioGroup aria-label="Plan" defaultValue="free">
+  <label>
+    <RadioGroupItem value="free" />
+    Free
+  </label>
+  <label>
+    <RadioGroupItem value="enterprise" disabled />
+    Enterprise
+  </label>
+</RadioGroup>
+```
+
+## API reference
+
+### RadioGroup
+
+Accepts Base UI's `RadioGroup.Props` and renders a grid container.
+Uses [Base UI Radio Group props](https://base-ui.com/react/components/radio-group#radiogroup).
+
+<TypeTable
+  type={{
+    value: {
+      type: "Value",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-value",
+      description: "The controlled selected value.",
+    },
+    defaultValue: {
+      type: "Value",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-defaultValue",
+      description: "The initial selected value of an uncontrolled group.",
+    },
+    onValueChange: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-onValueChange",
+      description:
+        "Called with the selected value and event details when the selection changes.",
+    },
+    name: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-name",
+      description: "The field name used in form submissions.",
+    },
+    form: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-form",
+      description: "The id of the form that owns the radio inputs.",
+    },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-disabled",
+      default: "false",
+      description: "Disables interaction with the entire group.",
+    },
+    readOnly: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-readOnly",
+      default: "false",
+      description: "Prevents changes to the selected value.",
+    },
+    required: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-required",
+      default: "false",
+      description: "Requires a selection before form submission.",
+    },
+    inputRef: {
+      type: "React.Ref<HTMLInputElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioGroup-inputRef",
+      description: "A ref to the hidden input element.",
+    },
+  }}
+/>
+
+### RadioGroupItem
+
+Accepts Base UI's `Radio.Root.Props`. Renders a radio control, its indicator, and a hidden input.
+Uses [Base UI Radio root props](https://base-ui.com/react/components/radio-group#root).
+
+<TypeTable
+  type={{
+    value: {
+      type: "Value",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-value",
+      required: true,
+      description: "The unique value that identifies this option.",
+    },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-disabled",
+      description: "Disables this item. The group can also disable all items.",
+    },
+    readOnly: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-readOnly",
+      description: "Prevents selection of this item.",
+    },
+    required: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-required",
+      description: "Requires a selection before form submission.",
+    },
+    inputRef: {
+      type: "React.Ref<HTMLInputElement>",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/radio-group#RadioRoot-inputRef",
+      description: "A ref to this item's hidden input.",
+    },
+  }}
+/>
+
+The selected item exposes `data-checked`. A card label can use `has-data-[checked]:border-blue` to style its selected state.

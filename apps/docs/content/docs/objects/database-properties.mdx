@@ -11,27 +11,72 @@ A database column object `ColumnInfo<TPlugin>` consists of the common properties
 
 ### Common Properties
 
-| Prop                         | Type                                                | Description                                        |
-| ---------------------------- | --------------------------------------------------- | -------------------------------------------------- |
-| `id`\*                       | `string`                                            | Unique identifier of the column.                   |
-| `name`\*                     | `string`                                            | Name of the column.                                |
-| `icon`                       | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the column.                      |
-| `width`                      | `string`                                            | Width of the column.                               |
-| `description`                | `string`                                            | Description of the column.                         |
-| `wrapped`                    | `boolean`                                           | Whether each cell in the column should be wrapped. |
-| `hidden`                     | `boolean`                                           | Whether the column is hidden.                      |
-| `isDeleted`                  | `boolean`                                           | Whether the column is deleted.                     |
-| (deprecated) `isCountCapped` | `boolean`                                           | Whether the count of the column should be capped.  |
-| (deprecated) `countMethod`   | `CountMethod`                                       | The count method of the column.                    |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the column.",
+    },
+    name: {
+      type: "string",
+      required: true,
+      description: "Name of the column.",
+    },
+    icon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      description: "Displayed icon of the column.",
+    },
+    width: {
+      type: "string",
+      description: "Width of the column.",
+    },
+    description: {
+      type: "string",
+      description: "Description of the column.",
+    },
+    wrapped: {
+      type: "boolean",
+      description: "Whether each cell in the column should be wrapped.",
+    },
+    hidden: {
+      type: "boolean",
+      description: "Whether the column is hidden.",
+    },
+    isDeleted: {
+      type: "boolean",
+      description: "Whether the column is deleted.",
+    },
+    "(deprecated) isCountCapped": {
+      type: "boolean",
+      description: "Whether the count of the column should be capped.",
+    },
+    "(deprecated) countMethod": {
+      type: "CountMethod",
+      description: "The count method of the column.",
+    },
+  }}
+/>
 
 ### Plugin Configuration
 
 The plugin-specific configuration `ColumnConfig<TPlugin>` for the column.
 
-| Prop       | Type                   | Description                        |
-| ---------- | ---------------------- | ---------------------------------- |
-| `type`\*   | `TPlugin['id']`        | Plugin type ID for the column.     |
-| `config`\* | `InferConfig<TPlugin>` | Plugin-specific config for column. |
+<TypeTable
+  type={{
+    type: {
+      type: "TPlugin['id']",
+      required: true,
+      description: "Plugin type ID for the column.",
+    },
+    config: {
+      type: "InferConfig<TPlugin>",
+      required: true,
+      description: "Plugin-specific config for column.",
+    },
+  }}
+/>
 
 ## ColumnDefs
 
@@ -55,13 +100,35 @@ A `Row<TPlugins>` represents a row of data in the table.
 
 ### API Reference
 
-| Prop             | Type                                                | Description                                      |
-| ---------------- | --------------------------------------------------- | ------------------------------------------------ |
-| `id`\*           | `string`                                            | Unique identifier of the row.                    |
-| `properties`\*   | `Record<string, Cell<TPlugin>>`                     | The row data keyed by column ID.                 |
-| `icon`           | [`IconData`](/docs/blocks/icon-block#type-icondata) | Displayed icon of the row.                       |
-| `createdAt`\*    | `number`                                            | The row creation timestamp (in milliseconds).    |
-| `lastEditedAt`\* | `number`                                            | The row last edited timestamp (in milliseconds). |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the row.",
+    },
+    properties: {
+      type: "Record<string, Cell<TPlugin>>",
+      required: true,
+      description: "The row data keyed by column ID.",
+    },
+    icon: {
+      type: "IconData",
+      typeDescriptionLink: "/docs/objects/icon",
+      description: "Displayed icon of the row.",
+    },
+    createdAt: {
+      type: "number",
+      required: true,
+      description: "The row creation timestamp (in milliseconds).",
+    },
+    lastEditedAt: {
+      type: "number",
+      required: true,
+      description: "The row last edited timestamp (in milliseconds).",
+    },
+  }}
+/>
 
 ## Cell
 
@@ -69,10 +136,20 @@ A `Cell<TPlugin>` contains the `id` and `value`, where the value is determined b
 
 ### Common Properties
 
-| Prop      | Type                 | Description                    |
-| --------- | -------------------- | ------------------------------ |
-| `id`\*    | `string`             | Unique identifier of the cell. |
-| `value`\* | `InferData<TPlugin>` | Plugin-defined cell data.      |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the cell.",
+    },
+    value: {
+      type: "InferData<TPlugin>",
+      required: true,
+      description: "Plugin-defined cell data.",
+    },
+  }}
+/>
 
 ### Examples
 

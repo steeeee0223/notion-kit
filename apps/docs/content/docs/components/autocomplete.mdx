@@ -3,9 +3,10 @@ title: Autocomplete
 description: A Base UI autocomplete composed with Notion-style menu groups, items, labels, and separators.
 ---
 
-<ComponentPreview
-  name="autocomplete-default"
-  preview={`<Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
+<RegistryStory name="autocomplete-default" />
+
+```tsx
+<Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
   <AutocompleteInput placeholder="Search workspace..." />
   <AutocompleteContent>
     <AutocompleteEmpty>No matches found.</AutocompleteEmpty>
@@ -31,8 +32,8 @@ description: A Base UI autocomplete composed with Notion-style menu groups, item
       )}
     </AutocompleteList>
   </AutocompleteContent>
-</Autocomplete>`}
-/>
+</Autocomplete>
+```
 
 ## Installation
 
@@ -46,11 +47,16 @@ description: A Base UI autocomplete composed with Notion-style menu groups, item
 
 Use `AutocompleteContent variant="inline"` when another primitive owns the overlay positioning. This keeps existing popover menus as `Popover` + `Autocomplete`.
 
-<ComponentPreview
-  name="autocomplete-popover"
-  preview={`<Popover>
+<RegistryStory name="autocomplete-popover" />
+
+```tsx
+<Popover>
   <PopoverTrigger
-    render={<Button variant="hint" size="sm">Open menu</Button>}
+    render={
+      <Button variant="hint" size="sm">
+        Open menu
+      </Button>
+    }
   />
   <PopoverContent>
     <Autocomplete items={groups} open autoHighlight="always" openOnInputClick>
@@ -81,8 +87,8 @@ Use `AutocompleteContent variant="inline"` when another primitive owns the overl
       </AutocompleteContent>
     </Autocomplete>
   </PopoverContent>
-</Popover>`}
-/>
+</Popover>
+```
 
 ## Anatomy
 
@@ -130,17 +136,71 @@ For grouped root items, render groups from `AutocompleteList`:
 
 The Base UI autocomplete root. It owns the input value, filtering, highlight state, and item collection.
 
-| Prop                | Type                                       | Default | Description                                                    |
-| ------------------- | ------------------------------------------ | ------- | -------------------------------------------------------------- |
-| `items`             | `Item[] \| { items: Item[] }[]`            | -       | Items to filter and render through `AutocompleteCollection`.   |
-| `itemToStringValue` | `(item: Item) => string`                   | -       | Converts object items to searchable text.                      |
-| `value`             | `string`                                   | -       | Controlled input value.                                        |
-| `onValueChange`     | `(value: string) => void`                  | -       | Handler called when the input value changes.                   |
-| `filter`            | Base UI filter function                    | -       | Optional custom filter. Prefer the internal filter by default. |
-| `filteredItems`     | `Item[] \| { items: Item[] }[]`            | -       | Controlled filtered result set.                                |
-| `open`              | `boolean`                                  | -       | Whether the autocomplete popup/list is open.                   |
-| `autoHighlight`     | `"always" \| "input" \| "none" \| boolean` | -       | How Base UI highlights a matching item.                        |
-| `openOnInputClick`  | `boolean`                                  | -       | Opens the list when the input is clicked.                      |
+<TypeTable
+  type={{
+    items: {
+      type: "Item[] | { items: Item[] }[]",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-items",
+      description: (
+        <>
+          {" "}
+          Items to filter and render through <code>AutocompleteCollection</code>
+          .{" "}
+        </>
+      ),
+    },
+    itemToStringValue: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-itemToStringValue",
+      description: "Converts object items to searchable text.",
+    },
+    value: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-value",
+      description: "Controlled input value.",
+    },
+    onValueChange: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-onValueChange",
+      description: "Handler called when the input value changes.",
+    },
+    filter: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-filter",
+      description:
+        "Optional custom filter. Prefer the internal filter by default.",
+    },
+    filteredItems: {
+      type: "Item[] | { items: Item[] }[]",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-filteredItems",
+      description: "Controlled filtered result set.",
+    },
+    open: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-open",
+      description: "Whether the autocomplete popup/list is open.",
+    },
+    autoHighlight: {
+      type: '"always" | "input" | "none" | boolean',
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-autoHighlight",
+      description: "How Base UI highlights a matching item.",
+    },
+    openOnInputClick: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-openOnInputClick",
+      description: "Opens the list when the input is clicked.",
+    },
+  }}
+/>
 
 ### AutocompleteInput
 
@@ -148,11 +208,25 @@ The search input uses Base UI Input and Clear. It includes a search icon and sho
 
 `default` renders a bordered field with inset spacing. `flat` renders a full-width header with a bottom divider. Both styles include the search icon and native clear button.
 
-| Prop          | Type                   | Default     | Description                                                |
-| ------------- | ---------------------- | ----------- | ---------------------------------------------------------- |
-| `placeholder` | `string`               | -           | Placeholder text for the input.                            |
-| `variant`     | `"default" \| "flat"`  | `"default"` | Bordered field or full-width header with a bottom divider. |
-| `className`   | `string`               | -           | Classes for the styled field container.                    |
+<TypeTable
+  type={{
+    placeholder: {
+      type: "string",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#input",
+      description: "Placeholder text for the input.",
+    },
+    variant: {
+      type: '"default" | "flat"',
+      default: '"default"',
+      description: "Bordered field or full-width header with a bottom divider.",
+    },
+    className: {
+      type: "string",
+      description: "Classes for the styled field container.",
+    },
+  }}
+/>
 
 Other input props, including `ref`, `render`, and accessible labels, follow Base UI Input. `AutocompleteInputProps` exports this contract.
 
@@ -162,39 +236,105 @@ The former `search`, `clear`, and `onCancel` props and standalone `AutocompleteC
 
 The popup surface. Floating content is positioned by Base UI; inline content renders in-flow for composed menus.
 
-| Prop               | Type                                     | Default      | Description                                              |
-| ------------------ | ---------------------------------------- | ------------ | -------------------------------------------------------- |
-| `variant`          | `"floating" \| "inline"`                 | `"floating"` | Whether to render a positioned popup or in-flow content. |
-| `side`             | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"`   | Preferred side for floating content.                     |
-| `align`            | `"start" \| "center" \| "end"`           | `"start"`    | Preferred alignment for floating content.                |
-| `sideOffset`       | `number`                                 | `4`          | Distance from the anchor for floating content.           |
-| `alignOffset`      | `number`                                 | -            | Alignment offset for floating content.                   |
-| `collisionPadding` | `number \| Padding`                      | -            | Padding used when avoiding viewport collisions.          |
-| `anchor`           | Base UI anchor                           | -            | Custom anchor for floating content.                      |
+<TypeTable
+  type={{
+    variant: {
+      type: '"floating" | "inline"',
+      default: '"floating"',
+      description: "Whether to render a positioned popup or in-flow content.",
+    },
+    side: {
+      type: "Side",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-side",
+      default: '"bottom"',
+      description: "Preferred side for floating content.",
+    },
+    align: {
+      type: "Align",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-align",
+      default: '"start"',
+      description: "Preferred alignment for floating content.",
+    },
+    sideOffset: {
+      type: "number | OffsetFunction",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-sideOffset",
+      default: "4",
+      description: "Distance from the anchor for floating content.",
+    },
+    alignOffset: {
+      type: "number | OffsetFunction",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-alignOffset",
+      description: "Alignment offset for floating content.",
+    },
+    collisionPadding: {
+      type: "number | Padding",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-collisionPadding",
+      description: "Padding used when avoiding viewport collisions.",
+    },
+    anchor: {
+      type: "Element",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-anchor",
+      description: "Custom anchor for floating content.",
+    },
+  }}
+/>
 
 ### AutocompleteList
 
 The scrollable list viewport. When the root receives grouped items, pass a render function as children and render one `AutocompleteGroup` per group.
 
-| Prop       | Type                                              | Default | Description                                      |
-| ---------- | ------------------------------------------------- | ------- | ------------------------------------------------ |
-| `children` | `React.ReactNode \| ((item, index) => ReactNode)` | -       | Static content or a Base UI item/group renderer. |
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteList-children",
+      description: "Static content or a Base UI item/group renderer.",
+    },
+  }}
+/>
 
 ### AutocompleteCollection
 
 Renders the filtered items from the nearest root or group.
 
-| Prop       | Type                         | Default | Description                      |
-| ---------- | ---------------------------- | ------- | -------------------------------- |
-| `children` | `(item, index) => ReactNode` | -       | Renderer for each filtered item. |
+<TypeTable
+  type={{
+    children: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteCollection-children",
+      description: "Renderer for each filtered item.",
+    },
+  }}
+/>
 
 ### AutocompleteGroup
 
 Groups related autocomplete items with menu spacing.
 
-| Prop    | Type     | Default | Description                                                                       |
-| ------- | -------- | ------- | --------------------------------------------------------------------------------- |
-| `items` | `Item[]` | -       | Group items. Use only when rendering a grouped root item from `AutocompleteList`. |
+<TypeTable
+  type={{
+    items: {
+      type: "Item[]",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteGroup-items",
+      description: (
+        <>
+          {" "}
+          Group items. Use only when rendering a grouped root item from{" "}
+          <code>AutocompleteList</code>.{" "}
+        </>
+      ),
+    },
+  }}
+/>
 
 For flat root items, keep the visual group item-less and let `AutocompleteCollection` read the root filtered items.
 
@@ -202,23 +342,57 @@ For flat root items, keep the visual group item-less and let `AutocompleteCollec
 
 A non-interactive label used to title a group of items.
 
-| Prop    | Type              | Default | Description              |
-| ------- | ----------------- | ------- | ------------------------ |
-| `title` | `React.ReactNode` | -       | The group label content. |
+<TypeTable
+  type={{
+    title: {
+      type: "React.ReactNode",
+      description: "The group label content.",
+    },
+  }}
+/>
 
 ### AutocompleteItem
 
 A single selectable autocomplete row. Extends the shared `MenuItem` visual props.
 
-| Prop       | Type                                                            | Default         | Description                              |
-| ---------- | --------------------------------------------------------------- | --------------- | ---------------------------------------- |
-| `value`    | `Item`                                                          | -               | The item value selected by Base UI.      |
-| `label`    | `React.ReactNode`                                               | `String(value)` | The main item label.                     |
-| `icon`     | `React.ReactNode`                                               | -               | An optional leading icon.                |
-| `desc`     | `string`                                                        | -               | An optional description below the label. |
-| `variant`  | `"default" \| "secondary" \| "sidebar" \| "warning" \| "error"` | `"default"`     | The visual style of the item.            |
-| `disabled` | `boolean`                                                       | -               | Whether the item is disabled.            |
-| `onClick`  | `React.MouseEventHandler<HTMLElement>`                          | -               | Handler called when the item is clicked. |
+<TypeTable
+  type={{
+    value: {
+      type: "Item",
+      description: "The generic item value selected by Base UI.",
+    },
+    label: {
+      type: "React.ReactNode",
+      default: "String(value)",
+      description: "The main item label.",
+    },
+    icon: {
+      type: "React.ReactNode",
+      description: "An optional leading icon.",
+    },
+    desc: {
+      type: "string",
+      description: "An optional description below the label.",
+    },
+    variant: {
+      type: '"default" | "secondary" | "sidebar" | "warning" | "error"',
+      default: '"default"',
+      description: "The visual style of the item.",
+    },
+    disabled: {
+      type: "boolean",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteItem-disabled",
+      description: "Whether the item is disabled.",
+    },
+    onClick: {
+      type: "function",
+      typeDescriptionLink:
+        "https://base-ui.com/react/components/autocomplete#AutocompleteItem-onClick",
+      description: "Handler called when the item is clicked.",
+    },
+  }}
+/>
 
 Use `MenuItemAction` as trailing content for metadata, status, or shortcuts.
 

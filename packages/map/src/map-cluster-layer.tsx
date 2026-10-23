@@ -289,9 +289,7 @@ export function MapClusterLayer<
       map.getCanvas().style.cursor = "";
     };
 
-    map.on("click", clusterLayerId, (e) => {
-      void handleClusterClick(e);
-    });
+    map.on("click", clusterLayerId, handleClusterClick);
     map.on("click", unclusteredLayerId, handlePointClick);
     map.on("mouseenter", clusterLayerId, handleMouseEnterCluster);
     map.on("mouseleave", clusterLayerId, handleMouseLeaveCluster);
@@ -299,9 +297,7 @@ export function MapClusterLayer<
     map.on("mouseleave", unclusteredLayerId, handleMouseLeavePoint);
 
     return () => {
-      map.off("click", clusterLayerId, (e) => {
-        void handleClusterClick(e);
-      });
+      map.off("click", clusterLayerId, handleClusterClick);
       map.off("click", unclusteredLayerId, handlePointClick);
       map.off("mouseenter", clusterLayerId, handleMouseEnterCluster);
       map.off("mouseleave", clusterLayerId, handleMouseLeaveCluster);

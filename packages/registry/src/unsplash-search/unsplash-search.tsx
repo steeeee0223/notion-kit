@@ -10,7 +10,7 @@ export default function Search() {
   const [url, setUrl] = useState("");
 
   return (
-    <div className="flex w-135 flex-col items-center gap-2">
+    <div className="flex w-full max-w-135 flex-col gap-2">
       <div className="flex w-full truncate px-4 text-xl font-medium">
         Selected: {url}
       </div>

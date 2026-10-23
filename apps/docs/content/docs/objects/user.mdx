@@ -1,16 +1,34 @@
 ---
 title: User
-description: The User object represents a user in a Notion workspace.
+description: User identity and profile details.
 ---
 
 ## Properties
 
-| Prop          | Type     | Description                    |
-| ------------- | -------- | ------------------------------ |
-| `id`\*        | `string` | Unique identifier of the user. |
-| `name`\*      | `string` | User's name.                   |
-| `email`\*     | `string` | User's email.                  |
-| `avatarUrl`\* | `string` | Chosen avatar image.           |
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true,
+      description: "Unique identifier of the user.",
+    },
+    name: {
+      type: "string",
+      required: true,
+      description: "User's name.",
+    },
+    email: {
+      type: "string",
+      required: true,
+      description: "User's email.",
+    },
+    avatarUrl: {
+      type: "string",
+      required: true,
+      description: "Chosen avatar image.",
+    },
+  }}
+/>
 
 ## Example
 

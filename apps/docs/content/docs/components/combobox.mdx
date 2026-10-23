@@ -3,10 +3,11 @@ title: Combobox
 description: A Base UI combobox with Notion-style chip input, floating and inline variants, and creatable items.
 ---
 
-<ComponentPreview
-  name="combobox-basic"
-  preview={`<ComboboxBasic />`}
-/>
+<RegistryStory name="combobox-basic" />
+
+```tsx
+<ComboboxBasic />
+```
 
 ## Installation
 
@@ -39,7 +40,7 @@ const items = Combobox.createItems(users, {
       </ComboboxGroup>
     </ComboboxList>
   </ComboboxContent>
-</Combobox>
+</Combobox>;
 ```
 
 Pass the derived ID to `ComboboxItem value`. Selection values and `onValueChange` use IDs; list callbacks receive the original records. `getLabel` supplies the text for the input and filtering.
@@ -50,19 +51,21 @@ Create static collections outside the component. For changing data, memoize `Com
 
 Use the floating variant for a positioned popup. This example supports creatable items and a configurable chip limit.
 
-<ComponentPreview
-  name="combobox-multiple-floating"
-  preview={`<ComboboxMultipleFloating maxChips={3} />`}
-/>
+<RegistryStory name="combobox-multiple-floating" />
+
+```tsx
+<ComboboxMultipleFloating maxChips={3} />
+```
 
 ### Multiple Inline
 
 Use `<Combobox inline open>` with the inline content variant when the list is part of the surrounding menu surface. The root's `inline` prop keeps selection and filtering in inline mode. This example supports creatable items and a configurable chip limit.
 
-<ComponentPreview
-  name="combobox-multiple-inline"
-  preview={`<ComboboxMultipleInline maxChips={3} />`}
-/>
+<RegistryStory name="combobox-multiple-inline" />
+
+```tsx
+<ComboboxMultipleInline maxChips={3} />
+```
 
 ## API Reference
 

@@ -1,12 +1,16 @@
 ---
 title: Input
-description: Displays a form input field or a component that looks like an input field.
+description: A text input with an optional clear button.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/input
 ---
 
-<ComponentPreview name="input-default" preview={`<Input className="w-80" />`} />
+<RegistryStory name="input-default" />
+
+```tsx
+<Input className="w-80" />
+```
 
 ## Installation
 
@@ -18,40 +22,61 @@ links:
 
 ### Without Border
 
-<ComponentPreview
-  name="input-flat"
-  preview={`<Input
-    variant="flat"
-    className="w-80"
-    placeholder="Enter something..."
-  />`}
-/>
+<RegistryStory name="input-flat" />
+
+```tsx
+<Input variant="flat" className="w-80" placeholder="Enter something..." />
+```
 
 ### Search Input
 
-<ComponentPreview
-  name="input-search"
-  preview={`<Input
-    className="w-80"
-    value={value}
-    onChange={(e) => setValue(e.target.value)}
-    onCancel={() => setValue("")}
-    placeholder="Enter something..."
-    search
-    clear
-  />`}
+<RegistryStory name="input-search" />
+
+```tsx
+<Input
+  className="w-80"
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  onCancel={() => setValue("")}
+  placeholder="Enter something..."
+  search
+  clear
 />
+```
 
 ## API Reference
 
 ### Input
 
-An `Input` extends the HTML `<input>` component. We list the extended properties only.
+`Input` accepts HTML `<input>` props and the props below.
 
-| Prop       | Type                             | Default     | Description                                              |
-| ---------- | -------------------------------- | ----------- | -------------------------------------------------------- |
-| `variant`  | `"default" \| "plain" \| "flat"` | `"default"` | The visual style of the input.                           |
-| `search`   | `boolean`                        | -           | Whether the search icon is shown.                        |
-| `clear`    | `boolean`                        | -           | Whether the clear button is shown.                       |
-| `endIcon`  | `React.ReactNode`                | -           | An icon at the end of the input.                         |
-| `onCancel` | `() => void`                     | -           | Handler that is called when the clear button is clicked. |
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "plain" | "flat"',
+      default: '"default"',
+      description: "The visual style of the input.",
+    },
+    "data-size": {
+      type: 'InputVariants["size"]',
+      description: "The visual size of the input.",
+    },
+    search: {
+      type: "boolean",
+      description: "Whether the search icon is shown.",
+    },
+    clear: {
+      type: "boolean",
+      description: "Whether the clear button is shown.",
+    },
+    endIcon: {
+      type: "React.ReactNode",
+      description: "An icon at the end of the input.",
+    },
+    onCancel: {
+      type: "() => void",
+      returns: "void",
+      description: "Handler that is called when the clear button is clicked.",
+    },
+  }}
+/>

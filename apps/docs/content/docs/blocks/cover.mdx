@@ -1,9 +1,9 @@
 ---
 title: Cover
-description: A component for displaying a cover image with an interactive picker.
+description: A page cover image with an image picker.
 ---
 
-<ComponentPreview name="cover-default" hideCode />
+<RegistryStory name="cover-default" />
 
 ## Installation
 
@@ -15,47 +15,135 @@ description: A component for displaying a cover image with an interactive picker
 
 ### Notion Cover
 
-<ComponentPreview
-  name="cover-default"
-  preview={`<Cover
+<RegistryStory name="cover-default" />
+
+```tsx
+<Cover
     url={cover}
     unsplashAPIKey={UNSPLASH_ACCESS_KEY}
     onSelect={...}
     onUpload={...}
     onRemove={...}
-  />`}
-/>
+  />
+```
 
 ### Cover Picker
 
-<ComponentPreview
-  name="cover-picker"
-  preview={`<CoverPicker unsplashAPIKey={UNSPLASH_ACCESS_KEY}>
-    <Button size="sm">
-      <ImageIcon className="mr-2 size-4" />
-      Change cover
-    </Button>
-  </CoverPicker>`}
-/>
+<RegistryStory name="cover-picker" />
+
+```tsx
+<CoverPicker unsplashAPIKey={UNSPLASH_ACCESS_KEY}>
+  <Button size="sm">
+    <ImageIcon className="mr-2 size-4" />
+    Change cover
+  </Button>
+</CoverPicker>
+```
 
 ## API Reference
 
 ### Cover
 
-| Prop               | Type                    | Default | Description                                                                          |
-| ------------------ | ----------------------- | ------- | ------------------------------------------------------------------------------------ |
-| `unsplashAPIKey`\* | `string`                | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers). |
-| `url`              | `string`                | -       | The current URL of the cover image (controlled).                                     |
-| `alt`              | `string`                | -       | The fallback text to display.                                                        |
-| `onSelect`         | `(url: string) => void` | -       | Handler that is called when a cover image is selected or when a URL is submitted.    |
-| `onUpload`         | `(file: File) => void`  | -       | Handler that is called when a cover image is submitted.                              |
-| `onRemove`         | `() => void`            | -       | Handler that is called when the remove button is clicked.                            |
+<TypeTable
+  type={{
+    unsplashAPIKey: {
+      type: "string",
+      required: true,
+      description: (
+        <>
+          {" "}
+          The Unsplash access key from{" "}
+          <a href="https://unsplash.com/developers">Unsplash Developers</a>
+          .{" "}
+        </>
+      ),
+    },
+    url: {
+      type: "string",
+      description: "The current URL of the cover image (controlled).",
+    },
+    alt: {
+      type: "string",
+      description: "The fallback text to display.",
+    },
+    onSelect: {
+      type: "(url: string) => void",
+      parameters: [
+        {
+          name: "url",
+          type: "string",
+          description: "The destination URL.",
+        },
+      ],
+      returns: "void",
+      description:
+        "Handler that is called when a cover image is selected or when a URL is submitted.",
+    },
+    onUpload: {
+      type: "(file: File) => void",
+      parameters: [
+        {
+          name: "file",
+          type: "File",
+          description: "The selected file.",
+        },
+      ],
+      returns: "void",
+      description: "Handler that is called when a cover image is submitted.",
+    },
+    onRemove: {
+      type: "() => void",
+      returns: "void",
+      description: "Handler that is called when the remove button is clicked.",
+    },
+  }}
+/>
 
 ### CoverPicker
 
-| Prop               | Type                    | Default | Description                                                                          |
-| ------------------ | ----------------------- | ------- | ------------------------------------------------------------------------------------ |
-| `unsplashAPIKey`\* | `string`                | -       | The Unsplash access key from [Unsplash Developers](https://unsplash.com/developers). |
-| `onSelect`         | `(url: string) => void` | -       | Handler that is called when a cover image is selected or when a URL is submitted.    |
-| `onUpload`         | `(file: File) => void`  | -       | Handler that is called when a cover image is submitted.                              |
-| `onRemove`         | `() => void`            | -       | Handler that is called when the remove button is clicked.                            |
+<TypeTable
+  type={{
+    unsplashAPIKey: {
+      type: "string",
+      required: true,
+      description: (
+        <>
+          {" "}
+          The Unsplash access key from{" "}
+          <a href="https://unsplash.com/developers">Unsplash Developers</a>
+          .{" "}
+        </>
+      ),
+    },
+    onSelect: {
+      type: "(url: string) => void",
+      parameters: [
+        {
+          name: "url",
+          type: "string",
+          description: "The destination URL.",
+        },
+      ],
+      returns: "void",
+      description:
+        "Handler that is called when a cover image is selected or when a URL is submitted.",
+    },
+    onUpload: {
+      type: "(file: File) => void",
+      parameters: [
+        {
+          name: "file",
+          type: "File",
+          description: "The selected file.",
+        },
+      ],
+      returns: "void",
+      description: "Handler that is called when a cover image is submitted.",
+    },
+    onRemove: {
+      type: "() => void",
+      returns: "void",
+      description: "Handler that is called when the remove button is clicked.",
+    },
+  }}
+/>

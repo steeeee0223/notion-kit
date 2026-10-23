@@ -1,0 +1,18 @@
+@import "tailwindcss";
+/* Compile UI sources with docs so responsive utilities keep their cascade order. */
+@import "../../../../packages/ui/src/style.css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@import "@fumadocs/story/css/preset.css";
+
+/* Keep the iframe responsive without scaling the components inside it. */
+[data-story-viewport] > div {
+  aspect-ratio: auto !important;
+}
+
+[data-story-viewport] iframe {
+  position: static;
+  display: block;
+  width: 100%;
+  transform: none !important;
+}
