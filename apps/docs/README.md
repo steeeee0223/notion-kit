@@ -101,7 +101,7 @@ The shared `TypeTable` wraps Fumadocs' table. Supply strings for `type`,
 component renders them with Fumadocs' default `Pre` styles and applies the
 parameter layout consistently. `description` fields accept text or React nodes.
 
-For function props, document each parameter with `name`, `type`, and `description`, and
+For locally defined function props, document each parameter with `name`, `type`, and `description`, and
 include `returns`, even for `void`. Omit `parameters` for functions with no
 arguments. Apply the same rules to callback type aliases and function variants
 of union types. Mark optional parameters with `?` in their names and explain
@@ -111,10 +111,15 @@ Use `typeDescription` for a full signature when `type` shows a short name or typ
 alias. Use `typeDescriptionLink` to link the displayed `type` to its reference;
 it does not require `typeDescription`.
 
-For props inherited from Base UI, link directly to the corresponding property
-in its API reference. For example, use
+In the Primitives group, document inherited Base UI props with `type`,
+`description`, and `typeDescriptionLink`. Keep `default` and `required` when
+applicable. Omit `typeDescription`, `parameters`, and `returns`; the linked
+Base UI API reference owns those details. Prefer its concise type names, such
+as `Side` or `Align`, and use `function` or `object` for unnamed complex types.
+For example, use
 `https://base-ui.com/react/components/autocomplete#AutocompletePositioner-sideOffset`
-for `AutocompleteContent.sideOffset`. Keep Notion Kit additions documented locally.
+for `AutocompleteContent.sideOffset`. Keep Notion Kit additions and redefined
+props documented locally. Other documentation groups retain their full type tables.
 
 ## Check changes
 

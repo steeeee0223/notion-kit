@@ -157,22 +157,9 @@ The element that toggles the dropdown menu.
 <TypeTable
   type={{
     render: {
-      type: "React.ReactElement | ((props: HTMLProps, state: Menu.Trigger.State) => React.ReactElement)",
+      type: "React.ReactElement | function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/menu#MenuTrigger-render",
-      parameters: [
-        {
-          name: "props",
-          type: "HTMLProps",
-          description: "Props and ref to spread onto the rendered element.",
-        },
-        {
-          name: "state",
-          type: "Menu.Trigger.State",
-          description: "The current trigger state.",
-        },
-      ],
-      returns: "React.ReactElement",
       description:
         "Renders a custom trigger element and merges trigger props onto it.",
     },
@@ -189,17 +176,6 @@ The popover panel that appears when the menu is open.
       type: "number | OffsetFunction",
       typeDescriptionLink:
         "https://base-ui.com/react/components/menu#MenuPositioner-sideOffset",
-      typeDescription:
-        "number | ((data: { side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }) => number)",
-      parameters: [
-        {
-          name: "data",
-          type: "{ side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }",
-          description:
-            "The resolved side, alignment, anchor dimensions, and popup dimensions.",
-        },
-      ],
-      returns: "number",
       default: "4",
       description: "Distance in pixels from the trigger.",
     },
@@ -236,18 +212,9 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
       description: "Whether the item is disabled.",
     },
     onClick: {
-      type: "React.MouseEventHandler<HTMLElement>",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/menu#MenuItem-onClick",
-      typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
-      parameters: [
-        {
-          name: "event",
-          type: "React.MouseEvent<HTMLElement>",
-          description: "The mouse event.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the item is clicked.",
     },
   }}
@@ -266,17 +233,9 @@ A menu item that can be toggled on and off. Extends `DropdownMenuItem` props.
       description: "Whether the item is checked.",
     },
     onCheckedChange: {
-      type: "(checked: boolean) => void",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/menu#MenuCheckboxItem-onCheckedChange",
-      parameters: [
-        {
-          name: "checked",
-          type: "boolean",
-          description: "The next checked state.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the checked state changes.",
     },
   }}
@@ -301,22 +260,9 @@ Groups related radio items and manages their mutually exclusive value.
       description: "The initially selected value when uncontrolled.",
     },
     onValueChange: {
-      type: "(value: any, eventDetails: Menu.RadioGroup.ChangeEventDetails) => void",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/menu#MenuRadioGroup-onValueChange",
-      parameters: [
-        {
-          name: "value",
-          type: "any",
-          description: "The new value.",
-        },
-        {
-          name: "eventDetails",
-          type: "Menu.RadioGroup.ChangeEventDetails",
-          description: "The event reason and controls supplied by Base UI.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the selected value changes.",
     },
     disabled: {

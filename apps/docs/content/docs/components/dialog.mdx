@@ -105,36 +105,15 @@ Common root props are listed below. Other props follow [Base UI's root reference
       description: "The initial open state of an uncontrolled dialog.",
     },
     onOpenChange: {
-      type: "(open: boolean, eventDetails: DialogRoot.ChangeEventDetails) => void",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/dialog#DialogRoot-onOpenChange",
-      parameters: [
-        {
-          name: "open",
-          type: "boolean",
-          description: "The next open state.",
-        },
-        {
-          name: "eventDetails",
-          type: "DialogRoot.ChangeEventDetails",
-          description: "The event reason and controls supplied by Base UI.",
-        },
-      ],
-      returns: "void",
       description: "Called when the dialog opens or closes.",
     },
     onOpenChangeComplete: {
-      type: "(open: boolean) => void",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/dialog#DialogRoot-onOpenChangeComplete",
-      parameters: [
-        {
-          name: "open",
-          type: "boolean",
-          description: "The next open state.",
-        },
-      ],
-      returns: "void",
       description: "Called after the opening or closing animation finishes.",
     },
     modal: {
@@ -155,8 +134,6 @@ Common root props are listed below. Other props follow [Base UI's root reference
   }}
 />
 
-`DialogRoot.ChangeEventDetails` is the event-details type from `@base-ui/react/dialog`.
-
 ### DialogContent
 
 Accepts Base UI's `Dialog.Popup` props and these additions.
@@ -174,7 +151,7 @@ Accepts Base UI's `Dialog.Popup` props and these additions.
         "Renders an empty, visually hidden title and clears aria-describedby.",
     },
     container: {
-      type: 'DialogPrimitive.Portal.Props["container"]',
+      type: "object",
       typeDescriptionLink:
         "https://base-ui.com/react/components/dialog#DialogPortal-container",
       description:
@@ -182,8 +159,6 @@ Accepts Base UI's `Dialog.Popup` props and these additions.
     },
   }}
 />
-
-`DialogPrimitive` refers to `Dialog` from `@base-ui/react/dialog`.
 
 ### DialogTitle and DialogDescription
 

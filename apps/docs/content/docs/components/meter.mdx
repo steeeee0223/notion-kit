@@ -69,28 +69,15 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
       ),
     },
     "aria-valuetext": {
-      type: 'React.AriaAttributes["aria-valuetext"]',
+      type: "string",
       typeDescriptionLink:
         "https://base-ui.com/react/components/meter#MeterRoot-aria-valuetext",
       description: "Human-readable text for the current value.",
     },
     getAriaValueText: {
-      type: "(formattedValue: string, value: number) => string",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/meter#MeterRoot-getAriaValueText",
-      parameters: [
-        {
-          name: "formattedValue",
-          type: "string",
-          description: "The formatted meter value.",
-        },
-        {
-          name: "value",
-          type: "number",
-          description: "The numeric meter value.",
-        },
-      ],
-      returns: "string",
       description:
         "Returns the human-readable text alternative for the current value.",
     },
@@ -141,22 +128,9 @@ Add `MeterLabel` and `MeterValue` when the value needs to be announced or displa
 <TypeTable
   type={{
     children: {
-      type: "null | ((formattedValue: string, value: number) => ReactNode)",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/meter#MeterValue-children",
-      parameters: [
-        {
-          name: "formattedValue",
-          type: "string",
-          description: "The formatted meter value.",
-        },
-        {
-          name: "value",
-          type: "number",
-          description: "The numeric meter value.",
-        },
-      ],
-      returns: "ReactNode",
       description: "Custom render function for value.",
     },
   }}

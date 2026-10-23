@@ -90,41 +90,26 @@ A group-level `disabled` prop disables the entire group.
 ### RadioGroup
 
 Accepts Base UI's `RadioGroup.Props` and renders a grid container.
-The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
+Uses [Base UI Radio Group props](https://base-ui.com/react/components/radio-group#radiogroup).
 
 <TypeTable
   type={{
     value: {
-      type: 'RadioGroupPrimitive.Props["value"]',
+      type: "Value",
       typeDescriptionLink:
         "https://base-ui.com/react/components/radio-group#RadioGroup-value",
       description: "The controlled selected value.",
     },
     defaultValue: {
-      type: 'RadioGroupPrimitive.Props["defaultValue"]',
+      type: "Value",
       typeDescriptionLink:
         "https://base-ui.com/react/components/radio-group#RadioGroup-defaultValue",
       description: "The initial selected value of an uncontrolled group.",
     },
     onValueChange: {
-      type: 'RadioGroupPrimitive.Props["onValueChange"]',
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/radio-group#RadioGroup-onValueChange",
-      typeDescription:
-        "(value: Value, eventDetails: RadioGroupPrimitive.ChangeEventDetails) => void",
-      parameters: [
-        {
-          name: "value",
-          type: "Value",
-          description: "The new value.",
-        },
-        {
-          name: "eventDetails",
-          type: "RadioGroupPrimitive.ChangeEventDetails",
-          description: "The event reason and controls supplied by Base UI.",
-        },
-      ],
-      returns: "void",
       description:
         "Called with the selected value and event details when the selection changes.",
     },
@@ -165,17 +150,6 @@ The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
       type: "React.Ref<HTMLInputElement>",
       typeDescriptionLink:
         "https://base-ui.com/react/components/radio-group#RadioGroup-inputRef",
-      typeDescription:
-        "React.RefObject<HTMLInputElement | null> | ((instance: HTMLInputElement | null) => void | (() => void)) | null",
-      parameters: [
-        {
-          name: "instance",
-          type: "HTMLInputElement | null",
-          description:
-            "The hidden input element, or null when its ref is detached without a cleanup function.",
-        },
-      ],
-      returns: "void | (() => void)",
       description: "A ref to the hidden input element.",
     },
   }}
@@ -184,12 +158,12 @@ The types below use `RadioGroupPrimitive` from `@base-ui/react/radio-group`.
 ### RadioGroupItem
 
 Accepts Base UI's `Radio.Root.Props`. Renders a radio control, its indicator, and a hidden input.
-The value type below uses `RadioPrimitive` for `Radio` from `@base-ui/react/radio`.
+Uses [Base UI Radio root props](https://base-ui.com/react/components/radio-group#root).
 
 <TypeTable
   type={{
     value: {
-      type: 'RadioPrimitive.Root.Props["value"]',
+      type: "Value",
       typeDescriptionLink:
         "https://base-ui.com/react/components/radio-group#RadioRoot-value",
       required: true,
@@ -217,17 +191,6 @@ The value type below uses `RadioPrimitive` for `Radio` from `@base-ui/react/radi
       type: "React.Ref<HTMLInputElement>",
       typeDescriptionLink:
         "https://base-ui.com/react/components/radio-group#RadioRoot-inputRef",
-      typeDescription:
-        "React.RefObject<HTMLInputElement | null> | ((instance: HTMLInputElement | null) => void | (() => void)) | null",
-      parameters: [
-        {
-          name: "instance",
-          type: "HTMLInputElement | null",
-          description:
-            "The hidden input element, or null when its ref is detached without a cleanup function.",
-        },
-      ],
-      returns: "void | (() => void)",
       description: "A ref to this item's hidden input.",
     },
   }}

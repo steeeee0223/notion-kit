@@ -81,22 +81,9 @@ The area that activates the context menu on right-click or long-press.
 <TypeTable
   type={{
     render: {
-      type: "React.ReactElement | ((props: HTMLProps, state: ContextMenu.Trigger.State) => React.ReactElement)",
+      type: "React.ReactElement | function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/context-menu#ContextMenuTrigger-render",
-      parameters: [
-        {
-          name: "props",
-          type: "HTMLProps",
-          description: "Props and ref to spread onto the rendered element.",
-        },
-        {
-          name: "state",
-          type: "ContextMenu.Trigger.State",
-          description: "The current trigger state.",
-        },
-      ],
-      returns: "React.ReactElement",
       description:
         "Renders a custom trigger element and merges trigger props onto it.",
     },
@@ -110,7 +97,7 @@ The popover panel that appears at the pointer position.
 <TypeTable
   type={{
     side: {
-      type: '"top" | "right" | "bottom" | "left"',
+      type: "Side",
       typeDescriptionLink:
         "https://base-ui.com/react/components/context-menu#ContextMenuPositioner-side",
       description: "Forces the panel to a specific side.",
@@ -148,18 +135,9 @@ A single actionable item in the menu. Extends the shared `MenuItem` props.
       description: "Whether the item is disabled.",
     },
     onClick: {
-      type: "React.MouseEventHandler<HTMLElement>",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/context-menu#ContextMenuItem-onClick",
-      typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
-      parameters: [
-        {
-          name: "event",
-          type: "React.MouseEvent<HTMLElement>",
-          description: "The mouse event.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the item is clicked.",
     },
   }}
@@ -178,17 +156,9 @@ A menu item that can be toggled on and off. Extends `ContextMenuItem` props.
       description: "Whether the item is checked.",
     },
     onCheckedChange: {
-      type: "(checked: boolean) => void",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/context-menu#ContextMenuCheckboxItem-onCheckedChange",
-      parameters: [
-        {
-          name: "checked",
-          type: "boolean",
-          description: "The next checked state.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the checked state changes.",
     },
   }}

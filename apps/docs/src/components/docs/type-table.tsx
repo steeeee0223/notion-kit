@@ -6,6 +6,8 @@ import {
   type ParameterNode,
 } from "fumadocs-ui/components/type-table";
 
+import { cn } from "@notion-kit/cn";
+
 export interface TypeNode
   extends Omit<
     FumadocsTypeNode,
@@ -27,7 +29,7 @@ function renderCode(value: string | undefined) {
   return value === undefined ? undefined : <Pre>{value}</Pre>;
 }
 
-export function TypeTable({ type, ...props }: TypeTableProps) {
+export function TypeTable({ type, className, ...props }: TypeTableProps) {
   const formattedType = Object.fromEntries(
     Object.entries(type).map(([name, field]): [string, FumadocsTypeNode] => [
       name,
@@ -40,8 +42,10 @@ export function TypeTable({ type, ...props }: TypeTableProps) {
         parameters: field.parameters?.map(({ type, ...parameter }) => ({
           ...parameter,
           description: (
-            <span className="inline-flex flex-wrap items-center gap-1.5">
-              {renderCode(type)}
+            <span data-slot="type-table-parameter">
+              <Pre className="inline w-auto min-w-0 whitespace-pre-wrap">
+                {type}
+              </Pre>{" "}
               {parameter.description}
             </span>
           ),
@@ -50,5 +54,16 @@ export function TypeTable({ type, ...props }: TypeTableProps) {
     ]),
   );
 
-  return <FumadocsTypeTable {...props} type={formattedType} />;
+  return (
+    <FumadocsTypeTable
+      {...props}
+      className={cn(
+        "[&_.inline-flex:has([data-slot=type-table-parameter])]:flex-nowrap",
+        "[&_.inline-flex:has([data-slot=type-table-parameter])]:items-baseline",
+        "[&_.inline-flex:has([data-slot=type-table-parameter])>div]:min-w-0",
+        className,
+      )}
+      type={formattedType}
+    />
+  );
 }

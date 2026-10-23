@@ -46,21 +46,15 @@ props and the controlled value props below.
   type={{
     defaultValue: {
       type: "TabValue",
-      typeDescriptionLink:
-        "https://base-ui.com/react/components/tabs#TabsRoot-defaultValue",
       default: "First tab",
       description: "The uncontrolled initial tab value.",
     },
     value: {
       type: "TabValue",
-      typeDescriptionLink:
-        "https://base-ui.com/react/components/tabs#TabsRoot-value",
       description: "The controlled selected tab value.",
     },
     onValueChange: {
       type: "(value: TabValue) => void",
-      typeDescriptionLink:
-        "https://base-ui.com/react/components/tabs#TabsRoot-onValueChange",
       parameters: [
         {
           name: "value",
@@ -72,7 +66,7 @@ props and the controlled value props below.
       description: "Handler called when a tab is selected.",
     },
     orientation: {
-      type: '"horizontal" | "vertical"',
+      type: "Tabs.Root.Orientation",
       typeDescriptionLink:
         "https://base-ui.com/react/components/tabs#TabsRoot-orientation",
       default: '"horizontal"',
@@ -111,7 +105,7 @@ A selectable tab. Its `value` must match a `TabsContent` value.
 <TypeTable
   type={{
     value: {
-      type: "TabValue",
+      type: "Tabs.Tab.Value",
       typeDescriptionLink:
         "https://base-ui.com/react/components/tabs#TabsTab-value",
       description: "The value selected by the trigger.",
@@ -132,7 +126,7 @@ The panel associated with a tab trigger.
 <TypeTable
   type={{
     value: {
-      type: "TabValue",
+      type: "Tabs.Tab.Value",
       typeDescriptionLink:
         "https://base-ui.com/react/components/tabs#TabsPanel-value",
       description: "The trigger value that shows this panel.",

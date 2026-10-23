@@ -151,17 +151,9 @@ The Base UI autocomplete root. It owns the input value, filtering, highlight sta
       ),
     },
     itemToStringValue: {
-      type: "(item: Item) => string",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-itemToStringValue",
-      parameters: [
-        {
-          name: "item",
-          type: "Item",
-          description: "The collection item.",
-        },
-      ],
-      returns: "string",
       description: "Converts object items to searchable text.",
     },
     value: {
@@ -171,41 +163,15 @@ The Base UI autocomplete root. It owns the input value, filtering, highlight sta
       description: "Controlled input value.",
     },
     onValueChange: {
-      type: "(value: string) => void",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-onValueChange",
-      parameters: [
-        {
-          name: "value",
-          type: "string",
-          description: "The new value.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the input value changes.",
     },
     filter: {
-      type: "null | ((item: Item, query: string, itemToString?: (item: Item) => string) => boolean)",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompleteRoot-filter",
-      parameters: [
-        {
-          name: "item",
-          type: "Item",
-          description: "The collection item.",
-        },
-        {
-          name: "query",
-          type: "string",
-          description: "The search text.",
-        },
-        {
-          name: "itemToString?",
-          type: "(item: Item) => string",
-          description: "Optional. Converts an item to searchable text.",
-        },
-      ],
-      returns: "boolean",
       description:
         "Optional custom filter. Prefer the internal filter by default.",
     },
@@ -278,14 +244,14 @@ The popup surface. Floating content is positioned by Base UI; inline content ren
       description: "Whether to render a positioned popup or in-flow content.",
     },
     side: {
-      type: '"top" | "right" | "bottom" | "left"',
+      type: "Side",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-side",
       default: '"bottom"',
       description: "Preferred side for floating content.",
     },
     align: {
-      type: '"start" | "center" | "end"',
+      type: "Align",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-align",
       default: '"start"',
@@ -295,17 +261,6 @@ The popup surface. Floating content is positioned by Base UI; inline content ren
       type: "number | OffsetFunction",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-sideOffset",
-      typeDescription:
-        "number | ((data: { side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }) => number)",
-      parameters: [
-        {
-          name: "data",
-          type: "{ side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }",
-          description:
-            "The resolved side, alignment, anchor dimensions, and popup dimensions.",
-        },
-      ],
-      returns: "number",
       default: "4",
       description: "Distance from the anchor for floating content.",
     },
@@ -313,17 +268,6 @@ The popup surface. Floating content is positioned by Base UI; inline content ren
       type: "number | OffsetFunction",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-alignOffset",
-      typeDescription:
-        "number | ((data: { side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }) => number)",
-      parameters: [
-        {
-          name: "data",
-          type: "{ side: Side; align: Align; anchor: { width: number; height: number }; positioner: { width: number; height: number } }",
-          description:
-            "The resolved side, alignment, anchor dimensions, and popup dimensions.",
-        },
-      ],
-      returns: "number",
       description: "Alignment offset for floating content.",
     },
     collisionPadding: {
@@ -333,12 +277,9 @@ The popup surface. Floating content is positioned by Base UI; inline content ren
       description: "Padding used when avoiding viewport collisions.",
     },
     anchor: {
-      type: 'AutocompletePrimitive.Positioner.Props["anchor"]',
+      type: "Element",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompletePositioner-anchor",
-      typeDescription:
-        "Element | null | VirtualElement | React.RefObject<Element | null> | (() => Element | VirtualElement | null)",
-      returns: "Element | VirtualElement | null",
       description: "Custom anchor for floating content.",
     },
   }}
@@ -351,22 +292,9 @@ The scrollable list viewport. When the root receives grouped items, pass a rende
 <TypeTable
   type={{
     children: {
-      type: "React.ReactNode | ((item: Item, index: number) => ReactNode)",
+      type: "React.ReactNode | function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompleteList-children",
-      parameters: [
-        {
-          name: "item",
-          type: "Item",
-          description: "The collection item.",
-        },
-        {
-          name: "index",
-          type: "number",
-          description: "The zero-based item index.",
-        },
-      ],
-      returns: "ReactNode",
       description: "Static content or a Base UI item/group renderer.",
     },
   }}
@@ -379,22 +307,9 @@ Renders the filtered items from the nearest root or group.
 <TypeTable
   type={{
     children: {
-      type: "(item: Item, index: number) => ReactNode",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompleteCollection-children",
-      parameters: [
-        {
-          name: "item",
-          type: "Item",
-          description: "The collection item.",
-        },
-        {
-          name: "index",
-          type: "number",
-          description: "The zero-based item index.",
-        },
-      ],
-      returns: "ReactNode",
       description: "Renderer for each filtered item.",
     },
   }}
@@ -444,9 +359,7 @@ A single selectable autocomplete row. Extends the shared `MenuItem` visual props
   type={{
     value: {
       type: "Item",
-      typeDescriptionLink:
-        "https://base-ui.com/react/components/autocomplete#AutocompleteItem-value",
-      description: "The item value selected by Base UI.",
+      description: "The generic item value selected by Base UI.",
     },
     label: {
       type: "React.ReactNode",
@@ -473,18 +386,9 @@ A single selectable autocomplete row. Extends the shared `MenuItem` visual props
       description: "Whether the item is disabled.",
     },
     onClick: {
-      type: "React.MouseEventHandler<HTMLElement>",
+      type: "function",
       typeDescriptionLink:
         "https://base-ui.com/react/components/autocomplete#AutocompleteItem-onClick",
-      typeDescription: "(event: React.MouseEvent<HTMLElement>) => void",
-      parameters: [
-        {
-          name: "event",
-          type: "React.MouseEvent<HTMLElement>",
-          description: "The mouse event.",
-        },
-      ],
-      returns: "void",
       description: "Handler called when the item is clicked.",
     },
   }}
