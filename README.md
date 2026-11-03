@@ -20,3 +20,18 @@ A component registry inspired by Notion's clean design — modular, customizable
 ## 🚀 Installation
 
 [Read the docs](https://notion-ui.vercel.app/)
+
+## Development setup
+
+Install the Node.js version in `.nvmrc` with nvm, then install the pnpm version
+pinned in `package.json`:
+
+```bash
+nvm install
+nvm use
+npm install --global pnpm@12.4.2 --allow-scripts=pnpm
+pnpm install --frozen-lockfile
+```
+
+CI uses the same Node.js and pnpm versions. After switching branches, run
+`nvm use` before running pnpm commands.
