@@ -1,0 +1,49 @@
+name: Sync Renovate branch
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+concurrency:
+  group: sync-renovate-branch
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref == 'feat/renovate' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Reset Renovate branch to main
+        shell: bash
+        env:
+          MERGED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          main_sha=$(git rev-parse refs/remotes/origin/main)
+          renovate_sha=$(git ls-remote --heads origin refs/heads/feat/renovate | awk '{print $1}')
+
+          if [[ "$renovate_sha" == "$main_sha" ]]; then
+            echo "feat/renovate already points to main." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          if [[ -n "$renovate_sha" && "$renovate_sha" != "$MERGED_HEAD_SHA" ]]; then
+            echo "Skipped: feat/renovate changed after the merged PR." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # An empty lease recreates a deleted branch only if it is still absent.
+          git push \
+            --force-with-lease="refs/heads/feat/renovate:$renovate_sha" \
+            origin "$main_sha:refs/heads/feat/renovate"
+          echo "Reset feat/renovate to main at $main_sha." >> "$GITHUB_STEP_SUMMARY"
