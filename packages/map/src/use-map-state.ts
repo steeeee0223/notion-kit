@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
-import isEqual from "lodash.isequal";
+import isEqual from "lodash-es/isEqual.js";
 import type { Map, MapEventType, Popup, PopupOptions } from "maplibre-gl";
 
 import type { MapViewport } from "./map";

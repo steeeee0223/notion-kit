@@ -19,7 +19,6 @@
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "catalog:tailwind-v4",
     "tailwindcss": "catalog:tailwind-v4",
     "tw-animate-css": "catalog:tailwind-v4"
   },

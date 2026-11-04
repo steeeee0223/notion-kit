@@ -73,6 +73,29 @@ function installGeolocation() {
 }
 
 describe("useCurrentLocation", () => {
+  it("keeps repeated position snapshots stable and publishes timestamp changes", () => {
+    const installed = installGeolocation();
+    const { result } = renderHook(() => useCurrentLocation());
+    const position = createGeolocationPosition(10, 20);
+
+    act(() => {
+      installed.emitPosition(position);
+    });
+    const initialSnapshot = result.current;
+
+    act(() => {
+      installed.emitPosition(position);
+    });
+    expect(result.current).toBe(initialSnapshot);
+
+    const updatedPosition = { ...position, timestamp: position.timestamp + 1 };
+    act(() => {
+      installed.emitPosition(updatedPosition);
+    });
+    expect(result.current).not.toBe(initialSnapshot);
+    expect(result.current.position).toBe(updatedPosition);
+  });
+
   it("subscribes to navigator.geolocation.watchPosition", () => {
     const installed = installGeolocation();
     const options = {

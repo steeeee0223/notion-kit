@@ -8,6 +8,7 @@ import {
   useMapBearing,
   useMapCenter,
   useMapPitch,
+  useMapState,
   usePopupOpen,
   usePopupOptions,
   type PopupOpenStore,
@@ -137,6 +138,37 @@ function createWrapper(map: FakeMap | null) {
 }
 
 describe("map state hooks", () => {
+  it("keeps Map snapshots with structurally equal keys stable", () => {
+    const map = new FakeMap();
+    const { result } = renderHook(
+      () =>
+        useMapState(
+          (current) =>
+            new globalThis.Map([
+              [
+                { property: "center" },
+                [current.getCenter().lng, current.getCenter().lat],
+              ],
+            ]),
+          new globalThis.Map(),
+          { events: ["move"] },
+        ),
+      { wrapper: createWrapper(map) },
+    );
+    const initialSnapshot = result.current;
+
+    act(() => {
+      map.emit("move");
+    });
+    expect(result.current).toBe(initialSnapshot);
+
+    act(() => {
+      map.setCenter(10, 20);
+    });
+    expect(result.current).not.toBe(initialSnapshot);
+    expect([...result.current.values()]).toEqual([[10, 20]]);
+  });
+
   it("updates bearing and pitch from map events", () => {
     const map = new FakeMap();
     const { result } = renderHook(

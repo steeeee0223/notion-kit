@@ -42,7 +42,6 @@
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/code-block": "workspace:*",
-    "@notion-kit/hooks": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/map": "workspace:*",
     "@notion-kit/schemas": "workspace:*",
@@ -51,7 +50,6 @@
     "@notion-kit/table-view": "workspace:*",
     "@notion-kit/ui": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "date-fns": "catalog:fns",
     "lodash.groupby": "catalog:fns",
     "maplibre-gl": "^5.24.0"
   },

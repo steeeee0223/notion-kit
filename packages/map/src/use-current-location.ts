@@ -1,5 +1,5 @@
 import { useMemo, useSyncExternalStore } from "react";
-import isEqual from "lodash.isequal";
+import isEqual from "lodash-es/isEqual.js";
 
 import type { MapViewport } from "./map";
 
