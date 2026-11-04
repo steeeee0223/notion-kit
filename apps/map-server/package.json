@@ -31,7 +31,7 @@
     "drizzle-orm": "^0.45.1",
     "fastify": "catalog:fastify",
     "gtfs-realtime-bindings": "^1.1.1",
-    "jszip": "^3.10.1",
+    "jszip": "^3.10.2",
     "pg": "^8.22.0",
     "zod": "catalog:"
   },
