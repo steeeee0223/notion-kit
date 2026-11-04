@@ -407,8 +407,8 @@ catalogs:
       version: 5.0.13
   uuid:
     uuid:
-      specifier: ^13.0.0
-      version: 13.0.0
+      specifier: ^14.0.3
+      version: 14.0.3
 
 patchedDependencies:
   '@testing-library/jest-dom@6.9.1': c11e9cf5e96618d60b9b660b98c9d75058b1673ff40648f0d802b7cc1f88fb7f
@@ -573,7 +573,7 @@ importers:
         version: 7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       uuid:
         specifier: catalog:uuid
-        version: 13.0.0
+        version: 14.0.3
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -1150,7 +1150,7 @@ importers:
         version: 7.66.0(react@19.2.3)
       uuid:
         specifier: catalog:uuid
-        version: 13.0.0
+        version: 14.0.3
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -1839,7 +1839,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       uuid:
         specifier: catalog:uuid
-        version: 13.0.0
+        version: 14.0.3
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -1939,7 +1939,7 @@ importers:
         version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       uuid:
         specifier: catalog:uuid
-        version: 13.0.0
+        version: 14.0.3
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -11845,8 +11845,8 @@ packages:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
-  uuid@13.0.0:
-    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+  uuid@14.0.3:
+    resolution: {integrity: sha512-Sc5u1VVln93y1Xnz4R+CunOZc7R9LUcTmhj7Rc7Eg3HVcf7rVn2FOoa812fe0W8p3jD7xeoGSYbfqCGGH2B6xw==}
     hasBin: true
 
   valibot@1.3.1:
@@ -21925,7 +21925,7 @@ snapshots:
 
   uuid@11.1.0: {}
 
-  uuid@13.0.0: {}
+  uuid@14.0.3: {}
 
   valibot@1.3.1(typescript@6.0.3):
     optionalDependencies:
