@@ -27,8 +27,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "i18next": "^25.0.1",
-    "react-i18next": "^15.4.1"
+    "i18next": "25.0.1",
+    "react-i18next": "15.4.1"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",

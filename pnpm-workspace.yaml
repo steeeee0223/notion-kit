@@ -5,16 +5,16 @@ packages:
   - tooling/*
 
 catalog:
-  "@better-fetch/fetch": ^1.1.21
+  "@better-fetch/fetch": 1.1.21
   eslint: ^9.39.1
-  prettier: ^3.6.2
-  tsdown: ^0.16.6
+  prettier: 3.6.2
+  tsdown: 0.16.6
   typescript: 6.0.3
-  zod: ^4.1.12
+  zod: 4.3.6
 
 catalogs:
   node:
-    "@types/node": ^24
+    "@types/node": ^26
   react19:
     react: ^19.2.3
     react-dom: ^19.2.3
@@ -30,11 +30,12 @@ catalogs:
     msw: ^2.12.4
     "@playwright/test": ^1.57.0
     playwright: ^1.57.0
-    vitest: 4.1.8
-    "@vitejs/plugin-react": 6.0.2
-    "@vitest/browser-playwright": 4.1.8
-    "@vitest/coverage-v8": 4.1.8
-    "@vitest/ui": 4.1.8
+    vite: 8.3.0
+    vitest: 5.0.1
+    "@vitejs/plugin-react": 6.1.1
+    "@vitest/browser-playwright": 5.0.1
+    "@vitest/coverage-v8": 5.0.1
+    "@vitest/ui": 5.0.1
   rtl:
     jsdom: 29.1.1
     "@testing-library/jest-dom": 6.9.1
@@ -58,13 +59,13 @@ catalogs:
     react-hotkeys-hook: ^5.2.1
     usehooks-ts: ^3.1.1
     zustand: ^5.0.3
-    "@dnd-kit/abstract": ^0.5.0
-    "@dnd-kit/dom": ^0.5.0
-    "@dnd-kit/helpers": ^0.5.0
-    "@dnd-kit/react": ^0.5.0
+    "@dnd-kit/abstract": 0.5.3
+    "@dnd-kit/dom": 0.5.3
+    "@dnd-kit/helpers": 0.5.3
+    "@dnd-kit/react": 0.5.3
     "@hookform/resolvers": ^5.2.2
     "@tanstack/react-query": ^5.81.5
-    "@tanstack/react-table": ^9.2.4
+    "@tanstack/react-table": 9.2.4
     "@tanstack/react-virtual": ^3.13.23
   uuid:
     uuid: ^13.0.0
@@ -109,6 +110,7 @@ linkWorkspacePackages: true
 allowBuilds:
   "@parcel/watcher": false
   "@prisma/engines": false
+  "@swc/core": true
   bufferutil: false
   core-js-pure: false
   esbuild: false
@@ -116,3 +118,5 @@ allowBuilds:
   prisma: false
   protobufjs: false
   sharp: false
+patchedDependencies:
+  "@testing-library/jest-dom@6.9.1": patches/@testing-library__jest-dom@6.9.1.patch

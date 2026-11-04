@@ -20,9 +20,9 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-turbo": "catalog:turbo",
-    "typescript-eslint": "^8.46.4"
+    "typescript-eslint": "8.46.4"
   },
   "devDependencies": {
     "@notion-kit/prettier-config": "workspace:*",
