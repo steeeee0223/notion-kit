@@ -7,7 +7,7 @@ packages:
 catalog:
   "@better-fetch/fetch": 1.1.21
   eslint: ^9.39.1
-  prettier: 3.6.2
+  prettier: 3.9.10
   tsdown: 0.16.6
   typescript: 6.0.3
   zod: 4.3.6
