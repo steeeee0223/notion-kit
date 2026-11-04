@@ -4,6 +4,7 @@ import {
   addMonths,
   addQuarters,
   addYears,
+  constructNow,
   differenceInCalendarDays,
   differenceInDays,
   differenceInHours,
@@ -77,12 +78,19 @@ function generateDailyRanges(
 function generateDailySubRanges(startTs: Date, endTs: Date, origin: Date) {
   const items: TimelineSubRangeItem[] = [];
   let current = startOfDay(startTs);
+  const today = constructNow(startTs);
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth();
+  const todayDate = today.getDate();
 
   while (current <= endTs) {
     items.push({
-      label: format(current, "d"),
+      label: String(current.getDate()),
       start: dateToPixel(current, "daily", origin),
-      isToday: isToday(current),
+      isToday:
+        current.getFullYear() === todayYear &&
+        current.getMonth() === todayMonth &&
+        current.getDate() === todayDate,
     });
     current = addDays(current, 1);
   }

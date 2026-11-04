@@ -50,6 +50,7 @@
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@testing-library/react": "catalog:rtl",
+    "@types/geojson": "^7946.0.16",
     "@types/lodash-es": "catalog:fns",
     "@vitejs/plugin-react": "catalog:test",
     "babel-plugin-react-compiler": "catalog:react-compiler",

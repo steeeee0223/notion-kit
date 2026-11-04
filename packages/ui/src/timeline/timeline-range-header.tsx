@@ -98,23 +98,20 @@ export function TimelineRangeHeader({ className }: TimelineRangeHeaderProps) {
 
   // Precompute range groups with their column-index positions
   const rangeGroups = useMemo((): RangeGroup[] => {
-    return ranges.reduce<{ groups: RangeGroup[]; colIndex: number }>(
-      (acc, range, i) => {
-        const nextRange = ranges[i + 1];
-        const count = subRanges.filter(
-          (sub) =>
-            sub.start >= range.start &&
-            (!nextRange || sub.start < nextRange.start),
-        ).length;
-        acc.groups.push({
-          label: range.label,
-          columnStartIndex: acc.colIndex,
-          columnCount: count,
-        });
-        return { groups: acc.groups, colIndex: acc.colIndex + count };
-      },
-      { groups: [], colIndex: 0 },
-    ).groups;
+    let subRangeIndex = 0;
+    let columnStartIndex = 0;
+    return ranges.map((range, i) => {
+      const nextRange = ranges[i + 1];
+      let columnCount = 0;
+      let subRange = subRanges[subRangeIndex];
+      while (subRange && (!nextRange || subRange.start < nextRange.start)) {
+        if (subRange.start >= range.start) columnCount++;
+        subRange = subRanges[++subRangeIndex];
+      }
+      const group = { label: range.label, columnStartIndex, columnCount };
+      columnStartIndex += columnCount;
+      return group;
+    });
   }, [ranges, subRanges]);
 
   // Filter to range groups overlapping with the visible column window
