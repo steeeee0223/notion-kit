@@ -11,8 +11,7 @@ const anyString: unknown = expect.any(String);
 function lastAction(callback: { mock: { lastCall: unknown[] | undefined } }) {
   return (
     callback.mock.lastCall?.[0] as
-      | { action: { id: unknown; payload: Record<string, unknown> } }
-      | undefined
+      { action: { id: unknown; payload: Record<string, unknown> } } | undefined
   )?.action;
 }
 

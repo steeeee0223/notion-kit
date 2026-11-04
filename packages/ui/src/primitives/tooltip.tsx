@@ -65,8 +65,10 @@ function TooltipContent({
   );
 }
 
-interface TooltipPresetProps
-  extends Omit<TooltipContentProps, "children" | "render"> {
+interface TooltipPresetProps extends Omit<
+  TooltipContentProps,
+  "children" | "render"
+> {
   disabled?: boolean;
   children: React.ReactElement;
   description: React.ReactNode;

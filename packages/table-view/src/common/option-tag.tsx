@@ -4,8 +4,10 @@ import { cn } from "@notion-kit/cn";
 import { Badge } from "@notion-kit/ui/primitives";
 import { COLOR, type Color } from "@notion-kit/utils";
 
-interface OptionTagProps
-  extends Omit<React.ComponentProps<typeof Badge>, "children" | "color"> {
+interface OptionTagProps extends Omit<
+  React.ComponentProps<typeof Badge>,
+  "children" | "color"
+> {
   name: string;
   color: Color;
 }

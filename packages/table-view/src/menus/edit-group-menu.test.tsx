@@ -362,8 +362,7 @@ describe("EditGroupMenu", () => {
     const nextGrouping = await (await grouping.changeGrouping()).select("Done");
     await waitFor(() => {
       const viewChange = onViewChange.mock.lastCall?.[0] as
-        | { next: TableViewState }
-        | undefined;
+        { next: TableViewState } | undefined;
       expect(viewChange?.next.pluginMethods?.groupSort).toEqual({
         mode: "manual",
       });
@@ -464,8 +463,7 @@ describe("EditGroupMenu", () => {
       ).toEqual(["Group code:bbb", "Group code:cc", "Group code:a"]),
     );
     const viewChange = onViewChange.mock.lastCall?.[0] as
-      | { next: TableViewState }
-      | undefined;
+      { next: TableViewState } | undefined;
     expect(viewChange?.next.pluginMethods?.groupSort).toEqual({
       mode: "descending",
       method: "locale:casefold",

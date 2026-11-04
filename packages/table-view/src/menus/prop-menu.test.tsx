@@ -28,8 +28,7 @@ function lastResourceChange<TNext = unknown[]>(callback: {
   mock: { lastCall: unknown[] | undefined };
 }) {
   return callback.mock.lastCall?.[0] as
-    | CapturedResourceChange<TNext>
-    | undefined;
+    CapturedResourceChange<TNext> | undefined;
 }
 
 async function openHeader(tableView: TableViewObject, name: string) {
@@ -272,8 +271,7 @@ it("PropMenu_QuickSortUsesPluginLabelsDefaultMethodAndInlineRuntime", async () =
     ]),
   );
   const viewChange = onViewChange.mock.lastCall?.[0] as
-    | { next: TableViewState }
-    | undefined;
+    { next: TableViewState } | undefined;
   expect(viewChange?.next.pluginMethods).toMatchObject({
     sortingMethodByColumn: { rank: "length" },
   });

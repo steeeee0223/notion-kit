@@ -57,5 +57,4 @@ export interface EditLogProps {
 }
 
 export type EditLogTarget =
-  | { type: "table" }
-  | { type: "row"; rowId: string; title?: string };
+  { type: "table" } | { type: "row"; rowId: string; title?: string };

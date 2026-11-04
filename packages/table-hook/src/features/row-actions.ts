@@ -633,10 +633,10 @@ export const RowActionsFeature: TableFeature = {
         (rows) => {
           const hasValidProjectedGroups = Boolean(
             projectedGroupTarget &&
-              sourceGroupId &&
-              groupingColumnId &&
-              groupingState.groupValues[sourceGroupId] &&
-              groupingState.groupValues[projectedGroupTarget.groupId],
+            sourceGroupId &&
+            groupingColumnId &&
+            groupingState.groupValues[sourceGroupId] &&
+            groupingState.groupValues[projectedGroupTarget.groupId],
           );
           const next = !shouldReorder
             ? rows

@@ -75,8 +75,7 @@ export interface LegacySortingMethod {
 }
 
 export type SortingMethodDescriptor<Data = unknown, Config = unknown> =
-  | SortingMethod<Data, Config>
-  | LegacySortingMethod;
+  SortingMethod<Data, Config> | LegacySortingMethod;
 
 export interface GroupingMethod<Data = unknown, Config = unknown> {
   id: string;
@@ -108,8 +107,7 @@ export interface CountingMethod {
   hint?: { description: string; imageSrc?: string };
   /** Preferred TanStack aggregation reference for new methods. */
   aggregationFn?:
-    | string
-    | AggregationFnDef<AnyTableFeatures, Row, unknown, unknown>;
+    string | AggregationFnDef<AnyTableFeatures, Row, unknown, unknown>;
   /** Plugin-owned extraction used before a reusable aggregation executes. */
   toAggregationValue?: (data: unknown, row: Row) => unknown;
   /** Formats a semantic aggregation result for the footer. */

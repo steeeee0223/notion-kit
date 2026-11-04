@@ -8,11 +8,10 @@ import {
 
 import { cn } from "@notion-kit/cn";
 
-export interface TypeNode
-  extends Omit<
-    FumadocsTypeNode,
-    "type" | "typeDescription" | "default" | "parameters" | "returns"
-  > {
+export interface TypeNode extends Omit<
+  FumadocsTypeNode,
+  "type" | "typeDescription" | "default" | "parameters" | "returns"
+> {
   type: string;
   typeDescription?: string;
   default?: string;
@@ -20,8 +19,10 @@ export interface TypeNode
   returns?: string;
 }
 
-export interface TypeTableProps
-  extends Omit<ComponentProps<typeof FumadocsTypeTable>, "type"> {
+export interface TypeTableProps extends Omit<
+  ComponentProps<typeof FumadocsTypeTable>,
+  "type"
+> {
   type: Record<string, TypeNode>;
 }
 

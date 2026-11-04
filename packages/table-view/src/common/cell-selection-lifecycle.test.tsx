@@ -104,11 +104,11 @@ it("navigates displayed data cells across group headings", async () => {
       (group) =>
         Boolean(
           first.compareDocumentPosition(group) &
-            Node.DOCUMENT_POSITION_FOLLOWING,
+          Node.DOCUMENT_POSITION_FOLLOWING,
         ) &&
         Boolean(
           group.compareDocumentPosition(next) &
-            Node.DOCUMENT_POSITION_FOLLOWING,
+          Node.DOCUMENT_POSITION_FOLLOWING,
         ),
     );
   expect(boundary).toBeDefined();

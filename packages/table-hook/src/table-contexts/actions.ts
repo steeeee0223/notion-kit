@@ -29,8 +29,7 @@ export type ResourceChangeFn<TResource, TAction> = (
 ) => void;
 
 type CellUpdateTarget =
-  | { rowId: string; rowIds?: never }
-  | { rowId?: never; rowIds: string[] };
+  { rowId: string; rowIds?: never } | { rowId?: never; rowIds: string[] };
 
 export type DataResourceAction =
   | TableAction<

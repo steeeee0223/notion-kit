@@ -15,10 +15,7 @@ export type CalendarEventValue = Pick<
   "startAt" | "endAt" | "allDay"
 >;
 export type CalendarEventChangeReason =
-  | "move"
-  | "resize-start"
-  | "resize-end"
-  | "convert";
+  "move" | "resize-start" | "resize-end" | "convert";
 export type CalendarEventChange = CalendarEventValue & {
   id: string;
   reason: CalendarEventChangeReason;

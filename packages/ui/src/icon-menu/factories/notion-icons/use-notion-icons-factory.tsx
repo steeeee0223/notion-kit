@@ -198,8 +198,7 @@ export function useNotionIconsFactory(
         onSelect={(hex) => {
           // Find back the color name from the hex
           const entry = Object.entries(colorMap).find(([, v]) => v === hex) as
-            | [NotionIconColor, string]
-            | undefined;
+            [NotionIconColor, string] | undefined;
           if (entry) setColor(entry[0]);
         }}
       />

@@ -4,8 +4,10 @@ import type { ColumnDef } from "@/presets/tables/table-features";
 
 import { ContentCell, type ContentCellProps } from "../cells";
 
-export interface ContentPlanRow
-  extends Omit<Record<Plan, ContentCellProps>, Plan.EDUCATION> {
+export interface ContentPlanRow extends Omit<
+  Record<Plan, ContentCellProps>,
+  Plan.EDUCATION
+> {
   title: string;
 }
 
