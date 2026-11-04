@@ -864,7 +864,7 @@ importers:
         specifier: catalog:env
         version: 11.1.0
       drizzle-kit:
-        specifier: ^0.31.9
+        specifier: ^0.31.11
         version: 0.31.11
       eslint:
         specifier: 'catalog:'
@@ -1065,7 +1065,7 @@ importers:
         specifier: catalog:env
         version: 11.1.0
       drizzle-kit:
-        specifier: ^0.31.9
+        specifier: ^0.31.11
         version: 0.31.11
       eslint:
         specifier: 'catalog:'

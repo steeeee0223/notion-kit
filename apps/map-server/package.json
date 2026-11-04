@@ -43,7 +43,7 @@
     "@types/pg": "^8.20.0",
     "@types/ws": "8.18.2",
     "dotenv-cli": "catalog:env",
-    "drizzle-kit": "^0.31.9",
+    "drizzle-kit": "^0.31.11",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tsdown": "catalog:",
