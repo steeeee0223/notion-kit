@@ -65,7 +65,7 @@ catalogs:
     "@tanstack/react-table": 9.2.4
     "@tanstack/react-virtual": ^3.13.23
   uuid:
-    uuid: ^13.0.0
+    uuid: ^14.0.3
   env:
     dotenv-cli: ^11.1.0
     "@t3-oss/env-nextjs": ^0.13.11
