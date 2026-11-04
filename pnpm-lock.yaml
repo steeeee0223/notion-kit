@@ -329,8 +329,8 @@ catalogs:
       version: 1.168.6
   test:
     '@playwright/test':
-      specifier: ^1.57.0
-      version: 1.61.1
+      specifier: ^1.64.1
+      version: 1.64.1
     '@vitejs/plugin-react':
       specifier: 6.1.1
       version: 6.1.1
@@ -489,7 +489,7 @@ importers:
         version: 0.5.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@fumadocs/story':
         specifier: ^1.5.3
-        version: 1.5.3(f2745dcb57abd6d177a30bc4d387bc31)
+        version: 1.5.3(16f7322d3b8db6dfb2340ebf3da37f10)
       '@notion-kit/auth-ui':
         specifier: workspace:*
         version: link:../../packages/auth-ui
@@ -546,13 +546,13 @@ importers:
         version: 8.7.0
       fumadocs-core:
         specifier: ^16.17.10
-        version: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
+        version: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
       fumadocs-mdx:
         specifier: ^15.4.10
-        version: 15.4.10(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(rolldown@1.2.16)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+        version: 15.4.10(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(rolldown@1.2.16)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
       fumadocs-ui:
         specifier: ^16.17.10
-        version: 16.17.10(@types/mdx@2.0.14)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.4)
+        version: 16.17.10(@types/mdx@2.0.14)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.4)
       isbot:
         specifier: ^5.1.0
         version: 5.1.40
@@ -673,7 +673,7 @@ importers:
         version: link:../../packages/utils
       next:
         specifier: catalog:next16
-        version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -701,7 +701,7 @@ importers:
         version: link:../../tooling/typescript
       '@playwright/test':
         specifier: catalog:test
-        version: 1.61.1
+        version: 1.64.1
       '@tailwindcss/postcss':
         specifier: catalog:tailwind-v4
         version: 4.2.2
@@ -952,7 +952,7 @@ importers:
         version: 0.13.11(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)
       next:
         specifier: catalog:next16
-        version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -1010,7 +1010,7 @@ importers:
         version: 0.456.0(react@19.2.3)
       next:
         specifier: catalog:next16
-        version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: catalog:react19
         version: 19.2.3
@@ -1047,10 +1047,10 @@ importers:
     dependencies:
       '@better-auth/passkey':
         specifier: 1.6.11
-        version: 1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(nanostores@1.1.1)
+        version: 1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(nanostores@1.1.1)
       '@better-auth/stripe':
         specifier: 1.6.11
-        version: 1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(stripe@20.3.1(@types/node@26.6.6))
+        version: 1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(stripe@20.3.1(@types/node@26.6.6))
       '@better-fetch/fetch':
         specifier: 'catalog:'
         version: 1.1.21
@@ -1068,7 +1068,7 @@ importers:
         version: 1.13.6(debug@4.4.3(supports-color@7.2.0))
       better-auth:
         specifier: 1.6.11
-        version: 1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0)
+        version: 1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0)
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17)
@@ -4326,9 +4326,9 @@ packages:
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@playwright/test@1.61.1':
-    resolution: {integrity: sha512-8nKv6+0RJSL9FE4jYOEGXnPeM/Hg12qZpmqzZjRh3qM0Y7c3z1mrOTfFLids72RDQYVh9WpLEfR5WdpNX4fkig==}
-    engines: {node: '>=18'}
+  '@playwright/test@1.64.1':
+    resolution: {integrity: sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@pnpm/deps.graph-sequencer@1100.0.1':
@@ -8638,11 +8638,6 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -10259,14 +10254,14 @@ packages:
   pkg-types@2.3.3:
     resolution: {integrity: sha512-j/lCFdcppV0JxWpCEITdbDltBxPP6cHT+yNJ6Go2OgoSA9518X847X9z0p6LtA4Nc16+eQzCZjRrWanTGvHJ5w==}
 
-  playwright-core@1.61.1:
-    resolution: {integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==}
-    engines: {node: '>=18'}
+  playwright-core@1.64.1:
+    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.61.1:
-    resolution: {integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==}
-    engines: {node: '>=18'}
+  playwright@1.64.1:
+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==}
+    engines: {node: '>=20'}
     hasBin: true
 
   points-on-curve@0.2.0:
@@ -12257,14 +12252,14 @@ snapshots:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1)
       '@better-auth/utils': 0.4.0
 
-  '@better-auth/passkey@1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(nanostores@1.1.1)':
+  '@better-auth/passkey@1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(nanostores@1.1.1)':
     dependencies:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1)
       '@better-auth/utils': 0.4.0
       '@better-fetch/fetch': 1.1.21
       '@simplewebauthn/browser': 13.2.2
       '@simplewebauthn/server': 13.2.3
-      better-auth: 1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0)
+      better-auth: 1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0)
       better-call: 1.3.5(zod@4.3.6)
       nanostores: 1.1.1
       zod: 4.3.6
@@ -12274,10 +12269,10 @@ snapshots:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1)
       '@better-auth/utils': 0.4.0
 
-  '@better-auth/stripe@1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(stripe@20.3.1(@types/node@26.6.6))':
+  '@better-auth/stripe@1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0))(better-call@1.3.5(zod@4.3.6))(stripe@20.3.1(@types/node@26.6.6))':
     dependencies:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1)
-      better-auth: 1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0)
+      better-auth: 1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0)
       better-call: 1.3.5(zod@4.3.6)
       defu: 6.1.7
       stripe: 20.3.1(@types/node@26.6.6)
@@ -12911,21 +12906,21 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.7
 
-  '@fumadocs/story@1.5.3(f2745dcb57abd6d177a30bc4d387bc31)':
+  '@fumadocs/story@1.5.3(16f7322d3b8db6dfb2340ebf3da37f10)':
     dependencies:
       '@base-ui/react': 1.9.0(@date-fns/tz@1.5.0)(@types/react@19.2.7)(date-fns@4.4.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@fuma-translate/react': 1.0.2(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@fumari/stf': 1.1.2(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       cn: 0.5.2
-      fumadocs-core: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
-      fumadocs-ui: 16.17.10(@types/mdx@2.0.14)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.4)
+      fumadocs-core: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
+      fumadocs-ui: 16.17.10(@types/mdx@2.0.14)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.4)
       lucide-react: 1.67.0(@types/react@19.2.7)(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       typescript: 7.1.0-beta
     optionalDependencies:
       '@types/react': 19.2.7
-      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       vite: 8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
     transitivePeerDependencies:
       - '@date-fns/tz'
@@ -13640,9 +13635,9 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@playwright/test@1.61.1':
+  '@playwright/test@1.64.1':
     dependencies:
-      playwright: 1.61.1
+      playwright: 1.64.1
 
   '@pnpm/deps.graph-sequencer@1100.0.1': {}
 
@@ -16570,7 +16565,7 @@ snapshots:
     dependencies:
       safe-buffer: 5.1.2
 
-  better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0):
+  better-auth@1.6.11(drizzle-kit@0.31.9(supports-color@7.2.0))(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@5.1.0):
     dependencies:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1)
       '@better-auth/drizzle-adapter': 1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.1.3)(kysely@0.28.17)(nanostores@1.1.1))(@better-auth/utils@0.4.0)(drizzle-orm@0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17))
@@ -16592,7 +16587,7 @@ snapshots:
     optionalDependencies:
       drizzle-kit: 0.31.9(supports-color@7.2.0)
       drizzle-orm: 0.45.1(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(kysely@0.28.17)
-      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       vitest: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@29.1.1(@noble/hashes@2.0.1))(msw@2.12.4(@types/node@26.6.6)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
@@ -17945,13 +17940,10 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
-  fsevents@2.3.2:
-    optional: true
-
   fsevents@2.3.3:
     optional: true
 
-  fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6):
+  fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6):
     dependencies:
       '@fumari/image-size': 0.1.1
       estree-util-value-to-estree: 3.5.0
@@ -17980,7 +17972,7 @@ snapshots:
       '@types/mdast': 4.0.4
       '@types/react': 19.2.7
       lucide-react: 1.58.0(@types/react@19.2.7)(react@19.2.3)
-      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       react-router: 7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -17988,14 +17980,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.4.10(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(rolldown@1.2.16)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)):
+  fumadocs-mdx@15.4.10(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(rolldown@1.2.16)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@mdx-js/mdx': 3.1.1(supports-color@7.2.0)
       '@standard-schema/spec': 1.1.0
       chokidar: 6.0.0
       esbuild: 0.28.2
       estree-util-value-to-estree: 3.5.0
-      fumadocs-core: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
+      fumadocs-core: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
       github-slugger: 2.0.0
       magic-string: 1.4.3
       mdast-util-mdx: 3.0.0(supports-color@7.2.0)
@@ -18013,14 +18005,14 @@ snapshots:
       '@types/mdast': 4.0.4
       '@types/mdx': 2.0.14
       '@types/react': 19.2.7
-      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       rolldown: 1.2.16
       vite: 8.3.0(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-ui@16.17.10(@types/mdx@2.0.14)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.4):
+  fumadocs-ui@16.17.10(@types/mdx@2.0.14)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.4):
     dependencies:
       '@fuma-translate/react': 1.0.2(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@fumadocs/tailwind': 0.1.5(tailwindcss@4.2.4)
@@ -18036,7 +18028,7 @@ snapshots:
       '@radix-ui/react-tabs': 1.2.1(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       class-variance-authority: 0.7.1
       cn: 0.5.2
-      fumadocs-core: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
+      fumadocs-core: 16.17.10(@mdx-js/mdx@3.1.1(supports-color@7.2.0))(@tanstack/react-router@1.170.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.7)(lucide-react@1.58.0(@types/react@19.2.7)(react@19.2.3))(next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-router@7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@7.2.0)(zod@4.3.6)
       lucide-react: 1.67.0(@types/react@19.2.7)(react@19.2.3)
       motion: 14.9.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-themes: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -18048,7 +18040,7 @@ snapshots:
     optionalDependencies:
       '@types/mdx': 2.0.14
       '@types/react': 19.2.7
-      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     transitivePeerDependencies:
       - '@types/react-dom'
       - remix
@@ -19554,7 +19546,7 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  next@16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@next/env': 16.1.0
       '@swc/helpers': 0.5.15
@@ -19573,7 +19565,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 16.1.0
       '@next/swc-win32-arm64-msvc': 16.1.0
       '@next/swc-win32-x64-msvc': 16.1.0
-      '@playwright/test': 1.61.1
+      '@playwright/test': 1.64.1
       babel-plugin-react-compiler: 1.0.0
       sharp: 0.34.5
     transitivePeerDependencies:
@@ -19855,13 +19847,11 @@ snapshots:
       exsolve: 1.1.3
       pathe: 2.0.3
 
-  playwright-core@1.61.1: {}
+  playwright-core@1.64.1: {}
 
-  playwright@1.61.1:
+  playwright@1.64.1:
     dependencies:
-      playwright-core: 1.61.1
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.64.1
 
   points-on-curve@0.2.0: {}
 
