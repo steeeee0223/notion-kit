@@ -38,7 +38,7 @@ runs:
         echo "TURBO_SCM_HEAD=$head" >> "$GITHUB_ENV"
 
     - uses: pnpm/action-setup@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v7
       with:
         node-version-file: ".nvmrc"
         cache: "pnpm"
