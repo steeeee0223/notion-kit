@@ -31,6 +31,22 @@ for (const layout of ["table", "list", "board"] as const) {
   });
 }
 
+for (const key of ["Enter", "Space"]) {
+  test(`BoardCard_${key}_OpensRowWithoutStartingDrag`, async ({ page }) => {
+    const table = await TableViewObject.open(page, "controlled");
+    await table.groupBy("Status");
+    await table.setLayout("board");
+
+    await table.rowBlock("row-alpha").press(key);
+
+    await expect(page.getByRole("dialog", { name: "Alpha" })).toBeVisible();
+    await expect(page.locator("[data-dragging]")).toHaveCount(0);
+    const snapshot = await table.controlledSnapshot();
+    expect(snapshot.view.openedRowId).toBe("row-alpha");
+    expect(snapshot.dataCount).toBe(0);
+  });
+}
+
 test("LockedRowView_PropertyTriggersRemainClosedAndDataUnchanged", async ({
   page,
 }) => {

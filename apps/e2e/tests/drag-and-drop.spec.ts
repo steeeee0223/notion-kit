@@ -170,6 +170,35 @@ for (const layout of ["table", "list", "board"] as const) {
   });
 }
 
+test("RowDnD_KeyboardHandle_MovesAlphaDown", async ({ page }) => {
+  const table = await TableViewObject.open(page, "controlled");
+  const alpha = table.row("Alpha");
+  await alpha.hover();
+
+  await alpha.getByRole("button", { name: "Row actions" }).press("Space");
+  await expect
+    .poll(() => page.locator("[data-dragging]").count())
+    .toBeGreaterThan(0);
+  await page.keyboard.press("Shift+ArrowDown");
+  await page.keyboard.press("Space");
+
+  await expect(page.locator("[data-dragging]")).toHaveCount(0);
+  await expect
+    .poll(async () => {
+      const snapshot = await table.controlledSnapshot();
+      return snapshot.data[0]?.id;
+    })
+    .toBe("row-empty");
+  const snapshot = await table.controlledSnapshot();
+  expect(snapshot.lastDataAction).toMatchObject({
+    type: "data.row.move",
+    payload: { rowId: "row-alpha", previousPosition: 0 },
+  });
+  const alphaBox = await alpha.boundingBox();
+  const emptyBox = await table.row("Empty").boundingBox();
+  expect(alphaBox!.y).toBeGreaterThan(emptyBox!.y);
+});
+
 test("HeaderPointerDnD_SameNotesTriggerOpensMenuAndMovesAfterScore", async ({
   page,
 }) => {

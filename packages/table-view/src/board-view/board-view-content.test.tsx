@@ -35,30 +35,38 @@ async function selectGroupedBoard(
   await tableView.clickOutside();
 }
 
-it.each(["Enter", " "])("BoardCard_%s_OpensConfiguredRowView", async (key) => {
+it.each([
+  { key: "Enter", input: "{Enter}" },
+  { key: "Space", input: " " },
+])("BoardCard_$key_OpensConfiguredRowView", async ({ input }) => {
   // Arrange
   const tableView = renderTableView({ properties: titleProperties });
   await selectGroupedBoard(tableView);
   const card = screen.getByRole("button", { name: /Task 1/ });
 
   // Act
-  fireEvent.keyDown(card, { key });
+  card.focus();
+  await tableView.user.keyboard(input);
 
   // Assert
   expect(await screen.findByRole("heading", { name: "Task 1" })).toBeVisible();
+  expect(card).not.toHaveAttribute("data-dragging");
 });
 
 it("BoardCard_NestedControlKeyDown_DoesNotOpenRowView", async () => {
   // Arrange
   const tableView = renderTableView({ properties: titleProperties });
   await selectGroupedBoard(tableView);
-  const editButton = screen.getAllByRole("button", { name: "Edit" })[0]!;
+  const card = screen.getByRole("button", { name: /Task 1/ });
+  const editButton = within(card).getByRole("button", { name: "Edit" });
 
   // Act
-  fireEvent.keyDown(editButton, { key: "Enter" });
+  editButton.focus();
+  await tableView.user.keyboard("{Enter}");
 
   // Assert
   expect(screen.queryByRole("heading", { name: "Task 1" })).toBeNull();
+  expect(await screen.findByRole("textbox")).toBeVisible();
 });
 
 it.each([

@@ -70,7 +70,8 @@ export function BoardCard({ groupId, row }: BoardCardProps) {
           group={groupId}
           disabled={locked}
           onClick={() => table.openRow(row.id)}
-          onKeyDown={(event) => {
+          // Claim row activation before dnd-kit's native keydown listener.
+          onKeyDownCapture={(event) => {
             if (event.target !== event.currentTarget) return;
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();

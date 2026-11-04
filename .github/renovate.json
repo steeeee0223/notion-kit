@@ -1,16 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:recommended"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@notion-kit/"],
+      "matchPackageNames": ["@notion-kit/*"],
       "enabled": false
     }
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": true,
+  "automerge": false,
   "npm": {
-    "fileMatch": ["(^|/)package\\.json$", "(^|/)package\\.json\\.hbs$"]
+    "managerFilePatterns": ["/(^|/)package\\.json\\.hbs$/"]
   }
 }

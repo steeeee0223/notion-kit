@@ -68,7 +68,7 @@
     "tailwindcss": "catalog:tailwind-v4",
     "tsx": "^4.19.3",
     "typescript": "catalog:",
-    "vite": "^8.0.13"
+    "vite": "catalog:test"
   },
   "type": "module"
 }
