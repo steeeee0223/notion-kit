@@ -32,8 +32,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@date-fns/tz": "^1.5.0",
-    "date-fns": "4.4.0"
+    "@date-fns/tz": "catalog:fns",
+    "date-fns": "catalog:fns"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
