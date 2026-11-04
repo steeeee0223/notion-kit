@@ -51,7 +51,7 @@
     "@vitejs/plugin-react": "catalog:test",
     "eslint": "catalog:",
     "jsdom": "catalog:rtl",
-    "monocart-coverage-reports": "^2.11.5",
+    "monocart-coverage-reports": "^3.2.0",
     "prettier": "catalog:",
     "tailwindcss": "catalog:tailwind-v4",
     "typescript": "catalog:",
