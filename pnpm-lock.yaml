@@ -397,8 +397,8 @@ catalogs:
       specifier: ^7.66.0
       version: 7.66.0
     react-hotkeys-hook:
-      specifier: ^5.2.1
-      version: 5.2.1
+      specifier: ^5.3.3
+      version: 5.3.3
     usehooks-ts:
       specifier: ^3.1.1
       version: 3.1.1
@@ -567,7 +567,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       react-hotkeys-hook:
         specifier: catalog:ui
-        version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 5.3.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-router:
         specifier: ^7.18.4
         version: 7.18.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -961,7 +961,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       react-hotkeys-hook:
         specifier: catalog:ui
-        version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 5.3.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@notion-kit/eslint-config':
         specifier: workspace:*
@@ -1327,7 +1327,7 @@ importers:
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-hotkeys-hook:
         specifier: catalog:ui
-        version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 5.3.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@notion-kit/config':
         specifier: workspace:*
@@ -1635,7 +1635,7 @@ importers:
         version: 19.2.3
       react-hotkeys-hook:
         specifier: '*'
-        version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 5.3.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -1936,7 +1936,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       react-hotkeys-hook:
         specifier: catalog:ui
-        version: 5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 5.3.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       uuid:
         specifier: catalog:uuid
         version: 14.0.3
@@ -10856,8 +10856,8 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
-  react-hotkeys-hook@5.2.1:
-    resolution: {integrity: sha512-xbKh6zJxd/vJHT4Bw4+0pBD662Fk20V+VFhLqciCg+manTVO4qlqRqiwFOYelfHN9dBvWj9vxaPkSS26ZSIJGg==}
+  react-hotkeys-hook@5.3.3:
+    resolution: {integrity: sha512-aswgyWUnE25hmhzHTfKDmKzsaSE5DJ4LKaU/o6rQSXkDd/1Bh9TfAFQbHkf6fLy11HvlYkp+cDDarGdhmCDhoQ==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -20725,7 +20725,7 @@ snapshots:
     dependencies:
       react: 19.2.3
 
-  react-hotkeys-hook@5.2.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  react-hotkeys-hook@5.3.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
