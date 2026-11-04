@@ -246,7 +246,7 @@ catalogs:
       version: 16.4.4
   node:
     '@types/node':
-      specifier: ^26
+      specifier: ^26.6.6
       version: 26.6.6
   react-compiler:
     babel-plugin-react-compiler:
