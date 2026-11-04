@@ -27,7 +27,7 @@
     "@fastify/websocket": "catalog:fastify",
     "@scalar/fastify-api-reference": "catalog:fastify",
     "@t3-oss/env-core": "catalog:env",
-    "csv-parse": "^5.6.0",
+    "csv-parse": "^7.0.3",
     "drizzle-orm": "^0.45.1",
     "fastify": "catalog:fastify",
     "gtfs-realtime-bindings": "^1.1.1",
