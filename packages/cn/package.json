@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "class-variance-authority": "catalog:ui",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
