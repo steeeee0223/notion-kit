@@ -83,7 +83,7 @@ catalogs:
     "@supabase/supabase-js": ^2.49.0
   stripe:
     stripe: ^20.3.1
-    "@stripe/react-stripe-js": ^5.6.0
+    "@stripe/react-stripe-js": ^5.6.1
     "@stripe/stripe-js": ^8.7.0
   fns:
     date-fns: ^4.1.0
