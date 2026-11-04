@@ -54,7 +54,7 @@
     "@notion-kit/validators": "workspace:*",
     "@react-router/dev": "^7.18.4",
     "@tailwindcss/vite": "catalog:tailwind-v4",
-    "@types/mdx": "^2.0.13",
+    "@types/mdx": "^2.0.14",
     "@types/node": "catalog:node",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
