@@ -27,7 +27,7 @@ catalogs:
     next: ^16.1.0
     "@next/eslint-plugin-next": ^16.1.0
   test:
-    "@playwright/test": ^1.57.0
+    "@playwright/test": ^1.64.1
     vite: 8.3.0
     vitest: 5.1.0
     "@vitejs/plugin-react": 6.1.1
