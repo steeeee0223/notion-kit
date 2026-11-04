@@ -12,13 +12,13 @@ export const tripParamsSchema = z.object({
 });
 
 export const tripRouteQuerySchema = z.object({
-  include_shape: optionalBooleanSchema.transform((value) => value ?? true),
+  include_shape: optionalBooleanSchema.default(true),
   fallback_route_id: scopedIdSchema.optional(),
 });
 
 export const tripStopTimesQuerySchema = z.object({
   date: serviceDateSchema.default(todayServiceDate()),
-  include_realtime: optionalBooleanSchema.transform((value) => value ?? true),
-  include_geometry: optionalBooleanSchema.transform((value) => value ?? false),
+  include_realtime: optionalBooleanSchema.default(true),
+  include_geometry: optionalBooleanSchema.default(false),
   fallback_route_id: scopedIdSchema.optional(),
 });
