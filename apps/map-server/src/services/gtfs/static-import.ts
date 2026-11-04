@@ -96,14 +96,14 @@ function shouldImportCoreRowsOnly(stopTimesCount: number) {
   );
 }
 
-async function readCsv(zip: JSZip, filename: string) {
+async function readCsv(zip: JSZip, filename: string): Promise<CsvRow[]> {
   const file = zip.file(filename);
-  if (!file) return [] as CsvRow[];
+  if (!file) return [];
   const content = await file.async("string");
-  return parse(content, {
+  return parse<CsvRow>(content, {
     bom: true,
     columns: true,
     skip_empty_lines: true,
     trim: true,
-  }) as CsvRow[];
+  });
 }
