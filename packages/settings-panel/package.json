@@ -39,7 +39,7 @@
   },
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
-    "@date-fns/tz": "^1.3.1",
+    "@date-fns/tz": "^1.5.0",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/i18n": "workspace:*",
