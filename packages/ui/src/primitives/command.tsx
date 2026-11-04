@@ -26,7 +26,8 @@ import {
 import { MenuItemShortcut } from "./menu";
 
 interface CommandDialogProps<ItemValue = string>
-  extends React.ComponentProps<typeof Dialog>,
+  extends
+    React.ComponentProps<typeof Dialog>,
     Pick<
       AutocompleteRootProps<ItemValue>,
       "items" | "itemToStringValue" | "filter" | "filteredItems"
@@ -104,8 +105,10 @@ function CommandEmpty({
   return <AutocompleteEmpty data-slot="command-empty" {...props} />;
 }
 
-interface CommandGroupProps
-  extends Omit<React.ComponentProps<typeof AutocompleteGroup>, "heading"> {
+interface CommandGroupProps extends Omit<
+  React.ComponentProps<typeof AutocompleteGroup>,
+  "heading"
+> {
   heading?: React.ReactNode;
 }
 
@@ -118,8 +121,9 @@ function CommandGroup({ heading, children, ...props }: CommandGroupProps) {
   );
 }
 
-interface CommandItemProps<ItemValue = string>
-  extends AutocompleteItemProps<ItemValue> {
+interface CommandItemProps<
+  ItemValue = string,
+> extends AutocompleteItemProps<ItemValue> {
   shortcut?: React.ReactNode;
 }
 

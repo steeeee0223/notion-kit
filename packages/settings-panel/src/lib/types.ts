@@ -65,13 +65,7 @@ export interface AccountStore extends User {
 }
 
 export type ConnectionStrategy =
-  | "slack"
-  | "google-drive"
-  | "figma"
-  | "github"
-  | "gitlab"
-  | "grid"
-  | "jira";
+  "slack" | "google-drive" | "figma" | "github" | "gitlab" | "grid" | "jira";
 
 export type TeamspacePermission = "default" | "open" | "closed" | "private";
 export type TeamspaceRole = "owner" | "member";

@@ -83,8 +83,7 @@ export function CalendarToolbar({
   );
 }
 
-export interface CalendarHeaderToolbarProps
-  extends React.ComponentProps<"div"> {
+export interface CalendarHeaderToolbarProps extends React.ComponentProps<"div"> {
   rangeDisabled?: boolean;
   onRangeChange?: (range: CalendarRange) => void;
 }

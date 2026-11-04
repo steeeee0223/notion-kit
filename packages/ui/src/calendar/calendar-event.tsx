@@ -18,8 +18,7 @@ function useEvent() {
 }
 
 export interface CalendarEventRootProps
-  extends CalendarEventRenderProps,
-    React.ComponentProps<"div"> {}
+  extends CalendarEventRenderProps, React.ComponentProps<"div"> {}
 function Root({
   event,
   segment,

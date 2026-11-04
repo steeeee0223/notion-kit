@@ -19,17 +19,17 @@ export const mapStopsQuerySchema = z
     lon: z.coerce.number().optional(),
     radius: z.coerce.number().positive().max(10000).optional(),
     route_type: integerQuerySchema.optional(),
-    include_alerts: optionalBooleanSchema.transform((value) => value ?? false),
+    include_alerts: optionalBooleanSchema.default(false),
     limit: positiveIntegerQuerySchema.max(500).default(200),
   })
   .refine(
     (query) =>
       Boolean(
         query.feed_onestop_id ??
-          query.bbox ??
-          (query.lat !== undefined &&
-            query.lon !== undefined &&
-            query.radius !== undefined),
+        query.bbox ??
+        (query.lat !== undefined &&
+          query.lon !== undefined &&
+          query.radius !== undefined),
       ),
     {
       message: "Provide feed_onestop_id, bbox, or lat+lon+radius",
@@ -67,7 +67,7 @@ export const mapTripsQuerySchema = z
 
 export const mapRouteShapeQuerySchema = z.object({
   route_id: scopedIdSchema,
-  include_shape: optionalBooleanSchema.transform((value) => value ?? true),
+  include_shape: optionalBooleanSchema.default(true),
 });
 
 export const staticFeedsStatusQuerySchema = z.object({

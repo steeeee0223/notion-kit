@@ -109,15 +109,14 @@ declare module "@tanstack/table-core" {
     advancedFilteringFeature: AdvancedFilteringTableState;
   }
 
-  interface TableState_All
-    extends Partial<
-      ColumnsInfoTableState &
-        CountingTableState &
-        FreezingTableState &
-        TableMenuTableState &
-        ExtendedGroupingTableState &
-        AdvancedFilteringTableState
-    > {
+  interface TableState_All extends Partial<
+    ColumnsInfoTableState &
+      CountingTableState &
+      FreezingTableState &
+      TableMenuTableState &
+      ExtendedGroupingTableState &
+      AdvancedFilteringTableState
+  > {
     __tableHookStateBrand?: never;
   }
 

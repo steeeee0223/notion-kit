@@ -12,11 +12,7 @@ export type ProviderCapability =
   | "departures";
 
 export type ProviderKind =
-  | "gtfs"
-  | "gtfs_rest"
-  | "country_api"
-  | "simulator"
-  | "flight_reserved";
+  "gtfs" | "gtfs_rest" | "country_api" | "simulator" | "flight_reserved";
 
 export interface ProviderContext {
   configAdminToken: string;

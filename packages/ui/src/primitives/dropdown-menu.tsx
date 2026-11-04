@@ -54,7 +54,8 @@ type MenuItemVisualProps = Pick<
 >;
 
 interface DropdownMenuSubTriggerProps
-  extends Omit<
+  extends
+    Omit<
       Menu.SubmenuTrigger.Props,
       "children" | "className" | "label" | "render"
     >,
@@ -139,7 +140,8 @@ function DropdownMenuContent({
 }
 
 interface DropdownMenuItemProps
-  extends Omit<Menu.Item.Props, "className" | "label" | "render">,
+  extends
+    Omit<Menu.Item.Props, "className" | "label" | "render">,
     MenuItemVisualProps {
   label?: React.ReactNode;
 }
@@ -174,7 +176,8 @@ function DropdownMenuItem({
 }
 
 interface DropdownMenuCheckboxItemProps
-  extends Omit<Menu.CheckboxItem.Props, "className" | "label" | "render">,
+  extends
+    Omit<Menu.CheckboxItem.Props, "className" | "label" | "render">,
     MenuItemVisualProps {
   label?: React.ReactNode;
   checkType?: "check" | "switch";
@@ -234,7 +237,8 @@ function DropdownMenuRadioGroup({ ...props }: Menu.RadioGroup.Props) {
 }
 
 interface DropdownMenuRadioItemProps
-  extends Omit<Menu.RadioItem.Props, "className" | "render">,
+  extends
+    Omit<Menu.RadioItem.Props, "className" | "render">,
     MenuItemVisualProps {}
 
 function DropdownMenuRadioItem({

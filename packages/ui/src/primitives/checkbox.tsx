@@ -25,8 +25,7 @@ const checkboxVariants = cva(
 );
 
 export interface CheckboxProps
-  extends CheckboxPrimitive.Root.Props,
-    VariantProps<typeof checkboxVariants> {}
+  extends CheckboxPrimitive.Root.Props, VariantProps<typeof checkboxVariants> {}
 
 function Checkbox({ className, size, ...props }: CheckboxProps) {
   return (

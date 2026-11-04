@@ -67,15 +67,12 @@ describe("OpenAPI transport provider cleanup", () => {
 });
 
 async function buildOpenApiSpec() {
-  const { registerTransportRoutes } = await import(
-    "@/controllers/transport/controller"
-  );
-  const { registerAdminConfigRoutes } = await import(
-    "@/controllers/admin-config/controller"
-  );
-  const { registerAdminRoutes } = await import(
-    "@/controllers/admin/controller"
-  );
+  const { registerTransportRoutes } =
+    await import("@/controllers/transport/controller");
+  const { registerAdminConfigRoutes } =
+    await import("@/controllers/admin-config/controller");
+  const { registerAdminRoutes } =
+    await import("@/controllers/admin/controller");
   const { openApiTags } = openApiModule as {
     openApiTags?: { name: string; description?: string }[];
   };

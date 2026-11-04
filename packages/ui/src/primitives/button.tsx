@@ -7,8 +7,7 @@ import { Icon } from "@notion-kit/icons";
 import { buttonVariants, type ButtonVariants } from "./variants";
 
 export interface ButtonProps
-  extends useRender.ComponentProps<"button">,
-    ButtonVariants {}
+  extends useRender.ComponentProps<"button">, ButtonVariants {}
 
 function Button({ className, variant, size, render, ...props }: ButtonProps) {
   return useRender({

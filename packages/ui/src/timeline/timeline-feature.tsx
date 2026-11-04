@@ -64,8 +64,10 @@ export function TimelineAddFeatureHelper({
   );
 }
 
-interface TimelineAddFeatureTrackProps
-  extends Omit<React.ComponentProps<"div">, "onMouseMove"> {
+interface TimelineAddFeatureTrackProps extends Omit<
+  React.ComponentProps<"div">,
+  "onMouseMove"
+> {
   ariaLabel?: string;
   onAddItem: (ts: number) => void;
 }

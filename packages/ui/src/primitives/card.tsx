@@ -12,8 +12,7 @@ const cardVariants = cva("rounded-lg shadow-xs", {
 });
 
 interface CardProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof cardVariants> {}
+  extends React.ComponentProps<"div">, VariantProps<typeof cardVariants> {}
 
 const Card = ({ className, asButton, ...props }: CardProps) => (
   <div

@@ -14,8 +14,7 @@ import {
   type SelectConfigActionPayload,
 } from "../select-config-reducer";
 
-interface UseSelectConfigMenuOptions
-  extends ConfigMenuRendererProps<SelectConfig> {
+interface UseSelectConfigMenuOptions extends ConfigMenuRendererProps<SelectConfig> {
   multi?: boolean;
 }
 

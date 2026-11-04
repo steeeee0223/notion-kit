@@ -405,8 +405,7 @@ function prepareNativeFiltering<TData extends RowData>(
     const column = table.getColumn(columnFilter.id);
     if (!column) continue;
     const filterFn = column.getFilterFn() as
-      | FilterFn<AnyTableFeatures, TData>
-      | undefined;
+      FilterFn<AnyTableFeatures, TData> | undefined;
     if (!filterFn) continue;
     resolvedColumnFilters.push({
       id: columnFilter.id,

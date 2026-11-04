@@ -50,8 +50,7 @@ export interface ColumnsInfoTableApi {
   countVisibleColumns: () => number;
   getFilterProperties: () => ColumnInfo[];
   getTitleFilterRule: () =>
-    | Pick<FilterRule, "propertyId" | "operator">
-    | undefined;
+    Pick<FilterRule, "propertyId" | "operator"> | undefined;
   // Column Setters
   _setColumnInfo: (
     colId: string,
@@ -625,8 +624,7 @@ export const ColumnsInfoFeature: TableFeature = {
       type: PluginType<TPlugins>,
     ) => {
       const destPlugin = instance.atoms.cellPlugins.get()[type] as
-        | InferPlugin<TPlugins>
-        | undefined;
+        InferPlugin<TPlugins> | undefined;
       if (!destPlugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }

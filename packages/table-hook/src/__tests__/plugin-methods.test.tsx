@@ -439,8 +439,7 @@ describe("cell plugin registered methods", () => {
       result.current.table.setColumnSortingMethod("col1", "natural");
     });
     const proposal = onViewChange.mock.lastCall?.[0] as
-      | { next: PartialTableViewState }
-      | undefined;
+      { next: PartialTableViewState } | undefined;
     expect(proposal).toBeDefined();
 
     rerender({ view: proposal!.next });

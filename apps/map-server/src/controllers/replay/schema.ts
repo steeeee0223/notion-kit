@@ -32,9 +32,7 @@ export const replaySnapshotQuerySchema = z.object({
   trip_id: scopedIdSchema.optional(),
   route_id: scopedIdSchema.optional(),
   vehicle_id: z.string().optional(),
-  include_stop_times: optionalBooleanSchema.transform(
-    (value) => value ?? false,
-  ),
-  include_route: optionalBooleanSchema.transform((value) => value ?? false),
+  include_stop_times: optionalBooleanSchema.default(false),
+  include_route: optionalBooleanSchema.default(false),
   tolerance_seconds: positiveIntegerQuerySchema.max(3600).default(60),
 });

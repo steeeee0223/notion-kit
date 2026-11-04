@@ -212,11 +212,9 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       const propertyChange = onPropertiesChange.mock.lastCall?.[0] as
-        | ResourceChange<ColumnDefs, PropertiesResourceAction>
-        | undefined;
+        ResourceChange<ColumnDefs, PropertiesResourceAction> | undefined;
       const dataChange = onDataChange.mock.lastCall?.[0] as
-        | ResourceChange<Row[], DataResourceAction>
-        | undefined;
+        ResourceChange<Row[], DataResourceAction> | undefined;
       expect(propertyChange?.action.id).toBe("timeline-initialization");
       expect(dataChange?.action).toMatchObject({
         id: "timeline-initialization",

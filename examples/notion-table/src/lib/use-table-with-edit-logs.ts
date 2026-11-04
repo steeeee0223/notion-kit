@@ -231,21 +231,20 @@ export function useTableWithEditLogs() {
   const editLogs: Required<EditLogProps> = {
     fetchTableEditLogs: () =>
       Promise.resolve({
-        items: history.map(
-          (record): TableEditLog =>
-            "rowId" in record
-              ? {
-                  id: record.id,
-                  editedAt: record.editedAt,
-                  action: "update",
-                  target: record.target,
-                  cell: {
-                    property: record.property,
-                    value: record.value,
-                    textValue: record.textValue,
-                  },
-                }
-              : record,
+        items: history.map((record): TableEditLog =>
+          "rowId" in record
+            ? {
+                id: record.id,
+                editedAt: record.editedAt,
+                action: "update",
+                target: record.target,
+                cell: {
+                  property: record.property,
+                  value: record.value,
+                  textValue: record.textValue,
+                },
+              }
+            : record,
         ),
         nextCursor: null,
       }),

@@ -33,8 +33,7 @@ interface MockWithLastCall {
 
 function getLastResourceChange<TResource, TAction>(mock: MockWithLastCall) {
   return mock.mock.lastCall?.[0] as
-    | ResourceChange<TResource, TAction>
-    | undefined;
+    ResourceChange<TResource, TAction> | undefined;
 }
 
 const methodPlugin = {

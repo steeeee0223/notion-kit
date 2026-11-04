@@ -90,8 +90,7 @@ export function Content({
 }
 
 interface TextLinksProps
-  extends Pick<TransProps, "i18nKey" | "values">,
-    React.ComponentProps<"a"> {
+  extends Pick<TransProps, "i18nKey" | "values">, React.ComponentProps<"a"> {
   hrefs?: string | string[];
 }
 
