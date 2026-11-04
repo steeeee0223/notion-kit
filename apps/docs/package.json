@@ -18,7 +18,7 @@
     "@dnd-kit/dom": "catalog:ui",
     "@dnd-kit/helpers": "catalog:ui",
     "@dnd-kit/react": "catalog:ui",
-    "@fumadocs/story": "^1.5.0",
+    "@fumadocs/story": "^1.5.3",
     "@notion-kit/auth-ui": "workspace:*",
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/code-block": "workspace:*",
