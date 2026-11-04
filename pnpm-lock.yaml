@@ -197,8 +197,8 @@ catalogs:
       specifier: ^0.13.11
       version: 0.13.11
     '@t3-oss/env-nextjs':
-      specifier: ^0.13.6
-      version: 0.13.6
+      specifier: ^0.13.11
+      version: 0.13.11
     dotenv-cli:
       specifier: ^11.1.0
       version: 11.1.0
@@ -949,7 +949,7 @@ importers:
         version: link:../../packages/ui
       '@t3-oss/env-nextjs':
         specifier: catalog:env
-        version: 0.13.6(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)
+        version: 0.13.11(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)
       next:
         specifier: catalog:next16
         version: 16.1.0(@babel/core@7.29.0(supports-color@7.2.0))(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -6487,30 +6487,13 @@ packages:
       zod:
         optional: true
 
-  '@t3-oss/env-core@0.13.6':
-    resolution: {integrity: sha512-rH7FgcB1YGbv/tvv7mdJAxnNvRkK/gEqdVYBwO1AVvaWOTNuftqskxkEYyhM2O+lkNPJmTq5YBE7H+Unl7CLjg==}
+  '@t3-oss/env-nextjs@0.13.11':
+    resolution: {integrity: sha512-NC+3j7YWgpzdFu1t5y/8wqibTK0lm5RS4bjXA1n8uwik3wIR4iZM4Fa+U2BaMa5k3Qk8RZiYhoAIX0WogmGkzg==}
     peerDependencies:
       arktype: ^2.1.0
       typescript: '>=5.0.0'
       valibot: ^1.0.0-beta.7 || ^1.0.0
-      zod: ^3.24.0 || ^4.0.0-beta.0
-    peerDependenciesMeta:
-      arktype:
-        optional: true
-      typescript:
-        optional: true
-      valibot:
-        optional: true
-      zod:
-        optional: true
-
-  '@t3-oss/env-nextjs@0.13.6':
-    resolution: {integrity: sha512-KcA5U8L+Be4OuR5YxmrBzkeo7WsKkEFJDwcAgYFwcBgxxc3oJBdTB7KPQfVrx7wjtX5aDr2jZ0LG55yEXqQi9A==}
-    peerDependencies:
-      arktype: ^2.1.0
-      typescript: '>=5.0.0'
-      valibot: ^1.0.0-beta.7 || ^1.0.0
-      zod: ^3.24.0 || ^4.0.0-beta.0
+      zod: ^3.24.0 || ^4.0.0
     peerDependenciesMeta:
       arktype:
         optional: true
@@ -15980,15 +15963,15 @@ snapshots:
       valibot: 1.3.1(typescript@6.0.3)
       zod: 4.3.6
 
-  '@t3-oss/env-core@0.13.6(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)':
+  '@t3-oss/env-core@0.13.11(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)':
     optionalDependencies:
       typescript: 6.0.3
       valibot: 1.3.1(typescript@6.0.3)
       zod: 4.6.7
 
-  '@t3-oss/env-nextjs@0.13.6(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)':
+  '@t3-oss/env-nextjs@0.13.11(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)':
     dependencies:
-      '@t3-oss/env-core': 0.13.6(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)
+      '@t3-oss/env-core': 0.13.11(typescript@6.0.3)(valibot@1.3.1(typescript@6.0.3))(zod@4.6.7)
     optionalDependencies:
       typescript: 6.0.3
       valibot: 1.3.1(typescript@6.0.3)
