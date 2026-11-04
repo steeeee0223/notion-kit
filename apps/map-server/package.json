@@ -46,7 +46,7 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tsdown": "catalog:",
-    "tsx": "^4.19.3",
+    "tsx": "^4.23.15",
     "typescript": "catalog:"
   }
 }
