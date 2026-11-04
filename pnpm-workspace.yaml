@@ -70,7 +70,7 @@ catalogs:
   uuid:
     uuid: ^13.0.0
   env:
-    dotenv-cli: ^8.0.0
+    dotenv-cli: ^11.1.0
     "@t3-oss/env-nextjs": ^0.13.6
     "@t3-oss/env-core": ^0.13.11
   build:
