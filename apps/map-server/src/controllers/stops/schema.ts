@@ -21,8 +21,8 @@ export const departuresQuerySchema = z
     start_time: gtfsTimeSchema.default(currentGtfsTime()),
     end_time: gtfsTimeSchema.optional(),
     next: z.coerce.number().int().positive().optional(),
-    include_realtime: optionalBooleanSchema.transform((value) => value ?? true),
-    include_alerts: optionalBooleanSchema.transform((value) => value ?? true),
+    include_realtime: optionalBooleanSchema.default(true),
+    include_alerts: optionalBooleanSchema.default(true),
     limit: positiveIntegerQuerySchema.max(200).default(30),
   })
   .transform((query) => ({
