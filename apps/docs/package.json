@@ -62,7 +62,7 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tailwindcss": "catalog:tailwind-v4",
-    "tsx": "^4.19.3",
+    "tsx": "^4.23.15",
     "typescript": "catalog:",
     "vite": "catalog:test"
   },
