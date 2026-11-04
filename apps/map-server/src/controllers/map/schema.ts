@@ -26,10 +26,10 @@ export const mapStopsQuerySchema = z
     (query) =>
       Boolean(
         query.feed_onestop_id ??
-          query.bbox ??
-          (query.lat !== undefined &&
-            query.lon !== undefined &&
-            query.radius !== undefined),
+        query.bbox ??
+        (query.lat !== undefined &&
+          query.lon !== undefined &&
+          query.radius !== undefined),
       ),
     {
       message: "Provide feed_onestop_id, bbox, or lat+lon+radius",

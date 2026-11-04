@@ -3,8 +3,10 @@ import { wrappedClassName } from "@notion-kit/table-hook";
 
 import type { CellValueProps } from "@/plugins/renderers";
 
-interface LinkCellValueProps
-  extends Pick<CellValueProps<string>, "data" | "wrapped"> {
+interface LinkCellValueProps extends Pick<
+  CellValueProps<string>,
+  "data" | "wrapped"
+> {
   type: "email" | "phone" | "url";
 }
 

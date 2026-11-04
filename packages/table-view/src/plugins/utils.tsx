@@ -4,13 +4,7 @@ import { getDefaultGroupingValue } from "@notion-kit/table-hook/plugins";
 import type { CellSurface, GroupingValueProps } from "./registry";
 
 export type CellStyleKind =
-  | "text"
-  | "number"
-  | "select"
-  | "link"
-  | "date"
-  | "checkbox"
-  | "neutral";
+  "text" | "number" | "select" | "link" | "date" | "checkbox" | "neutral";
 
 const triggerVariants = cva("relative px-2 aria-disabled:pointer-events-none", {
   variants: {

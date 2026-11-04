@@ -267,17 +267,14 @@ describe("useTableView - Counting Feature", () => {
     });
 
     it("preserves capped count output at 99+", () => {
-      const rows = Array.from(
-        { length: 100 },
-        (_, index): Row => ({
-          id: `row-${index}`,
-          createdAt: 0,
-          lastEditedAt: 0,
-          properties: {
-            col1: { id: `cell-${index}`, value: `Value ${index}` },
-          },
-        }),
-      );
+      const rows = Array.from({ length: 100 }, (_, index): Row => ({
+        id: `row-${index}`,
+        createdAt: 0,
+        lastEditedAt: 0,
+        properties: {
+          col1: { id: `cell-${index}`, value: `Value ${index}` },
+        },
+      }));
       const { table } = renderTableHook({
         data: rows,
         properties: mockProperties,

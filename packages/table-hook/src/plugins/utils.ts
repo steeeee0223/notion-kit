@@ -274,11 +274,9 @@ export function createCompareFn<TPlugin extends CellPlugin>(
 ): (rowA: Row, rowB: Row, colId: string) => number {
   return (rowA, rowB, colId) => {
     const dataA = rowA.properties[colId]?.value as
-      | InferData<TPlugin>
-      | undefined;
+      InferData<TPlugin> | undefined;
     const dataB = rowB.properties[colId]?.value as
-      | InferData<TPlugin>
-      | undefined;
+      InferData<TPlugin> | undefined;
     if (typeof dataA === "undefined")
       return typeof dataB === "undefined" ? 0 : -1;
     if (typeof dataB === "undefined") return 1;

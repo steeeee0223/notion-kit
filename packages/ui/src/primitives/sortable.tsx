@@ -82,8 +82,9 @@ function getSortableModifiers(orientation: Orientation) {
   ];
 }
 
-interface SortableRootProps
-  extends React.ComponentProps<typeof DragDropProvider> {
+interface SortableRootProps extends React.ComponentProps<
+  typeof DragDropProvider
+> {
   orientation?: Orientation;
   disabled?: boolean;
 }
@@ -122,8 +123,7 @@ function getSortableItemsAfterDrag<
     );
     if (sourceIndex >= 0 && targetIndex !== sourceIndex) {
       const next = [...items] as (
-        | UniqueIdentifier
-        | { id: UniqueIdentifier }
+        UniqueIdentifier | { id: UniqueIdentifier }
       )[];
       const [item] = next.splice(sourceIndex, 1);
       next.splice(targetIndex, 0, item!);
@@ -331,8 +331,9 @@ function SortableHandle({
   );
 }
 
-interface SortableOverlayProps
-  extends React.ComponentProps<typeof DragOverlay> {
+interface SortableOverlayProps extends React.ComponentProps<
+  typeof DragOverlay
+> {
   container?: Element | DocumentFragment | null;
 }
 

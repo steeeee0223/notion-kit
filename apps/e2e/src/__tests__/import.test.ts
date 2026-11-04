@@ -72,9 +72,8 @@ describe("Package Import Tests", () => {
   });
 
   it("should import @notion-kit/ui/selectable without errors", async () => {
-    const { Selectable, useSelectable, useSelectableItem } = await import(
-      "@notion-kit/ui/selectable"
-    );
+    const { Selectable, useSelectable, useSelectableItem } =
+      await import("@notion-kit/ui/selectable");
     expect(Selectable).toBeDefined();
     expect(useSelectable).toBeDefined();
     expect(useSelectableItem).toBeDefined();
@@ -97,9 +96,8 @@ describe("Package Import Tests", () => {
   });
 
   it("should import @notion-kit/ui/single-image-dropzone without errors", async () => {
-    const { SingleImageDropzone } = await import(
-      "@notion-kit/ui/single-image-dropzone"
-    );
+    const { SingleImageDropzone } =
+      await import("@notion-kit/ui/single-image-dropzone");
     expect(SingleImageDropzone).toBeDefined();
   });
 

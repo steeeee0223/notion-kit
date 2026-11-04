@@ -36,13 +36,7 @@ export interface TableMenuState {
 }
 
 export type LayoutType =
-  | "table"
-  | "board"
-  | "timeline"
-  | "calendar"
-  | "list"
-  | "gallery"
-  | "chart";
+  "table" | "board" | "timeline" | "calendar" | "list" | "gallery" | "chart";
 
 export const LAYOUT_OPTIONS: {
   label: string;

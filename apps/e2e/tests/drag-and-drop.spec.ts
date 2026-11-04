@@ -103,10 +103,10 @@ for (const layout of ["table", "list"] as const) {
         const doneBox = await table.group("status:Done").boundingBox();
         return Boolean(
           alphaBox &&
-            omegaBox &&
-            doneBox &&
-            alphaBox.y > doneBox.y &&
-            omegaBox.y < alphaBox.y,
+          omegaBox &&
+          doneBox &&
+          alphaBox.y > doneBox.y &&
+          omegaBox.y < alphaBox.y,
         );
       })
       .toBe(true);

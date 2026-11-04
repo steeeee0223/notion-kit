@@ -8,8 +8,10 @@ import { composeRefs } from "@/primitives";
 
 import { useTimelineRowContext } from "./timeline-row-context";
 
-export interface TimelineRowResizeProps
-  extends Omit<React.ComponentPropsWithRef<"div">, "children"> {
+export interface TimelineRowResizeProps extends Omit<
+  React.ComponentPropsWithRef<"div">,
+  "children"
+> {
   direction: "start" | "end";
 }
 

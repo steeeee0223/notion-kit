@@ -123,8 +123,7 @@ type AutocompletePositionerProps = Pick<
 >;
 
 interface AutocompleteContentProps
-  extends AutocompletePrimitive.Popup.Props,
-    AutocompletePositionerProps {
+  extends AutocompletePrimitive.Popup.Props, AutocompletePositionerProps {
   variant?: "floating" | "inline";
 }
 
@@ -225,8 +224,10 @@ function AutocompleteGroup({
   );
 }
 
-interface AutocompleteLabelProps
-  extends Omit<AutocompletePrimitive.GroupLabel.Props, "title"> {
+interface AutocompleteLabelProps extends Omit<
+  AutocompletePrimitive.GroupLabel.Props,
+  "title"
+> {
   title: React.ReactNode;
 }
 
@@ -246,7 +247,8 @@ type AutocompleteItemVisualProps = Pick<
 >;
 
 interface AutocompleteItemProps<ItemValue = string>
-  extends Omit<AutocompletePrimitive.Item.Props, "className" | "value">,
+  extends
+    Omit<AutocompletePrimitive.Item.Props, "className" | "value">,
     AutocompleteItemVisualProps {
   value?: ItemValue;
 }

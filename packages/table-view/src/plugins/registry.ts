@@ -14,12 +14,7 @@ import type {
 import type { RowEditLog } from "@/edit-log/types";
 
 export type CellSurface =
-  | "table"
-  | "list"
-  | "board"
-  | "row-view"
-  | "timeline"
-  | "calendar";
+  "table" | "list" | "board" | "row-view" | "timeline" | "calendar";
 
 export interface CellProps {
   cell: CellInstance;
@@ -39,8 +34,10 @@ export interface GroupingValueProps {
   table: TableInstance;
 }
 
-export interface ReadOnlyValueProps
-  extends Pick<RowEditLog, "value" | "property" | "textValue"> {
+export interface ReadOnlyValueProps extends Pick<
+  RowEditLog,
+  "value" | "property" | "textValue"
+> {
   config: unknown;
 }
 
@@ -69,8 +66,9 @@ export interface TablePluginPair<TData extends CellPlugin[] = CellPlugin[]> {
   ui: TableUiPlugin[];
 }
 
-export interface TablePluginRegistry<TData extends CellPlugin[] = CellPlugin[]>
-  extends TablePluginPair<TData> {
+export interface TablePluginRegistry<
+  TData extends CellPlugin[] = CellPlugin[],
+> extends TablePluginPair<TData> {
   getUiPlugin: (id: InferKey<TData[number]>) => TableUiPlugin;
 }
 
