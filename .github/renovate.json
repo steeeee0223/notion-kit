@@ -10,6 +10,7 @@
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
   "automerge": false,
+  "baseBranchPatterns": ["feat/renovate"],
   "npm": {
     "managerFilePatterns": ["/(^|/)package\\.json\\.hbs$/"]
   }
