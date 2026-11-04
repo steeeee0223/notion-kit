@@ -38,8 +38,6 @@
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
-    "@notion-kit/hooks": "workspace:*",
-    "@notion-kit/icons": "workspace:*",
     "@notion-kit/utils": "workspace:*",
     "framer-motion": "catalog:ui",
     "radix-ui": "1.4.3",
@@ -51,8 +49,6 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@testing-library/jest-dom": "catalog:rtl",
-    "@testing-library/react": "catalog:rtl",
-    "@testing-library/user-event": "catalog:rtl",
     "@types/react": "catalog:react19",
     "@vitejs/plugin-react": "catalog:test",
     "babel-plugin-react-compiler": "catalog:react-compiler",

@@ -94,6 +94,49 @@ describe("timeline date utilities", () => {
     expect(result.end).toEqual(DEFAULT_END_DATE);
   });
 
+  it.each([
+    {
+      name: "spring forward",
+      start: "2026-03-07T17:00:00Z",
+      end: "2026-03-10T16:00:00Z",
+      now: "2026-03-09T02:00:00Z",
+      labels: ["7", "8", "9", "10"],
+    },
+    {
+      name: "fall back",
+      start: "2026-10-31T16:00:00Z",
+      end: "2026-11-03T17:00:00Z",
+      now: "2026-11-02T02:00:00Z",
+      labels: ["31", "1", "2", "3"],
+    },
+  ])(
+    "CreateTimelineData_DailyAcross$name_PreservesCalendarOffsetsAndLocalToday",
+    ({ start, end, now, labels }) => {
+      vi.useFakeTimers({ now: Date.parse(now) });
+      try {
+        const result = createTimelineData(
+          "daily",
+          Date.parse(start),
+          Date.parse(end),
+          "America/New_York",
+        );
+
+        expect(result.subRanges.map(({ label }) => label)).toEqual(labels);
+        expect(result.subRanges.map(({ start }) => start)).toEqual([
+          0, 40, 80, 120,
+        ]);
+        expect(result.subRanges.map(({ isToday }) => isToday)).toEqual([
+          false,
+          true,
+          false,
+          false,
+        ]);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
+
   it("CreateTimelineData_UnsupportedRange_ReturnsEmptyRanges", () => {
     const result = createTimelineData(
       "unsupported" as TimelineRange,

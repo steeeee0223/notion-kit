@@ -69,7 +69,6 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
-    "@rollup/plugin-babel": "catalog:build",
     "@tailwindcss/cli": "catalog:tailwind-v4",
     "@testing-library/jest-dom": "catalog:rtl",
     "@testing-library/react": "catalog:rtl",

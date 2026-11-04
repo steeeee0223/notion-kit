@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useEffect, useId, useMemo, useRef } from "react";
+import type * as GeoJSON from "geojson";
 import MapLibreGL from "maplibre-gl";
 
 import { useMap } from "./use-map";

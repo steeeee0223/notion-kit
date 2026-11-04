@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import type * as GeoJSON from "geojson";
 import { expect, it, vi } from "vitest";
 
 import { MapClusterLayer } from "../map-cluster-layer";

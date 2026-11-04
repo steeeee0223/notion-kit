@@ -226,7 +226,9 @@ it("TimelineRangeSelect_Change_WritesExactViewResource", async () => {
     onViewChange,
   });
 
-  await tableView.user.click(await screen.findByRole("combobox"));
+  await tableView.user.click(
+    await screen.findByRole("combobox", { name: "Date range" }),
+  );
   await tableView.user.click(
     await screen.findByRole("option", { name: "Day" }),
   );

@@ -618,6 +618,31 @@ describe("timeline components", () => {
     ).toHaveLength(0);
   });
 
+  it("TimelineRangeHeader_DailyAcrossLeapFebruary_SizesPartialAndFullMonths", () => {
+    mocks.containerWidth = 3000;
+    setTimeline("daily", {
+      timelineData: createTimelineData(
+        "daily",
+        new Date(2028, 0, 30).getTime(),
+        new Date(2028, 2, 2).getTime(),
+      ),
+    });
+    const { container } = render(<TimelineRangeHeader />);
+
+    expect(screen.getByText("January 2028").parentElement).toHaveStyle({
+      width: "100px",
+    });
+    expect(screen.getByText("February 2028").parentElement).toHaveStyle({
+      width: "1450px",
+    });
+    expect(screen.getByText("March 2028").parentElement).toHaveStyle({
+      width: "100px",
+    });
+    expect(
+      container.querySelectorAll('[data-slot="timeline-sub-range"]'),
+    ).toHaveLength(33);
+  });
+
   it("TimelineRangeHeader_LaterVisibleGroup_RendersSpacerAndTodayEmphasis", () => {
     const subRanges = Array.from({ length: 24 }, (_, index) => ({
       label: String(index + 1),
