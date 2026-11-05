@@ -1037,7 +1037,7 @@ importers:
         specifier: catalog:stripe
         version: 20.4.1(@types/node@26.6.6)
       ua-parser-js:
-        specifier: ^2.0.9
+        specifier: ^2.0.10
         version: 2.0.10
       zod:
         specifier: 'catalog:'
