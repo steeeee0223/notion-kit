@@ -361,7 +361,7 @@ catalogs:
       specifier: 0.5.3
       version: 0.5.3
     '@hookform/resolvers':
-      specifier: ^5.2.2
+      specifier: ^5.9.2
       version: 5.9.2
     '@tanstack/react-query':
       specifier: ^5.106.0
