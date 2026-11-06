@@ -59,7 +59,7 @@
     "react-dropzone": "^20.1.4",
     "react-hook-form": "catalog:ui",
     "react-resizable-panels": "^2.1.7",
-    "sonner": "^2.0.7",
+    "sonner": "^2.0.8",
     "unsplash-js": "^8.0.1",
     "usehooks-ts": "catalog:ui"
   },
