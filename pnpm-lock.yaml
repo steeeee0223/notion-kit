@@ -204,8 +204,8 @@ catalogs:
       specifier: ^9.9.3
       version: 9.9.3
     '@fastify/websocket':
-      specifier: ^11.2.0
-      version: 11.3.6
+      specifier: ^11.3.7
+      version: 11.3.7
     '@scalar/fastify-api-reference':
       specifier: ^1.57.2
       version: 1.76.4
@@ -813,7 +813,7 @@ importers:
         version: 9.9.3(supports-color@7.2.0)
       '@fastify/websocket':
         specifier: catalog:fastify
-        version: 11.3.6
+        version: 11.3.7
       '@scalar/fastify-api-reference':
         specifier: catalog:fastify
         version: 1.76.4
@@ -3291,8 +3291,8 @@ packages:
   '@fastify/swagger@9.9.3':
     resolution: {integrity: sha512-1whjjguZlh4VV6OP2SD7w7ZNXXuLPwLcxbKIu7GckhHGgCyIYwtOyBskc3TLZa7LsaRmZZRiB1nz/JTaCI5grQ==}
 
-  '@fastify/websocket@11.3.6':
-    resolution: {integrity: sha512-5Hg0mokH6vcDc7s0CHtlhuHdcbknFDUE3bGY4IM4Pn+2YQbS5XGztMBxsgYvCODWz6P+fOYxcwxnUnBXjd0NbA==}
+  '@fastify/websocket@11.3.7':
+    resolution: {integrity: sha512-fkkS87CkAOY/MzvJrB94S729RxvIbLHXv2LNGkPifli4/q4IdeicpcFoxgJ3oVmIRVNSi4W6FZai5AmRhzhhTw==}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -12149,7 +12149,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@fastify/websocket@11.3.6':
+  '@fastify/websocket@11.3.7':
     dependencies:
       duplexify: 4.1.3
       fastify-plugin: 6.0.1
