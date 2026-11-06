@@ -63,7 +63,7 @@ catalogs:
     "@hookform/resolvers": ^5.2.2
     "@tanstack/react-query": ^5.106.0
     "@tanstack/react-table": 9.2.4
-    "@tanstack/react-virtual": ^3.13.23
+    "@tanstack/react-virtual": ^3.14.26
   uuid:
     uuid: ^14.0.3
   env:
