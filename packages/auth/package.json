@@ -42,7 +42,7 @@
     "@t3-oss/env-core": "catalog:env",
     "axios": "^1.21.0",
     "better-auth": "1.6.11",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.4",
     "pg": "^8.22.0",
     "stripe": "catalog:stripe",
     "ua-parser-js": "^2.0.10",
