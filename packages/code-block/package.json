@@ -44,9 +44,9 @@
     "@notion-kit/hooks": "workspace:*",
     "@notion-kit/icons": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "mermaid": "^11.12.2",
+    "mermaid": "^12.3.0",
     "prettier": "catalog:",
-    "shiki": "^3.22.0"
+    "shiki": "~4.5.0"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",

@@ -20,26 +20,22 @@ const PLAN_OPTIONS = [
   {
     value: Plan.FREE,
     labelKey: "plans.free",
-    priceKey: "prices.per-member",
-    priceObj: { price: "$0" },
+    price: "$0",
   },
   {
     value: Plan.PLUS,
     labelKey: "plans.plus",
-    priceKey: "prices.per-member",
-    priceObj: { price: "$12" },
+    price: "$12",
   },
   {
     value: Plan.BUSINESS,
     labelKey: "plans.business",
-    priceKey: "prices.per-member",
-    priceObj: { price: "$24" },
+    price: "$24",
   },
   {
     value: Plan.ENTERPRISE,
     labelKey: "plans.enterprise",
-    priceKey: "prices.contact",
-    priceObj: { price: undefined },
+    price: null,
   },
 ] as const;
 
@@ -75,7 +71,10 @@ export function ChangePlan({ currentPlan, onConfirm }: ChangePlanProps) {
         {PLAN_OPTIONS.map((option) => {
           const isSelected = selected === option.value;
           const label = t(option.labelKey);
-          const price = t(option.priceKey, option.priceObj);
+          const price =
+            option.price === null
+              ? t("prices.contact")
+              : t("prices.per-member", { price: option.price });
           return (
             <label
               key={option.value}

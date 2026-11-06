@@ -33,6 +33,8 @@ export function MermaidPreview({
       mermaid.initialize({
         startOnLoad: false,
         theme: "dark",
+        layout: "dagre",
+        look: "classic",
         securityLevel: "loose",
         fontFamily:
           'SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace',
