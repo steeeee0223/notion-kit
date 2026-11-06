@@ -27,7 +27,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "i18next": "26.7.1",
+    "i18next": "26.7.2",
     "react-i18next": "17.1.12"
   },
   "devDependencies": {
