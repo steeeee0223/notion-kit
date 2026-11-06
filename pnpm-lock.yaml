@@ -1022,7 +1022,7 @@ importers:
         specifier: catalog:env
         version: 0.13.11(typescript@6.0.3)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.7)
       axios:
-        specifier: ^1.13.6
+        specifier: ^1.21.0
         version: 1.21.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       better-auth:
         specifier: 1.6.11
