@@ -27,8 +27,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "i18next": "25.0.1",
-    "react-i18next": "15.4.1"
+    "i18next": "26.7.1",
+    "react-i18next": "17.1.12"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
@@ -36,7 +36,7 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "eslint": "catalog:",
-    "i18next-resources-for-ts": "^1.6.0",
+    "i18next-resources-for-ts": "^2.1.2",
     "prettier": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"

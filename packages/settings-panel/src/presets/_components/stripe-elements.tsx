@@ -25,7 +25,7 @@ export function StripeElements({
   const resolvedOptions: StripeElementsOptionsMode = {
     mode: "setup",
     currency: "usd",
-    paymentMethodTypes: ["card"],
+    allowedPaymentMethodTypes: ["card"],
     locale: i18n.language as StripeElementLocale,
     appearance: theme === "dark" ? stripeDark : stripeLight,
   };

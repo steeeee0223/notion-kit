@@ -16,7 +16,7 @@
   "prettier": "@notion-kit/prettier-config",
   "dependencies": {
     "@notion-kit/auth": "workspace:*",
-    "fastify": "^5.8.5"
+    "fastify": "catalog:fastify"
   },
   "devDependencies": {
     "@notion-kit/eslint-config": "workspace:*",

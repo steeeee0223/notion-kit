@@ -108,8 +108,9 @@ export function RegionSection() {
         <AlertModal
           {...trans.modals.language}
           title={t("preferences.modals.language.title", {
-            language: localeOptions.find((option) => option.value === value)
-              ?.label,
+            language:
+              localeOptions.find((option) => option.value === value)?.label ??
+              value,
           })}
           onTrigger={handleConfirmLanguageChange}
         />

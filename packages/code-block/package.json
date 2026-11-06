@@ -46,7 +46,7 @@
     "@notion-kit/utils": "workspace:*",
     "mermaid": "^12.3.0",
     "prettier": "catalog:",
-    "shiki": "^3.22.0"
+    "shiki": "~4.5.0"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
