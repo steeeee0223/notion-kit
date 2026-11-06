@@ -286,7 +286,7 @@ catalogs:
       specifier: ^5.6.1
       version: 5.6.1
     '@stripe/stripe-js':
-      specifier: ^8.7.0
+      specifier: ^8.11.0
       version: 8.11.0
     stripe:
       specifier: ^20.3.1
