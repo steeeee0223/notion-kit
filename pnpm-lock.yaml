@@ -382,7 +382,7 @@ catalogs:
       specifier: ^0.456.0
       version: 0.456.0
     react-hook-form:
-      specifier: ^7.66.0
+      specifier: ^7.91.0
       version: 7.91.0
     react-hotkeys-hook:
       specifier: ^5.3.3
