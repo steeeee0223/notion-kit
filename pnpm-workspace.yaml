@@ -61,7 +61,7 @@ catalogs:
     "@dnd-kit/helpers": 0.5.3
     "@dnd-kit/react": 0.5.3
     "@hookform/resolvers": ^5.9.2
-    "@tanstack/react-query": ^5.106.0
+    "@tanstack/react-query": ^5.106.1
     "@tanstack/react-table": 9.2.4
     "@tanstack/react-virtual": ^3.14.26
   uuid:
