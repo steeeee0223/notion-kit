@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "i18next": "26.7.1",
-    "react-i18next": "17.1.12"
+    "react-i18next": "17.1.13"
   },
   "devDependencies": {
     "@notion-kit/config": "workspace:*",
