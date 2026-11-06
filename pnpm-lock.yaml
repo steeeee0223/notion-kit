@@ -836,7 +836,7 @@ importers:
         specifier: ^3.10.2
         version: 3.10.2
       pg:
-        specifier: ^8.22.0
+        specifier: ^8.23.1
         version: 8.23.1
       zod:
         specifier: 'catalog:'
@@ -855,7 +855,7 @@ importers:
         specifier: catalog:node
         version: 26.6.6
       '@types/pg':
-        specifier: ^8.20.0
+        specifier: ^8.23.1
         version: 8.23.1
       '@types/ws':
         specifier: 8.18.2
@@ -1031,7 +1031,7 @@ importers:
         specifier: ^0.45.4
         version: 0.45.4(@types/pg@8.23.1)(kysely@0.28.19)(pg@8.23.1)
       pg:
-        specifier: ^8.22.0
+        specifier: ^8.23.1
         version: 8.23.1
       stripe:
         specifier: catalog:stripe
@@ -1059,7 +1059,7 @@ importers:
         specifier: catalog:node
         version: 26.6.6
       '@types/pg':
-        specifier: ^8.20.0
+        specifier: ^8.23.1
         version: 8.23.1
       dotenv-cli:
         specifier: catalog:env

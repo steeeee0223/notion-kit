@@ -43,7 +43,7 @@
     "axios": "^1.21.0",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.4",
-    "pg": "^8.22.0",
+    "pg": "^8.23.1",
     "stripe": "catalog:stripe",
     "ua-parser-js": "^2.0.10",
     "zod": "catalog:"
@@ -54,7 +54,7 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@types/node": "catalog:node",
-    "@types/pg": "^8.20.0",
+    "@types/pg": "^8.23.1",
     "dotenv-cli": "catalog:env",
     "drizzle-kit": "^0.31.11",
     "eslint": "catalog:",
