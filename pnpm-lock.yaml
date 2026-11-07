@@ -289,7 +289,7 @@ catalogs:
       specifier: ^10.2.1
       version: 10.2.1
     stripe:
-      specifier: ^20.3.1
+      specifier: ^20.4.1
       version: 20.4.1
   supabase:
     '@supabase/supabase-js':
