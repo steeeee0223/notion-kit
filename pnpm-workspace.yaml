@@ -30,7 +30,7 @@ catalogs:
     "@playwright/test": ^1.64.1
     vite: 8.3.0
     vitest: 5.1.0
-    "@vitejs/plugin-react": 6.1.1
+    "@vitejs/plugin-react": 6.2.1
     "@vitest/coverage-v8": 5.1.0
     "@vitest/ui": 5.1.0
   rtl:
@@ -52,7 +52,7 @@ catalogs:
     class-variance-authority: ^0.7.1
     framer-motion: ^14.9.1
     lucide-react: ^0.456.0
-    react-hook-form: ^7.66.0
+    react-hook-form: ^7.91.0
     react-hotkeys-hook: ^5.3.3
     usehooks-ts: ^3.1.1
     zustand: ^5.0.16
@@ -60,10 +60,10 @@ catalogs:
     "@dnd-kit/dom": 0.5.3
     "@dnd-kit/helpers": 0.5.3
     "@dnd-kit/react": 0.5.3
-    "@hookform/resolvers": ^5.2.2
-    "@tanstack/react-query": ^5.106.0
+    "@hookform/resolvers": ^5.9.2
+    "@tanstack/react-query": ^5.106.1
     "@tanstack/react-table": 9.2.4
-    "@tanstack/react-virtual": ^3.13.23
+    "@tanstack/react-virtual": ^3.14.26
   uuid:
     uuid: ^14.0.3
   env:
@@ -73,9 +73,9 @@ catalogs:
   build:
     "@rollup/plugin-babel": ^7.1.0
   supabase:
-    "@supabase/supabase-js": ^2.49.0
+    "@supabase/supabase-js": ^2.119.0
   stripe:
-    stripe: ^20.3.1
+    stripe: ^20.4.1
     "@stripe/react-stripe-js": ^7.0.1
     "@stripe/stripe-js": ^10.2.1
   fns:
