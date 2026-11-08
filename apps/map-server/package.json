@@ -28,11 +28,11 @@
     "@scalar/fastify-api-reference": "catalog:fastify",
     "@t3-oss/env-core": "catalog:env",
     "csv-parse": "^7.0.3",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.4",
     "fastify": "catalog:fastify",
     "gtfs-realtime-bindings": "^1.1.1",
     "jszip": "^3.10.2",
-    "pg": "^8.22.0",
+    "pg": "^8.23.1",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -40,7 +40,7 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@types/node": "catalog:node",
-    "@types/pg": "^8.20.0",
+    "@types/pg": "^8.23.1",
     "@types/ws": "8.18.2",
     "dotenv-cli": "catalog:env",
     "drizzle-kit": "^0.31.11",

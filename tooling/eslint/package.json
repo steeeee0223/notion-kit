@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@eslint/compat": "^2.1.1",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.5",
     "@next/eslint-plugin-next": "catalog:next16",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -28,7 +28,7 @@
     "@notion-kit/prettier-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "eslint": "catalog:",
-    "eslint-plugin-better-tailwindcss": "^4.5.0",
+    "eslint-plugin-better-tailwindcss": "^4.10.0",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
