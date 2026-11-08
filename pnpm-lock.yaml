@@ -521,10 +521,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       '@react-router/node':
-        specifier: ^7.18.4
+        specifier: ^7.18.5
         version: 7.18.5(react-router@7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3)
       '@react-router/serve':
-        specifier: ^7.18.4
+        specifier: ^7.18.5
         version: 7.18.5(react-router@7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(supports-color@7.2.0)(typescript@6.0.3)
       '@stripe/stripe-js':
         specifier: catalog:stripe
@@ -551,7 +551,7 @@ importers:
         specifier: catalog:react19
         version: 19.3.1(react@19.3.1)
       react-router:
-        specifier: ^7.18.4
+        specifier: ^7.18.5
         version: 7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       zod:
         specifier: 'catalog:'
@@ -573,7 +573,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/validators
       '@react-router/dev':
-        specifier: ^7.18.4
+        specifier: ^7.18.5
         version: 7.18.5(@react-router/serve@7.18.5(react-router@7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(supports-color@7.2.0)(typescript@6.0.3))(@types/node@26.6.6)(jiti@2.7.0)(lightningcss@1.33.0)(react-router@7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(supports-color@7.2.0)(tsx@4.23.15)(typescript@6.0.3)(vite@8.3.6(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))(yaml@2.9.1)
       '@tailwindcss/vite':
         specifier: catalog:tailwind-v4
