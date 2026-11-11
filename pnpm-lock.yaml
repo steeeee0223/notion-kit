@@ -1471,8 +1471,8 @@ importers:
         specifier: catalog:fns
         version: 4.18.1
       maplibre-gl:
-        specifier: ^5.24.0
-        version: 5.24.0
+        specifier: ^5.24.1
+        version: 5.24.1
       react:
         specifier: catalog:react19
         version: 19.3.1
@@ -1574,8 +1574,8 @@ importers:
         specifier: catalog:fns
         version: 4.6.0
       maplibre-gl:
-        specifier: ^5.24.0
-        version: 5.24.0
+        specifier: ^5.24.1
+        version: 5.24.1
       react:
         specifier: catalog:react19
         version: 19.3.1
@@ -9157,8 +9157,8 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
 
-  maplibre-gl@5.24.0:
-    resolution: {integrity: sha512-ALyFxgtd5R+65UqZ/++lOqwWcC0SNho9c27fYSyLmG7AfnAul2o46F05aDJGPbFU57wos9dgcIySHs0Xe6ia3A==}
+  maplibre-gl@5.24.1:
+    resolution: {integrity: sha512-HyiYBwtsbk3L1n1EPLJHWqdoyMiF80n7tEYXFZyu2m1TjvaNx6KMLiFeDdmszt1/mq2zvsR1TJuX/NMu5BonXQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-extensions@2.0.0:
@@ -17841,7 +17841,7 @@ snapshots:
     dependencies:
       semver: 7.8.6
 
-  maplibre-gl@5.24.0:
+  maplibre-gl@5.24.1:
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.3
       '@mapbox/point-geometry': 1.1.0
