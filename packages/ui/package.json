@@ -51,7 +51,7 @@
     "@tanstack/react-virtual": "catalog:ui",
     "@uidotdev/usehooks": "^2.4.1",
     "date-fns": "catalog:fns",
-    "jotai": "^3.0.1",
+    "jotai": "^3.0.2",
     "lodash.throttle": "catalog:fns",
     "lucide-react": "catalog:ui",
     "next-themes": "^0.4.6",
