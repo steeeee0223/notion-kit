@@ -94,8 +94,8 @@ catalogs:
     "@fastify/websocket": ^11.3.7
     "@scalar/fastify-api-reference": ^1.77.0
   tanstack-router:
-    "@tanstack/react-router": ^1.120.6
-    "@tanstack/router-plugin": ^1.120.5
+    "@tanstack/react-router": ^1.170.46
+    "@tanstack/router-plugin": ^1.169.0
 
 nodeLinker: hoisted
 linkWorkspacePackages: true
