@@ -92,7 +92,7 @@ catalogs:
     "@fastify/cors": ^11.4.1
     "@fastify/swagger": ^9.9.3
     "@fastify/websocket": ^11.3.7
-    "@scalar/fastify-api-reference": ^1.77.0
+    "@scalar/fastify-api-reference": ^1.78.0
   tanstack-router:
     "@tanstack/react-router": ^1.170.46
     "@tanstack/router-plugin": ^1.169.0
