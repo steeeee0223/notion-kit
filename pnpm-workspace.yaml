@@ -16,10 +16,10 @@ catalogs:
   node:
     "@types/node": ^26.6.6
   react19:
-    react: ^19.2.3
-    react-dom: ^19.2.3
-    "@types/react": ^19.2.7
-    "@types/react-dom": ^19.2.3
+    react: ^19.3.1
+    react-dom: ^19.3.1
+    "@types/react": ^19.3.0
+    "@types/react-dom": ^19.3.0
   react-compiler:
     babel-plugin-react-compiler: ^1.0.0
     react-compiler-runtime: ^1.0.0
