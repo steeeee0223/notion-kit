@@ -12,9 +12,9 @@ export function pruneRowSelection(
   data: readonly Pick<Row, "id">[],
 ) {
   const rowIds = new Set(data.map((row) => row.id));
-  const next = Object.fromEntries(
+  const next = Object.fromEntries<RowSelectionState[string]>(
     Object.entries(selection).filter(([rowId]) => rowIds.has(rowId)),
-  ) as RowSelectionState;
+  );
 
   return Object.keys(next).length === Object.keys(selection).length
     ? selection

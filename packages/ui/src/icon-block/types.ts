@@ -1,6 +1,6 @@
-import dynamicIconImports from "lucide-react/dynamicIconImports";
+import type { iconNodes } from "./lib/data";
 
-export type LucideName = keyof typeof dynamicIconImports;
+export type LucideName = keyof typeof iconNodes;
 
 export type IconData =
   | {

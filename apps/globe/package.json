@@ -36,6 +36,7 @@
     "@notion-kit/tailwind-config": "workspace:*",
     "@notion-kit/tsconfig": "workspace:*",
     "@tanstack/router-plugin": "catalog:tanstack-router",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "catalog:node",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",

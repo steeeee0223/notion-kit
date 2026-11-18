@@ -98,6 +98,8 @@ function createWeekContextPlugin(receivedWeekStartsOn: number[]) {
   } satisfies CellPlugin<"week-context", string, undefined>;
 }
 
+const actionIdMatcher: unknown = expect.any(String);
+
 describe("useTableView resource API", () => {
   it.each([
     { weekStartsOn: undefined, expectedWeekStartsOn: 1 },
@@ -237,7 +239,7 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.action,
     ).toMatchObject({
-      id: expect.any(String) as unknown as string,
+      id: actionIdMatcher,
       type: "view.date_view_property.change",
     });
   });
@@ -1000,7 +1002,7 @@ describe("useTableView resource API", () => {
         },
       },
       action: {
-        id: expect.any(String) as unknown as string,
+        id: actionIdMatcher,
         type: "view.plugin_sorting_method.change",
         payload: {
           propertyId: "col1",
@@ -1027,7 +1029,7 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.action,
     ).toEqual({
-      id: expect.any(String) as unknown as string,
+      id: actionIdMatcher,
       type: "view.plugin_grouping_method.change",
       payload: {
         propertyId: "col1",
@@ -1047,7 +1049,7 @@ describe("useTableView resource API", () => {
       getLastResourceChange<TableViewState, ViewResourceAction>(onViewChange)
         ?.action,
     ).toEqual({
-      id: expect.any(String) as unknown as string,
+      id: actionIdMatcher,
       type: "view.group_sort.change",
       payload: {
         previousGroupSort: { mode: "manual" },
@@ -1728,7 +1730,7 @@ describe("useTableView filter resource API", () => {
     );
     expect(change?.next.filters).toBe(nextFilters);
     expect(change?.action).toEqual({
-      id: expect.any(String) as unknown as string,
+      id: actionIdMatcher,
       type: "view.filters.change",
       payload: {
         previousFilters: initialFilters,
@@ -1750,6 +1752,9 @@ describe("useTableView filter resource API", () => {
 
   it("FilterResource_Controlled_RemainsOwnerAuthoritativeUntilRerender", () => {
     const onViewChange = vi.fn();
+    const initialProps: { filters: TableFilterState } = {
+      filters: initialFilters,
+    };
     const { result, rerender } = renderHook(
       ({ filters }: { filters: TableFilterState }) =>
         useTableView({
@@ -1759,7 +1764,7 @@ describe("useTableView filter resource API", () => {
           view: { filters },
           onViewChange,
         }),
-      { initialProps: { filters: initialFilters as TableFilterState } },
+      { initialProps },
     );
 
     act(() => result.current.table.setFilters(nextFilters));

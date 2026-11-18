@@ -112,7 +112,7 @@ export function TeamspaceDetail({
             </Button>
           )}
         </div>
-        <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
+        <Tabs value={tab} onValueChange={(v) => setTab(v)}>
           <TabsList className="mb-5">
             <TabsTrigger value={Tab.General}>{t("tabs.general")}</TabsTrigger>
             <TabsTrigger value={Tab.Members}>

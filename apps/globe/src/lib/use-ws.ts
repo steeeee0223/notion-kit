@@ -44,8 +44,7 @@ function mergeVehicles(
     const existing = prevMap.get(next.id);
 
     if (
-      existing &&
-      existing.longitude === next.longitude &&
+      existing?.longitude === next.longitude &&
       existing.latitude === next.latitude &&
       existing.bearing === next.bearing &&
       existing.stale === next.stale &&

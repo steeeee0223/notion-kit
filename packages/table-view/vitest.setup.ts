@@ -16,7 +16,7 @@ if (typeof globalThis.ResizeObserver === "undefined") {
     disconnect() {
       return;
     }
-  } as unknown as typeof globalThis.ResizeObserver;
+  };
 }
 
 if (typeof globalThis.IntersectionObserver === "undefined") {

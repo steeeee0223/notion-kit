@@ -95,7 +95,7 @@ export function useNotionIconsFactory(
   useEffect(() => {
     startTransition(() => {
       void import("./notion-icons-data.json").then((mod) => {
-        setIcons(mod.default as NotionIconData[]);
+        setIcons(mod.default);
       });
     });
   }, []);

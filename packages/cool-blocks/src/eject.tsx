@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useAnimate } from "framer-motion";
+import { useAnimate } from "motion/react";
 import { Slot } from "radix-ui";
 import { useHotkeys } from "react-hotkeys-hook";
 

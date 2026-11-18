@@ -29,7 +29,7 @@ pinned in `package.json`:
 ```bash
 nvm install
 nvm use
-npm install --global pnpm@12.16.1 --allow-scripts=pnpm
+npm install --global pnpm@12.21.0 --allow-scripts=pnpm
 pnpm install --frozen-lockfile
 ```
 

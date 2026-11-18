@@ -1,7 +1,8 @@
 "use client";
 
-import { BookTextIcon, Github } from "lucide-react";
+import { BookTextIcon } from "lucide-react";
 
+import { Icon } from "@notion-kit/icons";
 import { TableView } from "@notion-kit/table-view";
 import {
   Button,
@@ -43,7 +44,7 @@ export default function Page() {
                 openLink("https://github.com/steeeee0223/notion-kit")
               }
             >
-              <Github className="size-5" />
+              <Icon.GithubLogo className="size-5" />
             </Button>
           </Tooltip>
         </div>

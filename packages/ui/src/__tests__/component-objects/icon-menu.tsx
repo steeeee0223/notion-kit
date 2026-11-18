@@ -10,18 +10,17 @@ export class IconMenuObject {
   private constructor(readonly user: UserEvent) {}
 
   static render(props: Omit<IconMenuProps, "children">) {
-    Element.prototype.getBoundingClientRect = () =>
-      ({
-        width: 400,
-        height: 400,
-        top: 0,
-        left: 0,
-        bottom: 400,
-        right: 400,
-        x: 0,
-        y: 0,
-        toJSON: () => ({}),
-      }) as DOMRect;
+    Element.prototype.getBoundingClientRect = () => ({
+      width: 400,
+      height: 400,
+      top: 0,
+      left: 0,
+      bottom: 400,
+      right: 400,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
 
     const user = userEvent.setup({
       pointerEventsCheck: PointerEventsCheckLevel.Never,

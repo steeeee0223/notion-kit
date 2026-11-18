@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react";
+import { render, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { useLucideFactory } from "./use-lucide-factory";
@@ -19,6 +19,34 @@ describe("useLucideFactory", () => {
 
     expect(allSection).toBeDefined();
     expect(allSection!.iconIds.length).toBeGreaterThan(100);
+  });
+
+  it("UseLucideFactory_OfferedIcons_AllRender", () => {
+    const { result } = renderHook(() => useLucideFactory());
+    const factory = result.current;
+    const icons = factory.sections.find(
+      (section) => section.id === "all",
+    )!.iconIds;
+
+    const { container } = render(
+      <>
+        {icons.map((id) => (
+          <span key={id}>{factory.renderIcon(factory.getItem(id))}</span>
+        ))}
+      </>,
+    );
+
+    expect(container.querySelectorAll("svg")).toHaveLength(icons.length);
+  });
+
+  it("UseLucideFactory_LegacyBrandIcon_StillRenders", () => {
+    const { result } = renderHook(() => useLucideFactory());
+    const factory = result.current;
+    const { getByLabelText } = render(
+      factory.renderIcon(factory.getItem("chrome")),
+    );
+
+    expect(getByLabelText("chrome")).toBeInTheDocument();
   });
 
   it("getItem should return IconItem with id and name", () => {

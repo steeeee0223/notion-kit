@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
+import type * as GeoJSON from "geojson";
 
 import {
   Map,

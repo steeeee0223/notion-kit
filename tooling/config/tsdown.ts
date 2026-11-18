@@ -1,7 +1,7 @@
 import pluginBabel from "@rollup/plugin-babel";
-import { type UserConfigFn } from "tsdown";
+import type { InlineConfig, UserConfig } from "tsdown";
 
-export const baseConfig: UserConfigFn = (config) => {
+export const baseConfig = (config: InlineConfig): UserConfig => {
   return {
     ...config,
     dts: true,
@@ -16,7 +16,7 @@ export const baseConfig: UserConfigFn = (config) => {
   };
 };
 
-export const withReactClient: UserConfigFn = (config) => {
+export const withReactClient = (config: InlineConfig): UserConfig => {
   return {
     ...config,
     ...baseConfig(config),
@@ -24,7 +24,7 @@ export const withReactClient: UserConfigFn = (config) => {
   };
 };
 
-export const withReactCompiler: UserConfigFn = (config) => {
+export const withReactCompiler = (config: InlineConfig): UserConfig => {
   return {
     ...config,
     ...withReactClient(config),

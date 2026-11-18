@@ -117,7 +117,7 @@ function AddressFormStripe({
     (event: StripeAddressElementChangeEvent) => {
       setAddressComplete(event.complete);
       if (event.complete) {
-        setAddressValue(event.value as BillingAddress);
+        setAddressValue(event.value);
       }
     },
     [],

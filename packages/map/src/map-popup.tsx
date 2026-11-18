@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import MapLibreGL, { type PopupOptions } from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
+import type { PopupOptions } from "maplibre-gl";
 import { createPortal } from "react-dom";
 
 import { cn } from "@notion-kit/cn";

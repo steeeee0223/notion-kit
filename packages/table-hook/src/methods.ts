@@ -163,7 +163,7 @@ function createNullableCompareFn<T extends ComparableValue>(
     if (a === null || typeof a === "undefined")
       return b === null || typeof b === "undefined" ? 0 : 1;
     if (b === null || typeof b === "undefined") return -1;
-    return compare(a as T, b as T);
+    return compare(a, b);
   };
 }
 

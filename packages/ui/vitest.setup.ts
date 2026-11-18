@@ -23,7 +23,7 @@ if (typeof globalThis.ResizeObserver === "undefined") {
     disconnect() {
       return;
     }
-  } as unknown as typeof globalThis.ResizeObserver;
+  };
 }
 
 // jsdom does not implement scrollTo — needed by TanStack Virtual

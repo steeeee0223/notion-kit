@@ -1,8 +1,10 @@
 import type { IconNode } from "lucide-react";
 
-import type { LucideName } from "../types";
+function defineIconNodes<Name extends string>(nodes: Record<Name, IconNode>) {
+  return nodes;
+}
 
-export const iconNodes: Record<LucideName, IconNode> = {
+export const iconNodes = defineIconNodes({
   "a-arrow-down": [
     ["path", { d: "M3.5 13h6" }],
     ["path", { d: "m2 16 4.5-9 4.5 9" }],
@@ -12621,4 +12623,4 @@ export const iconNodes: Record<LucideName, IconNode> = {
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2" }],
     ["path", { d: "m10 8 4 4-4 4" }],
   ],
-} as const;
+});

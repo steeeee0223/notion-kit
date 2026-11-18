@@ -27,6 +27,7 @@ Create a child component that reads `{ map, isLoaded }` from `useMap`, then add 
 
 ```tsx
 import { useEffect } from "react";
+import type * as GeoJSON from "geojson";
 
 import { Map, useMap } from "@notion-kit/map";
 
@@ -96,6 +97,7 @@ export function Example() {
 If the GeoJSON changes after the source is created, update the existing source instead of adding it again.
 
 ```tsx
+import type * as GeoJSON from "geojson";
 import type { GeoJSONSource } from "maplibre-gl";
 
 function ParksLayer({ data }: { data: GeoJSON.FeatureCollection }) {

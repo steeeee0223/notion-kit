@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any */
 import { useEffect, useId, useRef } from "react";
 import type * as GeoJSON from "geojson";
-import MapLibreGL from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
 
 import { useMap } from "./use-map";
 
@@ -151,11 +151,10 @@ export function MapClusterLayer<
   useEffect(() => {
     if (!isLoaded || !map || typeof data === "string") return;
 
-    const source = map.getSource(sourceId);
-    // @ts-expect-error - MapLibre GL JS types are incorrect
-    if (source?.setData) {
-      // @ts-expect-error - MapLibre GL JS types are incorrect
-      source.setData(data);
+    const source = map.getSource<MapLibreGL.GeoJSONSource>(sourceId);
+
+    if (source) {
+      void source.setData(data);
     }
   }, [isLoaded, map, data, sourceId]);
 
@@ -233,10 +232,9 @@ export function MapClusterLayer<
           onClusterClick(clusterId, coordinates, pointCount);
         } else {
           // Default behavior: zoom to cluster expansion zoom
-          const source = map.getSource(sourceId);
-          // @ts-expect-error - MapLibre GL JS types are incorrect
-          if (source?.getClusterExpansionZoom) {
-            // @ts-expect-error - MapLibre GL JS types are incorrect
+          const source = map.getSource<MapLibreGL.GeoJSONSource>(sourceId);
+
+          if (source) {
             const zoom = await source.getClusterExpansionZoom(clusterId);
             map.easeTo({
               center: coordinates,
@@ -255,13 +253,12 @@ export function MapClusterLayer<
     ) => {
       if (!onPointClick || !e.features?.length) return;
 
-      const feature = e.features[0] as any;
-      if (!feature) return;
+      const feature = e.features[0];
+      if (feature?.geometry.type !== "Point") return;
 
-      const coordinates = feature.geometry.coordinates.slice() as [
-        number,
-        number,
-      ];
+      const [longitude, latitude] = feature.geometry.coordinates;
+      if (longitude === undefined || latitude === undefined) return;
+      const coordinates: [number, number] = [longitude, latitude];
 
       // Handle world copies
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
