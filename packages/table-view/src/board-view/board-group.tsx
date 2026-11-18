@@ -1,5 +1,6 @@
 import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
@@ -40,7 +41,7 @@ export function BoardGroup({ index, row, cards }: BoardGroupProps) {
             <div className="flex max-w-100 items-center overflow-hidden text-sm/6 font-medium whitespace-nowrap">
               {uiPlugin?.renderGroupingValue({
                 table: table as never,
-                value: table.getGroupingValue(row.id),
+                value: row.groupingValue as ComparableValue,
               })}
             </div>
             {row.getShouldShowGroupAggregates() && (
@@ -88,7 +89,7 @@ export function BoardGroupPreview({ row }: { row: RowInstance }) {
         {info &&
           plugins.getUiPlugin(info.type).renderGroupingValue({
             table: table as never,
-            value: table.getGroupingValue(row.id),
+            value: row.groupingValue as ComparableValue,
           })}
       </div>
       {row.subRows.map((card) => (

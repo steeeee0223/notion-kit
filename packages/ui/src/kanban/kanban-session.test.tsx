@@ -126,6 +126,7 @@ describe("KanbanSession_Gesture_UsesAuthoritativeCompletion", () => {
       const onMove = vi.fn();
       render(<Board onMove={onMove} />);
       startAndPreview();
+      expect(screen.getByText("Overlay a")).toBeInTheDocument();
       act(() =>
         handlers.onDragEnd({ ...event(), canceled: ending === "cancel" }),
       );
@@ -133,6 +134,7 @@ describe("KanbanSession_Gesture_UsesAuthoritativeCompletion", () => {
       expect(screen.getByTestId("membership")).toHaveTextContent(
         JSON.stringify(value.items),
       );
+      expect(screen.queryByText("Overlay a")).not.toBeInTheDocument();
     },
   );
   it("invalidates a session permanently when context changes", () => {

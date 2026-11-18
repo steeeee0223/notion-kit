@@ -391,13 +391,9 @@ export const RowActionsFeature: TableFeature = {
         }),
       );
     };
-    const getDestinationRow = (row: Row, groupId: string) => {
-      if (table.getTableGlobalState().locked) return null;
+    const getRowGrouping = () => {
       const info = table.getGroupedColumnInfo();
       if (!info) return null;
-      const state = table.atoms.groupingState.get();
-      const destination = state.groupValues[groupId];
-      if (!destination || state.groupVisibility[groupId] === false) return null;
       const plugin = table.getColumnPlugin(info.id);
       const method = table.getSelectedGroupingMethod(info.id);
       const context = createRuntimePluginMethodContext(
@@ -406,24 +402,42 @@ export const RowActionsFeature: TableFeature = {
         info.config,
         table.options.weekStartsOn ?? 1,
       );
-      const cell = row.properties[info.id];
-      const data: unknown = cell ? cell.value : plugin.default.data;
-      const classify = (value: unknown, source: Row) =>
-        createGroupId(
+      const classify = (row: Row) => {
+        const cell = row.properties[info.id];
+        const value: unknown = cell ? cell.value : plugin.default.data;
+        return createGroupId(
           info.id,
           plugin.isEmpty(value)
             ? null
-            : method.function(value, source, info.id, context),
+            : method.function(value, row, info.id, context),
         );
-      if (classify(data, row) === groupId) return row;
-      if (!cell || !method.getDropValue) return null;
+      };
+      return { info, plugin, method, context, classify };
+    };
+    const getDestinationRow = (
+      row: Row,
+      groupId: string,
+      grouping = getRowGrouping(),
+    ) => {
+      if (table.getTableGlobalState().locked || !grouping) return null;
+      const state = table.atoms.groupingState.get();
+      const destination = state.groupValues[groupId];
+      if (!destination || state.groupVisibility[groupId] === false) return null;
+      const { info, plugin, method, context, classify } = grouping;
+      if (classify(row) === groupId) return row;
+      if (!method.getDropValue) return null;
+      const cell = row.properties[info.id];
+      const data: unknown = cell ? cell.value : plugin.default.data;
       const value = method.getDropValue(data, destination.value, context);
       const next = {
         ...row,
-        properties: { ...row.properties, [info.id]: { ...cell, value } },
+        properties: {
+          ...row.properties,
+          [info.id]: { ...(cell ?? getDefaultCell(plugin)), value },
+        },
         lastEditedAt: Date.now(),
       };
-      return classify(value, next) === groupId ? next : null;
+      return classify(next) === groupId ? next : null;
     };
     table.getCanMoveRowToGroup = (rowId, groupId) => {
       const row = table.options.data.find(
@@ -439,35 +453,15 @@ export const RowActionsFeature: TableFeature = {
             return rows;
           const source = rows.find((row) => row.id === rowId);
           if (!source || !table.getRowModel().rowsById[rowId]) return rows;
+          const grouping = getRowGrouping();
           const moved =
-            groupId === undefined ? source : getDestinationRow(source, groupId);
+            groupId === undefined
+              ? source
+              : getDestinationRow(source, groupId, grouping);
           if (!moved) return rows;
           const remaining = rows.filter((row) => row.id !== rowId);
-          const info = table.getGroupedColumnInfo();
-          const method = info ? table.getSelectedGroupingMethod(info.id) : null;
-          const plugin = info ? table.getColumnPlugin(info.id) : null;
-          const context = info
-            ? createRuntimePluginMethodContext(
-                table,
-                info.id,
-                info.config,
-                table.options.weekStartsOn ?? 1,
-              )
-            : null;
-          const belongs = (row: Row) => {
-            if (groupId === undefined) return true;
-            if (!info || !method || !plugin || !context) return false;
-            const cell = row.properties[info.id];
-            const value: unknown = cell ? cell.value : plugin.default.data;
-            return (
-              createGroupId(
-                info.id,
-                plugin.isEmpty(value)
-                  ? null
-                  : method.function(value, row, info.id, context),
-              ) === groupId
-            );
-          };
+          const belongs = (row: Row) =>
+            groupId === undefined || grouping?.classify(row) === groupId;
           let index = remaining.length;
           if (beforeRowId !== null) {
             const anchor = remaining.find((row) => row.id === beforeRowId);

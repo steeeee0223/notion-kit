@@ -6,6 +6,7 @@ import type { RowInstance } from "@notion-kit/table-hook";
 import { buttonVariants, Sortable } from "@notion-kit/ui/primitives";
 
 import { Row, RowActionGroup } from "@/common";
+import { getRowDragIndex } from "@/common/row-dnd";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface ListRowProps {
@@ -21,13 +22,7 @@ export function ListRow({ rowId }: ListRowProps) {
       {(locked) => (
         <Sortable.Item
           id={row.id}
-          index={
-            row.parentId
-              ? table
-                  .getRow(row.parentId)
-                  .subRows.findIndex((sibling) => sibling.id === row.id)
-              : row.index
-          }
+          index={getRowDragIndex(table, row)}
           group={row.parentId}
           disabled={locked}
           data={{ type: "list-row", groupId: row.parentId }}

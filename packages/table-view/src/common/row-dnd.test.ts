@@ -1,11 +1,13 @@
 import type { DragEndEvent } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import type { TableInstance } from "@notion-kit/table-hook";
+import { useTableView } from "@notion-kit/table-hook";
+import { select } from "@notion-kit/table-hook/plugins";
 
-import { getRowMoveIntent } from "./row-dnd";
+import { getRowDragIndex, getRowMoveIntent } from "./row-dnd";
 
 function groupedTable() {
   const rows = ["a", "b", "c", "d", "e"].map((id) => ({ id }));
@@ -122,4 +124,40 @@ describe("getRowMoveIntent grouped shared views", () => {
       getRowMoveIntent(groupedTable(), groupedDrag({ keyboard: true, y: -20 })),
     ).toBeNull();
   });
+});
+
+it("RowDragIndex_InterleavedGroupsAndReorder_UsesCurrentSiblingPosition", () => {
+  const { result } = renderHook(() =>
+    useTableView({
+      plugins: { ids: ["select"], items: { select: select() } },
+      defaultProperties: [
+        {
+          id: "status",
+          name: "Status",
+          type: "select",
+          width: "150",
+          config: undefined,
+        },
+      ],
+      defaultData: ["TODO", "DONE", "TODO"].map((value, index) => ({
+        id: `row${index}`,
+        createdAt: 1,
+        lastEditedAt: 1,
+        properties: { status: { id: `cell${index}`, value } },
+      })),
+    }),
+  );
+  const { table } = result.current;
+  act(() => table.setGrouping(["status"]));
+  expect(getRowDragIndex(table, table.getRow("row1"))).toBe(0);
+  expect(getRowDragIndex(table, table.getRow("row2"))).toBe(1);
+  act(() =>
+    table.moveRow({
+      rowId: "row2",
+      groupId: "status:TODO",
+      beforeRowId: "row0",
+    }),
+  );
+  expect(getRowDragIndex(table, table.getRow("row2"))).toBe(0);
+  expect(getRowDragIndex(table, table.getRow("row0"))).toBe(1);
 });

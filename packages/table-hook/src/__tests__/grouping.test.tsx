@@ -1281,7 +1281,17 @@ describe("useTableView - Extended Grouping", () => {
   describe("Group DnD", () => {
     it("GroupMove_BeforeThirdGroup_ReordersStateAndRenderedRows", () => {
       const { table } = renderTableHook({
-        data: mockData,
+        data: [
+          ...mockData,
+          {
+            ...mockData[0]!,
+            id: "row4",
+            properties: {
+              ...mockData[0]!.properties,
+              col2: { id: "cell-third-group", value: { name: "IN PROGRESS" } },
+            },
+          },
+        ],
         properties: mockProperties,
       });
 
@@ -1290,6 +1300,7 @@ describe("useTableView - Extended Grouping", () => {
       });
 
       const initialGroupOrder = table.atoms.groupingState.get().groupOrder;
+      expect(initialGroupOrder).toHaveLength(3);
       const firstGroupId = initialGroupOrder[0]!;
       const secondGroupId = initialGroupOrder[1]!;
 
@@ -1300,7 +1311,7 @@ describe("useTableView - Extended Grouping", () => {
       act(() => {
         table.moveGroup({
           groupId: firstGroupId,
-          beforeGroupId: initialGroupOrder[2] ?? null,
+          beforeGroupId: initialGroupOrder[2]!,
         });
       });
 

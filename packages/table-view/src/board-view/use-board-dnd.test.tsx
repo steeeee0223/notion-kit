@@ -11,7 +11,7 @@ const state = vi.hoisted(() => ({
   propertyId: "status",
   methodId: "value",
   allowed: true,
-  rowsById: {} as Record<string, { parentId: string }>,
+  rowsById: Object.fromEntries<{ parentId: string }>([]),
 }));
 const table = vi.hoisted(() => ({
   moveRow: vi.fn(),

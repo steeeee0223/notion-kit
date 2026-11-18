@@ -36,8 +36,7 @@ interface KanbanValue {
   items: KanbanItems;
 }
 type KanbanSource =
-  | { type: KanbanDnd.Item; id: string }
-  | { type: KanbanDnd.Column; id: string };
+  { type: KanbanDnd.Item; id: string } | { type: KanbanDnd.Column; id: string };
 type KanbanMove =
   | {
       type: KanbanDnd.Item;
@@ -202,11 +201,10 @@ const kanbanSensors: React.ComponentProps<typeof Sortable.Root>["sensors"] = (
 const KanbanSessionContext = createContext<KanbanSource | null>(null);
 const KanbanFocusContext =
   createContext<React.RefObject<KanbanSource | null> | null>(null);
-interface KanbanRootProps
-  extends Omit<
-    React.ComponentProps<typeof Sortable.Root>,
-    "children" | "onDragStart" | "onDragOver" | "onDragMove" | "onDragEnd"
-  > {
+interface KanbanRootProps extends Omit<
+  React.ComponentProps<typeof Sortable.Root>,
+  "children" | "onDragStart" | "onDragOver" | "onDragMove" | "onDragEnd"
+> {
   value: KanbanValue;
   children: (projectedValue: KanbanValue) => React.ReactNode;
   onMove: (move: KanbanMove) => void;
@@ -290,10 +288,10 @@ function KanbanRoot({
           (source.type !== KanbanDnd.Item && source.type !== KanbanDnd.Column)
         )
           return;
-        const active = {
+        const active: KanbanSource = {
           type: source.type,
           id: String(source.id),
-        } as KanbanSource;
+        };
         if (
           active.type === KanbanDnd.Item
             ? !findItemColumn(value, active.id)

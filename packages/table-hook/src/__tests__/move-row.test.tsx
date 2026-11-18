@@ -82,6 +82,46 @@ describe("semantic row moves", () => {
     });
   });
 
+  it.each([
+    { type: "select", destination: "DONE", value: "DONE" },
+    { type: "multi-select", destination: "DONE", value: ["DONE"] },
+    { type: "checkbox", destination: "true", value: true },
+    { type: "text", destination: "DONE", value: "DONE" },
+  ])(
+    "MissingGroupingCell($type)_CreatesCellInOneMove",
+    ({ type, destination, value }) => {
+      const rows: Row[] = [
+        { ...data[0]!, properties: {} },
+        {
+          ...data[1]!,
+          properties: { status: { id: "destination", value } },
+        },
+      ];
+      const { table, onDataChange } = setup(
+        rows,
+        properties.map((column) => ({ ...column, type })),
+      );
+      const groupId = `status:${destination}`;
+      expect(table.getCanMoveRowToGroup("row0", groupId)).toBe(true);
+      expect(onDataChange).not.toHaveBeenCalled();
+      expect(table.getRow("row0").original.properties.status).toBeUndefined();
+
+      act(() => table.moveRow({ rowId: "row0", groupId, beforeRowId: null }));
+
+      expect(onDataChange).toHaveBeenCalledOnce();
+      const cell = table.getRow("row0").original.properties.status;
+      expect(cell?.id).toEqual(expect.any(String));
+      expect(cell?.value).toEqual(value);
+      expect(onDataChange.mock.lastCall![0].action).toMatchObject({
+        type: "data.row.move",
+        payload: {
+          rowId: "row0",
+          grouping: { propertyId: "status", nextValue: value },
+        },
+      });
+    },
+  );
+
   it("inserts before an ID and leaves interleaved groups in their relative order", () => {
     const { table, onDataChange } = setup();
     act(() =>

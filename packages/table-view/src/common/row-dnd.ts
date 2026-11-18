@@ -1,10 +1,23 @@
 import type { DragEndEvent } from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 
-import type { TableInstance } from "@notion-kit/table-hook";
+import type { RowInstance, TableInstance } from "@notion-kit/table-hook";
 import { getSortableItemsAfterDrag } from "@notion-kit/ui/primitives";
 
 export type RowMoveIntent = Parameters<TableInstance["moveRow"]>[0];
+
+const siblingIndices = new WeakMap<RowInstance[], Map<string, number>>();
+
+export function getRowDragIndex(table: TableInstance, row: RowInstance) {
+  if (!row.parentId) return row.index;
+  const siblings = table.getRow(row.parentId).subRows;
+  let indices = siblingIndices.get(siblings);
+  if (!indices) {
+    indices = new Map(siblings.map((sibling, index) => [sibling.id, index]));
+    siblingIndices.set(siblings, indices);
+  }
+  return indices.get(row.id) ?? -1;
+}
 
 /** Normalize library state while the drag operation still exists. */
 export function getRowMoveIntent(

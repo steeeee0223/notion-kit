@@ -173,7 +173,7 @@ function BoardCardTitle({ row }: { row: RowInstance }) {
         <IconBlock icon={row.original.icon} className="contents" />
       )}
       <div className="min-h-6 w-auto max-w-full grow text-sm/normal font-medium wrap-break-word whitespace-pre-wrap">
-        {title || <span className="text-muted">New page</span>}
+        {title.trim() ? title : <span className="text-muted">New page</span>}
       </div>
     </div>
   );

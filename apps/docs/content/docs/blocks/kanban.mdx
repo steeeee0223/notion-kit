@@ -69,7 +69,7 @@ Render the supplied projection, including each card's current column and local i
 
 For persisted boards, handle `onMove` with one application command that updates the card's group and position together. Use `canMove` to reject destinations that cannot accept the card. A controlled parent may reject a move by keeping `value` unchanged. When sorting overrides manual order, hold the completed move for confirmation before clearing the sort and committing it.
 
-In TableView, the selected grouping method must define `getDropValue` to allow transfers between groups. Exact text, checkbox, select, and multi-select groups supply this capability. Derived prefixes, number ranges, and date buckets allow same-group reordering but reject transfers. A sorted Board asks to remove sorting before applying the completed move.
+In TableView, the selected grouping method must define `getDropValue` to allow transfers between groups. Exact text, checkbox, select, and multi-select groups supply this capability. Derived prefixes, number ranges, and date buckets allow same-group reordering but reject transfers. A sorted Board asks to remove sorting before applying a card move. Column reorders apply immediately.
 
 ## API Reference
 
