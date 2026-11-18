@@ -388,7 +388,7 @@ catalogs:
       specifier: ^1.74.0
       version: 1.74.0
     motion:
-      specifier: ^14.12.0
+      specifier: ^14.14.0
       version: 14.14.0
     react-hook-form:
       specifier: ^7.92.0
