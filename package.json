@@ -4,9 +4,9 @@
   "private": true,
   "engines": {
     "node": "^26.13.1",
-    "pnpm": "12.16.1"
+    "pnpm": "12.21.0"
   },
-  "packageManager": "pnpm@12.16.1",
+  "packageManager": "pnpm@12.21.0",
   "scripts": {
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=./packages/*",

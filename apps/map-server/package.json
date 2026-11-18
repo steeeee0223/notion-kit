@@ -30,7 +30,7 @@
     "csv-parse": "^7.0.3",
     "drizzle-orm": "^0.45.4",
     "fastify": "catalog:fastify",
-    "gtfs-realtime-bindings": "^1.1.1",
+    "gtfs-realtime-bindings": "^3.0.0",
     "jszip": "^3.10.2",
     "pg": "^8.23.1",
     "zod": "catalog:"

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type * as GeoJSON from "geojson";
 
 import type { VehiclePosition } from "@/adapters";
 

@@ -1,5 +1,7 @@
 "use client";
 
+import type * as GeoJSON from "geojson";
+
 import {
   Map,
   MapClusterLayer,

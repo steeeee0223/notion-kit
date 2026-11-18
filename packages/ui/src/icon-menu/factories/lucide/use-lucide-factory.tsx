@@ -6,13 +6,13 @@ import {
   useTransition,
 } from "react";
 import { betterFetch } from "@better-fetch/fetch";
-import dynamicIconImports from "lucide-react/dynamicIconImports";
 
 import { randomItem } from "@notion-kit/utils";
 
 import { COLOR } from "@/colors";
 import type { LucideName } from "@/icon-block";
 import { LucideIcon } from "@/icon-block";
+import { iconNodes } from "@/icon-block/lib/data";
 import { ColorPicker } from "@/icon-menu/_components";
 
 import { useRecentIcons } from "../_hooks";
@@ -34,10 +34,7 @@ export function useLucideFactory(
   const [color, setColor] = useState<string>(defaultColor);
   const [tags, setTags] = useState<IconTag[]>([]);
 
-  const allIcons = useMemo(
-    () => Object.keys(dynamicIconImports) as LucideName[],
-    [],
-  );
+  const allIcons = useMemo(() => Object.keys(iconNodes) as LucideName[], []);
 
   const { recentIds, trackRecent } = useRecentIcons({
     storageKey: "recent:lucide",

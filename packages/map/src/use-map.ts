@@ -1,5 +1,5 @@
 import { createContext, use } from "react";
-import MapLibreGL from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
 
 export interface MapContextValue {
   map: MapLibreGL.Map | null;

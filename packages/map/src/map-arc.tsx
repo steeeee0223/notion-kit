@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useEffect, useId, useMemo, useRef } from "react";
 import type * as GeoJSON from "geojson";
-import MapLibreGL from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
 
 import { useMap } from "./use-map";
 
@@ -109,7 +108,7 @@ function mergeArcPaint(
             baseValue,
           ];
   }
-  return merged as MapArcLinePaint;
+  return merged;
 }
 
 function buildArcCoordinates(
@@ -253,11 +252,10 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
   // Sync features when data / curvature / samples change.
   useEffect(() => {
     if (!isLoaded || !map) return;
-    const source = map.getSource(sourceId);
-    // @ts-expect-error - MapLibre GL JS types are incorrect
-    if (source?.setData) {
-      // @ts-expect-error - MapLibre GL JS types are incorrect
-      source.setData(geoJSON);
+    const source = map.getSource<MapLibreGL.GeoJSONSource>(sourceId);
+
+    if (source) {
+      void source.setData(geoJSON);
     }
   }, [isLoaded, map, geoJSON, sourceId]);
 
@@ -265,18 +263,10 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
   useEffect(() => {
     if (!isLoaded || !map?.getLayer(layerId)) return;
     for (const [key, value] of Object.entries(mergedPaint)) {
-      map.setPaintProperty(
-        layerId,
-        key as keyof MapArcLinePaint,
-        value as never,
-      );
+      map.setPaintProperty(layerId, key as keyof MapArcLinePaint, value);
     }
     for (const [key, value] of Object.entries(mergedLayout)) {
-      map.setLayoutProperty(
-        layerId,
-        key as keyof MapArcLineLayout,
-        value as never,
-      );
+      map.setLayoutProperty(layerId, key as keyof MapArcLineLayout, value);
     }
     if (map.getLayer(hitLayerId)) {
       map.setPaintProperty(hitLayerId, "line-width", hitWidth);

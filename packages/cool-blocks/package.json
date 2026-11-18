@@ -39,8 +39,8 @@
   "dependencies": {
     "@notion-kit/cn": "workspace:*",
     "@notion-kit/utils": "workspace:*",
-    "framer-motion": "catalog:ui",
-    "radix-ui": "1.4.3",
+    "motion": "catalog:ui",
+    "radix-ui": "1.8.1",
     "react-hotkeys-hook": "catalog:ui"
   },
   "devDependencies": {

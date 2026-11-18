@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type * as GeoJSON from "geojson";
 import type { MapMouseEvent } from "maplibre-gl";
 
 import {

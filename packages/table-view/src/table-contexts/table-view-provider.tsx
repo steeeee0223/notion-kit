@@ -127,11 +127,14 @@ function Content() {
 
   return (
     <table.Subscribe
-      selector={(state) => ({
-        layout: state.tableGlobal.layout,
-        globalFilter: state.globalFilter as unknown,
-        filters: state.tableGlobal.filters as unknown,
-      })}
+      selector={(state) => {
+        const globalFilter: unknown = state.globalFilter;
+        return {
+          layout: state.tableGlobal.layout,
+          globalFilter,
+          filters: state.tableGlobal.filters,
+        };
+      }}
     >
       {({ layout }) => {
         switch (layout) {

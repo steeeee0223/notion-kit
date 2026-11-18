@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unused-vars */
 import { useEffect, useId } from "react";
 import type { GeoJSONSource } from "maplibre-gl";
 
@@ -86,11 +85,10 @@ export function MapRoute({
   useEffect(() => {
     if (!isLoaded || !map || coordinates.length < 2) return;
 
-    const source = map.getSource(sourceId);
-    // @ts-expect-error - MapLibre GL JS types are incorrect
-    if (source?.setData) {
-      // @ts-expect-error - MapLibre GL JS types are incorrect
-      source.setData({
+    const source = map.getSource<GeoJSONSource>(sourceId);
+
+    if (source) {
+      void source.setData({
         type: "Feature",
         properties: {},
         geometry: { type: "LineString", coordinates },

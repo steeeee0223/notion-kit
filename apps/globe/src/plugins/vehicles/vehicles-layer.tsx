@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
+import type * as GeoJSON from "geojson";
 
 import { MapPopup } from "@notion-kit/map";
 import { Button } from "@notion-kit/ui/primitives";

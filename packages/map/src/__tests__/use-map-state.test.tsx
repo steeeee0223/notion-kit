@@ -294,10 +294,13 @@ describe("usePopupOptions", () => {
 
   it("resets maxWidth to the popup default when it is cleared", () => {
     const popup = new FakePopup();
+    const initialProps: { maxWidth: string | undefined } = {
+      maxWidth: "240px",
+    };
     const { rerender } = renderHook(
       ({ maxWidth }) =>
         usePopupOptions(popup as unknown as PopupOptionsStore, { maxWidth }),
-      { initialProps: { maxWidth: "240px" as string | undefined } },
+      { initialProps },
     );
 
     act(() => {

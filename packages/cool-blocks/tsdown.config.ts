@@ -15,7 +15,7 @@ export default defineConfig((opts) => ({
   external: [
     /^react($|\/)/,
     /^react-dom($|\/)/,
-    "framer-motion",
+    "motion/react",
     "radix-ui",
     "react-hotkeys-hook",
     EXTERNAL_NOTION_KIT,

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import type MapLibreGL from "maplibre-gl";
+import type * as GeoJSON from "geojson";
+import type * as MapLibreGL from "maplibre-gl";
 
 import { useMap } from "@notion-kit/map";
 
@@ -198,12 +199,10 @@ export function VehiclesSymbolLayer({
   useEffect(() => {
     if (!isLoaded || !map) return;
 
-    const source = map.getSource(SOURCE_ID);
-    // @ts-expect-error - MapLibre GL JS types don't expose setData on the base Source type
-    if (source?.setData) {
-      // @ts-expect-error - see above
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      source.setData(data);
+    const source = map.getSource<MapLibreGL.GeoJSONSource>(SOURCE_ID);
+
+    if (source) {
+      void source.setData(data);
     }
   }, [isLoaded, map, data]);
 

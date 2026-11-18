@@ -53,7 +53,7 @@ export function useUnsplash({ apiKey }: UnsplashConfig) {
           });
           if (result.error) {
             return {
-              images: defaultImages as UnsplashImage[],
+              images: defaultImages,
               status: getErrorMessage(result.error),
             };
           }
@@ -76,7 +76,7 @@ export function useUnsplash({ apiKey }: UnsplashConfig) {
 
         if (result.error) {
           return {
-            images: defaultImages as UnsplashImage[],
+            images: defaultImages,
             status: getErrorMessage(result.error),
           };
         }
@@ -96,7 +96,7 @@ export function useUnsplash({ apiKey }: UnsplashConfig) {
         }
 
         return {
-          images: defaultImages as UnsplashImage[],
+          images: defaultImages,
           status:
             error instanceof Error
               ? error.message
