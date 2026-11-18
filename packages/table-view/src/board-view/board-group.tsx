@@ -1,19 +1,21 @@
 import { Icon } from "@notion-kit/icons";
 import type { RowInstance } from "@notion-kit/table-hook";
+import type { ComparableValue } from "@notion-kit/table-hook/plugins";
 import { Kanban } from "@notion-kit/ui/kanban";
 import { Button } from "@notion-kit/ui/primitives";
 
 import { GroupActions } from "@/common";
 import { useTableViewCtx } from "@/table-contexts";
 
-import { BoardCard } from "./board-card";
+import { BoardCard, BoardCardPreview } from "./board-card";
 
 interface BoardGroupProps {
   index: number;
   row: RowInstance;
+  cards: RowInstance[];
 }
 
-export function BoardGroup({ index, row }: BoardGroupProps) {
+export function BoardGroup({ index, row, cards }: BoardGroupProps) {
   const { table, plugins } = useTableViewCtx();
   const uiPlugin = row.groupingColumnId
     ? plugins.getUiPlugin(table.getColumnPlugin(row.groupingColumnId).id)
@@ -39,12 +41,12 @@ export function BoardGroup({ index, row }: BoardGroupProps) {
             <div className="flex max-w-100 items-center overflow-hidden text-sm/6 font-medium whitespace-nowrap">
               {uiPlugin?.renderGroupingValue({
                 table: table as never,
-                value: table.getGroupingValue(row.id),
+                value: row.groupingValue as ComparableValue,
               })}
             </div>
             {row.getShouldShowGroupAggregates() && (
               <Button variant="hint" size="xs" className="text-muted">
-                {row.subRows.length}
+                {cards.length}
               </Button>
             )}
             <GroupActions
@@ -53,8 +55,13 @@ export function BoardGroup({ index, row }: BoardGroupProps) {
             />
           </Kanban.ColumnHeader>
           <Kanban.ColumnContent>
-            {row.subRows.map((subRow) => (
-              <BoardCard key={subRow.id} row={subRow} groupId={row.id} />
+            {cards.map((subRow, itemIndex) => (
+              <BoardCard
+                key={subRow.id}
+                row={subRow}
+                groupId={row.id}
+                index={itemIndex}
+              />
             ))}
           </Kanban.ColumnContent>
           {!locked && (
@@ -70,5 +77,24 @@ export function BoardGroup({ index, row }: BoardGroupProps) {
         </Kanban.Column>
       )}
     </table.Subscribe>
+  );
+}
+
+export function BoardGroupPreview({ row }: { row: RowInstance }) {
+  const { table, plugins } = useTableViewCtx();
+  const info = table.getGroupedColumnInfo();
+  return (
+    <div className="flex w-65 flex-col gap-2 rounded-lg bg-main p-2">
+      <div className="text-sm font-medium">
+        {info &&
+          plugins.getUiPlugin(info.type).renderGroupingValue({
+            table: table as never,
+            value: row.groupingValue as ComparableValue,
+          })}
+      </div>
+      {row.subRows.map((card) => (
+        <BoardCardPreview key={card.id} row={card} />
+      ))}
+    </div>
   );
 }

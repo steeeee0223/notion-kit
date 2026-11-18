@@ -14,6 +14,7 @@ import { Button } from "@notion-kit/ui/primitives";
 import { EditLogDialogObject } from "@/__tests__/component-objects/edit-log-dialog";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { RowActionsObject } from "@/__tests__/component-objects/row-actions";
+import { TableViewObject } from "@/__tests__/component-objects/table-view";
 import { mockData, mockProperties, mockResizeObserver } from "@/__tests__/mock";
 import type { DefaultPlugins } from "@/plugins";
 import { TableView, useTableViewCtx } from "@/table-contexts";
@@ -167,8 +168,12 @@ describe("EditLogEntryPoints", () => {
     const first = screen.getByRole("region", { name: "First table" });
     const second = screen.getByRole("region", { name: "Second table" });
     const row = within(first).getByRole("row", { name: /Task 1/ });
-    await user.click(RowActionsObject.trigger(row));
-    await user.click(screen.getByRole("menuitem", { name: "Edit log" }));
+    const menu = await RowActionsObject.openFromTrigger(
+      new TableViewObject(user),
+      RowActionsObject.trigger(row),
+    );
+    await menu.openEditLog();
+    await menu.waitUntilClosed();
     const dialog = await EditLogDialogObject.find(user);
     rerender(
       <Tables

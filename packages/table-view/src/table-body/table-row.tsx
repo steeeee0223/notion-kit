@@ -6,6 +6,7 @@ import type { CellInstance, RowInstance } from "@notion-kit/table-hook";
 import { Sortable } from "@notion-kit/ui/primitives";
 
 import { Row, RowActionGroup } from "@/common";
+import { getRowDragIndex } from "@/common/row-dnd";
 import { useTableViewCtx } from "@/table-contexts";
 
 interface TableRowProps {
@@ -22,7 +23,7 @@ export function TableRow({ row }: TableRowProps) {
     <Sortable.Item
       data-notion-slot="notion-table-view-row"
       id={row.id}
-      index={row.index}
+      index={getRowDragIndex(table, row)}
       group={row.parentId}
       disabled={locked}
       data={{ type: "table-row", groupId: row.parentId }}
