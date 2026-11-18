@@ -90,7 +90,7 @@ catalogs:
   fastify:
     fastify: ^5.12.8
     "@fastify/cors": ^11.4.3
-    "@fastify/swagger": ^9.9.3
+    "@fastify/swagger": ^9.9.5
     "@fastify/websocket": ^11.3.7
     "@scalar/fastify-api-reference": ^1.78.0
   tanstack-router:

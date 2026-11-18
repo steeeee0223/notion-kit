@@ -201,8 +201,8 @@ catalogs:
       specifier: ^11.4.3
       version: 11.4.3
     '@fastify/swagger':
-      specifier: ^9.9.3
-      version: 9.9.3
+      specifier: ^9.9.5
+      version: 9.9.5
     '@fastify/websocket':
       specifier: ^11.3.7
       version: 11.3.7
@@ -810,7 +810,7 @@ importers:
         version: 11.4.3
       '@fastify/swagger':
         specifier: catalog:fastify
-        version: 9.9.3(supports-color@7.2.0)
+        version: 9.9.5(supports-color@7.2.0)
       '@fastify/websocket':
         specifier: catalog:fastify
         version: 11.3.7
@@ -3297,8 +3297,8 @@ packages:
   '@fastify/proxy-addr@5.1.2':
     resolution: {integrity: sha512-uqB4QsgVoro0XDC+DIftIMGXHdBPn+lK6Ek3xXAIxPMCJfqxnbtyEoMCm2KPUVOuIosd7Cyw9HawEqMFM/UA+g==}
 
-  '@fastify/swagger@9.9.3':
-    resolution: {integrity: sha512-1whjjguZlh4VV6OP2SD7w7ZNXXuLPwLcxbKIu7GckhHGgCyIYwtOyBskc3TLZa7LsaRmZZRiB1nz/JTaCI5grQ==}
+  '@fastify/swagger@9.9.5':
+    resolution: {integrity: sha512-2X/MXoTv3Jhxegju9DwjOTKcDT86q0SDPIuuZDx9DHfRsHzpVfxVIXzP73X+qcEA1j7N+k7Cm95h9esGy/oBgA==}
 
   '@fastify/websocket@11.3.7':
     resolution: {integrity: sha512-fkkS87CkAOY/MzvJrB94S729RxvIbLHXv2LNGkPifli4/q4IdeicpcFoxgJ3oVmIRVNSi4W6FZai5AmRhzhhTw==}
@@ -12194,7 +12194,7 @@ snapshots:
       '@fastify/forwarded': 3.1.2
       ipaddr.js: 2.5.0
 
-  '@fastify/swagger@9.9.3(supports-color@7.2.0)':
+  '@fastify/swagger@9.9.5(supports-color@7.2.0)':
     dependencies:
       fastify-plugin: 6.0.1
       json-schema-resolver: 3.0.0(supports-color@7.2.0)
