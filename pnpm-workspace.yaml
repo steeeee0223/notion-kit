@@ -39,9 +39,9 @@ catalogs:
     "@testing-library/react": 16.3.3
     "@testing-library/user-event": 14.6.9
   turbo:
-    turbo: ^2.11.10
-    "@turbo/gen": ^2.11.10
-    eslint-plugin-turbo: ^2.11.10
+    turbo: ^2.11.11
+    "@turbo/gen": ^2.11.11
+    eslint-plugin-turbo: ^2.11.11
   tailwind-v4:
     tailwindcss: ^4.3.5
     "@tailwindcss/cli": ^4.3.5
