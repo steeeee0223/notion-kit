@@ -75,7 +75,7 @@ catalogs:
   supabase:
     "@supabase/supabase-js": ^2.119.0
   stripe:
-    stripe: ^20.4.1
+    stripe: ^23.2.0
     "@stripe/react-stripe-js": ^7.1.0
     "@stripe/stripe-js": ^10.3.0
   fns:
