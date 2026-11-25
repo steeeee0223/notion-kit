@@ -1,11 +1,11 @@
 import React, {
   createContext,
   use,
-  useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
-  useRef,
+  useState,
 } from "react";
 import type { BundledLanguage } from "shiki";
 import { codeToHtml } from "shiki";
@@ -66,6 +66,10 @@ class CodeBlockStore extends Store<CodeBlockState> implements CodeBlockActions {
     });
     this.onChange = onChange;
   }
+
+  setOnChange = (onChange?: (value: CodeBlockValue) => void) => {
+    this.onChange = onChange;
+  };
 
   /** Notify external onChange handler */
   private notifyChange = () => {
@@ -231,30 +235,30 @@ export function CodeBlockProvider({
 }: CodeBlockProviderProps) {
   const blockId = useId();
   const isControlled = value !== undefined;
-  const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
-
-  // Stable onChange callback
-  const handleChange = useCallback((newValue: CodeBlockValue) => {
-    onChangeRef.current?.(newValue);
-  }, []);
+  const [notifyChanges] = useState(isControlled);
 
   // Create store with initial state
-  const storeRef = useRef<CodeBlockStore | null>(null);
-  storeRef.current ??= new CodeBlockStore(
-    {
-      blockId,
-      code: value?.code ?? defaultValue?.code ?? "",
-      lang: value?.lang ?? defaultValue?.lang ?? "text",
-      theme: value?.theme ?? defaultValue?.theme ?? "github-dark",
-      caption: value?.caption ?? defaultValue?.caption,
-    },
-    isControlled ? handleChange : undefined,
+  const [initialStore] = useState(
+    () =>
+      new CodeBlockStore(
+        {
+          blockId,
+          code: value?.code ?? defaultValue?.code ?? "",
+          lang: value?.lang ?? defaultValue?.lang ?? "text",
+          theme: value?.theme ?? defaultValue?.theme ?? "github-dark",
+          caption: value?.caption ?? defaultValue?.caption,
+        },
+        notifyChanges ? onChange : undefined,
+      ),
   );
 
   const { state, store } = useStore<CodeBlockState, CodeBlockStore>(
-    storeRef.current,
+    initialStore,
   );
+
+  useLayoutEffect(() => {
+    store.setOnChange(notifyChanges ? onChange : undefined);
+  }, [notifyChanges, onChange, store]);
 
   // Sync controlled value to store
   useEffect(() => {

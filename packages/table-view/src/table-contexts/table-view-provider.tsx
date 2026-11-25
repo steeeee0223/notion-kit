@@ -1,4 +1,4 @@
-import { createContext, use, useMemo, useRef } from "react";
+import { createContext, use, useMemo } from "react";
 
 import {
   arrayToEntity,
@@ -66,18 +66,10 @@ export function TableViewWrapper<
     defaultColumn: defaultColumn as TableProps<TPlugins>["defaultColumn"],
     ...props,
   } as Parameters<typeof useTableView<TPlugins>>[0];
-  const ctx = useTableView<TPlugins>(tableOptions);
-  const latestCtxRef = useRef(ctx);
-  latestCtxRef.current = ctx;
+  const { table } = useTableView<TPlugins>(tableOptions);
   const contextValue = useMemo(
-    () => ({
-      get table() {
-        return latestCtxRef.current.table;
-      },
-      plugins: registry,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ctx.table.options.columns, ctx.table.options.data, registry],
+    () => ({ table, plugins: registry }),
+    [table, registry],
   );
 
   return (

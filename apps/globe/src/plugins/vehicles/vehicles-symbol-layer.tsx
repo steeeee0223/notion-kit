@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent } from "react";
 import type * as GeoJSON from "geojson";
 import type * as MapLibreGL from "maplibre-gl";
 
@@ -46,8 +46,10 @@ export function VehiclesSymbolLayer({
   onPointClick,
 }: VehiclesSymbolLayerProps) {
   const { map, isLoaded } = useMap();
-  const onPointClickRef = useRef(onPointClick);
-  onPointClickRef.current = onPointClick;
+  const notifyPointClick = useEffectEvent(
+    (feature: GeoJSON.Feature<GeoJSON.Point>, coordinates: [number, number]) =>
+      onPointClick?.(feature, coordinates),
+  );
 
   useEffect(() => {
     if (!isLoaded || !map) return;
@@ -162,7 +164,7 @@ export function VehiclesSymbolLayer({
         coords[0] += e.lngLat.lng > coords[0] ? 360 : -360;
       }
 
-      onPointClickRef.current?.(
+      notifyPointClick(
         feature as unknown as GeoJSON.Feature<GeoJSON.Point>,
         coords,
       );
