@@ -712,8 +712,8 @@ importers:
         specifier: catalog:rtl
         version: 31.0.1(@noble/hashes@2.4.0)
       monocart-coverage-reports:
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^3.3.0
+        version: 3.3.0
       prettier:
         specifier: 'catalog:'
         version: 3.10.1
@@ -8930,13 +8930,13 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  monocart-coverage-reports@3.2.1:
-    resolution: {integrity: sha512-iOsx8vvP4bZkmzS1v/hW7CTZNSm7PNDRdZgLdTc+WMFD2nH3TiT1oNqJBp424v9ZUpTQwgidIN5O09Cf34QMpA==}
-    engines: {node: '>=22.15.0'}
+  monocart-coverage-reports@3.3.0:
+    resolution: {integrity: sha512-6w4M1+W/VL/Zf84EoHO8hfZ7zAjQnux+GWI4eolUF8HA9L5+EPdAMv3itNVGjugJqpb/pO70AIQx4NHtlQMI7g==}
+    engines: {node: '>=22.18.0'}
     hasBin: true
 
-  monocart-locator@1.0.6:
-    resolution: {integrity: sha512-P4DCDxeOhy59KexF3yx/kD7y64HVxHO0lskxjxAML9kTOvQnD2jTpZWFQFEFyyABx32at3t77mWLKftFfk1wHQ==}
+  monocart-locator@2.0.0:
+    resolution: {integrity: sha512-2T/XzDj1VKcgQdxV6J+F77sei90GOWee8zdEcx4UmXh3oLUXl1p5MQ7R4dXQdUJRVyQdQ8zADTvyBHGroWDrAw==}
 
   morgan@1.12.1:
     resolution: {integrity: sha512-tljKC0ex20AjO58Ob/eZ53JloycbVswbVNCHx6V6VLGzqt/w8dIynVGL0G8qVjNKwiA7sYSogCrN6QtJ82IV+g==}
@@ -10618,6 +10618,18 @@ packages:
 
   ws@8.22.1:
     resolution: {integrity: sha512-oyL6OPYme/CmiFvNuGzeoxCJ4nOrZE2O1FwM9MWM1AsGri6nLXB2pg+lNA8aLeXMSav0J6eIVS1j6vUPzUtK9g==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
+  ws@8.23.0:
+    resolution: {integrity: sha512-wCkmX8QMOrKjgO8HW2WyDbTSGeqkocxgDzS9iR79rEAexty6/2qzilx3Ag8Tqf9ykop3irLKle0MtVn5qjVnoQ==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -17314,7 +17326,7 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  monocart-coverage-reports@3.2.1:
+  monocart-coverage-reports@3.3.0:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
       acorn: 8.19.0
@@ -17329,15 +17341,15 @@ snapshots:
       istanbul-lib-report: 3.0.1
       istanbul-reports: 3.2.0
       lz-utils: 2.1.1
-      monocart-locator: 1.0.6
+      monocart-locator: 2.0.0
       node-stream-zip: 1.16.0
-      ws: 8.22.1
+      ws: 8.23.0
       yazl: 3.3.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  monocart-locator@1.0.6: {}
+  monocart-locator@2.0.0: {}
 
   morgan@1.12.1(supports-color@7.2.0):
     dependencies:
@@ -19149,6 +19161,8 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.22.1: {}
+
+  ws@8.23.0: {}
 
   xml-name-validator@5.0.0: {}
 
