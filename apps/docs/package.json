@@ -39,7 +39,7 @@
     "fumadocs-core": "^16.19.7",
     "fumadocs-mdx": "^15.6.4",
     "fumadocs-ui": "^16.19.7",
-    "isbot": "^5.2.3",
+    "isbot": "^5.2.4",
     "lucide-react": "catalog:ui",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
