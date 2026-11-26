@@ -18,7 +18,7 @@ catalogs:
   react19:
     react: ^19.3.1
     react-dom: ^19.3.1
-    "@types/react": ^19.3.0
+    "@types/react": ^19.3.1
     "@types/react-dom": ^19.3.0
   react-compiler:
     babel-plugin-react-compiler: ^1.0.0
@@ -37,11 +37,11 @@ catalogs:
     jsdom: 31.0.1
     "@testing-library/jest-dom": 6.9.1
     "@testing-library/react": 16.3.3
-    "@testing-library/user-event": 14.6.12
+    "@testing-library/user-event": 14.6.13
   turbo:
-    turbo: ^2.11.12
-    "@turbo/gen": ^2.11.12
-    eslint-plugin-turbo: ^2.11.12
+    turbo: ^2.11.13
+    "@turbo/gen": ^2.11.13
+    eslint-plugin-turbo: ^2.11.13
   tailwind-v4:
     tailwindcss: ^4.3.5
     "@tailwindcss/cli": ^4.3.5
@@ -61,10 +61,10 @@ catalogs:
     "@dnd-kit/dom": 0.5.3
     "@dnd-kit/helpers": 0.5.3
     "@dnd-kit/react": 0.5.3
-    "@hookform/resolvers": ^7.0.7
-    "@tanstack/react-query": ^5.108.0
+    "@hookform/resolvers": ^7.0.9
+    "@tanstack/react-query": ^5.108.4
     "@tanstack/react-table": 9.3.1
-    "@tanstack/react-virtual": ^3.14.26
+    "@tanstack/react-virtual": ^3.14.28
   uuid:
     uuid: ^14.0.3
   env:
@@ -74,7 +74,7 @@ catalogs:
   build:
     "@rollup/plugin-babel": ^7.1.0
   supabase:
-    "@supabase/supabase-js": ^2.119.0
+    "@supabase/supabase-js": ^2.119.2
   stripe:
     stripe: ^20.4.1
     "@stripe/react-stripe-js": ^7.1.0

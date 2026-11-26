@@ -31,7 +31,9 @@ const emptyState: EditLogState = {
 /** Request state stays local to the dialog and never enters table resources. */
 export function useEditLogRequest(callbacks: EditLogProps) {
   const latestCallbacks = useRef(callbacks);
-  latestCallbacks.current = callbacks;
+  useLayoutEffect(() => {
+    latestCallbacks.current = callbacks;
+  }, [callbacks]);
   const [state, setState] = useState(emptyState);
   const currentState = useRef(state);
   const activeRequest = useRef<AbortController | null>(null);

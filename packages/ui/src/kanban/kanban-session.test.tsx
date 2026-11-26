@@ -137,6 +137,19 @@ describe("KanbanSession_Gesture_UsesAuthoritativeCompletion", () => {
       expect(screen.queryByText("Overlay a")).not.toBeInTheDocument();
     },
   );
+  it("ignores a collision callback queued after cancellation", () => {
+    const onMove = vi.fn();
+    render(<Board onMove={onMove} />);
+    startAndPreview();
+
+    act(() => {
+      handlers.onDragEnd({ ...event(), canceled: true });
+      handlers.onDragOver(event());
+    });
+
+    expect(screen.queryByText("Overlay a")).not.toBeInTheDocument();
+    expect(onMove).not.toHaveBeenCalled();
+  });
   it("invalidates a session permanently when context changes", () => {
     const onMove = vi.fn();
     const { rerender } = render(<Board onMove={onMove} />);
@@ -242,34 +255,63 @@ describe("KanbanSession_Gesture_UsesAuthoritativeCompletion", () => {
   });
 });
 
-it("ColumnPreview_RepeatedAfterTarget_DoesNotTurnIntoSelfAnchor", () => {
-  const onMove = vi.fn();
-  render(
-    <Kanban.Root value={value} onMove={onMove} renderOverlay={() => null}>
-      {(projected) => <output>{projected.columnOrder.join(",")}</output>}
-    </Kanban.Root>,
-  );
-  const columnEvent = {
-    ...event(),
-    operation: {
-      ...event().operation,
-      source: { id: "todo", type: KanbanDnd.Column },
-      target: {
-        id: "done",
-        type: KanbanDnd.Column,
-        shape: { center: { x: 0, y: 0 } },
+it.each([
+  { drop: "over the reported target", targetFound: true, x: 1, commits: true },
+  {
+    drop: "over the projected source",
+    targetFound: false,
+    x: 1,
+    commits: true,
+  },
+  { drop: "outside the board", targetFound: false, x: 11, commits: false },
+])(
+  "ColumnPreview commits the reorder only for a valid drop $drop",
+  ({ targetFound, x, commits }) => {
+    const onMove = vi.fn();
+    render(
+      <Kanban.Root value={value} onMove={onMove} renderOverlay={() => null}>
+        {(projected) => <output>{projected.columnOrder.join(",")}</output>}
+      </Kanban.Root>,
+    );
+    const element = document.createElement("div");
+    const columnEvent = {
+      ...event(),
+      operation: {
+        ...event().operation,
+        source: { id: "todo", type: KanbanDnd.Column, element },
+        target: {
+          id: "done",
+          type: KanbanDnd.Column,
+          shape: { center: { x: 0, y: 0 } },
+        },
+        position: { current: { x: 1, y: 0 } },
       },
-      position: { current: { x: 1, y: 0 } },
-    },
-  } as unknown as DragStartEvent & DragOverEvent & DragEndEvent;
-  act(() => handlers.onDragStart(columnEvent));
-  act(() => handlers.onDragOver(columnEvent));
-  act(() => handlers.onDragOver(columnEvent));
-  expect(screen.getByRole("status")).toHaveTextContent("done,todo");
-  act(() => handlers.onDragEnd(columnEvent));
-  expect(onMove).toHaveBeenCalledExactlyOnceWith({
-    type: KanbanDnd.Column,
-    id: "todo",
-    beforeId: null,
-  });
-});
+    } as unknown as DragStartEvent & DragOverEvent & DragEndEvent;
+    act(() => handlers.onDragStart(columnEvent));
+    act(() => handlers.onDragOver(columnEvent));
+    act(() => handlers.onDragOver(columnEvent));
+    expect(screen.getByRole("status")).toHaveTextContent("done,todo");
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+      new DOMRect(targetFound ? 20 : 0, 0, 10, 10),
+    );
+    act(() =>
+      handlers.onDragEnd({
+        ...columnEvent,
+        operation: {
+          ...columnEvent.operation,
+          target: targetFound ? columnEvent.operation.target : null,
+          position: { current: { x, y: 1 } },
+        },
+      } as unknown as DragEndEvent),
+    );
+    if (!commits) {
+      expect(onMove).not.toHaveBeenCalled();
+      return;
+    }
+    expect(onMove).toHaveBeenCalledExactlyOnceWith({
+      type: KanbanDnd.Column,
+      id: "todo",
+      beforeId: null,
+    });
+  },
+);

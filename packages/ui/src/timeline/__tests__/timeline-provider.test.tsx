@@ -22,7 +22,8 @@ vi.mock("@/primitives", () => ({
 }));
 
 vi.mock("lodash.throttle", () => ({
-  default: (callback: () => void) => callback,
+  default: (callback: () => void) =>
+    Object.assign(callback, { cancel: vi.fn() }),
 }));
 
 const observerState = {

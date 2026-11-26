@@ -226,13 +226,13 @@ function KanbanRoot({
   const suppressClick = useRef(false);
   const focusSource = useRef<KanbanSource | null>(null);
   useEffect(() => {
-    if (!focusSource.current) return;
+    if (session || !focusSource.current) return;
     const frame = requestAnimationFrame(() => {
       const source = focusSource.current;
       if (!source) return;
       const node = [
         ...(listRef.current?.querySelectorAll<HTMLElement>(
-          "[data-kanban-id]",
+          "[data-kanban-id]:not([data-dnd-placeholder])",
         ) ?? []),
       ].find((node) => node.dataset.kanbanId === source.id);
       const handle =
@@ -258,7 +258,28 @@ function KanbanRoot({
     : value;
   function placement(event: DragOverEvent | DragEndEvent) {
     if (!validSession) return null;
-    const move = resolveMove(projected, validSession.source, event);
+    const { activatorEvent, position, source } = event.operation;
+    let move = resolveMove(projected, validSession.source, event);
+    if (
+      validSession.placement?.type === KanbanDnd.Column &&
+      !(activatorEvent instanceof KeyboardEvent)
+    ) {
+      // Projection can move the source into the pointer's path before dnd-kit
+      // measures its new position. The visible source still represents the preview.
+      const bounds = source?.element?.getBoundingClientRect();
+      const { x, y } = position.current;
+      if (
+        bounds &&
+        bounds.width > 0 &&
+        bounds.height > 0 &&
+        x >= bounds.left &&
+        x <= bounds.right &&
+        y >= bounds.top &&
+        y <= bounds.bottom
+      ) {
+        move = validSession.placement;
+      }
+    }
     return move && (canMove?.(move) ?? true) ? move : null;
   }
   function preview(event: DragOverEvent) {
@@ -273,7 +294,11 @@ function KanbanRoot({
         (move?.type === KanbanDnd.Item && previous.columnId === move.columnId))
     )
       return;
-    setSession({ ...validSession, placement: move });
+    setSession((current) =>
+      current?.source === validSession.source
+        ? { ...current, placement: move }
+        : current,
+    );
   }
   return (
     <Sortable.Root
@@ -311,11 +336,11 @@ function KanbanRoot({
       onDragEnd={(event) => {
         const move = event.canceled ? null : placement(event);
         const source = validSession?.source;
-        setSession(null);
-        if (move && applyKanbanMove(value, move) !== value) onMove(move);
         if (source && event.operation.activatorEvent instanceof KeyboardEvent) {
           focusSource.current = source;
         }
+        setSession(null);
+        if (move && applyKanbanMove(value, move) !== value) onMove(move);
         // Consume the synthetic click from the pointer-up that finished this gesture.
         setTimeout(() => {
           suppressClick.current = false;
@@ -363,6 +388,8 @@ function KanbanColumn({ id, className, ...props }: KanbanColumnProps) {
   return (
     <KanbanColumnContext value={id}>
       <Sortable.Item
+        // Keep the column's hit area on its projected slot during a drag.
+        transition={null}
         {...props}
         data-slot="kanban-column"
         data-kanban-id={id}

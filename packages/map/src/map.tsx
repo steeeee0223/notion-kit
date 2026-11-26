@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useEffectEvent,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -153,8 +154,9 @@ export function Map({
   const internalUpdateRef = useRef(false);
   const resolvedTheme = useResolvedTheme(themeProp);
 
-  const onViewportChangeRef = useRef(onViewportChange);
-  onViewportChangeRef.current = onViewportChange;
+  const notifyViewportChange = useEffectEvent((map: MapLibreGL.Map) => {
+    if (!internalUpdateRef.current) onViewportChange?.(getViewport(map));
+  });
 
   const mapStyles = useMemo(
     () => ({
@@ -202,10 +204,7 @@ export function Map({
     };
     const loadHandler = () => setIsLoaded(true);
 
-    const handleMove = () => {
-      if (internalUpdateRef.current) return;
-      onViewportChangeRef.current?.(getViewport(map));
-    };
+    const handleMove = () => notifyViewportChange(map);
 
     map.on("load", loadHandler);
     map.on("styledata", styleDataHandler);

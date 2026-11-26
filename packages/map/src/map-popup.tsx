@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useEffectEvent, useMemo, useState } from "react";
 import * as MapLibreGL from "maplibre-gl";
 import type { PopupOptions } from "maplibre-gl";
 import { createPortal } from "react-dom";
@@ -29,43 +29,36 @@ export function MapPopup({
   ...popupOptions
 }: MapPopupProps) {
   const { map } = useMap();
-  const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+  const notifyClose = useEffectEvent(() => onClose?.());
   const container = useMemo(() => document.createElement("div"), []);
 
-  const popup = useMemo(() => {
-    const popupInstance = new MapLibreGL.Popup({
+  const [popup] = useState(() =>
+    new MapLibreGL.Popup({
       offset: 20,
       maxWidth: "none",
       ...popupOptions,
       // Customized close button
       closeButton: false,
-    }).setLngLat([longitude, latitude]);
-
-    return popupInstance;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    }).setLngLat([longitude, latitude]),
+  );
 
   usePopupOptions(popup, popupOptions, { lngLat: [longitude, latitude] });
 
   useEffect(() => {
     if (!map) return;
 
-    const onCloseProp = () => onCloseRef.current?.();
-
-    popup.on("close", onCloseProp);
+    popup.on("close", notifyClose);
 
     popup.setDOMContent(container);
     popup.addTo(map);
 
     return () => {
-      popup.off("close", onCloseProp);
+      popup.off("close", notifyClose);
       if (popup.isOpen()) {
         popup.remove();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [container, map, popup]);
 
   return createPortal(
     <div

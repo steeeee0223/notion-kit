@@ -1,4 +1,12 @@
-import React, { createContext, use, useEffect, useMemo, useRef } from "react";
+import React, {
+  createContext,
+  use,
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import * as MapLibreGL from "maplibre-gl";
 import type { MarkerOptions, PopupOptions } from "maplibre-gl";
 import { createPortal } from "react-dom";
@@ -61,68 +69,55 @@ export function MapMarker({
 }: MapMarkerProps) {
   const { map } = useMap();
 
-  const callbacksRef = useRef({
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-  });
-  callbacksRef.current = {
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-  };
-
-  const marker = useMemo(() => {
+  const [marker] = useState(() => {
     const element = document.createElement("div");
     element.dataset.slot = "map-marker";
 
-    const markerInstance = new MapLibreGL.Marker({
+    return new MapLibreGL.Marker({
       ...markerOptions,
       element,
       draggable,
     }).setLngLat([longitude, latitude]);
+  });
 
-    const handleClick = (e: MouseEvent) => callbacksRef.current.onClick?.(e);
-    const handleMouseEnter = (e: MouseEvent) =>
-      callbacksRef.current.onMouseEnter?.(e);
-    const handleMouseLeave = (e: MouseEvent) =>
-      callbacksRef.current.onMouseLeave?.(e);
+  const handleClick = useEffectEvent((event: MouseEvent) => onClick?.(event));
+  const handleMouseEnter = useEffectEvent((event: MouseEvent) =>
+    onMouseEnter?.(event),
+  );
+  const handleMouseLeave = useEffectEvent((event: MouseEvent) =>
+    onMouseLeave?.(event),
+  );
+  const handleDragStart = useEffectEvent(() => {
+    const { lng, lat } = marker.getLngLat();
+    onDragStart?.({ lng, lat });
+  });
+  const handleDrag = useEffectEvent(() => {
+    const { lng, lat } = marker.getLngLat();
+    onDrag?.({ lng, lat });
+  });
+  const handleDragEnd = useEffectEvent(() => {
+    const { lng, lat } = marker.getLngLat();
+    onDragEnd?.({ lng, lat });
+  });
 
-    markerInstance.getElement().addEventListener("click", handleClick);
-    markerInstance
-      .getElement()
-      .addEventListener("mouseenter", handleMouseEnter);
-    markerInstance
-      .getElement()
-      .addEventListener("mouseleave", handleMouseLeave);
+  useLayoutEffect(() => {
+    const element = marker.getElement();
+    element.addEventListener("click", handleClick);
+    element.addEventListener("mouseenter", handleMouseEnter);
+    element.addEventListener("mouseleave", handleMouseLeave);
+    marker.on("dragstart", handleDragStart);
+    marker.on("drag", handleDrag);
+    marker.on("dragend", handleDragEnd);
 
-    const handleDragStart = () => {
-      const lngLat = markerInstance.getLngLat();
-      callbacksRef.current.onDragStart?.({ lng: lngLat.lng, lat: lngLat.lat });
+    return () => {
+      element.removeEventListener("click", handleClick);
+      element.removeEventListener("mouseenter", handleMouseEnter);
+      element.removeEventListener("mouseleave", handleMouseLeave);
+      marker.off("dragstart", handleDragStart);
+      marker.off("drag", handleDrag);
+      marker.off("dragend", handleDragEnd);
     };
-    const handleDrag = () => {
-      const lngLat = markerInstance.getLngLat();
-      callbacksRef.current.onDrag?.({ lng: lngLat.lng, lat: lngLat.lat });
-    };
-    const handleDragEnd = () => {
-      const lngLat = markerInstance.getLngLat();
-      callbacksRef.current.onDragEnd?.({ lng: lngLat.lng, lat: lngLat.lat });
-    };
-
-    markerInstance.on("dragstart", handleDragStart);
-    markerInstance.on("drag", handleDrag);
-    markerInstance.on("dragend", handleDragEnd);
-
-    return markerInstance;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [marker]);
 
   useEffect(() => {
     if (!map) return;
@@ -132,9 +127,7 @@ export function MapMarker({
     return () => {
       marker.remove();
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [map, marker]);
 
   if (
     marker.getLngLat().lng !== longitude ||

@@ -137,7 +137,6 @@ export const Eject = React.forwardRef<EjectRef, EjectProps>(function Eject(
         }, 1000);
         break;
       case "disappear":
-        // eslint-disable-next-line react-hooks/immutability
         scope.current.style.display = "none";
         break;
       case "ghost":
@@ -177,7 +176,6 @@ export const Eject = React.forwardRef<EjectRef, EjectProps>(function Eject(
   React.useEffect(() => {
     if (!respawning) return;
 
-    // eslint-disable-next-line react-hooks/immutability
     scope.current.style.maskImage =
       "linear-gradient(to bottom right, black 40%, transparent 60%)";
     scope.current.style.maskSize = "300% 300%";
