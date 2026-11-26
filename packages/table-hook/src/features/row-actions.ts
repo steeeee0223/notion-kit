@@ -14,10 +14,18 @@ import type { _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
+import type { TablePropertySources } from "@/plugins/property-sources";
+import { readReferences } from "@/plugins/references";
+import type { RelationConfig } from "@/plugins/relation";
 import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
+import {
+  hasProjectedPropertyValue,
+  projectTableData,
+} from "@/table-contexts/property-data";
 
 export interface RowActionsOptions {
+  propertySources?: TablePropertySources;
   onTableDataChange?: ResourceChangeFn<Row[], DataResourceAction>;
 }
 
@@ -87,6 +95,17 @@ export interface RowActionsRowApi {
   getIsLastChild: () => boolean;
 }
 
+function normalizeRelation(value: unknown, config: RelationConfig) {
+  const references = readReferences(value);
+  return config.limit === "one"
+    ? references.slice(0, 1)
+    : Array.from(
+        new Map(
+          references.map((reference) => [reference.id, reference]),
+        ).values(),
+      );
+}
+
 function getRowPosition(rows: Row[], rowId: string) {
   return rows.findIndex((row) => row.id === rowId);
 }
@@ -100,7 +119,14 @@ export const RowActionsFeature: TableFeature = {
     const scheduleGroupingStateSync = (rows: Row[]) => {
       if (table.atoms.grouping.get().length > 0) {
         queueMicrotask(() => {
-          table._syncGroupingStateFromData(rows);
+          table._syncGroupingStateFromData(
+            projectTableData(
+              rows,
+              table.atoms.columnsInfo.get(),
+              table.atoms.cellPlugins.get(),
+              table.options.propertySources,
+            ),
+          );
         });
       }
     };
@@ -113,6 +139,18 @@ export const RowActionsFeature: TableFeature = {
         );
         return next;
       }, action);
+    const editMetadata = (lastEditedAt: number) => ({
+      lastEditedAt,
+      ...(table.options.propertySources?.currentActor && {
+        lastEditedBy: table.options.propertySources.currentActor,
+      }),
+    });
+    const creationMetadata = (createdAt: number) => ({
+      createdAt,
+      lastEditedAt: createdAt,
+      createdBy: table.options.propertySources?.currentActor,
+      lastEditedBy: table.options.propertySources?.currentActor,
+    });
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.map((row) => row.original);
@@ -140,13 +178,20 @@ export const RowActionsFeature: TableFeature = {
       updater: Updater<Cell<TPlugin>>,
       _originalGroupId?: string,
     ) => {
+      const plugin = table.getColumnPlugin(colId);
+      if (plugin.readOnly) return;
+      const config = table.getColumnInfo(colId).config;
       const actionId = v4();
       table.setTableData(
         (prev) => {
           const now = Date.now();
           const next = prev.map((row) => {
             if (row.id !== rowId) return row;
-            const currentCell = row.properties[colId];
+            const currentCell =
+              row.properties[colId] ??
+              (hasProjectedPropertyValue(plugin.id)
+                ? getDefaultCell(plugin)
+                : undefined);
             if (!currentCell) return row;
             const data = functionalUpdate(
               updater,
@@ -154,8 +199,20 @@ export const RowActionsFeature: TableFeature = {
             );
             return {
               ...row,
-              properties: { ...row.properties, [colId]: data },
-              lastEditedAt: now,
+              properties: {
+                ...row.properties,
+                [colId]:
+                  plugin.id === "relation"
+                    ? {
+                        ...data,
+                        value: normalizeRelation(
+                          data.value,
+                          config as RelationConfig,
+                        ),
+                      }
+                    : data,
+              },
+              ...editMetadata(now),
             };
           });
 
@@ -183,7 +240,16 @@ export const RowActionsFeature: TableFeature = {
       colId: string,
       value: InferData<TPlugin>,
     ) => {
+      const plugin = table.getColumnPlugin(colId);
+      if (plugin.readOnly) return;
       const rowIdSet = new Set(rowIds);
+      const nextValue =
+        plugin.id === "relation"
+          ? normalizeRelation(
+              value,
+              table.getColumnInfo(colId).config as RelationConfig,
+            )
+          : value;
       const actionId = v4();
       table.setTableData(
         (previous) => {
@@ -201,9 +267,9 @@ export const RowActionsFeature: TableFeature = {
               ...row,
               properties: {
                 ...row.properties,
-                [colId]: { ...currentCell, value },
+                [colId]: { ...currentCell, value: nextValue },
               },
-              lastEditedAt: now,
+              ...editMetadata(now),
             };
           });
 
@@ -233,13 +299,13 @@ export const RowActionsFeature: TableFeature = {
           const row: Row = {
             id: rowId,
             properties: {},
-            createdAt: now,
-            lastEditedAt: now,
+            ...creationMetadata(now),
           };
           table.atoms.columnOrder.get().forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
             const cell = getDefaultCell(plugin);
             if (
+              !plugin.readOnly &&
               payload?.initialValues &&
               Object.hasOwn(payload.initialValues, colId)
             ) {
@@ -292,8 +358,7 @@ export const RowActionsFeature: TableFeature = {
               ...src,
               id: rowId,
               properties,
-              createdAt: now,
-              lastEditedAt: now,
+              ...creationMetadata(now),
             },
             idx + 1,
           );
@@ -335,8 +400,7 @@ export const RowActionsFeature: TableFeature = {
                 ...row,
                 id: v4(),
                 properties,
-                createdAt: now,
-                lastEditedAt: now,
+                ...creationMetadata(now),
               },
             ];
           });
@@ -435,7 +499,7 @@ export const RowActionsFeature: TableFeature = {
           ...row.properties,
           [info.id]: { ...(cell ?? getDefaultCell(plugin)), value },
         },
-        lastEditedAt: Date.now(),
+        ...editMetadata(Date.now()),
       };
       return classify(next) === groupId ? next : null;
     };
@@ -547,7 +611,7 @@ export const RowActionsFeature: TableFeature = {
             return {
               ...row,
               icon: icon ?? undefined,
-              lastEditedAt: now,
+              ...editMetadata(now),
             };
           });
         },
@@ -575,13 +639,12 @@ export const RowActionsFeature: TableFeature = {
           const row: Row = {
             id: rowId,
             properties: {},
-            createdAt: now,
-            lastEditedAt: now,
+            ...creationMetadata(now),
           };
           columnOrder.forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
             row.properties[colId] =
-              colId === grouping[0]
+              colId === grouping[0] && !plugin.readOnly
                 ? {
                     id: v4(),
                     value: structuredClone<unknown>(

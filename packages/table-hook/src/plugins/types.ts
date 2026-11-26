@@ -5,6 +5,9 @@ import type {
   SortingMethodDescriptor,
 } from "@/methods";
 
+import type { TablePropertySources } from "./property-sources";
+import type { PropertyReference } from "./references";
+
 export type CompareFn<T> = (a: T, b: T) => number;
 export type ComparableValue = string | number | boolean | null;
 
@@ -20,7 +23,16 @@ export type FilterOperandMetadata =
   | { kind: "none" }
   | { kind: "text" }
   | { kind: "number" }
-  | { kind: "option"; multiple?: boolean }
+  | {
+      kind: "option";
+      multiple?: boolean;
+      getOptions?: (context: {
+        config: unknown;
+        sources?: TablePropertySources;
+        getRelatedRows?: (databaseId: string) => readonly PropertyReference[];
+      }) => readonly PropertyReference[];
+    }
+  | { kind: "rollup-list" }
   | { kind: "date" }
   | { kind: "date-range" }
   | { kind: "relative-date" };
@@ -28,12 +40,14 @@ export type FilterOperandMetadata =
 export interface FilterEvaluationContext {
   /** Clock captured once for the complete filter evaluation pass. */
   now: number;
+  plugins?: Readonly<Record<string, CellPlugin>>;
 }
 
 export interface FilterOperatorDescriptor<Data = unknown, Config = unknown> {
   /** Stable identifier stored in a persisted filter rule. */
   id: string;
   name: string;
+  available?: (config: Config) => boolean;
   operand: FilterOperandMetadata;
   matches: (
     data: Data,
@@ -57,6 +71,9 @@ export interface CellPlugin<
   Config = any,
 > {
   id: Key;
+  readOnly?: boolean;
+  canGroup?: false;
+  canSort?: (config: Config) => boolean;
   default: {
     /**
      * @prop Default property config when creating a new property.

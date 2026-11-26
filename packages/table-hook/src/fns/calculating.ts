@@ -45,10 +45,16 @@ export const aggregateCountUnique: CommonAggregationFn = {
   },
 };
 
-function numberValues<TRow>(context: {
+export interface ValueAggregationContext<TRow> {
   rows: readonly TRow[];
   getValue: (row: TRow) => unknown;
-}) {
+}
+
+export interface ValueAggregation {
+  aggregate: <TRow>(context: ValueAggregationContext<TRow>) => unknown;
+}
+
+function numberValues<TRow>(context: ValueAggregationContext<TRow>) {
   return context.rows.flatMap((row) => {
     const value = context.getValue(row);
     if (typeof value === "string" && value.trim() === "") return [];
@@ -60,7 +66,7 @@ function numberValues<TRow>(context: {
 
 function numericAggregation(
   calculate: (values: number[]) => number,
-): CommonAggregationFn {
+): ValueAggregation {
   return {
     aggregate: (context) => {
       const values = numberValues(context);
@@ -126,10 +132,7 @@ function toDateRangeValue(value: unknown): DateRangeValue | null {
       };
 }
 
-function dateValues<TRow>(context: {
-  rows: readonly TRow[];
-  getValue: (row: TRow) => unknown;
-}) {
+function dateValues<TRow>(context: ValueAggregationContext<TRow>) {
   return context.rows.flatMap((row) => {
     const value = toDateRangeValue(context.getValue(row));
     return value === null ? [] : [value];
@@ -154,7 +157,7 @@ function getDateBoundaries(values: DateRangeValue[]) {
   };
 }
 
-export const aggregateDateEarliest: CommonAggregationFn = {
+export const aggregateDateEarliest: ValueAggregation = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";
@@ -166,7 +169,7 @@ export const aggregateDateEarliest: CommonAggregationFn = {
   },
 };
 
-export const aggregateDateLatest: CommonAggregationFn = {
+export const aggregateDateLatest: ValueAggregation = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";
@@ -178,7 +181,7 @@ export const aggregateDateLatest: CommonAggregationFn = {
   },
 };
 
-export const aggregateDateRange: CommonAggregationFn = {
+export const aggregateDateRange: ValueAggregation = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";

@@ -21,6 +21,7 @@ import type {
 } from "@/features/types";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type { CellPlugin, FilterEvaluationContext } from "@/plugins";
+import { getFilterOperators } from "@/plugins/utils";
 
 export type { FilterValue } from "@/plugins";
 
@@ -210,13 +211,21 @@ function evaluateValidatedTableFilter(
     const property = properties[node.propertyId];
     if (!property || property.isDeleted) return false;
     const plugin = plugins[property.type];
-    const operator = plugin?.filtering?.operators.find(
+    const operator = getFilterOperators(plugin, property.config).find(
       ({ id }) => id === node.operator,
     );
     if (!plugin || !operator) return false;
     const cell = row.properties[node.propertyId];
     const data: unknown = cell ? cell.value : plugin.default.data;
-    return operator.matches(data, row, property.config, node.value, context);
+    return operator.matches(
+      data,
+      row,
+      property.config,
+      node.value,
+      operator.operand.kind === "rollup-list"
+        ? { ...context, plugins }
+        : context,
+    );
   };
 
   return evaluate(state);

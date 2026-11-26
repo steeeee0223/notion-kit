@@ -1,12 +1,19 @@
 import {
   checkbox as createCheckbox,
+  createdBy as createCreatedBy,
   createdTime as createCreatedTime,
   date as createDate,
   email as createEmail,
+  id as createId,
+  lastEditedBy as createLastEditedBy,
   lastEditedTime as createLastEditedTime,
+  location as createLocation,
   multiSelect as createMultiSelect,
   number as createNumber,
+  person as createPerson,
   phone as createPhone,
+  relation as createRelation,
+  rollup as createRollup,
   select as createSelect,
   text as createText,
   title as createTitle,
@@ -15,9 +22,14 @@ import {
 
 import { checkbox } from "./checkbox";
 import { createdTime, date, lastEditedTime } from "./date";
+import { id } from "./id";
 import { email, phone, url } from "./link";
+import { location } from "./location";
 import { number } from "./number";
+import { createdBy, lastEditedBy, person } from "./person";
 import { createPluginRegistry } from "./registry";
+import { relation } from "./relation";
+import { rollup } from "./rollup";
 import { multiSelect, select } from "./select";
 import { text } from "./text";
 import { title } from "./title";
@@ -35,6 +47,13 @@ export const DEFAULT_DATA_PLUGINS = [
   createDate(),
   createCreatedTime(),
   createLastEditedTime(),
+  createId(),
+  createPerson(),
+  createCreatedBy(),
+  createLastEditedBy(),
+  createLocation(),
+  createRelation(),
+  createRollup(),
 ];
 
 export const DEFAULT_UI_PLUGINS = [
@@ -50,6 +69,13 @@ export const DEFAULT_UI_PLUGINS = [
   date(),
   createdTime(),
   lastEditedTime(),
+  id(),
+  person(),
+  createdBy(),
+  lastEditedBy(),
+  location(),
+  relation(),
+  rollup(),
 ];
 
 export const DEFAULT_PLUGINS = createPluginRegistry({
@@ -72,6 +98,13 @@ export {
   date,
   createdTime,
   lastEditedTime,
+  id,
+  person,
+  createdBy,
+  lastEditedBy,
+  location,
+  relation,
+  rollup,
 };
 export { DefaultGroupingValue } from "./utils";
 export { createPluginRegistry } from "./registry";

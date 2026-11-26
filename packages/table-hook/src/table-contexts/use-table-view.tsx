@@ -37,6 +37,7 @@ import {
   resolveSortingAccessorValue,
   resolveSortingFn,
 } from "@/methods";
+import { getFilterOperators } from "@/plugins/utils";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -47,6 +48,16 @@ import type {
 } from "@/table-contexts/actions";
 import { defaultColumn } from "@/table-contexts/column";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
+import {
+  assignRowSequences,
+  getLocalDatabaseId,
+  nextRowSequence,
+  projectTableData,
+} from "@/table-contexts/property-data";
+import {
+  applyRelationChanges,
+  getRelationChanges,
+} from "@/table-contexts/relation-sync";
 import type {
   BaseTableProps,
   PartialTableViewState,
@@ -128,11 +139,14 @@ function hasRelativeDateFilter(
       if (child.kind === "group") return hasRelativeRule(child);
       const property = properties[child.propertyId];
       const operator = property
-        ? plugins[property.type]?.filtering?.operators.find(
+        ? getFilterOperators(plugins[property.type], property.config).find(
             ({ id }) => id === child.operator,
           )
         : undefined;
-      return operator?.operand.kind === "relative-date";
+      return (
+        operator?.operand.kind === "relative-date" ||
+        operator?.operand.kind === "rollup-list"
+      );
     });
 
   return hasRelativeRule(filters);
@@ -166,6 +180,7 @@ function useResourceState<TResource, TAction>({
   defaultValue: TResource;
   onChange: ResourceChangeHandler<TResource, TAction> | undefined;
   onProposalSettled?: (settlement: {
+    previous: TResource;
     authoritative: TResource;
     proposals: { next: TResource; action: TAction }[];
   }) => void;
@@ -174,6 +189,7 @@ function useResourceState<TResource, TAction>({
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const resource = controlled ? value : uncontrolledValue;
+  const committedResourceRef = useRef(resource);
   const pendingResourceRef = useRef(resource);
   const pendingProposalsRef = useRef<{ next: TResource; action: TAction }[]>(
     [],
@@ -182,11 +198,13 @@ function useResourceState<TResource, TAction>({
   useLayoutEffect(() => {
     // A committed render is the controlled owner's acceptance/rejection
     // boundary. Same-render calls compose until this authoritative rebase.
+    const previous = committedResourceRef.current;
+    committedResourceRef.current = resource;
     pendingResourceRef.current = resource;
     const proposals = pendingProposalsRef.current;
     if (proposals.length === 0) return;
     pendingProposalsRef.current = [];
-    onProposalSettled?.({ authoritative: resource, proposals });
+    onProposalSettled?.({ previous, authoritative: resource, proposals });
   });
 
   const setResource = useCallback<ResourceChangeFn<TResource, TAction>>(
@@ -233,6 +251,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     plugins,
     weekStartsOn = 1,
     getRowUrl,
+    propertySources,
     onDataChange,
     onPropertiesChange,
     onViewChange,
@@ -250,16 +269,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     [options.view],
   );
 
-  const [dataEntity, setDataResource] = useResourceState<
-    Row<TPlugins>[],
-    DataResourceAction
-  >({
-    name: "data",
-    controlled: isDataControlled,
-    value: isDataControlled ? options.data : initialTable.data,
-    defaultValue: options.defaultData ?? initialTable.data,
-    onChange: onDataChange,
-  });
+  const nextSequenceRef = useRef(1);
   const [propertiesResource, setPropertiesResource] = useResourceState<
     ColumnDefs<TPlugins>,
     PropertiesResourceAction
@@ -297,6 +307,83 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => toPropertyEntity(plugins.items, propertiesResource),
     [plugins.items, propertiesResource],
   );
+  const [dataResource, setDataResource] = useResourceState<
+    Row<TPlugins>[],
+    DataResourceAction
+  >({
+    name: "data",
+    controlled: isDataControlled,
+    value: isDataControlled ? options.data : initialTable.data,
+    defaultValue: options.defaultData ?? initialTable.data,
+    onChange: onDataChange,
+    onProposalSettled: ({ previous, authoritative }) => {
+      if (!propertySources?.onRelationChanges || previous === authoritative)
+        return;
+      const databaseId = getLocalDatabaseId(propertySources);
+      const changes = getRelationChanges(
+        previous,
+        authoritative,
+        columnEntity.items,
+        databaseId,
+      ).filter(({ targetDatabaseId }) => targetDatabaseId !== databaseId);
+      if (changes.length) propertySources.onRelationChanges(changes);
+    },
+  });
+  const dataEntity = useMemo(
+    () =>
+      projectTableData(
+        dataResource,
+        columnEntity.items,
+        plugins.items,
+        propertySources,
+      ),
+    [dataResource, columnEntity.items, plugins.items, propertySources],
+  );
+  const hasIdProperty = Object.values(columnEntity.items).some(
+    ({ type }) => type === "id",
+  );
+  const handleDataChange = useCallback<
+    ResourceChangeFn<Row<TPlugins>[], DataResourceAction>
+  >(
+    (updater, action) =>
+      setDataResource((previous) => {
+        const proposed = functionalUpdate(updater, previous);
+        if (proposed === previous) return previous;
+        const databaseId = getLocalDatabaseId(propertySources);
+        const selfRelations = getRelationChanges(
+          previous,
+          proposed,
+          columnEntity.items,
+          databaseId,
+        ).filter(({ targetDatabaseId }) => targetDatabaseId === databaseId);
+        let next = selfRelations.length
+          ? applyRelationChanges(proposed, selfRelations)
+          : proposed;
+        if (hasIdProperty) {
+          const prior = assignRowSequences(
+            previous,
+            1,
+            propertySources?.allocateRowNumber,
+          );
+          const sequences = new Map(
+            prior.map(({ id, sequence }) => [id, sequence]),
+          );
+          next = next.map((row) => {
+            const sequence = sequences.get(row.id);
+            return { ...row, sequence };
+          });
+          const minimum = nextRowSequence(prior, nextSequenceRef.current);
+          next = assignRowSequences(
+            next,
+            minimum,
+            propertySources?.allocateRowNumber,
+          );
+          nextSequenceRef.current = nextRowSequence(next, minimum);
+        }
+        return next;
+      }, action),
+    [columnEntity.items, hasIdProperty, propertySources, setDataResource],
+  );
   const columns = useMemo(
     () =>
       columnEntity.ids.map<ColumnDef<TableFeatures, Row<TPlugins>>>((colId) => {
@@ -305,6 +392,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         return {
           id: property.id,
           enableGlobalFilter: !property.isDeleted,
+          enableGrouping: plugin.canGroup !== false,
+          enableSorting: plugin.canSort?.(property.config) !== false,
           accessorFn: (row) => {
             const cell = row.properties[colId];
             const value: unknown = cell ? cell.value : plugin.default.data;
@@ -443,11 +532,12 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       getRowId: (row) => row.id,
       state: tableState,
       onColumnInfoChange: handleColumnChange,
-      onTableDataChange: setDataResource,
+      onTableDataChange: handleDataChange,
       onTableGlobalChange: setViewResource,
       globalFilterFn: "pluginTextIncludes",
       weekStartsOn,
       getRowUrl,
+      propertySources,
     }),
     [
       columns,
@@ -455,7 +545,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       defaultColumnOverride,
       getRowUrl,
       handleColumnChange,
-      setDataResource,
+      handleDataChange,
+      propertySources,
       setViewResource,
       tableState,
       weekStartsOn,

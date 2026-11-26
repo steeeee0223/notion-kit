@@ -205,7 +205,11 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
       })}
     >
       {({ columnsInfo, sorting }) => {
-        const columns = Object.values(columnsInfo);
+        const columns = Object.values(columnsInfo).filter(
+          (property) =>
+            table.getColumnPlugin(property.id).canSort?.(property.config) !==
+            false,
+        );
         /** Select */
         const sortedProps = new Set(sorting.map((s) => s.id));
 

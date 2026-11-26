@@ -3,6 +3,7 @@ import { createContext, use, useMemo } from "react";
 import {
   arrayToEntity,
   useTableView,
+  type TablePropertySources,
   type TableProps,
 } from "@notion-kit/table-hook";
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
@@ -33,6 +34,7 @@ import { TableViewContent } from "./table-view-content";
 interface TableViewCtx<TPlugins extends CellPlugin[] = CellPlugin[]> {
   table: ReturnType<typeof useTableView<TPlugins>>["table"];
   plugins: TablePluginRegistry<TPlugins>;
+  propertySources?: TablePropertySources;
 }
 
 const TableViewContext = createContext<TableViewCtx | null>(null);
@@ -68,8 +70,12 @@ export function TableViewWrapper<
   } as Parameters<typeof useTableView<TPlugins>>[0];
   const { table } = useTableView<TPlugins>(tableOptions);
   const contextValue = useMemo(
-    () => ({ table, plugins: registry }),
-    [table, registry],
+    () => ({
+      table,
+      plugins: registry,
+      propertySources: props.propertySources,
+    }),
+    [table, registry, props.propertySources],
   );
 
   return (

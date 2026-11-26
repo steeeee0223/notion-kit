@@ -60,6 +60,20 @@ Do not put React nodes, presentation choices, icons, or renderer callbacks on a
 data plugin. Generic menus discover sorting, grouping, filtering, and counting
 from the data plugin; they discover display metadata from the UI adapter.
 
+## Application-provided property data
+
+The built-in people, relation, and place editors read application data through
+`TableView`'s optional `propertySources` prop. For example, pass
+`propertySources={{ people, currentActor, databases, searchLocations }}` to
+populate the pickers. The place editor also accepts a manual name and address
+or coordinates from the browser's location permission.
+
+The ID adapter edits the prefix in the property menu. Relation and rollup
+adapters configure the target database or calculation and render the resolved
+value in the same table and row surfaces as other properties. See the
+[table-hook property contracts](../../table-hook/docs/plugins.md#id-people-places-and-related-rows)
+for the cross-database callbacks and the sequence allocator.
+
 ## Related audits
 
 See the [table-view testing audit](./testing/README.md) for component and

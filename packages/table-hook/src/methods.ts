@@ -108,6 +108,7 @@ export interface CountingMethodContext {
 export interface CountingMethod {
   id: string;
   name: string;
+  available?: (config: unknown) => boolean;
   label?: string;
   hint?: { description: string; imageSrc?: string };
   /** Preferred TanStack aggregation reference for new methods. */
@@ -420,10 +421,26 @@ export function resolveGroupingMethod<Key extends string, Data, Config>(
   };
 }
 
-export function resolveCountingMethod(plugin: CellPlugin, methodId: string) {
+export function getCountingMethodGroups(plugin: CellPlugin, config: unknown) {
+  return plugin.counting?.flatMap(({ group, functions }) => {
+    const available = functions.filter(
+      (method) => method.available?.(config) !== false,
+    );
+    return available.length ? [{ group, functions: available }] : [];
+  });
+}
+
+export function resolveCountingMethod(
+  plugin: CellPlugin,
+  methodId: string,
+  config: unknown = plugin.default.config,
+) {
   return plugin.counting
     ?.flatMap((group) => group.functions)
-    .find((method) => method.id === methodId);
+    .find(
+      (method) =>
+        method.id === methodId && method.available?.(config) !== false,
+    );
 }
 
 export const COMMON_AGGREGATION_FNS = {
@@ -444,7 +461,11 @@ export function createCountingAggregation(
       context: AggregationContext<AnyTableFeatures, Row, unknown>,
     ) => {
       const methodId = context.table.getColumnCounting(context.columnId).method;
-      const method = resolveCountingMethod(plugin, methodId);
+      const method = resolveCountingMethod(
+        plugin,
+        methodId,
+        context.table.getColumnInfo(context.columnId).config,
+      );
       const reference = method?.aggregationFn;
       const aggregation =
         typeof reference === "string"

@@ -17,6 +17,7 @@ import type {
   InferPlugin,
   UnknownCellPlugin,
 } from "@/plugins";
+import { getFilterOperators } from "@/plugins/utils";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -73,6 +74,7 @@ export interface ColumnsInfoTableApi {
     name: string;
     type: string;
     width?: string;
+    config?: unknown;
     operationId?: string;
     getInitialValue?: (row: Row) => unknown;
     at?: {
@@ -277,7 +279,8 @@ export const ColumnsInfoFeature: TableFeature = {
       return Object.values(columnsInfo).filter(
         (property) =>
           !property.isDeleted &&
-          Boolean(plugins[property.type]?.filtering?.operators.length),
+          getFilterOperators(plugins[property.type], property.config).length >
+            0,
       );
     };
     instance.getTitleFilterRule = () => {
@@ -485,19 +488,28 @@ export const ColumnsInfoFeature: TableFeature = {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
       const idsUpdater = createIdsUpdater(id, at);
-      instance._addColumnInfo(
-        { id, name, type, width, config: plugin.default.config },
-        idsUpdater,
-        {
-          id: actionId,
-          type: "properties.create",
-          payload: {
-            propertyId: id,
-            nextPosition: -1,
-            property: { id, name, type, width, config: plugin.default.config },
-          },
+      const databaseName = instance.options.propertySources?.databaseName;
+      const config: unknown =
+        payload.config ??
+        (type === "id" && databaseName
+          ? {
+              prefix: databaseName
+                .trim()
+                .split(/\s+/u)
+                .map((part) => part[0])
+                .join("")
+                .toUpperCase(),
+            }
+          : plugin.default.config);
+      instance._addColumnInfo({ id, name, type, width, config }, idsUpdater, {
+        id: actionId,
+        type: "properties.create",
+        payload: {
+          propertyId: id,
+          nextPosition: -1,
+          property: { id, name, type, width, config },
         },
-      );
+      });
       // Update all rows
       if (instance.getCellValues().length === 0) return;
       instance.setTableData(
@@ -536,6 +548,12 @@ export const ColumnsInfoFeature: TableFeature = {
       instance._addColumnInfo(
         {
           ...src,
+          ...(src.type === "relation" && {
+            config: {
+              ...(src.config as import("@/plugins").RelationConfig),
+              reciprocalPropertyId: undefined,
+            },
+          }),
           id: newColId,
           name: instance.generateUniqueColumnName(src.name),
         },

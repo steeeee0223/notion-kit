@@ -1,6 +1,10 @@
 import { cn } from "@notion-kit/cn";
 import { Icon } from "@notion-kit/icons";
-import { removeFilterNode, updateFilterNode } from "@notion-kit/table-hook";
+import {
+  getFilterOperators,
+  removeFilterNode,
+  updateFilterNode,
+} from "@notion-kit/table-hook";
 import type { FilterGroup, FilterRule } from "@notion-kit/table-hook";
 import {
   Button,
@@ -156,7 +160,7 @@ function FilterRuleEditor({
   const properties = table.getFilterProperties();
   const property = properties.find(({ id }) => id === rule.propertyId);
   const operators = property
-    ? (table.getColumnPlugin(property.id).filtering?.operators ?? [])
+    ? getFilterOperators(table.getColumnPlugin(property.id), property.config)
     : [];
   const operator = operators.find(({ id }) => id === rule.operator);
   const operatorItems = [
@@ -180,7 +184,10 @@ function FilterRuleEditor({
         onValueChange={(propertyId) => {
           const nextProperty = properties.find(({ id }) => id === propertyId);
           const firstOperator = nextProperty
-            ? table.getColumnPlugin(nextProperty.id).filtering?.operators[0]
+            ? getFilterOperators(
+                table.getColumnPlugin(nextProperty.id),
+                nextProperty.config,
+              )[0]
             : undefined;
           if (!firstOperator) return;
           updateRule((current) => ({

@@ -38,7 +38,12 @@ export function SelectGroupMenu() {
         const options = columnOrder.reduce<(ColumnInfo & { kind: "column" })[]>(
           (acc, colId) => {
             const col = columnsInfo[colId]!;
-            if (col.hidden || col.isDeleted) return acc;
+            if (
+              col.hidden ||
+              col.isDeleted ||
+              table.getColumnPlugin(col.id).canGroup === false
+            )
+              return acc;
             acc.push({ ...col, kind: "column" });
             return acc;
           },

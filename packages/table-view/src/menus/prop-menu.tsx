@@ -4,6 +4,7 @@ import { Icon } from "@notion-kit/icons";
 import {
   appendFilterNode,
   createFilterRule,
+  getFilterOperators,
   TableViewMenuPage,
 } from "@notion-kit/table-hook";
 import {
@@ -75,8 +76,8 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     table.setSorting([{ id: propId, desc }]);
   };
   // 2. Filter
+  const operator = getFilterOperators(plugin, info.config)[0];
   const addFilter = () => {
-    const operator = plugin.filtering?.operators[0];
     if (!operator) return;
     const filters = table.getFilters();
     table.setFilters(
@@ -134,44 +135,50 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         <>
           <Separator />
           <DropdownMenuGroup>
-            <DropdownMenuItem
-              icon={<Icon.FilterSmall />}
-              label="Filter"
-              onClick={addFilter}
-            />
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger
-                icon={<Icon.ArrowUpDown />}
-                label="Sort"
+            {operator && (
+              <DropdownMenuItem
+                icon={<Icon.FilterSmall />}
+                label="Filter"
+                onClick={addFilter}
               />
-              <DropdownMenuContent sideOffset={-4} className="w-50">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    icon={<Icon.ArrowUp className="size-4" />}
-                    label={sortingLabels.ascending}
-                    onClick={() => sortColumn(false)}
-                  />
-                  <DropdownMenuItem
-                    icon={<Icon.ArrowDown className="size-4" />}
-                    label={sortingLabels.descending}
-                    onClick={() => sortColumn(true)}
-                  />
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenuSub>
-            <table.Subscribe selector={(state) => state.grouping}>
-              {(grouping) => (
-                <DropdownMenuItem
-                  icon={<Icon.SquareGridBelowLines />}
-                  label={grouping.includes(propId) ? "Ungroup" : "Group"}
-                  onClick={() =>
-                    table.setGroupingColumn((v) =>
-                      v === propId ? null : propId,
-                    )
-                  }
+            )}
+            {plugin.canSort?.(info.config) !== false && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger
+                  icon={<Icon.ArrowUpDown />}
+                  label="Sort"
                 />
-              )}
-            </table.Subscribe>
+                <DropdownMenuContent sideOffset={-4} className="w-50">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      icon={<Icon.ArrowUp className="size-4" />}
+                      label={sortingLabels.ascending}
+                      onClick={() => sortColumn(false)}
+                    />
+                    <DropdownMenuItem
+                      icon={<Icon.ArrowDown className="size-4" />}
+                      label={sortingLabels.descending}
+                      onClick={() => sortColumn(true)}
+                    />
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenuSub>
+            )}
+            {plugin.canGroup !== false && (
+              <table.Subscribe selector={(state) => state.grouping}>
+                {(grouping) => (
+                  <DropdownMenuItem
+                    icon={<Icon.SquareGridBelowLines />}
+                    label={grouping.includes(propId) ? "Ungroup" : "Group"}
+                    onClick={() =>
+                      table.setGroupingColumn((v) =>
+                        v === propId ? null : propId,
+                      )
+                    }
+                  />
+                )}
+              </table.Subscribe>
+            )}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
               <DropdownMenuContent
