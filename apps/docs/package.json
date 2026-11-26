@@ -37,7 +37,7 @@
     "@react-router/serve": "^8.5.1",
     "@stripe/stripe-js": "catalog:stripe",
     "fumadocs-core": "^16.19.7",
-    "fumadocs-mdx": "^15.6.3",
+    "fumadocs-mdx": "^15.6.4",
     "fumadocs-ui": "^16.19.4",
     "isbot": "^5.2.3",
     "lucide-react": "catalog:ui",
