@@ -4,7 +4,7 @@ Shared Better Auth configuration for the standalone [auth server](../../apps/aut
 
 ## Versions
 
-The upgrade selects Better Auth, `@better-auth/passkey`, and `@better-auth/stripe` 1.7.5, plus `@better-auth/infra` 0.4.9. Stripe Node SDK 22.6.2 uses API version `2026-08-26.dahlia`. The workspace Zod catalog is 4.6.5, satisfying Better Auth's ^4.5.4 peer requirement. The browser Stripe packages remain on their existing compatible ranges: `@stripe/stripe-js` ^8.7.0 and `@stripe/react-stripe-js` ^5.6.0.
+Better Auth, the `auth` CLI, `@better-auth/passkey`, and `@better-auth/stripe` use 1.7.28. The email integration uses `@better-auth/infra` 0.4.31. The workspace catalogs select Better Fetch 1.3.3 and Stripe Node SDK 23.2.0, whose default request API version is `2026-11-18.endive`.
 
 Stripe's SDK request version and each webhook destination's event version are separate settings. Updating the SDK does not update the Stripe Dashboard. Webhook compatibility therefore needs its own test before deployment. See [Stripe API upgrades](https://docs.stripe.com/upgrades).
 

@@ -38,11 +38,9 @@ export function useRouteShapes(
 
       const { data, error } = tripId
         ? await mapApiClient<TripRouteResponse>(
-            transportProviderPath(
-              provider,
-              `/trips/${encodeURIComponent(tripId)}/route`,
-            ),
+            transportProviderPath(provider, "/trips/:tripId/route"),
             {
+              params: { tripId },
               query: {
                 include_shape: true,
                 ...(fallbackRouteId

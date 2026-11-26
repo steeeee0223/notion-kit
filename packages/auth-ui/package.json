@@ -42,7 +42,7 @@
     "@notion-kit/schemas": "workspace:*",
     "@notion-kit/settings-panel": "workspace:*",
     "react-hook-form": "catalog:ui",
-    "ua-parser-js": "^2.0.9",
+    "ua-parser-js": "^2.0.10",
     "uuid": "catalog:uuid"
   },
   "devDependencies": {

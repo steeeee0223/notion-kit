@@ -1,6 +1,4 @@
-import { createFetch, createSchema } from "@better-fetch/fetch";
 import gtfsRealtimeBindings from "gtfs-realtime-bindings";
-import { z } from "zod/v4";
 
 import { upstreamError } from "@/lib/api-error";
 import type { Bbox } from "@/lib/schemas";
@@ -194,13 +192,14 @@ function dedupeFeedRows<T extends { onestopId: string }>(rows: T[]) {
 }
 
 async function fetchGtfsRt(url: string, timeoutMs: number) {
-  const $fetch = createFetch({
-    baseURL: url,
-    schema: createSchema({ "/": { output: z.instanceof(ArrayBuffer) } }),
-  });
-  const { data, error } = await $fetch("/", { timeout: timeoutMs });
-  if (error) throw upstreamError("GTFS-RT fetch failed", error);
-  const buffer = new Uint8Array(data);
+  const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+  if (!response.ok) {
+    throw upstreamError("GTFS-RT fetch failed", {
+      status: response.status,
+      statusText: response.statusText,
+    });
+  }
+  const buffer = new Uint8Array(await response.arrayBuffer());
   const decoder = gtfsRealtimeBindings as Decoder;
   const feedMessage = decoder.transit_realtime?.FeedMessage;
   if (!feedMessage) throw upstreamError("GTFS-RT decoder is unavailable");

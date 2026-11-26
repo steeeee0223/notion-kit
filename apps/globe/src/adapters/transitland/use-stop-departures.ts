@@ -62,19 +62,12 @@ export function useStopDepartures(
     queryKey: queryKey.mapServer.stopDepartures(provider, stopKey),
     queryFn: async () => {
       if (!stopKey) return [];
-      // TODO stopKey "f-u2m-bkk:002138" is not encoded correctly in the URL, need to investigate
-      // receives "f-u2m-bkk%3A002138" in the backend, which causes the API to return 404
       const { data, error } = await mapApiClient<{
         departures: TransitlandDeparture[];
-      }>(
-        transportProviderPath(
-          provider,
-          `/stops/${encodeURIComponent(stopKey)}/departures`,
-        ),
-        {
-          query: { next: 7200, include_realtime: true, include_alerts: true },
-        },
-      );
+      }>(transportProviderPath(provider, "/stops/:stopId/departures"), {
+        params: { stopId: stopKey },
+        query: { next: 7200, include_realtime: true, include_alerts: true },
+      });
       if (error) return [];
       return data.departures.map(transferDeparture);
     },

@@ -66,7 +66,7 @@ If the browser blocks cookies on unrelated domains, use a deployment-specific sa
 5. Test passkeys against the deployed origin and relying-party domain.
 6. Verify real delivery to the intended mailboxes, including the original email during an email change.
 7. Check background task failures in the hosting platform. The server uses `waitUntil`; API acceptance alone does not establish mail delivery.
-8. If billing is enabled, test subscription changes and webhook event redelivery in Stripe test mode. Check the webhook destination's API version separately from SDK 22.6.2's `2026-08-26.dahlia` request version.
+8. If billing is enabled, test subscription changes and webhook event redelivery in Stripe test mode. Check the webhook destination's API version separately from SDK 23.2.0's `2026-11-18.endive` request version.
 9. If storage is enabled, test uploads and deletion with the deployed Supabase policies.
 10. Verify constraints and relations against the deployment's PostgreSQL schema.
 11. Test that organization operations still target the intended organization after another tab switches the active organization.
