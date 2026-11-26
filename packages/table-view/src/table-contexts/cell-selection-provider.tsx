@@ -294,9 +294,7 @@ export function CellSelectionProvider({ children }: PropsWithChildren) {
   const { table } = useTableViewCtx();
   const [editing, setEditing] = useState(false);
   const root = useRef<HTMLDivElement>(null);
-  const controllerRef = useRef<Controller | null>(null);
-  controllerRef.current ??= createController(table, setEditing);
-  const controller = controllerRef.current;
+  const [controller] = useState(() => createController(table, setEditing));
   useEffect(() => {
     controller.mount(root.current!.ownerDocument);
     return () => controller.dispose();

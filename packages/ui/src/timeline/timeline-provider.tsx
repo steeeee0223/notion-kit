@@ -187,28 +187,20 @@ function TimelineProviderInner({
     setScrollX,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleScroll = useCallback(
-    throttle(() => {
-      const scrollElement = scrollRef.current;
-      if (!scrollElement) return;
-      setScrollX(scrollElement.scrollLeft);
-    }, 100),
-    [],
-  );
-
   useEffect(() => {
     const scrollElement = scrollRef.current;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-    }
+    if (!scrollElement) return;
+
+    const handleScroll = throttle(() => {
+      setScrollX(scrollElement.scrollLeft);
+    }, 100);
+    scrollElement.addEventListener("scroll", handleScroll);
 
     return () => {
-      if (scrollElement) {
-        scrollElement.removeEventListener("scroll", handleScroll);
-      }
+      scrollElement.removeEventListener("scroll", handleScroll);
+      handleScroll.cancel();
     };
-  }, [handleScroll]);
+  }, [setScrollX]);
 
   const scrollToFeature = useCallback(
     (feature: TimelineFeature) => {

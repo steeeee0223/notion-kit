@@ -11,9 +11,10 @@ import * as _Icon from "./icons";
 import { MenuGroup, MenuItem, MenuItemCheck, MenuLabel } from "./menu";
 import { Separator } from "./separator";
 
-type ComboboxAnchorContextValue = React.RefObject<HTMLElement | null> & {
+interface ComboboxAnchorContextValue {
+  anchor: React.RefObject<HTMLElement | null>;
   ref: React.RefCallback<HTMLElement>;
-};
+}
 
 const ComboboxAnchorContext =
   React.createContext<ComboboxAnchorContextValue | null>(null);
@@ -24,15 +25,12 @@ function Combobox<
   Item = Value,
 >(props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>) {
   const anchor = React.useRef<HTMLElement | null>(null);
+  const setAnchor = React.useCallback((node: HTMLElement | null) => {
+    anchor.current = node;
+  }, []);
   const ctx = React.useMemo<ComboboxAnchorContextValue>(
-    () =>
-      // eslint-disable-next-line react-hooks/refs
-      Object.assign(anchor, {
-        ref: (node: HTMLElement | null) => {
-          anchor.current = node;
-        },
-      }),
-    [],
+    () => ({ anchor, ref: setAnchor }),
+    [setAnchor],
   );
 
   return (
@@ -141,7 +139,7 @@ function ComboboxContent({
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
-        anchor={anchor ?? comboboxAnchor}
+        anchor={anchor ?? comboboxAnchor?.anchor}
         className={cn(positioner())}
       >
         <ComboboxPrimitive.Popup

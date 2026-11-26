@@ -135,7 +135,6 @@ function createItemState(): ItemPhysicsState {
 }
 
 interface SlingShotContextValue {
-  activeItemId: string | null;
   activeState: SlingShotState | null;
   disabled?: boolean;
   getItemState: (id: string) => { isAiming: boolean; isFlying: boolean };
@@ -353,6 +352,23 @@ function splitSlotsAndItems(children: React.ReactNode) {
   return { items, slots };
 }
 
+function createPhysicsStore() {
+  let snapshot: { activeState: SlingShotState | null } = { activeState: null };
+  const listeners = new Set<() => void>();
+
+  return {
+    getSnapshot: () => snapshot,
+    subscribe: (listener: () => void) => {
+      listeners.add(listener);
+      return () => void listeners.delete(listener);
+    },
+    publish: (activeState = snapshot.activeState) => {
+      snapshot = { activeState };
+      listeners.forEach((listener) => listener());
+    },
+  };
+}
+
 function SlingShotRoot({
   boundsRef,
   children,
@@ -379,9 +395,13 @@ function SlingShotRoot({
     [config],
   );
 
-  // Incrementing this causes context consumers to re-render and read fresh physics state
-  const [renderTick, setRenderTick] = React.useState(0);
-  const forceRender = React.useCallback(() => setRenderTick((t) => t + 1), []);
+  const [physics] = React.useState(createPhysicsStore);
+  const physicsSnapshot = React.useSyncExternalStore(
+    physics.subscribe,
+    physics.getSnapshot,
+    physics.getSnapshot,
+  );
+  const publishPhysics = physics.publish;
 
   const getReferenceOrigin = React.useCallback(() => {
     return getPositioningReferenceOrigin({
@@ -389,12 +409,6 @@ function SlingShotRoot({
       rootRect: rootRef.current?.getBoundingClientRect(),
     });
   }, [boundsRef]);
-
-  // Active aiming state exposed to Arrow / Preview / Power
-  const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
-  const [activeState, setActiveState] = React.useState<SlingShotState | null>(
-    null,
-  );
 
   // ── Item registration ────────────────────────────────────────────────────
 
@@ -513,9 +527,9 @@ function SlingShotRoot({
         item.shakeFrameId = null;
       }
       item.shakeOffset = ZERO_VECTOR;
-      forceRender();
+      publishPhysics();
     },
-    [forceRender],
+    [publishPhysics],
   );
 
   const startShake = React.useCallback(
@@ -530,7 +544,7 @@ function SlingShotRoot({
             it.shakeFrameId = null;
             it.shakeOffset = ZERO_VECTOR;
           }
-          forceRender();
+          publishPhysics();
           return;
         }
         const amplitude = it.power * resolvedConfig.shakeIntensity;
@@ -539,12 +553,12 @@ function SlingShotRoot({
           y: (Math.random() - 0.5) * amplitude,
         };
         it.shakeFrameId = requestAnimationFrame(tick);
-        forceRender();
+        publishPhysics();
       };
 
       item.shakeFrameId = requestAnimationFrame(tick);
     },
-    [forceRender, resolvedConfig.shake, resolvedConfig.shakeIntensity],
+    [publishPhysics, resolvedConfig.shake, resolvedConfig.shakeIntensity],
   );
 
   // ── Flight cancellation / reset ──────────────────────────────────────────
@@ -571,11 +585,9 @@ function SlingShotRoot({
       item.rotation = item.baseRotation;
       item.pullVector = ZERO_VECTOR;
       item.power = 0;
-      setActiveItemId(null);
-      setActiveState(null);
-      forceRender();
+      publishPhysics(null);
     },
-    [forceRender],
+    [publishPhysics],
   );
 
   // ── Aiming state updater (called every moveDrag) ─────────────────────────
@@ -615,7 +627,7 @@ function SlingShotRoot({
       };
       item.rotation = pullVector.x * resolvedConfig.rotation;
 
-      setActiveState({
+      publishPhysics({
         aimAngle: Math.atan2(launchVector.y, launchVector.x),
         isAiming: item.isAiming,
         isFlying: false,
@@ -626,9 +638,8 @@ function SlingShotRoot({
         pullVector,
         velocity,
       });
-      forceRender();
     },
-    [forceRender, resolvedConfig],
+    [publishPhysics, resolvedConfig],
   );
 
   // ── Goal registration & hit detection ───────────────────────────────────
@@ -705,9 +716,7 @@ function SlingShotRoot({
       item.hitGoalIds.clear();
 
       onLaunch?.(item.velocity, itemId);
-      setActiveItemId(null);
-      setActiveState(null);
-      forceRender();
+      publishPhysics(null);
 
       const bounds = getBounds(boundsRef?.current ?? null);
       const minX = bounds.left - layoutRect.left;
@@ -784,7 +793,7 @@ function SlingShotRoot({
               itemRect: settledItemRect,
               velocity: settledVelocity,
             });
-            forceRender();
+            publishPhysics();
 
             // onGoalHit and onLand are mutually exclusive outcomes.
             // If a goal was hit at any point during this flight, skip
@@ -823,14 +832,21 @@ function SlingShotRoot({
           itemRect: nextItemRect,
           velocity: nextVelocity,
         });
-        forceRender();
+        publishPhysics();
         it.frameId = requestAnimationFrame(tick);
       };
 
       item.frameId = requestAnimationFrame(tick);
     },
 
-    [boundsRef, detectGoalHits, forceRender, onLand, onLaunch, resolvedConfig],
+    [
+      boundsRef,
+      detectGoalHits,
+      publishPhysics,
+      onLand,
+      onLaunch,
+      resolvedConfig,
+    ],
   );
 
   // ── Drag lifecycle ────────────────────────────────────────────────────────
@@ -881,7 +897,6 @@ function SlingShotRoot({
         if (distance < resolvedConfig.startDragDistance) return false;
 
         item.isAiming = true;
-        setActiveItemId(itemId);
         startShake(itemId);
       }
 
@@ -951,10 +966,8 @@ function SlingShotRoot({
     });
     activePointersRef.current.clear();
 
-    setActiveItemId(null);
-    setActiveState(null);
-    forceRender();
-  }, [forceRender, getReferenceOrigin, resetKey]);
+    publishPhysics(null);
+  }, [publishPhysics, getReferenceOrigin, resetKey]);
 
   React.useEffect(() => {
     const items = itemsRef.current;
@@ -1073,7 +1086,7 @@ function SlingShotRoot({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [renderTick],
+    [physicsSnapshot],
   );
 
   const getItemState = React.useCallback(
@@ -1085,7 +1098,7 @@ function SlingShotRoot({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [renderTick],
+    [physicsSnapshot],
   );
 
   // ── Children rendering ────────────────────────────────────────────────────
@@ -1106,8 +1119,7 @@ function SlingShotRoot({
 
   const contextValue = React.useMemo<SlingShotContextValue>(
     () => ({
-      activeItemId,
-      activeState,
+      activeState: physicsSnapshot.activeState,
       disabled,
       getItemState,
       getItemTransform,
@@ -1119,8 +1131,7 @@ function SlingShotRoot({
       registerItem,
     }),
     [
-      activeItemId,
-      activeState,
+      physicsSnapshot.activeState,
       disabled,
       getItemState,
       getItemTransform,

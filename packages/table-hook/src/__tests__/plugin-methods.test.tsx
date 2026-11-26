@@ -448,6 +448,41 @@ describe("cell plugin registered methods", () => {
     ).toEqual(["row1", "row2", "row3"]);
   });
 
+  it("useTableView_PluginAccessorRunsDuringRender_ReceivesCurrentTableData", () => {
+    const plugin: CellPlugin = {
+      ...reverseTextPlugin,
+      sorting: {
+        methods: [
+          {
+            id: "context",
+            name: "Context",
+            ascendingLabel: "Ascending",
+            descendingLabel: "Descending",
+            toComparable: (_value, _row, { table }) =>
+              String(table.options.data.length),
+            compare: compareStrings,
+          },
+        ],
+      },
+    };
+    const plugins = arrayToEntity([plugin]);
+    const { result, rerender } = renderHook(
+      ({ rows }) => {
+        const { table } = useTableView({
+          data: rows,
+          defaultProperties: properties,
+          plugins,
+        });
+        return table.getCoreRowModel().rows[0]?.getValue("col1");
+      },
+      { initialProps: { rows: data }, reactStrictMode: true },
+    );
+
+    expect(result.current).toBe(String(data.length));
+    rerender({ rows: data.slice(1) });
+    expect(result.current).toBe(String(data.length - 1));
+  });
+
   it("provides the live table instance to sorting methods", () => {
     const receivedTables: unknown[] = [];
     const plugin: CellPlugin = {

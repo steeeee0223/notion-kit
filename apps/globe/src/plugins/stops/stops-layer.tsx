@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useEffectEvent, useMemo } from "react";
 import type * as GeoJSON from "geojson";
 import type * as MapLibreGL from "maplibre-gl";
 
@@ -31,10 +31,6 @@ export function StopsLayer() {
   const mapStop = useStopsStore((state) => state.mapStop);
   const setSelectedStop = useStopsStore((state) => state.setSelectedStop);
   const requestFlyTo = useAdapterBBoxStore((state) => state.requestFlyTo);
-  const onClickRef = useRef(setSelectedStop);
-  const flyToRef = useRef(requestFlyTo);
-  onClickRef.current = setSelectedStop;
-  flyToRef.current = requestFlyTo;
 
   const context =
     selectedRouteContext && expandedTripId
@@ -74,13 +70,12 @@ export function StopsLayer() {
     return { type: "FeatureCollection", features };
   }, [mapStop, stops, routeColor]);
 
-  const handleStopClick = useCallback(
+  const handleStopClick = useEffectEvent(
     (feature: GeoJSON.Feature<GeoJSON.Point, RouteStop>) => {
       const props = feature.properties;
-      onClickRef.current(props);
-      flyToRef.current([props.longitude, props.latitude]);
+      setSelectedStop(props);
+      requestFlyTo([props.longitude, props.latitude]);
     },
-    [],
   );
 
   useEffect(() => {

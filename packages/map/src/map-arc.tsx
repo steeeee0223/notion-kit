@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef } from "react";
+import { useEffect, useEffectEvent, useId, useMemo } from "react";
 import type * as GeoJSON from "geojson";
 import * as MapLibreGL from "maplibre-gl";
 
@@ -198,8 +198,23 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
     [data, curvature, samples],
   );
 
-  const latestRef = useRef({ data, onClick, onHover });
-  latestRef.current = { data, onClick, onHover };
+  const notifyInteraction = useEffectEvent(
+    (kind: "click" | "hover", event: MapLibreGL.MapLayerMouseEvent) => {
+      const featureId = event.features?.[0]?.id;
+      if (featureId == null) return;
+      const arc = data.find((item) => String(item.id) === String(featureId));
+      if (!arc) return;
+
+      const callback = kind === "click" ? onClick : onHover;
+      callback?.({
+        arc,
+        longitude: event.lngLat.lng,
+        latitude: event.lngLat.lat,
+        originalEvent: event,
+      });
+    },
+  );
+  const notifyHoverEnd = useEffectEvent(() => onHover?.(null));
 
   // Add source and layers on mount.
   useEffect(() => {
@@ -294,13 +309,6 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
       }
     };
 
-    const findArc = (featureId: string | number | undefined) =>
-      featureId == null
-        ? undefined
-        : latestRef.current.data.find(
-            (arc) => String(arc.id) === String(featureId),
-          );
-
     const handleMouseMove = (e: MapLibreGL.MapLayerMouseEvent) => {
       const featureId = e.features?.[0]?.id;
       if (featureId == null || featureId === hoveredId) return;
@@ -308,32 +316,17 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
       setHover(featureId);
       map.getCanvas().style.cursor = "pointer";
 
-      const arc = findArc(featureId);
-      if (arc) {
-        latestRef.current.onHover?.({
-          arc: arc,
-          longitude: e.lngLat.lng,
-          latitude: e.lngLat.lat,
-          originalEvent: e,
-        });
-      }
+      notifyInteraction("hover", e);
     };
 
     const handleMouseLeave = () => {
       setHover(null);
       map.getCanvas().style.cursor = "";
-      latestRef.current.onHover?.(null);
+      notifyHoverEnd();
     };
 
     const handleClick = (e: MapLibreGL.MapLayerMouseEvent) => {
-      const arc = findArc(e.features?.[0]?.id);
-      if (!arc) return;
-      latestRef.current.onClick?.({
-        arc: arc,
-        longitude: e.lngLat.lng,
-        latitude: e.lngLat.lat,
-        originalEvent: e,
-      });
+      notifyInteraction("click", e);
     };
 
     map.on("mousemove", hitLayerId, handleMouseMove);

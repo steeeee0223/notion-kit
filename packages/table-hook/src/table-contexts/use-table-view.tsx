@@ -10,6 +10,7 @@ import {
   functionalUpdate,
   useTable,
   type ColumnDef,
+  type TableOptions,
 } from "@tanstack/react-table";
 
 import type { CellPlugin } from "@notion-kit/table-hook/plugins";
@@ -219,7 +220,15 @@ function useResourceState<TResource, TAction>({
 export function useTableView<TPlugins extends CellPlugin[]>(
   options: UseTableViewOptions<TPlugins>,
 ) {
-  const tableRef = useRef<_TableInstance | null>(null);
+  const [{ getTable, bindTable }] = useState(() => {
+    let currentTable: _TableInstance | null = null;
+    return {
+      getTable: () => currentTable,
+      bindTable: (table: _TableInstance) => {
+        currentTable = table;
+      },
+    };
+  });
   const {
     plugins,
     weekStartsOn = 1,
@@ -229,8 +238,9 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     onViewChange,
     defaultColumn: defaultColumnOverride,
   } = options;
-  const initialTable = useRef<TableState<TPlugins> | null>(null);
-  initialTable.current ??= createInitialTable() as TableState<TPlugins>;
+  const [initialTable] = useState(
+    () => createInitialTable() as TableState<TPlugins>,
+  );
 
   const isDataControlled = options.data !== undefined;
   const isPropertiesControlled = options.properties !== undefined;
@@ -246,8 +256,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   >({
     name: "data",
     controlled: isDataControlled,
-    value: isDataControlled ? options.data : initialTable.current.data,
-    defaultValue: options.defaultData ?? initialTable.current.data,
+    value: isDataControlled ? options.data : initialTable.data,
+    defaultValue: options.defaultData ?? initialTable.data,
     onChange: onDataChange,
   });
   const [propertiesResource, setPropertiesResource] = useResourceState<
@@ -258,8 +268,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     controlled: isPropertiesControlled,
     value: isPropertiesControlled
       ? options.properties
-      : initialTable.current.properties,
-    defaultValue: options.defaultProperties ?? initialTable.current.properties,
+      : initialTable.properties,
+    defaultValue: options.defaultProperties ?? initialTable.properties,
     onChange: onPropertiesChange,
   });
   const [tableGlobalState, setViewResource] = useResourceState<
@@ -275,7 +285,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       if (
         proposals.some(({ action }) => action.type === "view.group_sort.change")
       ) {
-        tableRef.current?._settlePendingGroupOrder(
+        getTable()?._settlePendingGroupOrder(
           authoritative.pluginMethods?.groupSort ?? { mode: "manual" },
         );
       }
@@ -305,7 +315,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
               colId,
               tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
               createRuntimePluginMethodContext(
-                () => tableRef.current,
+                getTable,
                 colId,
                 property.config,
                 weekStartsOn,
@@ -319,7 +329,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
             plugin,
             tableGlobalState.pluginMethods?.sortingMethodByColumn?.[colId],
             createRuntimePluginMethodContext(
-              () => tableRef.current,
+              getTable,
               colId,
               property.config,
               weekStartsOn,
@@ -339,7 +349,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
               row,
               colId,
               createRuntimePluginMethodContext(
-                () => tableRef.current,
+                getTable,
                 colId,
                 property.config,
                 weekStartsOn,
@@ -348,7 +358,13 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           },
         };
       }),
-    [columnEntity, plugins.items, tableGlobalState.pluginMethods, weekStartsOn],
+    [
+      columnEntity,
+      getTable,
+      plugins.items,
+      tableGlobalState.pluginMethods,
+      weekStartsOn,
+    ],
   );
   const refreshRelativeFilters = hasRelativeDateFilter(
     tableGlobalState.filters,
@@ -413,8 +429,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   );
 
   /** table instance */
-  const table = useTable<TableFeatures, Row<TPlugins>, null>(
-    {
+  const tableOptions = useMemo<TableOptions<TableFeatures, Row<TPlugins>>>(
+    () => ({
       features: DEFAULT_FEATURES,
       columns,
       data: dataEntity,
@@ -432,10 +448,26 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       globalFilterFn: "pluginTextIncludes",
       weekStartsOn,
       getRowUrl,
-    },
+    }),
+    [
+      columns,
+      dataEntity,
+      defaultColumnOverride,
+      getRowUrl,
+      handleColumnChange,
+      setDataResource,
+      setViewResource,
+      tableState,
+      weekStartsOn,
+    ],
+  );
+  const table = useTable<TableFeatures, Row<TPlugins>, null>(
+    tableOptions,
     () => null,
   );
-  tableRef.current = table as _TableInstance;
+  // TanStack installs options during render, and callers can read the row model
+  // immediately. Bind the same instance for plugin callbacks before returning it.
+  bindTable(table as _TableInstance);
   useCellSelectionDomain(table);
 
   const sortingMethods = tableGlobalState.pluginMethods?.sortingMethodByColumn;
