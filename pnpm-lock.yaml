@@ -488,8 +488,8 @@ importers:
         specifier: catalog:ui
         version: 0.5.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@fumadocs/story':
-        specifier: ^1.5.4
-        version: 1.5.4(3e1fe396259113aea1d66317a8753f13)
+        specifier: ^1.5.5
+        version: 1.5.5(3e1fe396259113aea1d66317a8753f13)
       '@notion-kit/auth-ui':
         specifier: workspace:*
         version: link:../../packages/auth-ui
@@ -3241,8 +3241,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@fumadocs/story@1.5.4':
-    resolution: {integrity: sha512-Vg4u23WxDaDWXBmzn2poTH9IXcya5ixD+uo1EHwDW09L1yRGPr4rmaSz52wZQ9yNf9ovUbyxvgsl6oZHr+PC4Q==}
+  '@fumadocs/story@1.5.5':
+    resolution: {integrity: sha512-0SMKFsg3i55ehxna4Y+ajQZmeAgnkKE9onIoLpm7zukMHHSeIwvB+XwLZXVFJGBJsySZu6DxAIzzI6cU7/ms5g==}
     peerDependencies:
       '@types/react': '*'
       fumadocs-core: ^16.10.0
@@ -11545,7 +11545,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.1
 
-  '@fumadocs/story@1.5.4(3e1fe396259113aea1d66317a8753f13)':
+  '@fumadocs/story@1.5.5(3e1fe396259113aea1d66317a8753f13)':
     dependencies:
       '@base-ui/react': 1.9.0(@date-fns/tz@1.5.0)(@types/react@19.3.1)(date-fns@4.4.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@fuma-translate/react': 1.0.2(@types/react@19.3.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
