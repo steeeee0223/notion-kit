@@ -18,7 +18,7 @@ catalogs:
   react19:
     react: ^19.3.1
     react-dom: ^19.3.1
-    "@types/react": ^19.3.1
+    "@types/react": ^19.3.3
     "@types/react-dom": ^19.3.0
   react-compiler:
     babel-plugin-react-compiler: ^1.0.0
