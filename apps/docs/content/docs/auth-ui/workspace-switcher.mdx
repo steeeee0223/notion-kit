@@ -1,0 +1,76 @@
+---
+title: Workspace Switcher
+description: Switch the active workspace or sign out from an authenticated sidebar.
+---
+
+<RegistryStory name="sidebar-workspace-switcher" />
+
+The preview renders `WorkspaceSwitcherMenu` with sample workspaces. In your app, use `WorkspaceSwitcher` inside an [Auth Provider](/docs/auth-ui/auth-provider). The switcher reads the signed-in account and workspaces, updates the active workspace, and signs the user out. Users can open the menu and choose a workspace before their session has an active workspace.
+
+```tsx
+import { AuthProvider, WorkspaceSwitcher } from "@notion-kit/auth-ui";
+
+<AuthProvider authURL="https://auth.example.com">
+  <WorkspaceSwitcher
+    onWorkspaceChange={({ slug }) => {
+      window.location.assign(`/workspace/${encodeURIComponent(slug)}`);
+    }}
+  />
+</AuthProvider>;
+```
+
+## Installation
+
+<Installation
+  packages="@notion-kit/auth-ui"
+  registryName="sidebar-workspace-switcher"
+/>
+
+The Shadcn command installs the sample menu shown in the preview.
+
+## API reference
+
+Use the callbacks to wire app-specific navigation and dialogs. The switcher calls `onWorkspaceChange` and `onSignedOut` after the corresponding auth operation succeeds.
+
+<TypeTable
+  type={{
+    onWorkspaceChange: {
+      type: "(workspace: { id: string; slug: string }) => void",
+      parameters: [
+        {
+          name: "workspace",
+          type: "{ id: string; slug: string }",
+          description: "The newly active workspace.",
+        },
+      ],
+      returns: "void",
+      description: "Navigate to the workspace after a successful switch.",
+    },
+    onSignedOut: {
+      type: "() => void",
+      returns: "void",
+      description:
+        'Called after sign-out succeeds. If omitted, AuthProvider redirects to "/".',
+    },
+    onCreateAccount: {
+      type: "() => void",
+      returns: "void",
+      description: 'Handle the "Add another account" action.',
+    },
+    onCreateWorkspace: {
+      type: "() => void",
+      returns: "void",
+      description: 'Handle the "Join or create workspace" action.',
+    },
+    onOpenSettings: {
+      type: "() => void",
+      returns: "void",
+      description: 'Handle the "Settings" action.',
+    },
+    onInviteMembers: {
+      type: "() => void",
+      returns: "void",
+      description: 'Handle the "People" action.',
+    },
+  }}
+/>

@@ -19,8 +19,8 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: styles },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const resolved = resolvePage(new URL(request.url).pathname);
+export async function loader({ url }: Route.LoaderArgs) {
+  const resolved = resolvePage(url.pathname);
   if (!resolved)
     throw new Response("Not Found", { status: 404, statusText: "Not Found" });
   await resolved.page.data.preload();

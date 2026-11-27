@@ -6,20 +6,18 @@ import { IconData } from "@notion-kit/schemas";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "@/core";
-import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";
+import { QUERY_KEYS, unsupportedOperation } from "@/lib/queries";
 import type { WorkspaceStore } from "@/lib/types";
 
 import { initialWorkspaceStore } from "./constants";
-import { useWorkspace } from "./queries";
 
 export function useWorkspaceActions() {
   const queryClient = useQueryClient();
-  const { data: workspace } = useWorkspace();
   const { workspace: actions } = useSettingsApi();
-  const queryKey = QUERY_KEYS.workspace(workspace.id);
+  const queryKey = QUERY_KEYS.workspace(initialWorkspaceStore.id);
 
   const { mutateAsync: update } = useMutation({
-    mutationFn: actions?.update ?? createDefaultFn(),
+    mutationFn: actions?.update ?? unsupportedOperation,
     onMutate: async (payload) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -38,7 +36,7 @@ export function useWorkspaceActions() {
 
   const { mutateAsync: updateIcon, isPending: isUpdatingIcon } = useMutation({
     mutationFn: (icon: IconData) => {
-      if (!actions?.update) return createDefaultFn()();
+      if (!actions?.update) return unsupportedOperation();
       return actions.update({ icon });
     },
     onMutate: async (payload) => {
@@ -57,7 +55,7 @@ export function useWorkspaceActions() {
   });
 
   const { mutateAsync: remove } = useMutation({
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -72,7 +70,7 @@ export function useWorkspaceActions() {
   });
 
   const { mutateAsync: leave } = useMutation({
-    mutationFn: actions?.leave ?? createDefaultFn(),
+    mutationFn: actions?.leave ?? unsupportedOperation,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -87,7 +85,7 @@ export function useWorkspaceActions() {
   });
 
   const { mutateAsync: resetLink, isPending: isResettingLink } = useMutation({
-    mutationFn: actions?.resetLink ?? createDefaultFn(),
+    mutationFn: actions?.resetLink ?? unsupportedOperation,
     onSuccess: () => toast.success("Workspace link updated"),
     onError: (error) => {
       toast.error("Update workspace link failed", {

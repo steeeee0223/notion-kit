@@ -4,11 +4,11 @@ import { useTranslation } from "@notion-kit/i18n";
 import { Button, Separator } from "@notion-kit/ui/primitives";
 
 import { SettingsRule, SettingsSection } from "@/core";
-import { useSettingsApi } from "@/core/settings-provider";
 import { useBilling } from "@/presets/hooks/queries";
+import { useBillingActions } from "@/presets/hooks/use-billing-actions";
 
 export function InvoicesSection() {
-  const { billing: actions } = useSettingsApi();
+  const { viewInvoice, canViewInvoice, isViewingInvoice } = useBillingActions();
   const { data: billing } = useBilling();
   /** i18n */
   const { t } = useTranslation("settings", { keyPrefix: "billing" });
@@ -20,7 +20,12 @@ export function InvoicesSection() {
         title={trans.upcoming.title}
         description={billing.upcomingInvoice ?? ""}
       >
-        <Button size="sm" className="w-36" onClick={actions?.viewInvoice}>
+        <Button
+          size="sm"
+          className="w-36"
+          onClick={() => viewInvoice()}
+          disabled={!canViewInvoice || isViewingInvoice}
+        >
           {trans.upcoming.button}
         </Button>
       </SettingsRule>

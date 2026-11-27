@@ -4,7 +4,7 @@ import { Plan } from "@notion-kit/schemas";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "@/core/settings-provider";
-import { createDefaultFn, QUERY_KEYS } from "@/lib/queries";
+import { QUERY_KEYS, unsupportedOperation } from "@/lib/queries";
 import type { BillingStore } from "@/lib/types";
 
 import { useWorkspace } from "./queries";
@@ -17,20 +17,20 @@ export function useBillingActions() {
 
   const { mutateAsync: upgrade, isPending: isUpgrading } = useMutation({
     mutationFn: (params: { plan: Plan; annual: boolean }) =>
-      actions?.upgrade(params.plan, params.annual) ?? createDefaultFn()(),
+      actions?.upgrade(params.plan, params.annual) ?? unsupportedOperation(),
     onError: (e) => toast.error("Upgrade failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const { mutateAsync: changePlan } = useMutation({
-    mutationFn: actions?.changePlan ?? createDefaultFn(),
+    mutationFn: actions?.changePlan ?? unsupportedOperation,
     onError: (e) =>
       toast.error("Change plan failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const { mutateAsync: editMethod, isPending: isEditingMethod } = useMutation({
-    mutationFn: actions?.editMethod ?? createDefaultFn(),
+    mutationFn: actions?.editMethod ?? unsupportedOperation,
     onError: (e) =>
       toast.error("Edit payment method failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
@@ -38,7 +38,7 @@ export function useBillingActions() {
 
   const { mutateAsync: editBilledTo, isPending: isEditingBilledTo } =
     useMutation({
-      mutationFn: actions?.editBilledTo ?? createDefaultFn(),
+      mutationFn: actions?.editBilledTo ?? unsupportedOperation,
       onError: (e) =>
         toast.error("Update billing address failed", {
           description: e.message,
@@ -47,7 +47,7 @@ export function useBillingActions() {
     });
 
   const { mutateAsync: editEmail, isPending: isEditingEmail } = useMutation({
-    mutationFn: actions?.editEmail ?? createDefaultFn(),
+    mutationFn: actions?.editEmail ?? unsupportedOperation,
     onError: (e) =>
       toast.error("Update billing email failed", { description: e.message }),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
@@ -55,7 +55,7 @@ export function useBillingActions() {
 
   const { mutate: toggleInvoiceEmails } = useMutation({
     mutationFn: async (checked: boolean) => {
-      if (!actions?.toggleInvoiceEmails) return;
+      if (!actions?.toggleInvoiceEmails) return unsupportedOperation();
       await Promise.resolve(actions.toggleInvoiceEmails(checked));
     },
     onMutate: async (checked) => {
@@ -77,13 +77,22 @@ export function useBillingActions() {
   });
 
   const editVat = actions?.editVat;
-  const viewInvoice = actions?.viewInvoice;
+  const { mutate: viewInvoice, isPending: isViewingInvoice } = useMutation({
+    mutationFn: async () => {
+      if (!actions?.viewInvoice) return unsupportedOperation();
+      await actions.viewInvoice();
+    },
+    onError: (error) =>
+      toast.error("View invoice failed", { description: error.message }),
+  });
 
   return {
     isUpgrading,
     isEditingMethod,
     isEditingBilledTo,
     isEditingEmail,
+    isViewingInvoice,
+    canViewInvoice: !!actions?.viewInvoice,
     upgrade,
     changePlan,
     editMethod,

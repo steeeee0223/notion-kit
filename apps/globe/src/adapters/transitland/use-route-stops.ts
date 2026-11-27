@@ -75,11 +75,8 @@ export function useRouteStops(
       if (fallbackRouteId) query.fallback_route_id = fallbackRouteId;
 
       const { data, error } = await mapApiClient<TripStopTimesResponse>(
-        transportProviderPath(
-          provider,
-          `/trips/${encodeURIComponent(id)}/stop-times`,
-        ),
-        { query },
+        transportProviderPath(provider, "/trips/:tripId/stop-times"),
+        { params: { tripId: id }, query },
       );
       if (error) return [];
       return data.stop_times.flatMap((stop) => {

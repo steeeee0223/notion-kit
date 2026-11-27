@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import z from "zod/v4";
 
-import type { Organization, WorkspaceMetadata } from "@notion-kit/auth";
+import type { Organization } from "@notion-kit/auth/client";
 import { IconObject, type IconData } from "@notion-kit/schemas";
 
 import { useAuth } from "../auth-provider";
-import { handleError } from "../lib";
+import { handleError, toSlugLike } from "../lib";
 
 const createWorkspaceSchema = z.object({
   name: z.string().min(1),
@@ -34,23 +34,22 @@ export function useCreateWorkspaceForm({
   const { handleSubmit, setValue, watch } = form;
 
   const submit = handleSubmit(async (values) => {
-    const slugRes = await auth.organization.getUniqueSlug({
-      name: values.name,
-    });
-    if (!slugRes.data) return handleError(slugRes, "Generate workspace slug");
+    const slug = `${toSlugLike(values.name) || "workspace"}-${v4().slice(0, 8)}`;
+    const available = await auth.organization.checkSlug({ slug });
+    if (available.error) return handleError(available, "Check workspace slug");
 
     const res = await auth.organization.create({
       name: values.name,
-      slug: slugRes.data.slug,
+      slug,
       logo: JSON.stringify(values.icon),
-      metadata: { inviteToken: v4() } satisfies WorkspaceMetadata,
       keepCurrentActiveOrganization: false,
     });
     if (!res.data) return handleError(res, "Create workspace error");
-    onSuccess?.(res.data);
-    await auth.organization.setActive({
+    const active = await auth.organization.setActive({
       organizationId: res.data.id,
     });
+    if (active.error) return handleError(active, "Activate workspace error");
+    onSuccess?.(res.data);
   });
 
   useEffect(() => {

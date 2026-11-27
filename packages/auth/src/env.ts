@@ -20,11 +20,14 @@ export function createAuthEnv() {
     client: {},
     server: {
       POSTGRES_URL: z.string(),
-      BETTER_AUTH_URL: z.string(),
-      BETTER_AUTH_ALLOWED_HOSTS: stringListSchema,
-      BETTER_AUTH_SECRET: z.string(),
-      TRUSTED_ORIGINS: stringListSchema,
-      APP_URL: z.string().optional(),
+      BETTER_AUTH_URL: z.url(),
+      BETTER_AUTH_SECRET: z.string().min(32),
+      TRUSTED_ORIGINS: stringListSchema.pipe(
+        z.array(z.url().transform((url) => new URL(url).origin)),
+      ),
+      TRUSTED_PROXY_IPS: stringListSchema.optional(),
+      PASSKEY_RP_ID: z.hostname().optional(),
+      APP_URL: z.url().optional(),
       GOOGLE_CLIENT_ID: z.string(),
       GOOGLE_CLIENT_SECRET: z.string(),
       GITHUB_CLIENT_ID: z.string(),
@@ -32,8 +35,31 @@ export function createAuthEnv() {
       NODE_ENV: z
         .enum(["development", "production", "test"])
         .prefault("development"),
-      MAILTRAP_API_KEY: z.string(),
-      MAILTRAP_INBOX_ID: z.string().optional(),
+      BETTER_AUTH_API_KEY: z.string().min(1),
+      BETTER_AUTH_API_URL: z.url().optional(),
+      STRIPE_PLANS: z
+        .string()
+        .transform((value, ctx) => {
+          try {
+            return JSON.parse(value) as unknown;
+          } catch {
+            ctx.addIssue({
+              code: "custom",
+              message: "STRIPE_PLANS must be JSON",
+            });
+            return z.NEVER;
+          }
+        })
+        .pipe(
+          z.array(
+            z.object({
+              name: z.enum(["education", "plus", "business", "enterprise"]),
+              priceId: z.string().startsWith("price_"),
+              annualDiscountPriceId: z.string().startsWith("price_").optional(),
+            }),
+          ),
+        )
+        .optional(),
       STRIPE_SECRET_KEY: z.string().optional(),
       STRIPE_WEBHOOK_SECRET: z.string().optional(),
       SUPABASE_URL: z.string().optional(),
@@ -42,24 +68,24 @@ export function createAuthEnv() {
     runtimeEnv: {
       POSTGRES_URL: process.env.POSTGRES_URL,
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-      BETTER_AUTH_ALLOWED_HOSTS: process.env.BETTER_AUTH_ALLOWED_HOSTS,
       BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
       TRUSTED_ORIGINS: process.env.TRUSTED_ORIGINS,
-      APP_URL: process.env.APP_URL ?? process.env.VIEWER_URL,
+      PASSKEY_RP_ID: process.env.PASSKEY_RP_ID,
+      TRUSTED_PROXY_IPS: process.env.TRUSTED_PROXY_IPS,
+      APP_URL: process.env.APP_URL,
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
       GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
       GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
       NODE_ENV: process.env.NODE_ENV,
-      MAILTRAP_API_KEY: process.env.MAILTRAP_API_KEY,
-      MAILTRAP_INBOX_ID: process.env.MAILTRAP_INBOX_ID,
+      BETTER_AUTH_API_KEY: process.env.BETTER_AUTH_API_KEY,
+      BETTER_AUTH_API_URL: process.env.BETTER_AUTH_API_URL,
+      STRIPE_PLANS: process.env.STRIPE_PLANS,
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_PUBLISHABLE_KEY: process.env.SUPABASE_PUBLISHABLE_KEY,
     },
-    skipValidation:
-      !!process.env.CI || process.env.npm_lifecycle_event === "lint",
   });
 }
 

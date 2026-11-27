@@ -71,6 +71,10 @@ export function useAcceptInvitationForm({
     if (res.error) {
       return handleError(res, "Accepting invitation failed");
     }
+    const active = await auth.organization.setActive({
+      organizationId: res.data.invitation.organizationId,
+    });
+    if (active.error) return handleError(active, "Activate workspace failed");
     const { icon: _, ...data } = workspace;
     onAccept?.(data);
   });

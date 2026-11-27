@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "@notion-kit/auth-ui";
 import {
   SettingsBodyPreset,
   SettingsContent,
@@ -19,6 +20,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { tab, setTab, adapters } = useSettings();
+  const { data: session } = useSession();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -26,7 +28,10 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
         noTitle
         className="flex h-[calc(100vh-100px)] max-h-180 w-[calc(100vw-100px)] max-w-[1150px] rounded-md border-none p-0 shadow-sm"
       >
-        <SettingsProvider adapters={adapters}>
+        <SettingsProvider
+          key={`${session?.user.id ?? "signed-out"}:${session?.session.activeOrganizationId ?? "none"}`}
+          adapters={adapters}
+        >
           <SettingsPanel>
             <SettingsSidebar>
               <SettingsSidebarPreset tab={tab} onTabChange={setTab} />

@@ -30,3 +30,7 @@ export const LOCALSTORAGE_KEYS = {
   locale: "nk:preferences:locale",
   timezone: "nk:preferences:timezone",
 };
+
+export function unsupportedOperation(): Promise<never> {
+  return Promise.reject(new Error("This operation is not available."));
+}

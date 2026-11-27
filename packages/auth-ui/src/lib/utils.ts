@@ -1,4 +1,5 @@
-import { ErrorContext } from "@notion-kit/auth";
+import type { ErrorContext } from "@notion-kit/auth/client";
+import { IconObject, type IconData } from "@notion-kit/schemas";
 import { toast } from "@notion-kit/ui/primitives";
 
 export function handleError(
@@ -9,6 +10,19 @@ export function handleError(
   toast.error(title, {
     description: error.message,
   });
+}
+
+export function parseWorkspaceIcon(
+  logo: string | null | undefined,
+  name: string,
+): IconData {
+  try {
+    const icon = IconObject.safeParse(JSON.parse(logo ?? ""));
+    if (icon.success) return icon.data;
+  } catch {
+    // Organizations can have an empty or legacy logo.
+  }
+  return { type: "text", src: name };
 }
 
 /**

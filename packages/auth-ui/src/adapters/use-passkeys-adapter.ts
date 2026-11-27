@@ -14,11 +14,20 @@ export function usePasskeysAdapter(): PasskeysAdapter {
     () => ({
       getAll: async () => {
         const result = await auth.passkey.listUserPasskeys();
+        if (result.error) throw new Error(result.error.message);
         return transferPasskeys(result.data);
       },
       add: async () => {
         const result = await auth.passkey.addPasskey();
-        return !result;
+        if (result.error) {
+          if (
+            "code" in result.error &&
+            result.error.code === "ERROR_CEREMONY_ABORTED"
+          )
+            return false;
+          throw new Error(result.error.message);
+        }
+        return Boolean(result.data);
       },
       update: async (data) => {
         await auth.passkey.updatePasskey(data, { throw: true });

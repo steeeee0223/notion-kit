@@ -6,7 +6,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@notion-kit/ui/primitives";
 
 import { useSettingsApi } from "../../core";
-import { createDefaultFn, logError, QUERY_KEYS, type Passkey } from "../../lib";
+import {
+  createDefaultFn,
+  logError,
+  QUERY_KEYS,
+  unsupportedOperation,
+  type Passkey,
+} from "../../lib";
 import { useAccount } from "../hooks";
 
 export function usePasskeys() {
@@ -19,13 +25,15 @@ export function usePasskeys() {
     initialData: [],
     queryKey,
     queryFn: actions?.getAll ?? createDefaultFn([]),
+    enabled: !!actions,
   });
 
   const [error, setError] = useState(false);
 
   const { mutate: create, isPending: isCreating } = useMutation({
     mutationKey: queryKey,
-    mutationFn: actions?.add ?? createDefaultFn(true),
+    mutationFn: actions?.add ?? unsupportedOperation,
+    onMutate: () => setError(false),
     onSuccess: async (ok) => {
       setError(!ok);
       if (ok) {
@@ -35,12 +43,15 @@ export function usePasskeys() {
       }
       logError("Create passkey failed", { message: "Unexpected error" });
     },
-    onError: (error) => logError("Create passkey failed", error),
+    onError: (error) => {
+      setError(true);
+      logError("Create passkey failed", error);
+    },
   });
 
   const { mutate: update, isPending: isUpdating } = useMutation({
     mutationKey: queryKey,
-    mutationFn: actions?.update ?? createDefaultFn(),
+    mutationFn: actions?.update ?? unsupportedOperation,
     onMutate: async (payload) => {
       setError(false);
       await queryClient.cancelQueries({ queryKey });
@@ -65,7 +76,7 @@ export function usePasskeys() {
 
   const { mutate: remove, isPending: isRemoving } = useMutation({
     mutationKey: queryKey,
-    mutationFn: actions?.delete ?? createDefaultFn(),
+    mutationFn: actions?.delete ?? unsupportedOperation,
     onMutate: async (payload) => {
       setError(false);
       await queryClient.cancelQueries({ queryKey });

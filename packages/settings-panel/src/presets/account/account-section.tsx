@@ -32,7 +32,7 @@ export function AccountSection() {
   /** handlers */
   const { data: account } = useAccount();
   const { updateSync } = useAccountActions();
-  const { upload } = useFileActions();
+  const { upload } = useFileActions("avatar");
   const updateAvatar = () => avatarInputRef.current?.click();
   const [isPending, startTransition] = useTransition();
   const removeAvatar = () =>

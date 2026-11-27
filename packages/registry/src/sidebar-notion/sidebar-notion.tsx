@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { WorkspaceSwitcherMenu } from "@notion-kit/auth-ui";
 import { Icon } from "@notion-kit/icons";
 import {
   Sidebar,
@@ -23,7 +24,6 @@ import {
   SearchCommand,
   TrashBox,
   usePages,
-  WorkspaceSwitcher,
 } from "@notion-kit/ui/sidebar/presets";
 
 import {
@@ -67,9 +67,9 @@ const AppSidebar = () => {
       <SidebarClose />
       <SidebarHeader>
         <div className="flex h-11 w-full shrink-0 grow-0 items-center justify-between">
-          <WorkspaceSwitcher
+          <WorkspaceSwitcherMenu
             user={user}
-            activeWorkspace={workspaces[0]!}
+            activeWorkspace={workspaces[0]}
             workspaces={workspaces}
           />
         </div>

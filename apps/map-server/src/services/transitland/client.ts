@@ -107,10 +107,10 @@ export class TransitlandClient {
 
   async getFeed(feedId: string) {
     const $fetch = createFetch({ baseURL: this.baseUrl });
-    const { data, error } = await $fetch<unknown>(
-      `/feeds/${encodeURIComponent(feedId)}`,
-      { query: { apikey: this.apiKey } },
-    );
+    const { data, error } = await $fetch<unknown>("/feeds/:feedId", {
+      params: { feedId },
+      query: { apikey: this.apiKey },
+    });
     if (error) throw upstreamError("Transitland feed lookup failed", error);
     const parsed = transitlandFeedsResponseSchema.parse(data);
     const feed = parsed.feeds?.[0];
@@ -134,7 +134,7 @@ export class TransitlandClient {
     const { data, error } = await $fetch(
       "/feeds/:feedId/download_latest_feed_version",
       {
-        params: { feedId: encodeURIComponent(feedId) },
+        params: { feedId },
         query: { apikey: this.apiKey },
       },
     );
@@ -145,8 +145,8 @@ export class TransitlandClient {
   async downloadLatestRealtimeVehiclePositions(feedId: string) {
     const $fetch = createFetch({ baseURL: this.baseUrl });
     const { data, error } = await $fetch<unknown>(
-      `/feeds/${encodeURIComponent(feedId)}/download_latest_rt/vehicle_positions.json`,
-      { query: { apikey: this.apiKey } },
+      "/feeds/:feedId/download_latest_rt/vehicle_positions.json",
+      { params: { feedId }, query: { apikey: this.apiKey } },
     );
     if (error)
       throw upstreamError("Transitland GTFS-RT vehicle download failed", error);
