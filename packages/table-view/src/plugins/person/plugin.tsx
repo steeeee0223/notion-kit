@@ -12,8 +12,6 @@ import type {
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
@@ -21,7 +19,8 @@ import {
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 import { useTableViewCtx } from "@/table-contexts";
 
-import { PropertyCell, propertyMetadata } from "../property-cell";
+import { propertyMetadata } from "../property-cell";
+import { PropertySettingMenu } from "../property-setting-menu";
 import { ReferenceAvatar, ReferencePicker } from "../reference-picker";
 import type { ReadOnlyValueProps, TableUiPlugin } from "../registry";
 import {
@@ -31,11 +30,18 @@ import {
   type CellRendererProps,
   type ConfigMenuRendererProps,
 } from "../renderers";
+import { SelectCell, SelectCellValues } from "../select/select-cell";
 import { DefaultGroupingValue } from "../utils";
 
-function People({ people }: { people: PropertyReference[] }) {
+function People({
+  people,
+  wrapped,
+}: {
+  people: PropertyReference[];
+  wrapped?: boolean;
+}) {
   return (
-    <span className="flex min-w-0 flex-wrap gap-x-2 gap-y-1">
+    <SelectCellValues wrapped={wrapped}>
       {people.map((reference) => (
         <span
           className="inline-flex min-w-0 items-center gap-1"
@@ -45,44 +51,13 @@ function People({ people }: { people: PropertyReference[] }) {
           <span className="truncate">{referenceLabel(reference)}</span>
         </span>
       ))}
-    </span>
+    </SelectCellValues>
   );
 }
 
 function renderPeopleValue({ value, textValue }: ReadOnlyValueProps) {
   const people = readReferences(value);
-  return people.length ? <People people={people} /> : textValue;
-}
-
-function PersonSetting<Value extends string>({
-  label,
-  icon,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  icon: ReactNode;
-  options: readonly { label: string; value: Value }[];
-  value: Value;
-  onChange: (value: Value) => void;
-}) {
-  return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger label={label} icon={icon} openOnHover={false}>
-        <span className="text-muted">
-          {options.find((option) => option.value === value)?.label}
-        </span>
-      </DropdownMenuSubTrigger>
-      <DropdownMenuContent sideOffset={-4}>
-        <DropdownMenuRadioGroup value={value} onValueChange={onChange}>
-          {options.map((option) => (
-            <DropdownMenuRadioItem key={option.value} {...option} />
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenuSub>
-  );
+  return people.length ? <People people={people} wrapped /> : textValue;
 }
 
 const limitOptions = [
@@ -105,30 +80,26 @@ function PersonConfigMenu({
 }: ConfigMenuRendererProps<PersonConfig>) {
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger
-        label="Edit property"
-        icon={<Icon.Sliders />}
-        openOnHover={false}
-      />
+      <DropdownMenuSubTrigger label="Edit property" icon={<Icon.Sliders />} />
       <DropdownMenuContent sideOffset={-4} className="w-64">
         <DropdownMenuGroup>
-          <PersonSetting
+          <PropertySettingMenu
             label="Limit"
             icon={<Icon.Numbers123 />}
             options={limitOptions}
             value={config.limit}
             onChange={(limit) => onChange((current) => ({ ...current, limit }))}
           />
-          <PersonSetting
+          <PropertySettingMenu
             label="Default"
-            icon={<Icon.PersonCircle />}
+            icon={<Icon.PersonCircleOutline />}
             options={defaultOptions}
             value={config.defaultValue}
             onChange={(defaultValue) =>
               onChange((current) => ({ ...current, defaultValue }))
             }
           />
-          <PersonSetting
+          <PropertySettingMenu
             label="Notifications"
             icon={<Icon.Bell />}
             options={notificationOptions}
@@ -147,10 +118,12 @@ function PeoplePicker({
   value,
   onChange,
   limit,
+  onClose,
 }: {
   value: PropertyReference[];
   onChange: (people: PropertyReference[]) => void;
   limit: PersonConfig["limit"];
+  onClose?: () => void;
 }) {
   const { propertySources } = useTableViewCtx();
   return (
@@ -159,6 +132,7 @@ function PeoplePicker({
       options={propertySources?.people ?? []}
       label="Search people"
       onChange={onChange}
+      onClose={onClose}
       avatars
       single={limit === "one"}
       heading={
@@ -169,30 +143,21 @@ function PeoplePicker({
 }
 
 function PersonCell({
-  editable,
+  renderEditor,
   ...props
-}: Omit<
-  CellRendererProps<PropertyReference[], PersonConfig | undefined>,
-  "onConfigChange"
-> & { editable?: boolean }) {
+}: Pick<
+  CellRendererProps<PropertyReference[], unknown>,
+  "data" | "surface" | "disabled" | "wrapped"
+> & {
+  renderEditor?: (close: () => void) => ReactNode;
+}) {
   return (
-    <PropertyCell
+    <SelectCell
       cell={props}
-      text={props.textValue}
-      renderEditor={
-        editable
-          ? () => (
-              <PeoplePicker
-                value={props.data}
-                onChange={props.onChange}
-                limit={props.config?.limit ?? "unlimited"}
-              />
-            )
-          : undefined
-      }
-    >
-      <People people={props.data} />
-    </PropertyCell>
+      isEmpty={props.data.length === 0}
+      renderEditor={renderEditor}
+      value={<People people={props.data} wrapped={props.wrapped} />}
+    />
   );
 }
 
@@ -201,7 +166,17 @@ export function person(): TableUiPlugin<PersonPlugin> {
     id: "person",
     ...propertyMetadata("person", "Person", "Assign people to a row."),
     renderCell: createCellRenderer<PersonPlugin>((props) => (
-      <PersonCell {...props} editable />
+      <PersonCell
+        {...props}
+        renderEditor={(close) => (
+          <PeoplePicker
+            value={props.data}
+            onChange={props.onChange}
+            limit={props.config.limit}
+            onClose={close}
+          />
+        )}
+      />
     )),
     renderBulkEditor: createBulkEditorRenderer<PersonPlugin>((props) => (
       <BulkEditorPopover {...props} initialData={props.data}>

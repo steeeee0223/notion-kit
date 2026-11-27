@@ -10,8 +10,6 @@ import {
   AvatarImage,
   Combobox,
   ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
   ComboboxCollection,
   ComboboxContent,
   ComboboxEmpty,
@@ -21,6 +19,8 @@ import {
   ComboboxList,
   ComboboxValue,
 } from "@notion-kit/ui/primitives";
+
+import { SelectCellSearch } from "./select/select-cell-search";
 
 export function ReferenceAvatar({
   reference,
@@ -45,6 +45,7 @@ export function ReferencePicker({
   single,
   avatars,
   heading,
+  onClose,
 }: {
   value: PropertyReference[];
   options: readonly PropertyReference[];
@@ -53,6 +54,7 @@ export function ReferencePicker({
   single?: boolean;
   avatars?: boolean;
   heading?: string;
+  onClose?: () => void;
 }) {
   const choices = useMemo(
     () => new Map([...value, ...options].map((option) => [option.id, option])),
@@ -82,7 +84,7 @@ export function ReferencePicker({
         )
       }
     >
-      <ComboboxChips variant="inline" hideClearButton={avatars}>
+      <SelectCellSearch label={label} placeholder={label} onClose={onClose}>
         <ComboboxValue>
           {(selected: string[]) => (
             <>
@@ -101,11 +103,10 @@ export function ReferencePicker({
                   </ComboboxChip>
                 );
               })}
-              <ComboboxChipsInput aria-label={label} placeholder={label} />
             </>
           )}
         </ComboboxValue>
-      </ComboboxChips>
+      </SelectCellSearch>
       <ComboboxContent variant="inline">
         <ComboboxEmpty>No matches.</ComboboxEmpty>
         <ComboboxList>

@@ -10,6 +10,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { mockData, mockEditLogs, mockProps } from "./data";
+import { placeSources } from "./places";
 import { ViewWrapper } from "./view-wrapper";
 
 export const Database = () => {
@@ -45,9 +46,23 @@ export const Database = () => {
         <ViewWrapper>
           <TableView
             {...mockEditLogs}
-            defaultProperties={mockProps}
+            defaultProperties={[
+              ...mockProps,
+              { id: "place", name: "Place", type: "location" },
+            ]}
             defaultData={mockData}
+            propertySources={placeSources}
           />
+          <p className="text-xs text-secondary">
+            Place search uses Photon and{" "}
+            <a
+              className="underline"
+              href="https://www.openstreetmap.org/copyright"
+            >
+              OpenStreetMap data
+            </a>
+            .
+          </p>
         </ViewWrapper>
       </TabsContent>
     </Tabs>

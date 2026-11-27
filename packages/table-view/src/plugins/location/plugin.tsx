@@ -13,7 +13,6 @@ import {
   ComboboxCollection,
   ComboboxContent,
   ComboboxGroup,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
   Field,
@@ -25,9 +24,11 @@ import {
 
 import { useTableViewCtx } from "@/table-contexts";
 
-import { PropertyCell, propertyMetadata } from "../property-cell";
+import { propertyMetadata } from "../property-cell";
 import type { TableUiPlugin } from "../registry";
 import { createCellRenderer, type CellRendererProps } from "../renderers";
+import { SelectCell, SelectCellValues } from "../select/select-cell";
+import { SelectCellSearch } from "../select/select-cell-search";
 import { DefaultGroupingValue } from "../utils";
 
 const emptyLocation: LocationValue = { name: "", address: "" };
@@ -41,9 +42,11 @@ function locationMapUrl(location: LocationValue) {
 function LocationEditor({
   value,
   onSave,
+  onClose,
 }: {
   value: LocationValue | null;
   onSave: (value: LocationValue | null) => void;
+  onClose: () => void;
 }) {
   const { propertySources } = useTableViewCtx();
   const { searchLocations, reverseGeocode } = propertySources ?? {};
@@ -134,7 +137,7 @@ function LocationEditor({
     })),
   ];
   return (
-    <div className="flex flex-col gap-2">
+    <>
       <Combobox
         inline
         open
@@ -163,18 +166,22 @@ function LocationEditor({
           }
         }}
       >
-        <div className="flex items-center gap-2">
-          <Icon.MagnifyingGlass className="size-4 shrink-0 fill-icon" />
-          <ComboboxInput
-            aria-label="Search places"
-            placeholder="Search a name or address"
-          />
-          <TooltipPreset description="Place search coverage depends on the location provider.">
-            <Button variant="hint" aria-label="About place search">
-              <Icon.Info />
-            </Button>
-          </TooltipPreset>
-        </div>
+        <SelectCellSearch
+          label="Search places"
+          placeholder="Search a name or address"
+          onClose={onClose}
+          action={
+            <TooltipPreset description="Place search coverage depends on the location provider.">
+              <Button
+                type="button"
+                variant="hint"
+                aria-label="About place search"
+              >
+                <Icon.Info className="size-4 fill-current" />
+              </Button>
+            </TooltipPreset>
+          }
+        />
         <ComboboxContent variant="inline">
           <ComboboxList>
             <ComboboxGroup>
@@ -199,95 +206,105 @@ function LocationEditor({
       {(status ||
         searching ||
         (searchLocations && query.trim() && results.length === 0)) && (
-        <p role="status" className="text-sm text-muted">
+        <p role="status" className="px-2 pb-2 text-sm text-muted">
           {status || (searching ? "Searching…" : "No places found")}
         </p>
       )}
       <Separator />
-      {!manual && (
-        <Button
-          variant="hint"
-          onClick={() => {
-            geolocationRequest.current?.abort();
-            setStatus("");
-            setDraft(value ?? { ...emptyLocation, address: query.trim() });
-            setManual(true);
-          }}
-        >
-          Enter address manually
-        </Button>
-      )}
-      {manual && (
-        <>
-          <Field>
-            <FieldLabel htmlFor={nameId}>Place name</FieldLabel>
-            <Input
-              id={nameId}
-              value={draft.name}
-              onChange={(event) => {
-                geolocationRequest.current?.abort();
-                setDraft({ ...draft, name: event.currentTarget.value });
-              }}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={addressId}>Address</FieldLabel>
-            <Input
-              id={addressId}
-              value={draft.address}
-              onChange={(event) => {
-                geolocationRequest.current?.abort();
-                setDraft({
-                  ...draft,
-                  address: event.currentTarget.value,
-                  coordinates: undefined,
-                });
-              }}
-            />
-          </Field>
+      <div className="flex flex-col gap-2 p-2">
+        {!manual && (
           <Button
-            onClick={() =>
-              onSave({
-                ...draft,
-                name: draft.name.trim(),
-                address: draft.address.trim(),
-              })
-            }
-            disabled={!locationLabel(draft)}
+            variant="hint"
+            onClick={() => {
+              geolocationRequest.current?.abort();
+              setStatus("");
+              setDraft(value ?? { ...emptyLocation, address: query.trim() });
+              setManual(true);
+            }}
           >
-            Save place
+            Enter address manually
           </Button>
-        </>
-      )}
-      {value && (
-        <div className="flex items-center justify-between gap-2">
-          {locationLabel(value) && (
-            <a
-              className="text-sm underline"
-              href={locationMapUrl(value)}
-              target="_blank"
-              rel="noreferrer"
+        )}
+        {manual && (
+          <>
+            <Field>
+              <FieldLabel htmlFor={nameId}>Place name</FieldLabel>
+              <Input
+                id={nameId}
+                value={draft.name}
+                onChange={(event) => {
+                  geolocationRequest.current?.abort();
+                  setDraft({ ...draft, name: event.currentTarget.value });
+                }}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor={addressId}>Address</FieldLabel>
+              <Input
+                id={addressId}
+                value={draft.address}
+                onChange={(event) => {
+                  geolocationRequest.current?.abort();
+                  setDraft({
+                    ...draft,
+                    address: event.currentTarget.value,
+                    coordinates: undefined,
+                  });
+                }}
+              />
+            </Field>
+            <Button
+              onClick={() =>
+                onSave({
+                  ...draft,
+                  name: draft.name.trim(),
+                  address: draft.address.trim(),
+                })
+              }
+              disabled={!locationLabel(draft)}
             >
-              Open in maps
-            </a>
-          )}
-          <Button variant="hint" onClick={() => onSave(null)}>
-            Clear
-          </Button>
-        </div>
-      )}
-    </div>
+              Save place
+            </Button>
+          </>
+        )}
+        {value && (
+          <div className="flex items-center justify-between gap-2">
+            {locationLabel(value) && (
+              <a
+                className="text-sm underline"
+                href={locationMapUrl(value)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open in maps
+              </a>
+            )}
+            <Button variant="hint" onClick={() => onSave(null)}>
+              Clear
+            </Button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
 function LocationCell(props: CellRendererProps<LocationValue | null>) {
   return (
-    <PropertyCell
+    <SelectCell
       cell={props}
-      text={props.textValue}
+      isEmpty={!props.textValue}
+      value={
+        <SelectCellValues wrapped={props.wrapped}>
+          <span className={props.wrapped ? "wrap-break-word" : "truncate"}>
+            {props.textValue}
+          </span>
+        </SelectCellValues>
+      }
       renderEditor={(close) => (
         <LocationEditor
           value={props.data}
+          onClose={close}
           onSave={(value) => {
             props.onChange(value);
             close();

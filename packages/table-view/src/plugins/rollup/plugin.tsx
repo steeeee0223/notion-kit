@@ -1,3 +1,4 @@
+import { Icon } from "@notion-kit/icons";
 import { getRelatedDatabase } from "@notion-kit/table-hook";
 import {
   getRollupCalculations,
@@ -10,16 +11,17 @@ import {
 } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
 import { ReadOnlyValue } from "@/edit-log/read-only-value";
 
-import { numberFormatOptions } from "../number/number-config-menu/format-menu";
-import { numberRoundingOptions } from "../number/number-config-menu/rounding-menu";
+import { FormatMenu } from "../number/number-config-menu/format-menu";
+import { RoundingMenu } from "../number/number-config-menu/rounding-menu";
 import { PropertyCell, propertyMetadata } from "../property-cell";
-import { PropertyConfigSelect } from "../property-config-select";
+import { PropertySettingMenu } from "../property-setting-menu";
 import type { TableUiPlugin } from "../registry";
 import { useRelatedDatabases } from "../relation/use-related-databases";
 import {
@@ -49,11 +51,11 @@ function RollupSettings({
   const property = properties.find(({ id }) => id === config.targetPropertyId);
   const calculations = getRollupCalculations(property?.type);
   return (
-    <div className="flex flex-col gap-3">
-      <PropertyConfigSelect
+    <DropdownMenuGroup>
+      <PropertySettingMenu
         label="Relation"
         value={relation?.id ?? null}
-        items={relations.map(({ id, name }) => ({ value: id, label: name }))}
+        options={relations.map(({ id, name }) => ({ value: id, label: name }))}
         onChange={(relationPropertyId) =>
           onChange({
             ...config,
@@ -63,10 +65,10 @@ function RollupSettings({
           })
         }
       />
-      <PropertyConfigSelect
+      <PropertySettingMenu
         label="Property"
         value={property?.id ?? null}
-        items={properties.map(({ id, name }) => ({ value: id, label: name }))}
+        options={properties.map(({ id, name }) => ({ value: id, label: name }))}
         disabled={!target}
         onChange={(targetPropertyId) => {
           const next = properties.find(({ id }) => id === targetPropertyId);
@@ -80,10 +82,10 @@ function RollupSettings({
           });
         }}
       />
-      <PropertyConfigSelect
+      <PropertySettingMenu
         label="Calculate"
         value={config.calculation}
-        items={calculations}
+        options={calculations}
         disabled={!property}
         onChange={(calculation) =>
           onChange({
@@ -95,21 +97,17 @@ function RollupSettings({
       />
       {getRollupResultKind(config.calculation) === "number" && (
         <>
-          <PropertyConfigSelect
-            label="Number format"
-            value={config.format}
-            items={numberFormatOptions}
-            onChange={(format) => onChange({ ...config, format })}
+          <FormatMenu
+            format={config.format}
+            onUpdate={(format) => onChange({ ...config, format })}
           />
-          <PropertyConfigSelect
-            label="Decimal places"
-            value={config.round}
-            items={numberRoundingOptions}
-            onChange={(round) => onChange({ ...config, round })}
+          <RoundingMenu
+            round={config.round}
+            onUpdate={(round) => onChange({ ...config, round })}
           />
         </>
       )}
-    </div>
+    </DropdownMenuGroup>
   );
 }
 
@@ -161,8 +159,8 @@ export function rollup(): TableUiPlugin<RollupPlugin> {
     )),
     renderConfigMenu: createConfigMenuRenderer<RollupPlugin>((props) => (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger label="Rollup settings" openOnHover={false} />
-        <DropdownMenuContent sideOffset={-4} className="w-72 p-2">
+        <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
+        <DropdownMenuContent sideOffset={-4} className="w-75">
           <RollupSettings {...props} />
         </DropdownMenuContent>
       </DropdownMenuSub>

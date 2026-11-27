@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { v4 } from "uuid";
 
+import { Icon } from "@notion-kit/icons";
 import {
   applyRelationChanges,
   getRelatedDatabase,
@@ -17,6 +18,7 @@ import {
 import {
   Button,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   Field,
@@ -27,7 +29,7 @@ import {
 import { useTableViewCtx } from "@/table-contexts";
 
 import { PropertyCell, propertyMetadata } from "../property-cell";
-import { PropertyConfigSelect } from "../property-config-select";
+import { PropertySettingMenu } from "../property-setting-menu";
 import { ReferencePicker } from "../reference-picker";
 import type { TableUiPlugin } from "../registry";
 import {
@@ -177,34 +179,39 @@ function RelationSettings(props: ConfigMenuRendererProps<RelationConfig>) {
   );
   return (
     <div className="flex flex-col gap-3">
-      <PropertyConfigSelect
-        label="Related database"
-        value={target?.id ?? null}
-        items={databases.map(({ id, name }) => ({ value: id, label: name }))}
-        onChange={(databaseId) =>
-          onChange({
-            databaseId,
-            limit: config.limit,
-          })
-        }
-        disabled={
-          Boolean(config.reciprocalPropertyId) ||
-          linkedPages.some((count) => count > 0)
-        }
-      />
-      <PropertyConfigSelect<RelationConfig["limit"]>
-        label="Limit"
-        value={config.limit}
-        items={[
-          {
-            value: "one",
-            label: "1 page",
-            disabled: linkedPages.some((count) => count > 1),
-          },
-          { value: "unlimited", label: "No limit" },
-        ]}
-        onChange={(limit) => onChange({ ...config, limit })}
-      />
+      <DropdownMenuGroup>
+        <PropertySettingMenu
+          label="Related database"
+          value={target?.id ?? null}
+          options={databases.map(({ id, name }) => ({
+            value: id,
+            label: name,
+          }))}
+          onChange={(databaseId) =>
+            onChange({
+              databaseId,
+              limit: config.limit,
+            })
+          }
+          disabled={
+            Boolean(config.reciprocalPropertyId) ||
+            linkedPages.some((count) => count > 0)
+          }
+        />
+        <PropertySettingMenu<RelationConfig["limit"]>
+          label="Limit"
+          value={config.limit}
+          options={[
+            {
+              value: "one",
+              label: "1 page",
+              disabled: linkedPages.some((count) => count > 1),
+            },
+            { value: "unlimited", label: "No limit" },
+          ]}
+          onChange={(limit) => onChange({ ...config, limit })}
+        />
+      </DropdownMenuGroup>
       <ReciprocalRelationSettings {...props} local={local} target={target} />
       {targetProperties.length > 0 && (
         <Field>
@@ -371,7 +378,7 @@ export function relation(): TableUiPlugin<RelationPlugin> {
     )),
     renderConfigMenu: createConfigMenuRenderer<RelationPlugin>((props) => (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger label="Relation settings" openOnHover={false} />
+        <DropdownMenuSubTrigger icon={<Icon.Sliders />} label="Edit property" />
         <DropdownMenuContent sideOffset={-4} className="w-72 p-2">
           <RelationSettings {...props} />
         </DropdownMenuContent>

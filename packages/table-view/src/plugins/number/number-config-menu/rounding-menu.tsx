@@ -7,7 +7,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-export const numberRoundingOptions: { label: string; value: NumberRound }[] = [
+const numberRoundingOptions: { label: string; value: NumberRound }[] = [
   { label: "Default", value: "default" },
   { label: "0", value: "0" },
   { label: "1", value: "1" },

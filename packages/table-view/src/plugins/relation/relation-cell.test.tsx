@@ -122,11 +122,9 @@ it("creates a named reciprocal property and fills it for existing links", async 
   });
 
   await table.clickButton("Related");
-  const menu = await MenuSurfaceObject.findByItem(
-    table.user,
-    "Relation settings",
-  );
-  await table.user.click(menu.item("Relation settings"));
+  const menu = await MenuSurfaceObject.findByItem(table.user, "Edit property");
+  menu.item("Edit property").focus();
+  await table.user.keyboard("{ArrowRight}");
   const name = await screen.findByRole("textbox", {
     name: "Related property name",
   });

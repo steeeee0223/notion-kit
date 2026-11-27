@@ -31,10 +31,11 @@ it("applies the Person limit in the cell picker", async () => {
 
   await table.clickButton("Person");
   const menu = await MenuSurfaceObject.findByItem(table.user, "Edit property");
-  await table.user.click(menu.item("Edit property"));
-  await table.user.click(
-    await screen.findByRole("menuitem", { name: "Limit" }),
-  );
+  menu.item("Edit property").focus();
+  await table.user.keyboard("{ArrowRight}");
+  const settings = await MenuSurfaceObject.findByItem(table.user, /^Limit/);
+  settings.item(/^Limit/).focus();
+  await table.user.keyboard("{ArrowRight}");
   await table.user.click(
     await screen.findByRole("menuitemradio", { name: "1 Person" }),
   );

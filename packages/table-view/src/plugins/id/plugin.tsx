@@ -40,7 +40,7 @@ function IdConfigMenu({
         onChange({ prefix });
       }}
     >
-      <Field>
+      <Field className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <FieldLabel htmlFor={inputId}>Prefix</FieldLabel>
         <Input
           id={inputId}
@@ -73,12 +73,8 @@ export function id(): TableUiPlugin<IdPlugin> {
     )),
     renderConfigMenu: createConfigMenuRenderer<IdPlugin>((props) => (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger
-          label="Edit property"
-          icon={<Icon.Sliders />}
-          openOnHover={false}
-        />
-        <DropdownMenuContent sideOffset={-4} className="w-64">
+        <DropdownMenuSubTrigger label="Edit property" icon={<Icon.Sliders />} />
+        <DropdownMenuContent sideOffset={-4} className="w-75">
           <IdConfigMenu key={props.config.prefix} {...props} />
         </DropdownMenuContent>
       </DropdownMenuSub>

@@ -7,7 +7,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-export const numberFormatOptions: { label: string; value: NumberFormat }[] = [
+const numberFormatOptions: { label: string; value: NumberFormat }[] = [
   { label: "Number", value: "number" },
   { label: "Number with commas", value: "number_with_commas" },
   { label: "Percent", value: "percent" },

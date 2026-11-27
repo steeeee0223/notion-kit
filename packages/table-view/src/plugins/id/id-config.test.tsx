@@ -28,7 +28,8 @@ it("changes the displayed prefix while retaining the existing row number", async
   ).toBeVisible();
   await table.clickButton("ID");
   const menu = await MenuSurfaceObject.findByItem(table.user, "Calculate");
-  await table.user.click(menu.item("Edit property"));
+  menu.item("Edit property").focus();
+  await table.user.keyboard("{ArrowRight}");
   const prefix = await screen.findByRole("textbox", { name: "Prefix" });
   await table.user.clear(prefix);
   await table.user.type(prefix, "TRIP");
