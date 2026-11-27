@@ -1,15 +1,17 @@
 "use client";
 
-import { useSession } from "@notion-kit/auth-ui";
-import type { IconData } from "@notion-kit/schemas";
+import {
+  parseWorkspaceIcon,
+  useActiveWorkspace,
+  useSession,
+} from "@notion-kit/auth-ui";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 
 import { DatabaseView } from "@/components/database-view";
-import { useWorkspaceList } from "@/hooks/use-workspace-list";
 
 export default function Page() {
   const { data: session } = useSession();
-  const { activeWorkspace } = useWorkspaceList();
+  const { data: activeWorkspace } = useActiveWorkspace();
 
   return (
     <main className="flex h-screen w-full flex-col items-center">
@@ -17,8 +19,18 @@ export default function Page() {
         <span>Hi, {session?.user.preferredName ?? "there"}!</span>
         <div className="flex items-center gap-2">
           Welcome to
-          <IconBlock icon={activeWorkspace.icon as IconData} size="md" />
-          {activeWorkspace.name}
+          {activeWorkspace && (
+            <>
+              <IconBlock
+                icon={parseWorkspaceIcon(
+                  activeWorkspace.logo,
+                  activeWorkspace.name,
+                )}
+                size="md"
+              />
+              {activeWorkspace.name}
+            </>
+          )}
         </div>
       </div>
       <DatabaseView />

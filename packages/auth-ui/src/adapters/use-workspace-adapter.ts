@@ -2,21 +2,12 @@
 
 import { useMemo } from "react";
 
-import { IconObject, PlanObject, type IconData } from "@notion-kit/schemas";
+import { PlanObject } from "@notion-kit/schemas";
 import type { WorkspaceAdapter } from "@notion-kit/settings-panel";
 
 import { useActiveWorkspace, useAuth, useSession } from "../auth-provider";
+import { parseWorkspaceIcon } from "../lib";
 import { displayRole } from "./utils";
-
-function parseIcon(logo: string | null | undefined, name: string): IconData {
-  try {
-    const res = IconObject.safeParse(JSON.parse(logo ?? ""));
-    if (res.success) return res.data;
-  } catch {
-    // use default text icon
-  }
-  return { type: "text", src: name };
-}
 
 export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
   const { auth, redirect } = useAuth();
@@ -40,7 +31,7 @@ export function useWorkspaceAdapter(): WorkspaceAdapter | undefined {
           id: data.id,
           name: data.name,
           slug: data.slug,
-          icon: parseIcon(data.logo, data.name),
+          icon: parseWorkspaceIcon(data.logo, data.name),
           inviteLink: "",
           role: displayRole(data.role),
           plan: PlanObject.parse(data.plan.toLowerCase()),

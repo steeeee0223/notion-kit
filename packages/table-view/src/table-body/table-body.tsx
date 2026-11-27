@@ -178,7 +178,7 @@ function TableBody({ table, onRowDragEnd }: TableBodyProps) {
 /**
  * special memoized wrapper for our table body that we will use during column resizing
  */
-const MemoizedTableBody = React.memo<TableBodyProps>(
+export const MemoizedTableBody = React.memo<TableBodyProps>(
   TableBody,
   (prev, next) => prev.table.options.data === next.table.options.data,
 );

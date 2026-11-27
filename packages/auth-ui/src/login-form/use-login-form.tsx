@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
@@ -114,17 +114,17 @@ export function useLoginForm({
     }
   });
 
-  const handlePasswordForgot = useCallback(() => {
+  const handlePasswordForgot = () => {
     setForgotPasswordStage("email");
     setValue("forgotPassword", true);
     setValue("password", "");
-  }, [setValue]);
+  };
 
-  const resetForm = useCallback(() => {
+  const resetForm = () => {
     setForgotPasswordStage("none");
     setTwoFactorMethods(null);
     reset({ forgotPassword: false, password: "" });
-  }, [reset]);
+  };
 
   return {
     form,

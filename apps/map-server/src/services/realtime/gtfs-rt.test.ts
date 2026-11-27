@@ -59,9 +59,10 @@ it("polls the stored feed URL and decodes the protobuf response", async () => {
   const result = await syncRealtimeFeeds({ timeoutMs: 1_000 });
 
   expect(fetch).toHaveBeenCalledTimes(1);
-  const [url, options] = fetch.mock.calls[0]!;
-  expect(url).toBe(feedUrl);
-  expect(options?.signal).toBeInstanceOf(AbortSignal);
+  expect(fetch).toHaveBeenCalledWith(
+    feedUrl,
+    expect.objectContaining({ signal: expect.any(AbortSignal) }),
+  );
   expect(result.errors).toEqual([]);
   expect(result.polled).toEqual([
     expect.objectContaining({

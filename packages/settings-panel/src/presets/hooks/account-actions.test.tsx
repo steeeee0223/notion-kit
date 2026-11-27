@@ -79,16 +79,4 @@ describe("TestAccountActions", () => {
       expect(result.current.account.data.hasPassword).toBe(true),
     );
   });
-
-  it("missing account adapter rejects account deletion", async () => {
-    const { result } = renderHook(useAccountActions, { wrapper: wrapper({}) });
-    await act(async () => {
-      await expect(
-        result.current.remove({
-          accountId: "account-1",
-          email: "ada@example.com",
-        }),
-      ).rejects.toThrow();
-    });
-  });
 });

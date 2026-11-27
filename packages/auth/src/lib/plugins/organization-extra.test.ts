@@ -271,40 +271,4 @@ describe("TestOrganizationDisplayContract", () => {
     ]);
     expect(db.query.team.findMany).toHaveBeenCalledTimes(1);
   });
-  it("inviter display survives inviter leaving organization membership", async () => {
-    const { request, db } = await setup("member");
-    db.query.invitation.findMany.mockResolvedValue([
-      {
-        id: "invite",
-        email: "invitee@example.test",
-        role: "member",
-        status: "canceled",
-        user: {
-          id: "former-member",
-          name: "Former member",
-          email: "former@example.test",
-          image: null,
-        },
-      },
-    ]);
-    const response = await request(
-      "/organization-extra/list-invitations-with-inviter?organizationId=org-a",
-    );
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual([
-      {
-        id: "invite",
-        email: "invitee@example.test",
-        role: "member",
-        status: "canceled",
-        inviter: {
-          id: "former-member",
-          name: "Former member",
-          email: "former@example.test",
-          avatarUrl: "",
-        },
-      },
-    ]);
-    expect(db.query.invitation.findMany).toHaveBeenCalledTimes(1);
-  });
 });

@@ -1,6 +1,6 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 
 import { ResetPasswordForm } from "./reset-password-form";
 
@@ -8,7 +8,6 @@ const resetPassword = vi.hoisted(() => vi.fn());
 vi.mock("../auth-provider", () => ({
   useAuth: () => ({ auth: { resetPassword } }),
 }));
-afterEach(cleanup);
 beforeEach(() => vi.resetAllMocks());
 
 it("refuses a missing reset token", () => {

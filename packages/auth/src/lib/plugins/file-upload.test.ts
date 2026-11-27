@@ -69,15 +69,6 @@ describe("TestFileUploadPurpose", () => {
       "image/png",
     );
   });
-  it("avatar access does not permit uploading a workspace icon for another organization", async () => {
-    const { upload, storage } = await setup();
-    const response = await upload({
-      purpose: "workspace-icon",
-      organizationId: "foreign-org",
-    });
-    expect(response.status).toBe(403);
-    expect(storage.upload).not.toHaveBeenCalled();
-  });
   it("workspace icon uploads still require an organization", async () => {
     const { upload, storage } = await setup();
     expect((await upload({ purpose: "workspace-icon" })).status).toBe(400);

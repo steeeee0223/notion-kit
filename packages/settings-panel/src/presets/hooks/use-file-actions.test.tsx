@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { SettingsProvider } from "@/core/settings-provider";
 import type { FileUploadPurpose, SettingsAdapters } from "@/lib/types";
@@ -23,16 +23,18 @@ describe("TestFileActions", () => {
         id: "org-1",
         icon: { type: "url" as const, src: "old-icon" },
       };
+      const getAccount = vi.fn(() => Promise.resolve(account));
+      const getWorkspace = vi.fn(() => Promise.resolve(workspace));
       const adapters: SettingsAdapters = {
         account: {
-          getAll: () => Promise.resolve(account),
+          getAll: getAccount,
           update: () => Promise.resolve(),
           delete: () => Promise.resolve(),
           sendEmailVerification: () => Promise.resolve(),
           changePassword: () => Promise.resolve(),
         },
         workspace: {
-          getAll: () => Promise.resolve(workspace),
+          getAll: getWorkspace,
           update: () => Promise.resolve(),
           delete: () => Promise.resolve(),
           leave: () => Promise.resolve(),
@@ -67,6 +69,9 @@ describe("TestFileActions", () => {
       await waitFor(() =>
         expect(result.current.workspace.data.id).toBe("org-1"),
       );
+      const getOther = purpose === "avatar" ? getWorkspace : getAccount;
+      getOther.mockClear();
+
       await act(() =>
         result.current.actions.upload(new File(["image"], "image.png")),
       );
@@ -80,6 +85,7 @@ describe("TestFileActions", () => {
           purpose === "workspace-icon" ? "new-icon" : "old-icon",
         ),
       );
+      expect(getOther).not.toHaveBeenCalled();
     },
   );
 });

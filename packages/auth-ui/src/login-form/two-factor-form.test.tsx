@@ -1,6 +1,6 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 
 import { TwoFactorForm } from "./two-factor-form";
 
@@ -12,7 +12,6 @@ const api = vi.hoisted(() => ({
 vi.mock("../auth-provider", () => ({
   useAuth: () => ({ auth: { twoFactor: api }, redirect: api.redirect }),
 }));
-afterEach(cleanup);
 beforeEach(() => vi.resetAllMocks());
 
 it("retains a failed challenge and only redirects after successful verification", async () => {

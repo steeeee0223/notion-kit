@@ -1,89 +1,85 @@
 # @notion-kit/auth
 
-Shared Better Auth configuration for the standalone [auth server](../../apps/auth-server/README.md), browser clients, and optional settings data endpoints. The server owns authentication and organization data. Consumer apps do not instantiate a second auth server.
+The [shared auth server](../../apps/auth-server/README.md) uses this package to configure Better Auth and serve account and organization data. Consumer apps use the browser entry point `@notion-kit/auth/client`.
 
 ## Versions
 
-Better Auth, the `auth` CLI, `@better-auth/passkey`, and `@better-auth/stripe` use 1.7.28. The email integration uses `@better-auth/infra` 0.4.31. The workspace catalogs select Better Fetch 1.3.3 and Stripe Node SDK 23.2.0, whose default request API version is `2026-11-18.endive`.
+Better Auth, the `auth` CLI, `@better-auth/passkey`, and `@better-auth/stripe` are at 1.7.28. The email integration uses `@better-auth/infra` 0.4.31. The workspace uses Better Fetch 1.3.3 and Stripe Node SDK 23.2.0.
 
-Stripe's SDK request version and each webhook destination's event version are separate settings. Updating the SDK does not update the Stripe Dashboard. Webhook compatibility therefore needs its own test before deployment. See [Stripe API upgrades](https://docs.stripe.com/upgrades).
+Stripe SDK requests default to `2026-11-18.endive`. The Stripe Dashboard sets the event version for each webhook destination. Check both versions independently before deploying. [Stripe API upgrades](https://docs.stripe.com/upgrades)
 
 ## Server configuration
 
-`createAuth(env, options)` accepts an `AuthEnv` value. `createAuthEnv()` validates the process environment. Configuration is instance-local, including the database connection, secret, public URL, storage client, and email sender.
+`createAuthEnv()` reads and validates the server environment. `createAuth(env, options)` takes the resulting `AuthEnv` value. Each auth instance uses its own database connection, secret, public URL, storage client, and email sender.
 
-| Variable                                     | Requirement                                       | Meaning                                                                                           |
-| -------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `POSTGRES_URL`                               | Required                                          | PostgreSQL connection string.                                                                     |
-| `BETTER_AUTH_URL`                            | Required URL                                      | Fixed public auth URL. The default API prefix is `/api/auth`.                                     |
-| `BETTER_AUTH_SECRET`                         | Required, at least 32 characters                  | Server signing and encryption secret.                                                             |
-| `APP_URL`                                    | Optional URL                                      | Default consumer app for requests without an accepted Origin. Defaults to `BETTER_AUTH_URL`.      |
-| `TRUSTED_ORIGINS`                            | Comma-separated origins                           | Additional consumer origins. `APP_URL`'s origin is included automatically.                        |
-| `TRUSTED_PROXY_IPS`                          | Optional comma-separated proxy addresses or CIDRs | Fastify proxy trust allowlist. An absent value leaves proxy headers untrusted.                    |
-| `PASSKEY_RP_ID`                              | Optional hostname                                 | Passkey relying-party domain override for the deployment.                                         |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`   | Required                                          | Google OAuth credentials.                                                                         |
-| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`   | Required                                          | GitHub OAuth credentials.                                                                         |
-| `BETTER_AUTH_API_KEY`                        | Required                                          | Server-only Better Auth Infrastructure key.                                                       |
-| `BETTER_AUTH_API_URL`                        | Optional URL                                      | Override for the official Infrastructure API endpoint.                                            |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Optional pair                                     | Together enable Stripe subscriptions and customer endpoints.                                      |
-| `STRIPE_PLANS`                               | Optional JSON array                               | Server-owned paid plan names and Stripe price IDs. An absent value produces no purchasable plans. |
-| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`   | Optional pair                                     | Together enable emoji and image storage endpoints. Bucket policies remain a deployment concern.   |
-| `NODE_ENV`                                   | Optional                                          | `development`, `production`, or `test`; defaults to `development`.                                |
+| Variable                                     | Requirement                                    | Meaning                                                                                                       |
+| -------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `POSTGRES_URL`                               | Required                                       | PostgreSQL connection string.                                                                                 |
+| `BETTER_AUTH_URL`                            | Required URL                                   | Public base URL of the auth service.                                                                          |
+| `BETTER_AUTH_SECRET`                         | At least 32 characters                         | Signing and encryption secret.                                                                                |
+| `APP_URL`                                    | Optional URL                                   | Default consumer URL for invitation links. Defaults to `BETTER_AUTH_URL`.                                     |
+| `TRUSTED_ORIGINS`                            | Optional comma-separated URLs                  | Additional consumer origins. Better Auth trusts the origins of `APP_URL` and `BETTER_AUTH_URL` automatically. |
+| `TRUSTED_PROXY_IPS`                          | Optional comma-separated IP addresses or CIDRs | Peers whose forwarded client addresses Fastify trusts. Omit for direct connections.                           |
+| `PASSKEY_RP_ID`                              | Optional hostname                              | Passkey relying-party ID.                                                                                     |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`   | Required                                       | Google OAuth credentials.                                                                                     |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`   | Required                                       | GitHub OAuth credentials.                                                                                     |
+| `BETTER_AUTH_API_KEY`                        | Required                                       | Server-only Better Auth Infrastructure key.                                                                   |
+| `BETTER_AUTH_API_URL`                        | Optional URL                                   | Better Auth Infrastructure API endpoint override.                                                             |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Optional pair                                  | Set both to enable Stripe subscriptions and customer endpoints.                                               |
+| `STRIPE_PLANS`                               | Optional JSON array                            | Paid plans for organizations. Defaults to an empty array.                                                     |
+| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`   | Optional pair                                  | Set both to enable emoji and image storage.                                                                   |
+| `NODE_ENV`                                   | Optional                                       | `development`, `production`, or `test`. Defaults to `development`.                                            |
 
-A plan entry contains `name`, `priceId`, and optional `annualDiscountPriceId`. Names are `education`, `plus`, `business`, or `enterprise`. Prices belong to the shared auth service's organizations; there is no per-app plan registry. The free plan has no placeholder Stripe price.
+A paid plan has a `name`, a Stripe `priceId`, and an optional `annualDiscountPriceId`. The shared service recognizes `education`, `plus`, `business`, and `enterprise` across apps. The free plan needs no Stripe price.
 
-`options.basePath` changes the factory's API prefix. `options.backgroundTasks` supplies Better Auth's task lifecycle handler. The bundled Fastify server exposes `/api/auth`; a different prefix also requires corresponding transport routes.
+`options.basePath` sets the API prefix and defaults to `/api/auth`. The Fastify server mounts `/api/auth/*`. A different prefix needs matching HTTP routes. `options.backgroundTasks` supplies Better Auth's background task handler.
 
-The server uses Better Auth's database-backed rate limiter and its `rate_limit` model. The final schema includes that table. Fastify overwrites `x-auth-client-ip` with its computed `request.ip`; Better Auth reads only that header for the client IP. `TRUSTED_PROXY_IPS` controls which network peers may supply forwarded client addresses. A caller cannot select its own rate-limit address by sending `x-auth-client-ip`.
+Better Auth stores rate limits in the `rate_limit` table and reads the client IP from `x-auth-client-ip`. Fastify replaces that header with `request.ip` and accepts forwarded addresses only from peers in `TRUSTED_PROXY_IPS`. The HTTP body limit is 7 MiB to accommodate base64 encoding. Upload validation caps the decoded image at 5 MiB.
 
-The Fastify body limit is 7 MiB so a base64-encoded image can reach the plugin's 5 MiB decoded-image limit. Image validation remains separate from the HTTP body limit.
+## Email delivery
 
-## Email contract
+`createEmailSender` from `@better-auth/infra` sends all authentication emails. Transactional email requires a Better Auth Infrastructure Pro plan or higher. [Email Service requirements](https://better-auth.com/docs/infrastructure/services/email)
 
-All authentication mail uses the official `createEmailSender` from `@better-auth/infra`. Transactional email requires a Better Auth Infrastructure **Pro or higher** plan. There is no Mailtrap, console, or alternate-provider fallback. See the [official Email Service requirements](https://better-auth.com/docs/infrastructure/services/email).
+| Flow                 | Template         | Recipient                                                                |
+| -------------------- | ---------------- | ------------------------------------------------------------------------ |
+| Verify account       | `verify-email`   | The account email address.                                               |
+| Reset password       | `reset-password` | The account email address. Better Auth validates the requested callback. |
+| Confirm email change | `change-email`   | The current email address. Better Auth then verifies the new one.        |
+| Invite member        | `invitation`     | The invitee.                                                             |
 
-| Flow                 | Template         | Destination                                                                |
-| -------------------- | ---------------- | -------------------------------------------------------------------------- |
-| Verify account       | `verify-email`   | Account email.                                                             |
-| Reset password       | `reset-password` | Account email; callback comes from the validated reset request.            |
-| Confirm email change | `change-email`   | Current email, before the new email is verified through the official flow. |
-| Invite member        | `invitation`     | Invitation email.                                                          |
+The service builds invitation links at `/accept-invitation/{id}` using the trusted request origin. It uses `APP_URL` when the request has no trusted origin. Each consumer implements that route.
 
-Invitation links use `/accept-invitation/{id}` on the accepted request Origin. Requests without that Origin use `APP_URL`. Every consumer implements the same path contract; no app registry is involved.
+The Fastify server passes Vercel's `waitUntil` to Better Auth so background tasks can continue after the response. Local development keeps the server process running. The sender throws when the email API returns `success: false`. Verify actual delivery through the [deployment checks](../../apps/auth-server/README.md#verify-a-deployment).
 
-The standalone server supplies `@vercel/functions` `waitUntil` to Better Auth's background task handler. Vercel can extend the invocation for these tasks; local development keeps the server process running. A `success: false` email result throws. An accepted reset request does not prove that mail reached an inbox. Production delivery, background failure reporting, and mailbox verification remain deployment checks.
+## Browser client
 
-## Client contract
+`createAuthClient({ baseURL, basePath })` from `@notion-kit/auth/client` creates the React client. `basePath` defaults to `/api/auth`. The options object replaces the previous string argument. The root package export contains the server factory.
 
-`createAuthClient({ baseURL, basePath })` from `@notion-kit/auth/client` creates the React client. Browser code must use this client entry; the root entry contains the server factory. `basePath` defaults to `/api/auth`. The former string argument is removed.
+`AuthProvider` from `@notion-kit/auth-ui` accepts `authURL`, `appURL`, `resetPasswordURL`, and `billingReturnURL`. The consumer owns the reset page and billing return page. Their URLs must use an allowed origin. A reset request without `resetPasswordURL` fails with a configuration error. Omitting `billingReturnURL` disables the billing adapter.
 
-`AuthProvider` from `@notion-kit/auth-ui` accepts `authURL`, `appURL`, `resetPasswordURL`, and `billingReturnURL`. Reset and billing URLs belong to the consumer app and must use an allowed origin. An absent reset URL makes reset submission fail explicitly. An absent billing return URL leaves the billing adapter unavailable.
+Configured apps share accounts and organizations. Another tab or app can change the session's `activeOrganizationId`. Pass the intended `organizationId` when an endpoint accepts one.
 
-Accounts and organizations are shared across configured consumer apps. `activeOrganizationId` belongs to a session, so another app or tab can change it. Organization operations use an explicit `organizationId` where the official endpoint accepts one.
+The factory uses the default Better Auth cookie scope. Browser cookie rules still apply to trusted origins. An app on a separate domain may need a same-origin proxy to the shared service. Test callbacks, cookies, and passkeys on the deployed domains. [Better Auth cookies](https://better-auth.com/docs/concepts/cookies)
 
-CORS and trusted origins do not override browser cookie rules. The current factory does not enable cross-subdomain cookie sharing or implement a general cross-domain SSO flow. Unrelated domains need browser validation and may require a consumer-origin HTTP proxy with verified callback, cookie, and passkey settings. Such a proxy forwards requests to this service; it does not create another auth implementation. See [Better Auth cookies](https://better-auth.com/docs/concepts/cookies).
+## Settings endpoints
 
-## Settings extensions
+The settings panel uses Better Auth APIs for accounts, sessions, organization and team membership, invitations, subscriptions, and billing portal links. It also uses these product endpoints.
 
-Official APIs own accounts, sessions, organization membership, team membership, invitations, subscriptions, and billing portal navigation. The retained endpoints provide data the settings panel still needs:
+- `organization-extra/get-workspace-detail` returns the organization, the caller's roles, and the current plan. It requires membership. It reads subscriptions when billing is enabled and returns an error if that read fails.
+- `organization-extra/list-teams-with-members` checks organization membership, then reads team display fields and member roles in one query.
+- `organization-extra/list-invitations-with-inviter` keeps the inviter's display data available after the inviter leaves the organization.
+- `organization-extra/update-team-member` sets a team member's role to `owner` or `member`. It checks the caller's organization membership and `team:update` permission, then verifies the target's organization and team membership.
+- `stripe-extra` checks permission to read a Stripe customer or update the customer's billing email and address in the settings panel.
+- Emoji endpoints check organization access. Image uploads validate the image type and size and require a purpose. The `avatar` purpose uses the signed-in user's ID. The `workspace-icon` purpose uses the organization ID and requires organization update permission. The client updates the account image or organization logo for the requested purpose.
 
-- `organization-extra/get-workspace-detail` joins organization identity, caller roles, and active subscription plan. Missing membership is forbidden. The explicit `billingEnabled` flag skips subscription access when disabled. Subscription failures propagate when enabled.
-- `organization-extra/list-teams-with-members` returns team display fields and all member roles in one database query after membership authorization.
-- `organization-extra/list-invitations-with-inviter` preserves inviter display data even after the inviter leaves the organization.
-- `organization-extra/update-team-member` changes only the product `owner` or `member` role. It requires organization membership, official `team:update` permission, and valid target memberships.
-- `stripe-extra` retains authorized customer display data and embedded billing address and email updates.
-- Emoji endpoints retain organization authorization. Image uploads require an explicit `avatar` or `workspace-icon` purpose and validate image types and sizes. Avatar paths use the authenticated user ID and require no active organization; workspace icons require organization update permission. The client updates only the corresponding user image or organization logo.
+The server assigns `teamMember.role`, which defaults to `member`. Better Auth controls membership keys and counts. The UI derives a display role from the comma-separated organization roles. Team ownership grants team permissions. Organization permissions come from organization roles.
 
-`teamMember.role` defaults to `member` and is not client input. Official membership APIs retain control of membership keys and counts. A teamspace owner role does not grant organization administrator permissions. The UI accepts official comma-separated organization roles and derives the supported display role.
+The panel uses email invitations and hides the generic invite-link control. Device rows show the session IP when available and derive the device label from the user agent.
 
-The former metadata inviteToken and resetLink flow had no accepting server endpoint and is removed. The production adapter supplies no generic invite link, so the panel hides that control. Official email invitations remain available.
+## Database schema
 
-Session IP and user agent use official fields. The UI derives device labels from the user agent. The previous IP-to-city HTTP lookup and stored location fields are removed; device rows show the available IP address instead of a city. This is a product tradeoff, not an official geolocation replacement.
+This upgrade targets empty databases and updates `src/db/schemas.ts`. The schema change is limited to the repository. Work on an existing database requires a separate migration.
 
-## Schema contract
+`pnpm -F @notion-kit/auth generate` runs `src/schema-auth.ts` with placeholder credentials and all plugins that define tables. Review the generated schema for the product fields, the emoji table, and its relations before accepting the result.
 
-The upgrade targets empty databases and updates the final schema directly. It does not include a data migration, baseline, backfill, or remote database operation.
-
-`src/schema-auth.ts` is the generator entrypoint with isolated placeholders and all schema-producing plugins enabled. `pnpm -F @notion-kit/auth generate` writes the generated schema. The final schema must also preserve product fields, the emoji table, and its relations; generation output requires review rather than blind replacement. No `db:push` operation is part of this upgrade.
-
-The [shared auth service decision](../../docs/adr/0008-shared-auth-service-and-official-better-auth-features.md) explains the architecture, retained extensions, and test responsibilities. External integration checks are in [deployment verification](../../apps/auth-server/README.md#verify-a-deployment).
+The architecture and its tradeoffs are in the [shared auth service decision](../../docs/adr/0008-shared-auth-service-and-official-better-auth-features.md).

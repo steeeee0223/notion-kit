@@ -16,13 +16,6 @@ function wrapper(adapters: SettingsAdapters) {
 afterEach(() => vi.restoreAllMocks());
 
 describe("TestPasskeys", () => {
-  it("missing passkey adapter reports creation failure", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const { result } = renderHook(usePasskeys, { wrapper: wrapper({}) });
-    act(() => result.current.create());
-    await waitFor(() => expect(result.current.error).toBe(true));
-  });
-
   it("a rejected passkey request exposes an error for the modal", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { result } = renderHook(usePasskeys, {

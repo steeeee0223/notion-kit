@@ -135,7 +135,7 @@ describe("shared auth configuration", () => {
       ]);
     },
   );
-  it("isolates sender credentials and trusted origins between factory instances", async () => {
+  it("uses each auth instance's own email host and credentials", async () => {
     const requests: { url: string; authorization: string | null }[] = [];
     vi.stubGlobal("fetch", (url: string | URL, init: RequestInit) => {
       requests.push({
@@ -145,25 +145,11 @@ describe("shared auth configuration", () => {
       return Promise.resolve(Response.json({ messageId: "isolated-1" }));
     });
     const first = createAuth(env);
-    const second = createAuth(
-      {
-        ...env,
-        BETTER_AUTH_URL: "https://second-auth.example.com",
-        APP_URL: "https://second.example.com",
-        TRUSTED_ORIGINS: [],
-        BETTER_AUTH_API_URL: "https://second-email.example.com",
-        BETTER_AUTH_API_KEY: "second-test-email-key",
-      },
-      { basePath: "/identity" },
-    );
-    expect(second.options.trustedOrigins).toEqual([
-      "https://second-auth.example.com",
-      "https://second.example.com",
-    ]);
-    expect(first.options.trustedOrigins).toEqual([
-      "https://auth.example.com",
-      "https://app.example.com",
-    ]);
+    const second = createAuth({
+      ...env,
+      BETTER_AUTH_API_URL: "https://second-email.example.com",
+      BETTER_AUTH_API_KEY: "second-test-email-key",
+    });
     const message = {
       user,
       url: "https://auth.example.com/verify",

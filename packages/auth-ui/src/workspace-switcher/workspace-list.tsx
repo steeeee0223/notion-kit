@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
-import { Role, User, Workspace } from "@notion-kit/schemas";
-
-import { IconBlock } from "@/icon-block";
+import { Role, type User, type Workspace } from "@notion-kit/schemas";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Badge,
   DropdownMenuCheckboxItem,
@@ -13,7 +12,7 @@ import {
   TooltipDescription,
   TooltipPreset,
   TooltipProvider,
-} from "@/primitives";
+} from "@notion-kit/ui/primitives";
 
 import { planTitle } from "./constant";
 import { HeaderDropdown } from "./header-dropdown";
@@ -35,15 +34,16 @@ export function WorkspaceList({
   onCreateWorkspace,
   onLogout,
 }: WorkspaceListProps) {
-  const [order, setOrder] = useState(workspaces.map((w) => w.id));
-
-  const workspaceList = useMemo(() => {
-    const map = workspaces.reduce<Record<string, Workspace>>(
-      (acc, w) => ({ ...acc, [w.id]: w }),
-      {},
-    );
-    return order.map((id) => map[id]!);
-  }, [workspaces, order]);
+  const [order, setOrder] = useState<string[]>([]);
+  const orderedWorkspaces = new Map(
+    workspaces.map((workspace) => [workspace.id, workspace]),
+  );
+  const sortedWorkspaces = order.flatMap((id) => {
+    const workspace = orderedWorkspaces.get(id);
+    orderedWorkspaces.delete(id);
+    return workspace ? [workspace] : [];
+  });
+  const workspaceList = [...sortedWorkspaces, ...orderedWorkspaces.values()];
 
   return (
     <TooltipProvider>
@@ -55,7 +55,10 @@ export function WorkspaceList({
         />
       </div>
       <Sortable.Root
-        onDragEnd={(e) => setOrder(getSortableItemsAfterDrag(order, e))}
+        onDragEnd={(event) => {
+          const ids = workspaceList.map((workspace) => workspace.id);
+          setOrder(getSortableItemsAfterDrag(ids, event));
+        }}
       >
         <Sortable.List render={<MenuGroup />}>
           {workspaceList.map((workspace, index) => (

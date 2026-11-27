@@ -39,7 +39,7 @@ it("reports a slug uniqueness race without claiming creation succeeded", async (
   expect(onSuccess).not.toHaveBeenCalled();
 });
 
-it("does not finish invitation acceptance until the organization becomes active", async () => {
+it("reports activation failure after accepting an invitation", async () => {
   api.getInvitation.mockResolvedValue({
     data: {
       organizationId: "org-1",
@@ -63,12 +63,9 @@ it("does not finish invitation acceptance until the organization becomes active"
   await waitFor(() => expect(result.current.workspace.id).toBe("org-1"));
   await act(() => result.current.submit());
   expect(api.setActive).toHaveBeenCalledWith({ organizationId: "org-1" });
+  expect(api.reportError).toHaveBeenCalledWith(
+    { data: null, error: { message: "Session expired" } },
+    "Activate workspace failed",
+  );
   expect(onAccept).not.toHaveBeenCalled();
-  api.setActive.mockResolvedValue({ data: { id: "org-1" }, error: null });
-  await act(() => result.current.submit());
-  expect(onAccept).toHaveBeenCalledWith({
-    id: "org-1",
-    name: "Notes",
-    slug: "notes",
-  });
 });

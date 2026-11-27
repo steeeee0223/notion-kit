@@ -1,8 +1,8 @@
 "use client";
 
+import { WorkspaceSwitcherMenu } from "@notion-kit/auth-ui";
 import type { User, Workspace } from "@notion-kit/schemas";
 import { Plan, Role } from "@notion-kit/schemas";
-import { WorkspaceSwitcher } from "@notion-kit/ui/sidebar/presets";
 
 export const user: User = {
   id: "u1",
@@ -45,10 +45,10 @@ export const workspaces: Workspace[] = [
 export default function Demo() {
   return (
     <div className="w-[200px]">
-      <WorkspaceSwitcher
+      <WorkspaceSwitcherMenu
         user={user}
         workspaces={workspaces}
-        activeWorkspace={workspaces[0]!}
+        activeWorkspace={workspaces[0]}
       />
     </div>
   );

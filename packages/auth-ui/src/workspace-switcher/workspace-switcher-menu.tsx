@@ -1,7 +1,6 @@
 import { Icon } from "@notion-kit/icons";
-import type { User, Workspace } from "@notion-kit/schemas";
-
-import { IconBlock } from "@/icon-block";
+import type { Workspace } from "@notion-kit/schemas";
+import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
   DropdownMenu,
@@ -11,14 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Separator,
-} from "@/primitives";
+} from "@notion-kit/ui/primitives";
 
-import { planTitle, WorkspaceList } from "./_components";
+import { planTitle } from "./constant";
+import { WorkspaceList } from "./workspace-list";
 
-interface WorkspaceSwitcherProps {
-  user: User;
-  activeWorkspace: Workspace;
+interface WorkspaceSwitcherMenuProps {
+  user: { email: string };
+  activeWorkspace?: Workspace;
   workspaces: Workspace[];
+  disabled?: boolean;
   onCreateAccount?: () => void;
   onCreateWorkspace?: () => void;
   onLogout?: () => void;
@@ -27,21 +28,20 @@ interface WorkspaceSwitcherProps {
   onInviteMembers?: () => void;
 }
 
-export function WorkspaceSwitcher({
+export function WorkspaceSwitcherMenu({
   user,
   activeWorkspace,
   workspaces,
+  disabled,
   onCreateAccount,
   onCreateWorkspace,
   onLogout,
   onSelect,
   onOpenSettings,
   onInviteMembers,
-}: WorkspaceSwitcherProps) {
-  const icon = activeWorkspace.icon ?? {
-    type: "text",
-    src: activeWorkspace.name,
-  };
+}: WorkspaceSwitcherMenuProps) {
+  const name = activeWorkspace?.name ?? "Workspaces";
+  const icon = activeWorkspace?.icon ?? { type: "text", src: name };
   const handleGetMac = () =>
     window.open("https://www.notion.so/desktop", "_blank");
 
@@ -51,12 +51,13 @@ export function WorkspaceSwitcher({
         render={
           <Button
             variant="hint"
+            disabled={disabled}
             className="h-8 w-full justify-normal rounded-sm px-3 py-1.5"
           >
             <div className="flex max-w-[150px] items-center gap-x-2">
-              <IconBlock size="sm" icon={icon} />
+              {activeWorkspace && <IconBlock size="sm" icon={icon} />}
               <span className="overflow-hidden text-start font-medium text-ellipsis text-primary">
-                {activeWorkspace.name}
+                {name}
               </span>
             </div>
             <Icon.Chevron side="down" className="size-3.5 fill-icon" />
@@ -64,45 +65,47 @@ export function WorkspaceSwitcher({
         }
       />
       <DropdownMenuContent className="w-75" align="start" alignOffset={11}>
-        <div className="flex flex-col gap-3 p-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-md">
-              <IconBlock size="md" icon={icon} />
+        {activeWorkspace && (
+          <div className="flex flex-col gap-3 p-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-md">
+                <IconBlock size="md" icon={icon} />
+              </div>
+              <div className="flex flex-col truncate">
+                <div className="truncate text-sm font-medium text-primary">
+                  {activeWorkspace.name}
+                </div>
+                <div className="truncate text-xs text-secondary">
+                  {planTitle[activeWorkspace.plan]} ·{" "}
+                  {activeWorkspace.memberCount} member
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col truncate">
-              <div className="truncate text-sm font-medium text-primary">
-                {activeWorkspace.name}
-              </div>
-              <div className="truncate text-xs text-secondary">
-                {planTitle[activeWorkspace.plan]} ·{" "}
-                {activeWorkspace.memberCount} member
-              </div>
+            <div className="inline-flex gap-2">
+              <Button
+                tabIndex={0}
+                className="h-7 px-2 text-xs/tight font-medium text-secondary focus-within:shadow-notion"
+                onClick={onOpenSettings}
+              >
+                <Icon.Settings className="size-3.5 fill-secondary" />
+                Settings
+              </Button>
+              <Button
+                tabIndex={0}
+                className="h-7 px-2 text-xs/tight font-medium text-secondary focus-within:shadow-notion"
+                onClick={onInviteMembers}
+              >
+                <Icon.PersonCircle className="size-3.5 fill-secondary" />
+                People
+              </Button>
             </div>
           </div>
-          <div className="inline-flex gap-2">
-            <Button
-              tabIndex={0}
-              className="h-7 px-2 text-xs/tight font-medium text-secondary focus-within:shadow-notion"
-              onClick={onOpenSettings}
-            >
-              <Icon.Settings className="size-3.5 fill-secondary" />
-              Settings
-            </Button>
-            <Button
-              tabIndex={0}
-              className="h-7 px-2 text-xs/tight font-medium text-secondary focus-within:shadow-notion"
-              onClick={onInviteMembers}
-            >
-              <Icon.PersonCircle className="size-3.5 fill-secondary" />
-              People
-            </Button>
-          </div>
-        </div>
+        )}
         <Separator />
         <WorkspaceList
-          user={{ email: user.email }}
+          user={user}
           workspaces={workspaces}
-          activeWorkspace={activeWorkspace.id}
+          activeWorkspace={activeWorkspace?.id}
           onSelect={onSelect}
           onCreateWorkspace={onCreateWorkspace}
           onLogout={onLogout}

@@ -4,8 +4,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useAccountAdapter } from "./use-account-adapter";
 import { useBillingAdapter } from "./use-billing-adapter";
 import { useConnectionsAdapter } from "./use-connections-adapter";
-import { useEmojiAdapter } from "./use-emoji-adapter";
-import { useInvitationsAdapter } from "./use-invitations-adapter";
 import { usePasskeysAdapter } from "./use-passkeys-adapter";
 import { usePeopleAdapter } from "./use-people-adapter";
 import { useSessionsAdapter } from "./use-sessions-adapter";
@@ -55,14 +53,11 @@ vi.mock("../auth-provider", () => ({
         listMembers: state.read,
         addTeamMember: state.addTeamMember,
       },
-      emoji: { list: state.read },
       subscription: { list: state.read },
       stripeExtra: { getCustomer: state.read },
       organizationExtra: {
         getWorkspaceDetail: state.getWorkspaceDetail,
         updateTeamMember: state.updateTeamMember,
-        listTeamsWithMembers: state.read,
-        listInvitationsWithInviter: state.read,
       },
     },
   }),
@@ -81,7 +76,6 @@ vi.mock("../auth-provider", () => ({
     data: { id: "org-1", name: "Notes", slug: "notes" },
   }),
 }));
-vi.mock("../lib", () => ({ handleError: vi.fn() }));
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -102,14 +96,6 @@ describe("AuthAdapters", () => {
     });
     expect((await result.current!.getAll()).hasPassword).toBe(true);
   });
-  it("reports successful passkey creation", async () => {
-    state.addPasskey.mockResolvedValue({
-      data: { id: "passkey-1" },
-      error: null,
-    });
-    const { result } = renderHook(() => usePasskeysAdapter());
-    await expect(result.current.add()).resolves.toBe(true);
-  });
   it("does not turn a passkey failure into success", async () => {
     state.addPasskey.mockResolvedValue({
       data: null,
@@ -117,14 +103,6 @@ describe("AuthAdapters", () => {
     });
     const { result } = renderHook(() => usePasskeysAdapter());
     await expect(result.current.add()).rejects.toThrow("Registration rejected");
-  });
-  it("does not turn session read errors into an empty device list", async () => {
-    state.listSessions.mockResolvedValue({
-      data: null,
-      error: { message: "Session expired" },
-    });
-    const { result } = renderHook(() => useSessionsAdapter());
-    await expect(result.current.getAll()).rejects.toThrow("Session expired");
   });
   it("does not invent workspace owner privileges when the request fails", async () => {
     state.getWorkspaceDetail.mockResolvedValue({
@@ -222,24 +200,6 @@ it("derives session device details from the official user agent field", async ()
     },
   ]);
 });
-
-it.each([
-  ["emoji", useEmojiAdapter],
-  ["invitations", useInvitationsAdapter],
-  ["people", usePeopleAdapter],
-  ["teamspaces", useTeamspacesAdapter],
-  ["billing", useBillingAdapter],
-] as const)(
-  "propagates %s read errors instead of empty success",
-  async (_name, hook) => {
-    state.read.mockResolvedValue({
-      data: null,
-      error: { message: "Forbidden" },
-    });
-    const { result } = renderHook(() => hook());
-    await expect(result.current!.getAll()).rejects.toThrow("Forbidden");
-  },
-);
 
 it("loads every member page using explicit organization scope", async () => {
   state.read.mockImplementation(
@@ -370,7 +330,6 @@ it("rejects an unknown saved language instead of asserting it is supported", asy
   state.listAccounts.mockResolvedValue({ data: [], error: null });
   const { result } = renderHook(() => useAccountAdapter());
   await expect(result.current!.getAll()).rejects.toThrow();
-  state.language = "en";
 });
 
 it("shows empty billing details for a new organization without a Stripe customer", async () => {

@@ -1,5 +1,5 @@
 ---
-title: Sidebar Presets
+title: Sidebar presets
 description: Page lists, workspace switching, search, and trash.
 ---
 
@@ -11,80 +11,13 @@ pnpm add @notion-kit/ui
 
 ## Components
 
----
+### Workspace switcher
 
-### Workspace Switcher
+Use the [Workspace Switcher](/docs/auth-ui/workspace-switcher) from `@notion-kit/auth-ui` to switch workspaces and sign out in an authenticated sidebar.
 
-A `WorkspaceSwitcher` is a dropdown menu that controls workspaces and user's login state.
+### Page list
 
-<RegistryStory name="sidebar-workspace-switcher" />
-
-```tsx
-<WorkspaceSwitcher
-  user={user}
-  workspaces={workspaces}
-  activeWorkspace={activeWorkspace}
-/>
-```
-
-#### API Reference
-
-<TypeTable
-  type={{
-    user: {
-      type: "User",
-      typeDescriptionLink: "/docs/objects/user",
-      required: true,
-      description: "Current user.",
-    },
-    activeWorkspace: {
-      type: "Workspace",
-      typeDescriptionLink: "/docs/objects/workspace",
-      required: true,
-      description: "Current user.",
-    },
-    workspaces: {
-      type: "Workspace[]",
-      typeDescriptionLink: "/docs/objects/workspace",
-      required: true,
-      description: "Current user.",
-    },
-    onSelect: {
-      type: "(id: string) => void",
-      parameters: [
-        {
-          name: "id",
-          type: "string",
-          description: "The target workspace ID.",
-        },
-      ],
-      returns: "void",
-      description: "Handler that is called when a workspace is selected.",
-    },
-    onCreateAccount: {
-      type: "() => void",
-      returns: "void",
-      description:
-        'Handler that is called when the "Create Account" button is clicked.',
-    },
-    onCreateWorkspace: {
-      type: "() => void",
-      returns: "void",
-      description:
-        'Handler that is called when the "Create or Join Workspace" button is clicked.',
-    },
-    onLogout: {
-      type: "() => void",
-      returns: "void",
-      description:
-        'Handler that is called when the "Logout" button is clicked.',
-    },
-  }}
-/>
-
-### Page List
-
-A page list is a component `DocList` showing a group of pages.
+Use `DocList` to display pages in a named group.
 
 <RegistryStory name="sidebar-page-list" />
 
@@ -92,7 +25,7 @@ A page list is a component `DocList` showing a group of pages.
 <DocList group="document" title="Document" pages={pages} />
 ```
 
-#### API Reference
+#### API reference
 
 <TypeTable
   type={{
@@ -133,7 +66,7 @@ A page list is a component `DocList` showing a group of pages.
         },
       ],
       returns: "void",
-      description: "Handler that is called when a page is active.",
+      description: "Called when the user selects a page.",
     },
     onCreate: {
       type: "(group: string, parentId?: string) => void",
@@ -151,8 +84,7 @@ A page list is a component `DocList` showing a group of pages.
         },
       ],
       returns: "void",
-      description:
-        'Handler that is called when the "Create" button is triggered in this group.',
+      description: 'Called when the user chooses "Create" in this group.',
     },
     onDuplicate: {
       type: "(id: string) => void",
@@ -164,8 +96,7 @@ A page list is a component `DocList` showing a group of pages.
         },
       ],
       returns: "void",
-      description:
-        'Handler that is called when the "Duplicate" action is triggered.',
+      description: 'Called when the user chooses "Duplicate".',
     },
     onUpdate: {
       type: "(id: string, data: UpdatePageParams) => void",
@@ -182,19 +113,14 @@ A page list is a component `DocList` showing a group of pages.
         },
       ],
       returns: "void",
-      description:
-        "Handler that is called when the page data or page state is updated.",
+      description: "Called with the fields changed by a page action.",
     },
   }}
 />
 
-### Favorite List
+### Favorite list
 
-A `FavoriteList` is a group of pages that are marked as your `Favorite`.
-
-<Callout title="Note">
-  - The `FavoriteList` only shows your Favorite pages that are not **archived**.
-</Callout>
+`FavoriteList` shows favorite pages that are still active.
 
 <RegistryStory name="sidebar-favorite-list" />
 
@@ -202,7 +128,7 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
 <FavoriteList pages={pages} />
 ```
 
-#### API Reference
+#### API reference
 
 <TypeTable
   type={{
@@ -226,7 +152,7 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
         },
       ],
       returns: "void",
-      description: "Handler that is called when a page is active.",
+      description: "Called when the user selects a page.",
     },
     onCreate: {
       type: "(group: string, parentId?: string) => void",
@@ -244,8 +170,7 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
         },
       ],
       returns: "void",
-      description:
-        'Handler that is called when the "Create" button is triggered in this group.',
+      description: 'Called when the user chooses "Create" in this group.',
     },
     onDuplicate: {
       type: "(id: string) => void",
@@ -257,8 +182,7 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
         },
       ],
       returns: "void",
-      description:
-        'Handler that is called when the "Duplicate" action is triggered.',
+      description: 'Called when the user chooses "Duplicate".',
     },
     onUpdate: {
       type: "(id: string, data: UpdatePageParams) => void",
@@ -275,32 +199,25 @@ A `FavoriteList` is a group of pages that are marked as your `Favorite`.
         },
       ],
       returns: "void",
-      description:
-        "Handler that is called when the page data or page state is updated.",
+      description: "Called with the fields changed by a page action.",
     },
   }}
 />
 
-### Search Command
+### Search command
 
-A `SearchCommand` is a command dialog for searching all non-archived pages.
+`SearchCommand` searches pages that are still active.
 
 <RegistryStory name="sidebar-search-command" />
 
-<Callout title="Note">
-
-- It searches only for **non-archived** pages.
-
-</Callout>
-
-#### API Reference
+#### API reference
 
 <TypeTable
   type={{
     workspaceName: {
       type: "string",
       required: true,
-      description: "The name of current workspace.",
+      description: "The active workspace name.",
     },
     open: {
       type: "boolean",
@@ -334,20 +251,19 @@ A `SearchCommand` is a command dialog for searching all non-archived pages.
         },
       ],
       returns: "void",
-      description: "Handler that is called when a page is selected.",
+      description: "Called when the user selects a page.",
     },
     onOpenTrash: {
       type: "() => void",
       returns: "void",
-      description:
-        'Handler that is called when the "Open in Trash" button is clicked.',
+      description: 'Called when the user chooses "Open in Trash".',
     },
   }}
 />
 
-### Trash Box
+### Trash box
 
-A `TrashBox` is a popover menu for searching archived pages.
+`TrashBox` opens a menu for searching, restoring, and deleting archived pages.
 
 <RegistryStory name="sidebar-trash-box" />
 
@@ -355,13 +271,7 @@ A `TrashBox` is a popover menu for searching archived pages.
 <TrashBox pages={pages} />
 ```
 
-<Callout title="Note">
-
-- It searches only for **archived** pages.
-
-</Callout>
-
-#### API Reference
+#### API reference
 
 <TypeTable
   type={{
@@ -373,13 +283,7 @@ A `TrashBox` is a popover menu for searching archived pages.
     },
     isOpen: {
       type: "boolean",
-      description: (
-        <>
-          {" "}
-          The (controlled) open state of the trash box. Must be used in
-          conjunction with <code>onOpenChange</code>.{" "}
-        </>
-      ),
+      description: "The controlled open state. Pair with onOpenChange.",
     },
     onOpenChange: {
       type: "(open: boolean) => void",
@@ -404,7 +308,7 @@ A `TrashBox` is a popover menu for searching archived pages.
         },
       ],
       returns: "void",
-      description: "Handler that is called when a page is selected.",
+      description: "Called when the user selects a page.",
     },
     onRestore: {
       type: "(id: string) => void",
@@ -416,8 +320,7 @@ A `TrashBox` is a popover menu for searching archived pages.
         },
       ],
       returns: "void",
-      description:
-        'Handler that is called when the "Restore" button of the page is clicked.',
+      description: 'Called when the user chooses "Restore".',
     },
     onDelete: {
       type: "(id: string) => void",
@@ -429,8 +332,7 @@ A `TrashBox` is a popover menu for searching archived pages.
         },
       ],
       returns: "void",
-      description:
-        'Handler that is called when the "Delete" button of the page is clicked.',
+      description: 'Called when the user chooses "Delete".',
     },
   }}
 />

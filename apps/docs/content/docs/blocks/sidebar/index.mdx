@@ -1,6 +1,6 @@
 ---
 title: Sidebar
-description: Workspace navigation with page lists, search, and trash.
+description: A resizable sidebar for workspace navigation.
 links:
   - label: Shadcn UI
     href: https://ui.shadcn.com/docs/components/sidebar
@@ -10,7 +10,7 @@ links:
 
 ## Installation
 
-<Installation packages="@notion-kit/ui" registryName="sidebar-notion" />
+<Installation packages="@notion-kit/ui" registryName="sidebar-basic" />
 
 ## Anatomy
 
@@ -29,13 +29,18 @@ links:
 
 ## Examples
 
----
-
-### Notion Sidebar
+### Notion sidebar
 
 <RegistryStory name="sidebar-notion" />
 
-## API Reference
+The preview uses sample workspaces. To connect a sidebar to your auth server, use [Workspace Switcher](/docs/auth-ui/workspace-switcher) from `@notion-kit/auth-ui`.
+
+<Installation
+  packages="@notion-kit/ui @notion-kit/auth-ui"
+  registryName="sidebar-notion"
+/>
+
+## API reference
 
 ### SidebarProvider
 
@@ -43,22 +48,15 @@ links:
   type={{
     config: {
       type: "Partial<SidebarConfig>",
-      description: "The configuration object of the sidebar.",
+      description: "Overrides for the default sidebar configuration.",
     },
     defaultOpen: {
       type: "boolean",
-      description:
-        "The open state of the sidebar when it is initially rendered. Use when you do not need to control its open state.",
+      description: "Whether the uncontrolled sidebar starts open.",
     },
     open: {
       type: "boolean",
-      description: (
-        <>
-          {" "}
-          The (controlled) open state of the sidebar. Must be used in
-          conjunction with <code>onOpenChange</code>.{" "}
-        </>
-      ),
+      description: "The controlled open state. Pair with onOpenChange.",
     },
     onOpenChange: {
       type: "(open: boolean) => void",
@@ -70,14 +68,13 @@ links:
         },
       ],
       returns: "void",
-      description:
-        "Handler that is called when the open state of the sidebar changes.",
+      description: "Called when the sidebar opens or closes.",
     },
   }}
 />
 
 <Callout title="Note">
-  All the layout components below must be used within `<SidebarProvider>`.
+  Place the sidebar layout components inside `<SidebarProvider>`.
 </Callout>
 
 ### Sidebar
@@ -141,13 +138,11 @@ It accepts HTML `<div>` props and the props below.
 
 ### SidebarClose
 
-The `SidebarClose` is used to close the sidebar. It can be triggered by keyboard shortcut.
-It extends the `<Button>` component.
+`SidebarClose` is a button that closes the sidebar. The keyboard shortcut can also close it.
 
 ### SidebarOpen
 
-The `SidebarOpen` is used to open the sidebar. It can be triggered by keyboard shortcut.
-It extends the `<Button>` component.
+`SidebarOpen` is a button that opens the sidebar. The keyboard shortcut can also open it.
 
 ### SidebarMenuItem
 
@@ -177,9 +172,7 @@ It extends the `<Button>` component.
   }}
 />
 
-### `type` SidebarConfig
-
-The configuration object of the sidebar.
+### SidebarConfig
 
 <TypeTable
   type={{
@@ -189,7 +182,7 @@ The configuration object of the sidebar.
       default: "248px",
       description: "Default width of the sidebar.",
     },
-    defaultModileWidth: {
+    defaultMobileWidth: {
       type: "string",
       required: true,
       default: "248px",
@@ -228,8 +221,8 @@ The configuration object of the sidebar.
     cookieMaxAge: {
       type: "number",
       required: true,
-      default: "7d",
-      description: "Cookie's maximum lifetime (in seconds).",
+      default: "604800",
+      description: "The maximum cookie lifetime in seconds.",
     },
   }}
 />

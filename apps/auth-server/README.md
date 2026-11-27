@@ -1,79 +1,55 @@
 # Connect an app to the shared auth server
 
-Use this Fastify service as the auth endpoint for your own consumer apps. Each app uses the shared browser client and implements its own login, reset, and invitation pages.
+The Fastify service runs Better Auth for your apps. Each app uses the shared browser client and hosts its login, password reset, and invitation pages.
 
 ## Configure the service
 
-1. Set the required values in the [auth configuration reference](../../packages/auth/README.md#server-configuration). Keep credentials on the server.
-2. Set `BETTER_AUTH_URL` to the service's public URL.
-3. Set `APP_URL` to the default consumer URL.
-4. Add each additional consumer origin to `TRUSTED_ORIGINS`, separated by commas. Use exact origins including the port during local development.
-5. If the service is behind a reverse proxy, set `TRUSTED_PROXY_IPS` to the actual proxy addresses or CIDRs. Leave it unset for direct connections.
-6. Configure Google and GitHub OAuth callbacks for the public auth service.
-7. Configure Better Auth Infrastructure email on a Pro or higher plan. Set its server-only API key.
-8. If the app uses billing, configure both Stripe secrets and real price IDs in `STRIPE_PLANS`.
-9. If the app uses emoji or image uploads, configure Supabase storage and verify the required bucket policies.
-
-For example, a service at `https://auth.example.com` can use `APP_URL=https://app.example.com` and `TRUSTED_ORIGINS=https://admin.example.com`. Origin allowlisting does not guarantee that a browser accepts cross-site cookies. Validate the actual domains before relying on shared login state.
+1. In the repository root, create `.env` from `.env.example`. Fill in the required values from the [auth configuration reference](../../packages/auth/README.md#server-configuration).
+2. Set `BETTER_AUTH_URL` to the service's public URL and `APP_URL` to the default consumer's base URL. For example, use `https://auth.example.com` for the service and `https://app.example.com` for the consumer.
+3. Add any other consumer origins to `TRUSTED_ORIGINS` as a comma-separated list. Include the port when the origin uses one.
+4. If you run the service behind a reverse proxy, set `TRUSTED_PROXY_IPS` to the addresses or CIDRs of the proxies you trust.
+5. Point the Google and GitHub OAuth callbacks at the public auth service.
+6. Set the server-only `BETTER_AUTH_API_KEY` for a Better Auth Infrastructure Pro plan or higher.
+7. If you offer billing, configure both Stripe secrets and set `STRIPE_PLANS` to the paid plans and their Stripe price IDs.
+8. If you support emoji or image uploads, configure Supabase storage and check the bucket policies.
 
 ## Run the service
 
-From the repository root, use the repository's configured Node and pnpm versions:
+Build the auth server and its workspace dependencies from the repository root.
 
 ```sh
-pnpm -F @notion-kit/auth-server dev
+pnpm build --filter=@notion-kit/auth-server
 ```
 
-The service reads the root `.env` through `with-env` and listens on `PORT`, or `3001` when `PORT` is unset.
+Start the service with `pnpm -F @notion-kit/auth-server start`. To run the source in development, use `pnpm -F @notion-kit/auth-server dev`.
 
-For a built service, run these commands in order:
-
-```sh
-pnpm -F @notion-kit/auth-server build
-pnpm -F @notion-kit/auth-server start
-```
-
-Check the built-in Better Auth endpoint `/api/auth/ok` for `{ "ok": true }`. Open `/api/auth/reference` for the generated API reference.
+Both commands read the root `.env`. The server listens on `PORT`, which defaults to `3001`. Send a `GET` request to `/api/auth/ok` and check for `{ "ok": true }`. Open `/api/auth/reference` for the OpenAPI reference.
 
 ## Configure a consumer
 
-1. Point `AuthProvider.authURL` at the public auth service.
-2. Set `appURL` to the consumer's base URL.
-3. Supply `resetPasswordURL` for the consumer's reset-token page.
-4. Supply `billingReturnURL` only when Stripe is configured on the shared server and the consumer exposes billing. Omit it to disable billing controls.
-5. Implement `/accept-invitation/{id}` with the invitation form.
-6. Use the official client to read the session, sign in, sign out, and operate on organizations.
-7. Pass the intended `organizationId` to organization operations that accept it.
+1. Set `AuthProvider.authURL` to the public auth service URL and `appURL` to the consumer's base URL.
+2. Set `resetPasswordURL` to the consumer's reset-token page.
+3. If the consumer exposes billing and the service has Stripe enabled, set `billingReturnURL` to the consumer's billing return page. The billing adapter stays disabled when the URL is absent.
+4. Add the invitation form at `/accept-invitation/{id}`.
+5. Use `@notion-kit/auth/client` for session reads, sign-in, sign-out, and organization operations. Pass the intended `organizationId` when the operation accepts one.
 
-For notion-clone, enable billing only after configuring the server's Stripe secrets and `STRIPE_PLANS`:
+Relative reset and billing URLs resolve against the consumer's origin. If the browser blocks cookies for the deployed domains, route auth requests through a same-origin proxy to the shared service. Check cookies, callbacks, and passkeys with that route.
 
-```dotenv
-NEXT_PUBLIC_AUTH_BILLING_ENABLED=true
-```
+### Configure the notion-clone example
 
-This public flag defaults to `false` and accepts only `true` or `false`. Keep it consistent with the shared server's Stripe configuration. The consumer passes `billingReturnURL` only when the flag is `true`; it does not need Stripe secrets. Relative return URLs resolve against the consumer's origin.
-
-The notion-clone example runs on port `3002` and is a browser consumer; it no longer runs its own `/api/auth` handler or loads server credentials. Other apps can use the core auth client without rendering the settings panel.
-
-If the browser blocks cookies on unrelated domains, use a deployment-specific same-origin forwarding arrangement and verify its callback and cookie behavior. Do not recreate auth logic in the consumer. The repository does not provide a general proxy setup or guarantee SSO across arbitrary domains.
+The example runs on port `3002`. Set `NEXT_PUBLIC_AUTH_URL` to the shared service URL. Keep Stripe secrets on the auth server. To show billing controls after enabling Stripe on the server, set `NEXT_PUBLIC_AUTH_BILLING_ENABLED=true` in the consumer environment. The flag defaults to `false` and accepts `true` or `false`.
 
 ## Verify a deployment
 
-1. Test registration, email verification, reset, sign-in, session refresh, and sign-out from two configured app origins.
-2. Test that an unlisted Origin receives `403`.
-3. Test Google and GitHub callbacks with the deployed public URL.
-4. Test an account that already has two-factor authentication enabled.
-5. Test passkeys against the deployed origin and relying-party domain.
-6. Verify real delivery to the intended mailboxes, including the original email during an email change.
-7. Check background task failures in the hosting platform. The server uses `waitUntil`; API acceptance alone does not establish mail delivery.
-8. If billing is enabled, test subscription changes and webhook event redelivery in Stripe test mode. Check the webhook destination's API version separately from SDK 23.2.0's `2026-11-18.endive` request version.
-9. If storage is enabled, test uploads and deletion with the deployed Supabase policies.
-10. Verify constraints and relations against the deployment's PostgreSQL schema.
-11. Test that organization operations still target the intended organization after another tab switches the active organization.
-12. Test expired and canceled invitations, concurrent workspace slug creation, and partial failures in batch member changes.
+Use the deployed service URL and the consumer URLs for these checks.
 
-The service uses Better Auth's database-backed rate limiter. Its transport overwrites `x-auth-client-ip` and trusts forwarded client addresses only through the configured proxy allowlist. The 7 MiB HTTP body limit permits the 5 MiB decoded-image limit after base64 encoding.
+- Complete registration, email verification, password reset, sign-in, session refresh, and sign-out from two allowed origins. Confirm that a request with an unlisted origin returns `403`.
+- Complete the Google and GitHub sign-in callbacks. Sign in as a user with two-factor authentication and try a passkey on the deployed origin and relying-party domain.
+- Confirm delivery to the intended inboxes, including the current email address during an email change. Check the host's background task logs for email failures.
+- If billing is enabled, test subscription changes and webhook redelivery in Stripe test mode. Verify the webhook destination's API version and [the SDK request version](../../packages/auth/README.md#versions).
+- If Supabase storage is enabled, test uploads and deletion using the deployed bucket policies.
+- Check the constraints and relations in the deployed PostgreSQL schema.
+- Switch the active organization in another tab, then verify that actions with an explicit organization ID still affect the intended organization.
+- Exercise expired and canceled invitations, simultaneous requests for the same workspace slug, and partial failures in batch member changes.
 
-The HTTP adapter preserves raw webhook bytes, separate `Set-Cookie` headers, redirects, and error status codes. Its request URL comes from the configured public auth URL rather than an incoming Host or forwarded host. Transport tests do not replace real cookie, proxy, OAuth, email, storage, or Stripe integration checks.
-
-Do not run migrations or `db:push` as part of this upgrade. The target databases are empty, and the change updates the repository's final schema only. The upgrade did not perform the external integration checks above. See the [shared auth service decision](../../docs/adr/0008-shared-auth-service-and-official-better-auth-features.md) for the architecture and test responsibilities.
+The schema in this upgrade targets empty databases. The upgrade includes no database operations. See the [shared auth service decision](../../docs/adr/0008-shared-auth-service-and-official-better-auth-features.md) for the scope of local verification.

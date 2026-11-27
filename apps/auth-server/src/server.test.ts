@@ -41,14 +41,14 @@ describe("AuthHttpBoundary", () => {
     });
     expect(response.json()).toEqual({ ip: "198.51.100.7" });
   });
-  it("accepts an image payload within the plugin's 5 MiB decoded limit", async () => {
+  it("accepts the base64 payload for an image at the 5 MiB limit", async () => {
     const server = serverWith(() => Response.json({ ok: true }));
     const response = await server.inject({
       method: "POST",
       url: "/api/auth/file-upload/upload",
       headers: { "content-type": "application/json" },
       payload: JSON.stringify({
-        imageBase64: Buffer.alloc(2 * 1024 * 1024).toString("base64"),
+        imageBase64: Buffer.alloc(5 * 1024 * 1024).toString("base64"),
       }),
     });
     expect(response.statusCode).toBe(200);
@@ -109,14 +109,10 @@ describe("AuthHttpBoundary", () => {
   });
 
   it.each([
-    ["application/json", '{ "email" : "person@example.com", "n": 1.00 }\n'],
+    ["application/json", '{\n "name": "測試", "amount": 1.00\n}\n'],
     [
       "application/x-www-form-urlencoded",
       "email=person%40example.com&name=A+B",
-    ],
-    [
-      "application/json",
-      '{\n "id": "evt_test", "data": {"object": "測試"}\n}\n',
     ],
   ])("preserves the exact %s request bytes", async (contentType, payload) => {
     const server = serverWith(
