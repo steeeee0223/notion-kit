@@ -204,10 +204,17 @@ same resolved row values.
 | `rollup`                       | Relation, source property, and calculation in column config | The related database snapshot supplies the values                         |
 
 Supply `databaseId` and `databaseName` to give a table a stable identity across
-views. The ID property allocates numbers in creation order and keeps a local
-high-water mark for the lifetime of the table. A shared allocator should reserve
-numbers by row ID, return the same number on retries, and retain its high-water
-mark after deletions. Keep `Row.sequence` when saving and hydrating rows.
+views. The ID property numbers existing rows in creation order and keeps a local
+high-water mark for the lifetime of the table. Save and hydrate `Row.sequence`.
+For shared data, reserve numbers by row ID, return the same number on retries,
+and retain the allocator's high-water mark after deletions. Hydrate shared rows
+with their reserved sequences so IDs appear immediately. A row without a
+sequence stays blank until a data change reserves its number.
+
+Person columns can limit new assignments to one person and default to the row's
+creator. The creator default applies when a new row has no explicit assignment.
+Person columns also store a notification preference for the host to use when
+delivering notifications.
 
 Self-relations can update both fields in the table's data resource. For two-way
 relations across databases, `createReciprocalRelation` returns the target field
@@ -215,7 +222,9 @@ ID, and `onRelationChanges` receives accepted link changes. The host can use
 `applyRelationChanges` to update the target row resource and then supply its
 updated snapshot. For cross-database creation, renaming, and removal, wire
 `createRelatedRow`, `renameReciprocalRelation`, and `removeReciprocalRelation`
-to the respective target resources.
+to the respective target resources. A one-page relation keeps the first link
+when a row is created with several initial links. In the editor, remove extra
+links before choosing a one-page limit.
 
 Rollups derive their result from relation references on each data refresh. The
 calculation picker lists the operations allowed by the target property type.

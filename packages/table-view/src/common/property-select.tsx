@@ -16,12 +16,14 @@ import { DefaultIcon } from "./default-icon";
 interface PropertySelectProps {
   className?: string;
   value: string;
+  mode?: "sort" | "filter";
   onValueChange: (propertyId: string) => void;
 }
 
 export function PropertySelect({
   className,
   value,
+  mode = "filter",
   onValueChange,
 }: PropertySelectProps) {
   const { table } = useTableViewCtx();
@@ -33,8 +35,14 @@ export function PropertySelect({
         cellPlugins: state.cellPlugins,
       })}
     >
-      {() => {
-        const properties = table.getFilterProperties();
+      {({ columnsInfo }) => {
+        const properties =
+          mode === "sort"
+            ? Object.values(columnsInfo).filter(
+                ({ id, isDeleted }) =>
+                  !isDeleted && table.getColumn(id)?.getCanSort(),
+              )
+            : table.getFilterProperties();
         const currentProperty = properties.find(({ id }) => id === value);
         const items = [
           ...properties.map(({ id, name, type, icon }) => ({

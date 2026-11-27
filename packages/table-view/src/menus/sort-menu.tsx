@@ -105,10 +105,6 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
     );
   const removeRule = () => {
     table.setSorting((prev) => prev.filter((s) => s.id !== currentId));
-    const isLastRule = table.atoms.sorting.get().length === 1;
-    if (isLastRule) {
-      // TODO close popover
-    }
   };
 
   return (
@@ -142,6 +138,7 @@ function SortRule({ id: currentId, desc, index }: SortRuleProps) {
                 label={
                   <div className="grid h-8 w-full grid-cols-2 items-center gap-1.5">
                     <PropertySelect
+                      mode="sort"
                       value={currentId}
                       onValueChange={replaceProperty}
                     />
@@ -206,9 +203,8 @@ function PropSelectMenu({ onSelect }: { onSelect: () => void }) {
     >
       {({ columnsInfo, sorting }) => {
         const columns = Object.values(columnsInfo).filter(
-          (property) =>
-            table.getColumnPlugin(property.id).canSort?.(property.config) !==
-            false,
+          ({ id, isDeleted }) =>
+            !isDeleted && table.getColumn(id)?.getCanSort(),
         );
         /** Select */
         const sortedProps = new Set(sorting.map((s) => s.id));

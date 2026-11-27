@@ -1,4 +1,5 @@
 import {
+  firstReferenceText,
   referenceFiltering,
   referenceMethods,
   referenceText,
@@ -7,7 +8,17 @@ import {
 import type { CellPlugin } from "../types";
 import { genericCounting } from "../utils";
 
-export type PersonPlugin = CellPlugin<"person", PropertyReference[], undefined>;
+export interface PersonConfig {
+  limit: "one" | "unlimited";
+  defaultValue: "none" | "created-by";
+  notifications: "individuals" | "individuals-and-groups" | "none";
+}
+
+export type PersonPlugin = CellPlugin<
+  "person",
+  PropertyReference[],
+  PersonConfig
+>;
 export type CreatedByPlugin = CellPlugin<
   "created-by",
   PropertyReference[],
@@ -19,20 +30,21 @@ export type LastEditedByPlugin = CellPlugin<
   undefined
 >;
 
-function personPlugin<Key extends "person" | "created-by" | "last-edited-by">(
-  id: Key,
-): CellPlugin<Key, PropertyReference[], undefined> {
+function personPlugin<
+  Key extends "person" | "created-by" | "last-edited-by",
+  Config,
+>(id: Key, config: Config): CellPlugin<Key, PropertyReference[], Config> {
   const isEmpty = (data: PropertyReference[]) => data.length === 0;
   return {
     id,
-    default: { data: [], config: undefined },
+    default: { data: [], config },
     fromValue: () => [],
-    toValue: (data) => referenceText(data.slice(0, 1)),
+    toValue: firstReferenceText,
     toTextValue: referenceText,
     isEmpty,
-    ...referenceMethods<undefined>(id === "person"),
+    ...referenceMethods<Config>(id === "person"),
     counting: genericCounting(isEmpty),
-    filtering: referenceFiltering<undefined>(
+    filtering: referenceFiltering<Config>(
       ({ sources }) => sources?.people ?? [],
       id === "person",
     ),
@@ -40,7 +52,13 @@ function personPlugin<Key extends "person" | "created-by" | "last-edited-by">(
   };
 }
 
-export const person = (): PersonPlugin => personPlugin("person");
-export const createdBy = (): CreatedByPlugin => personPlugin("created-by");
+export const person = (): PersonPlugin =>
+  personPlugin<"person", PersonConfig>("person", {
+    limit: "unlimited",
+    defaultValue: "none",
+    notifications: "individuals",
+  });
+export const createdBy = (): CreatedByPlugin =>
+  personPlugin("created-by", undefined);
 export const lastEditedBy = (): LastEditedByPlugin =>
-  personPlugin("last-edited-by");
+  personPlugin("last-edited-by", undefined);

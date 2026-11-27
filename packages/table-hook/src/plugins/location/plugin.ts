@@ -27,8 +27,8 @@ export type LocationPlugin = CellPlugin<
 export function locationLabel(data: LocationValue | null | undefined): string {
   if (!data) return "";
   return (
-    data.name ||
-    data.address ||
+    data.name.trim() ||
+    data.address.trim() ||
     (data.coordinates
       ? `${data.coordinates.latitude}, ${data.coordinates.longitude}`
       : "")
@@ -36,7 +36,7 @@ export function locationLabel(data: LocationValue | null | undefined): string {
 }
 
 export function location(): LocationPlugin {
-  const isEmpty = (data: LocationValue | null) => !locationLabel(data).trim();
+  const isEmpty = (data: LocationValue | null) => !locationLabel(data);
   const { sorting } = textMethodCapabilities();
   return {
     id: "location",

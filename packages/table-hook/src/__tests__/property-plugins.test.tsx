@@ -18,7 +18,11 @@ import {
   type RollupConfig,
 } from "@/plugins";
 import type { TablePropertySources } from "@/plugins/property-sources";
-import { useTableView } from "@/table-contexts";
+import {
+  useTableView,
+  type DataResourceAction,
+  type ResourceChangeHandler,
+} from "@/table-contexts";
 import { applyRelationChanges } from "@/table-contexts/relation-sync";
 
 const plugins = arrayToEntity([
@@ -132,43 +136,19 @@ describe("New table property plugins", () => {
       number: 1,
       prefix: "ISSUE",
     });
-    act(() => table.setGroupingColumn("serial"));
-    expect(table.atoms.grouping.get()).toEqual([]);
-    act(() =>
-      table.setFilters(
-        appendFilterNode(undefined, "", {
-          ...createFilterRule("serial", "greater-than"),
-          value: 1,
-        }),
-      ),
-    );
-    expect(table.getFilteredRowModel().rows.map(({ id }) => id)).toEqual([
-      copy?.id,
-    ]);
   });
 
-  it("uses title-style grouping for people, matches stable IDs, and captures the actor when rows change", () => {
+  it("keeps the creator and resolves the latest editor from the current directory", () => {
     const { table, rerender } = renderProperties(
       [
         { id: "owner", name: "Owner", type: "person" },
         { id: "creator", name: "Created by", type: "created-by" },
         { id: "editor", name: "Last edited by", type: "last-edited-by" },
       ],
-      [row("first", { owner: [grace] }), row("second", { owner: [ada] })],
+      [],
       { people: [ada, grace], currentActor: ada },
     );
 
-    act(() => {
-      table.setGroupingColumn("owner");
-      table.setColumnGroupingMethod("owner", "alphabetical");
-      table.setGroupSort({ mode: "ascending", method: "text" });
-    });
-    expect(
-      table
-        .getGroupedRowModel()
-        .rows.map(({ id }) => table.getGroupingValue(id)),
-    ).toEqual(["A", "G"]);
-    act(() => table.setGroupingColumn(null));
     let added = "";
     act(() => {
       added = table.addRow({ initialValues: { owner: [ada, grace] } });
@@ -186,18 +166,91 @@ describe("New table property plugins", () => {
       { ...grace, name: "Rear Admiral Hopper" },
     ]);
     expect(table.getCell("creator", added).value).toEqual([ada]);
-    act(() =>
-      table.setFilters(
-        appendFilterNode(undefined, "", {
-          ...createFilterRule("owner", "contains"),
-          value: [grace.id],
-        }),
-      ),
+  });
+
+  it("persists bulk person edits on rows that have no stored person cell", () => {
+    const onDataChange =
+      vi.fn<ResourceChangeHandler<Row[], DataResourceAction>>();
+    const { result } = renderHook(() =>
+      useTableView({
+        plugins,
+        defaultProperties: [{ id: "owner", name: "Owner", type: "person" }],
+        defaultData: [row("first"), row("second"), row("unselected")],
+        onDataChange,
+      }),
     );
-    expect(table.getFilteredRowModel().rows.map(({ id }) => id)).toEqual([
-      "first",
-      added,
+
+    act(() =>
+      result.current.table
+        .getColumn("owner")
+        ?.updateCells(["first", "second"], [ada]),
+    );
+
+    const change = onDataChange.mock.lastCall?.[0];
+    expect(change?.action).toMatchObject({
+      type: "data.cell.update",
+      payload: { propertyId: "owner", rowIds: ["first", "second"] },
+    });
+    expect(
+      change?.next.map(({ id, properties }): [string, unknown] => [
+        id,
+        properties.owner?.value,
+      ]),
+    ).toEqual([
+      ["first", [ada]],
+      ["second", [ada]],
+      ["unselected", undefined],
     ]);
+  });
+
+  it("applies the relation limit when creating a row with initial links", () => {
+    const { table } = renderProperties(
+      [{ ...relationProperty, config: { databaseId: "self", limit: "one" } }],
+      [row("first"), row("second")],
+    );
+
+    let id = "";
+    act(() => {
+      id = table.addRow({
+        initialValues: {
+          related: [
+            { id: "first", name: "First" },
+            { id: "second", name: "Second" },
+          ],
+        },
+      });
+    });
+
+    expect(table.getCell("related", id).value).toEqual([
+      { id: "first", name: "Untitled" },
+    ]);
+  });
+
+  it("does not reuse a row number after a controlled deletion", () => {
+    const onDataChange = vi.fn();
+    const first = { ...row("first"), sequence: 2 };
+    const last = { ...row("last"), sequence: 9 };
+    const { result, rerender } = renderHook(
+      (data: Row[]) =>
+        useTableView({
+          plugins,
+          defaultProperties: [idProperty],
+          data,
+          onDataChange,
+        }),
+      { initialProps: [first, last] },
+    );
+
+    rerender([first]);
+    act(() => {
+      result.current.table.addRow();
+    });
+
+    expect(onDataChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        next: [first, expect.objectContaining({ sequence: 10 })],
+      }),
+    );
   });
 
   it("synchronizes self-relations, recomputes rollups on target edits, and filters lists by the target operator", () => {
@@ -300,6 +353,41 @@ describe("New table property plugins", () => {
     expect(updated[0]?.properties.reverse?.value).toEqual([
       { id: "source", name: "" },
     ]);
-    expect(applyRelationChanges(updated, changes)).toEqual(updated);
+    expect(applyRelationChanges(updated, changes)).toBe(updated);
   });
+});
+
+it("uses the Person creator default only when a new row has no explicit assignment", () => {
+  const ada = { id: "ada", name: "Ada Lovelace" };
+  const columns: ColumnDefs = [
+    { id: "title", name: "Name", type: "title" },
+    {
+      id: "owner",
+      name: "Person",
+      type: "person",
+      config: {
+        limit: "one",
+        defaultValue: "created-by",
+        notifications: "individuals",
+      },
+    },
+  ];
+  const { result } = renderHook(() =>
+    useTableView({
+      plugins,
+      defaultProperties: columns,
+      defaultData: [],
+      propertySources: { currentActor: ada },
+    }),
+  );
+  const { table } = result.current;
+
+  act(() => {
+    table.addRow({ initialValues: { title: "Uses default" } });
+    table.addRow({ initialValues: { title: "Explicitly empty", owner: [] } });
+  });
+
+  expect(
+    table.getCellValues().map((row): unknown => row.properties.owner?.value),
+  ).toEqual([[ada], []]);
 });

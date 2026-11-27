@@ -57,34 +57,55 @@ export function getRelationChanges(
   return changes;
 }
 
+function updateReciprocalCell<T extends Row>(
+  row: T,
+  { targetPropertyId, sourceRowId }: RelationChange,
+  isLinked: boolean,
+): T {
+  const existing = row.properties[targetPropertyId];
+  const references = readReferences(existing?.value);
+  if (references.some(({ id }) => id === sourceRowId) === isLinked) return row;
+
+  const value = isLinked
+    ? [...references, { id: sourceRowId, name: "" }]
+    : references.filter(({ id }) => id !== sourceRowId);
+  return {
+    ...row,
+    properties: {
+      ...row.properties,
+      [targetPropertyId]: { id: existing?.id ?? v4(), value },
+    },
+  };
+}
+
 /** Apply a source relation change to the target database. Safe to apply again after a retry. */
 export function applyRelationChanges<T extends Row>(
   rows: T[],
   changes: readonly RelationChange[],
 ): T[] {
+  if (!changes.length) return rows;
+  const positions = new Map<string, number[]>();
+  rows.forEach(({ id }, index) => {
+    const existing = positions.get(id);
+    if (existing) existing.push(index);
+    else positions.set(id, [index]);
+  });
+
   let result = rows;
   for (const change of changes) {
-    result = result.map((row) => {
-      const wasLinked = change.previousRowIds.includes(row.id);
-      const isLinked = change.nextRowIds.includes(row.id);
-      if (wasLinked === isLinked) return row;
-      const existing = row.properties[change.targetPropertyId];
-      const references = readReferences(existing?.value);
-      const alreadyLinked = references.some(
-        ({ id }) => id === change.sourceRowId,
-      );
-      if (alreadyLinked === isLinked) return row;
-      const value = isLinked
-        ? [...references, { id: change.sourceRowId, name: "" }]
-        : references.filter(({ id }) => id !== change.sourceRowId);
-      return {
-        ...row,
-        properties: {
-          ...row.properties,
-          [change.targetPropertyId]: { id: existing?.id ?? v4(), value },
-        },
-      };
-    });
+    const previous = new Set(change.previousRowIds);
+    const next = new Set(change.nextRowIds);
+    for (const id of new Set([...previous, ...next])) {
+      const isLinked = next.has(id);
+      if (previous.has(id) === isLinked) continue;
+      positions.get(id)?.forEach((index) => {
+        const row = result[index]!;
+        const updated = updateReciprocalCell(row, change, isLinked);
+        if (row === updated) return;
+        if (result === rows) result = rows.slice();
+        result[index] = updated;
+      });
+    }
   }
   return result;
 }

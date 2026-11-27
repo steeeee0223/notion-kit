@@ -1,7 +1,16 @@
 import { useId, useState } from "react";
 
-import type { IdPlugin } from "@notion-kit/table-hook/plugins";
-import { Button, Field, FieldLabel, Input } from "@notion-kit/ui/primitives";
+import { Icon } from "@notion-kit/icons";
+import { formatId, type IdPlugin } from "@notion-kit/table-hook/plugins";
+import {
+  Button,
+  DropdownMenuContent,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  Field,
+  FieldLabel,
+  Input,
+} from "@notion-kit/ui/primitives";
 
 import { PropertyCell, propertyMetadata } from "../property-cell";
 import type { TableUiPlugin } from "../registry";
@@ -18,13 +27,17 @@ function IdConfigMenu({
 }: ConfigMenuRendererProps<IdPlugin["default"]["config"]>) {
   const [draft, setDraft] = useState(config.prefix);
   const inputId = useId();
+  const prefix = draft.trim();
+  const examples = [1, 2, 3]
+    .map((number) => formatId({ prefix, number }))
+    .join(", ");
   return (
     <form
-      className="flex flex-col gap-2 px-2 pb-2"
+      className="flex flex-col gap-3 p-3"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        onChange({ prefix: draft.trim() });
+        onChange({ prefix });
       }}
     >
       <Field>
@@ -39,8 +52,9 @@ function IdConfigMenu({
           placeholder="TASK"
         />
       </Field>
-      <Button type="submit" disabled={draft.trim() === config.prefix}>
-        Save prefix
+      <p className="text-sm text-muted">{examples}, …</p>
+      <Button type="submit" variant="blue" disabled={prefix === config.prefix}>
+        {config.prefix ? "Save prefix" : "Add ID prefix"}
       </Button>
     </form>
   );
@@ -58,7 +72,16 @@ export function id(): TableUiPlugin<IdPlugin> {
       <PropertyCell cell={props} text={props.textValue} />
     )),
     renderConfigMenu: createConfigMenuRenderer<IdPlugin>((props) => (
-      <IdConfigMenu key={props.config.prefix} {...props} />
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger
+          label="Edit property"
+          icon={<Icon.Sliders />}
+          openOnHover={false}
+        />
+        <DropdownMenuContent sideOffset={-4} className="w-64">
+          <IdConfigMenu key={props.config.prefix} {...props} />
+        </DropdownMenuContent>
+      </DropdownMenuSub>
     )),
     renderGroupingValue: DefaultGroupingValue,
   };

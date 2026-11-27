@@ -38,6 +38,32 @@ export function getRelatedDatabase(
     : sources?.databases?.find((database) => database.id === databaseId);
 }
 
+export function getRollupTarget(
+  config: RollupConfig,
+  local: RelatedDatabase,
+  sources?: TablePropertySources,
+):
+  | {
+      relation: RelatedDatabase["properties"][number];
+      database: RelatedDatabase;
+      property: RelatedDatabase["properties"][number];
+    }
+  | undefined {
+  const relation = local.properties.find(
+    ({ id, type, isDeleted }) =>
+      id === config.relationPropertyId && type === "relation" && !isDeleted,
+  );
+  if (!relation) return undefined;
+  const { databaseId } = relation.config as RelationConfig;
+  const database = getRelatedDatabase(databaseId, local, sources);
+  const property = database?.properties.find(
+    ({ id, type, isDeleted }) =>
+      id === config.targetPropertyId && type !== "rollup" && !isDeleted,
+  );
+  if (!database || !property) return undefined;
+  return { relation, database, property };
+}
+
 export function getRelatedRowOptions(
   database: RelatedDatabase,
 ): PropertyReference[] {
@@ -106,22 +132,43 @@ export function hasProjectedPropertyValue(type: string) {
   return projectedTypes.has(type);
 }
 
+interface PropertyProjectionOptions {
+  propertyId?: string;
+  getRowUrl?: (rowId: string) => string;
+}
+
 export function projectTableData<T extends Row>(
   rows: T[],
   columns: Record<string, ColumnInfo>,
   plugins: Record<string, CellPlugin>,
   sources?: TablePropertySources,
+  { propertyId, getRowUrl }: PropertyProjectionOptions = {},
 ): T[] {
-  const properties = Object.values(columns).filter(
+  const allProperties = Object.values(columns);
+  const projectedProperties = allProperties.filter(
     ({ type, isDeleted }) => !isDeleted && projectedTypes.has(type),
   );
+  const properties =
+    propertyId === undefined
+      ? projectedProperties
+      : projectedProperties.filter(({ id }) => id === propertyId);
   if (!properties.length) return rows;
-  const numberedRows = properties.some(({ type }) => type === "id")
-    ? assignRowSequences(rows)
-    : rows;
-  const local = getLocalDatabase(sources, Object.values(columns), numberedRows);
+  const numberedRows =
+    !sources?.allocateRowNumber &&
+    projectedProperties.some(({ type }) => type === "id")
+      ? assignRowSequences(rows)
+      : rows;
+  const local = getLocalDatabase(
+    sources,
+    allProperties,
+    numberedRows,
+    getRowUrl,
+  );
   const people = new Map(sources?.people?.map((person) => [person.id, person]));
-  const relatedRows = new Map<string, Map<string, PropertyReference>>();
+  const relatedRows = new Map<
+    RelatedDatabase,
+    Map<string, PropertyReference>
+  >();
   const rowsByDatabase = new Map<RelatedDatabase, Map<string, Row>>();
   const getRows = (database: RelatedDatabase) => {
     const existing = rowsByDatabase.get(database);
@@ -134,7 +181,47 @@ export function projectTableData<T extends Row>(
     references: PropertyReference[],
     options: Map<string, PropertyReference>,
   ) => references.map((reference) => options.get(reference.id) ?? reference);
-  const project = (row: Row, property: ColumnInfo): unknown => {
+  function projectRollup(
+    row: Row,
+    config: RollupConfig,
+    databaseScope: RelatedDatabase,
+  ) {
+    const rollupTarget = getRollupTarget(config, databaseScope, sources);
+    if (!rollupTarget) return null;
+    const { relation, database, property } = rollupTarget;
+    const plugin = plugins[property.type];
+    if (!plugin) return null;
+    const selected = readReferences(row.properties[relation.id]?.value);
+    const rowsById = getRows(database);
+    const targetProperty: ColumnInfo = {
+      ...property,
+      config: property.config ?? plugin.default.config,
+    };
+    const related = selected.flatMap(({ id }) => {
+      const relatedRow = rowsById.get(id);
+      if (!relatedRow) return [];
+      if (!projectedTypes.has(property.type)) return [relatedRow];
+      return [
+        {
+          ...relatedRow,
+          properties: {
+            ...relatedRow.properties,
+            [property.id]: {
+              id: property.id,
+              value: project(relatedRow, targetProperty, database),
+            },
+          },
+        },
+      ];
+    });
+    return calculateRollup(config, targetProperty, plugin, related);
+  }
+
+  function project(
+    row: Row,
+    property: ColumnInfo,
+    databaseScope = local,
+  ): unknown {
     const data: unknown = row.properties[property.id]?.value;
     switch (property.type) {
       case "id": {
@@ -151,70 +238,29 @@ export function projectTableData<T extends Row>(
         return data ?? null;
       case "relation": {
         const { databaseId } = property.config as RelationConfig;
-        let options = relatedRows.get(databaseId);
+        const references = readReferences(data);
+        if (!references.length) return references;
+        const database = getRelatedDatabase(databaseId, databaseScope, sources);
+        if (!database) return references;
+        let options = relatedRows.get(database);
         if (!options) {
-          const database = getRelatedDatabase(databaseId, local, sources);
           options = new Map(
-            database
-              ? getRelatedRowOptions(database).map((option) => [
-                  option.id,
-                  option,
-                ])
-              : [],
+            getRelatedRowOptions(database).map((option) => [option.id, option]),
           );
-          relatedRows.set(databaseId, options);
+          relatedRows.set(database, options);
         }
-        return resolve(readReferences(data), options);
+        return resolve(references, options);
       }
-      case "rollup": {
-        const config = property.config as RollupConfig;
-        const relation = columns[config.relationPropertyId];
-        if (relation?.type !== "relation" || relation.isDeleted) return null;
-        const { databaseId } = relation.config as RelationConfig;
-        const database = getRelatedDatabase(databaseId, local, sources);
-        const target = database?.properties.find(
-          ({ id }) => id === config.targetPropertyId,
+      case "rollup":
+        return projectRollup(
+          row,
+          property.config as RollupConfig,
+          databaseScope,
         );
-        if (
-          !database ||
-          !target ||
-          target.isDeleted ||
-          target.type === "rollup"
-        )
-          return null;
-        const plugin = plugins[target.type];
-        if (!plugin) return null;
-        const selected = readReferences(row.properties[relation.id]?.value);
-        const rowsById = getRows(database);
-        const targetProperty: ColumnInfo = {
-          ...target,
-          config: target.config ?? plugin.default.config,
-        };
-        const related = selected.flatMap(({ id }) => {
-          const relatedRow = rowsById.get(id);
-          if (!relatedRow) return [];
-          if (!projectedTypes.has(target.type)) return [relatedRow];
-          if (database !== local && target.type === "relation")
-            return [relatedRow];
-          return [
-            {
-              ...relatedRow,
-              properties: {
-                ...relatedRow.properties,
-                [target.id]: {
-                  id: target.id,
-                  value: project(relatedRow, targetProperty),
-                },
-              },
-            },
-          ];
-        });
-        return calculateRollup(config, targetProperty, plugin, related);
-      }
       default:
         return data;
     }
-  };
+  }
   return numberedRows.map((row) => {
     const cells = { ...row.properties };
     for (const property of properties) {

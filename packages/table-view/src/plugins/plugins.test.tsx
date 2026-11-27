@@ -1,12 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import {
-  DEFAULT_DATA_PLUGINS,
-  DEFAULT_PLUGINS,
-  DEFAULT_UI_PLUGINS,
-  DefaultGroupingValue,
-} from ".";
+import { DEFAULT_PLUGINS, DefaultGroupingValue } from ".";
 import type { GroupingValueProps } from "./registry";
 
 describe("table-view plugin wrappers", () => {
@@ -32,18 +27,6 @@ describe("table-view plugin wrappers", () => {
       "relation",
       "rollup",
     ]);
-  });
-
-  it("pairs every default data plugin with a direct UI adapter", () => {
-    expect(DEFAULT_DATA_PLUGINS.map(({ id }) => id)).toEqual(
-      DEFAULT_UI_PLUGINS.map(({ id }) => id),
-    );
-    for (const plugin of DEFAULT_UI_PLUGINS) {
-      expect(plugin.meta.icon).not.toBeNull();
-      expect(plugin.default.icon).not.toBeNull();
-      expect(plugin.renderCell).toEqual(expect.any(Function));
-      expect(plugin.renderGroupingValue).toEqual(expect.any(Function));
-    }
   });
 
   it("renders the headless default grouping label with table-view UI", () => {

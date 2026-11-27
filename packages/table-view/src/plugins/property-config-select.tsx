@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 import {
   Field,
   FieldLabel,
@@ -18,13 +20,14 @@ export function PropertyConfigSelect<Value extends string>({
 }: {
   label: string;
   value: Value | null;
-  items: { value: Value; label: string }[];
+  items: { value: Value; label: string; disabled?: boolean }[];
   onChange: (value: Value) => void;
   disabled?: boolean;
 }) {
+  const triggerId = useId();
   return (
     <Field>
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <Select
         value={value}
         items={items}
@@ -33,13 +36,18 @@ export function PropertyConfigSelect<Value extends string>({
           if (next !== null) onChange(next);
         }}
       >
-        <SelectTrigger aria-label={label} className="w-full">
+        <SelectTrigger id={triggerId} className="w-full">
           <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {items.map(({ label, value }) => (
-              <SelectItem key={value} value={value} label={label} />
+            {items.map(({ label, value, disabled }) => (
+              <SelectItem
+                key={value}
+                value={value}
+                label={label}
+                disabled={disabled}
+              />
             ))}
           </SelectGroup>
         </SelectContent>

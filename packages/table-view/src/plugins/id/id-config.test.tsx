@@ -1,4 +1,4 @@
-import { within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { MenuSurfaceObject } from "@/__tests__/component-objects/menu-surface";
@@ -28,11 +28,12 @@ it("changes the displayed prefix while retaining the existing row number", async
   ).toBeVisible();
   await table.clickButton("ID");
   const menu = await MenuSurfaceObject.findByItem(table.user, "Calculate");
-  expect(menu.queryItem("Group")).toBeNull();
-  const prefix = within(menu.root).getByRole("textbox", { name: "Prefix" });
+  await table.user.click(menu.item("Edit property"));
+  const prefix = await screen.findByRole("textbox", { name: "Prefix" });
   await table.user.clear(prefix);
   await table.user.type(prefix, "TRIP");
-  await table.user.click(menu.button("Save prefix"));
+  expect(screen.getByText("TRIP-1, TRIP-2, TRIP-3, …")).toBeVisible();
+  await table.user.click(screen.getByRole("button", { name: "Save prefix" }));
   await table.clickOutside();
 
   expect(

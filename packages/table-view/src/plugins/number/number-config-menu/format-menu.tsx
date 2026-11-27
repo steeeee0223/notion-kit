@@ -7,7 +7,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-const options: { label: string; value: NumberFormat }[] = [
+export const numberFormatOptions: { label: string; value: NumberFormat }[] = [
   { label: "Number", value: "number" },
   { label: "Number with commas", value: "number_with_commas" },
   { label: "Percent", value: "percent" },
@@ -24,7 +24,7 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
     <DropdownMenuSub>
       <DropdownMenuSubTrigger label="Number format">
         <div className="text-muted">
-          {options.find((option) => option.value === format)?.label}
+          {numberFormatOptions.find((option) => option.value === format)?.label}
         </div>
       </DropdownMenuSubTrigger>
       <DropdownMenuContent sideOffset={-4} className="w-48">
@@ -32,7 +32,7 @@ export function FormatMenu({ format, onUpdate }: FormatMenuProps) {
           value={format}
           onValueChange={(value: NumberFormat) => onUpdate(value)}
         >
-          {options.map((option) => (
+          {numberFormatOptions.map((option) => (
             <DropdownMenuRadioItem
               key={option.value}
               value={option.value}

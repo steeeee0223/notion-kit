@@ -50,8 +50,13 @@ export interface ValueAggregationContext<TRow> {
   getValue: (row: TRow) => unknown;
 }
 
-export interface ValueAggregation {
-  aggregate: <TRow>(context: ValueAggregationContext<TRow>) => unknown;
+export interface ValueAggregation<Result> {
+  aggregate: <TRow>(context: ValueAggregationContext<TRow>) => Result | "";
+}
+
+export interface DatePoint {
+  value: number;
+  includeTime: boolean;
 }
 
 function numberValues<TRow>(context: ValueAggregationContext<TRow>) {
@@ -66,7 +71,7 @@ function numberValues<TRow>(context: ValueAggregationContext<TRow>) {
 
 function numericAggregation(
   calculate: (values: number[]) => number,
-): ValueAggregation {
+): ValueAggregation<number> {
   return {
     aggregate: (context) => {
       const values = numberValues(context);
@@ -157,7 +162,7 @@ function getDateBoundaries(values: DateRangeValue[]) {
   };
 }
 
-export const aggregateDateEarliest: ValueAggregation = {
+export const aggregateDateEarliest: ValueAggregation<DatePoint> = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";
@@ -169,7 +174,7 @@ export const aggregateDateEarliest: ValueAggregation = {
   },
 };
 
-export const aggregateDateLatest: ValueAggregation = {
+export const aggregateDateLatest: ValueAggregation<DatePoint> = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";
@@ -181,7 +186,7 @@ export const aggregateDateLatest: ValueAggregation = {
   },
 };
 
-export const aggregateDateRange: ValueAggregation = {
+export const aggregateDateRange: ValueAggregation<Required<DateRangeValue>> = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";

@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 
+import { Icon } from "@notion-kit/icons";
 import {
   locationLabel,
   locationValueSchema,
@@ -11,7 +12,6 @@ import {
   Combobox,
   ComboboxCollection,
   ComboboxContent,
-  ComboboxEmpty,
   ComboboxGroup,
   ComboboxInput,
   ComboboxItem,
@@ -19,6 +19,8 @@ import {
   Field,
   FieldLabel,
   Input,
+  Separator,
+  TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
@@ -46,6 +48,7 @@ function LocationEditor({
   const { propertySources } = useTableViewCtx();
   const { searchLocations, reverseGeocode } = propertySources ?? {};
   const [draft, setDraft] = useState(value ?? emptyLocation);
+  const [manual, setManual] = useState(false);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
   const [results, setResults] = useState<LocationValue[]>([]);
@@ -99,17 +102,21 @@ function LocationEditor({
         if (request.signal.aborted) return;
         const coordinates = { latitude, longitude };
         const coordinateLocation = { ...emptyLocation, coordinates };
-        setDraft(coordinateLocation);
-        setStatus("");
-        if (reverseGeocode) {
-          void reverseGeocode(coordinates, request.signal)
-            .then((value) => {
-              if (request.signal.aborted) return;
-              const parsed = locationValueSchema.safeParse(value);
-              if (parsed.success) setDraft({ ...parsed.data, coordinates });
-            })
-            .catch(() => undefined);
+        if (!reverseGeocode) {
+          onSave(coordinateLocation);
+          return;
         }
+        void reverseGeocode(coordinates, request.signal)
+          .catch(() => null)
+          .then((result) => {
+            if (request.signal.aborted) return;
+            const parsed = locationValueSchema.safeParse(result);
+            onSave(
+              parsed.success
+                ? { ...parsed.data, coordinates }
+                : coordinateLocation,
+            );
+          });
       },
       () => {
         if (!request.signal.aborted)
@@ -118,125 +125,157 @@ function LocationEditor({
       { timeout: 10_000 },
     );
   };
-  const items = results.map((location, index) => ({
-    value: String(index),
-    label: [location.name, location.address].filter(Boolean).join(" · "),
-    location,
-  }));
+  const items = [
+    { id: "current", label: "Current Location", location: null },
+    ...results.map((location, index) => ({
+      id: String(index),
+      label: locationLabel(location),
+      location,
+    })),
+  ];
   return (
     <div className="flex flex-col gap-2">
-      {searchLocations && (
-        <Combobox
-          inline
-          open
-          items={Combobox.createItems(items, {
-            getValue: ({ value }) => value,
-            getLabel: ({ label }) => label,
-          })}
-          value={null}
-          inputValue={query}
-          onInputValueChange={(value) => {
-            setQuery(value);
-            setResults([]);
-            setSearching(false);
-            setStatus("");
-          }}
-          onValueChange={(value) => {
-            const location = items.find(
-              (item) => item.value === value,
-            )?.location;
-            if (location) onSave(location);
-          }}
-        >
+      <Combobox
+        inline
+        open
+        filter={null}
+        items={Combobox.createItems(items, {
+          getValue: ({ id }) => id,
+          getLabel: ({ label }) => label,
+        })}
+        value={null}
+        inputValue={query}
+        onInputValueChange={(value, { reason }) => {
+          if (reason !== "input-change" && reason !== "input-clear") return;
+          geolocationRequest.current?.abort();
+          setQuery(value);
+          setResults([]);
+          setSearching(Boolean(searchLocations && value.trim()));
+          setStatus("");
+        }}
+        onValueChange={(id) => {
+          const option = items.find((item) => item.id === id);
+          if (!option) return;
+          if (option.location) {
+            onSave(option.location);
+          } else {
+            locate();
+          }
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <Icon.MagnifyingGlass className="size-4 shrink-0 fill-icon" />
           <ComboboxInput
             aria-label="Search places"
             placeholder="Search a name or address"
           />
-          <ComboboxContent variant="inline">
-            {query.trim() && (
-              <ComboboxEmpty>
-                {searching ? "Searching…" : "No places found"}
-              </ComboboxEmpty>
-            )}
-            <ComboboxList>
-              <ComboboxGroup>
-                <ComboboxCollection>
-                  {(item: (typeof items)[number]) => (
-                    <ComboboxItem
-                      key={item.value}
-                      value={item.value}
-                      label={item.label}
-                    />
-                  )}
-                </ComboboxCollection>
-              </ComboboxGroup>
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
+          <TooltipPreset description="Place search coverage depends on the location provider.">
+            <Button variant="hint" aria-label="About place search">
+              <Icon.Info />
+            </Button>
+          </TooltipPreset>
+        </div>
+        <ComboboxContent variant="inline">
+          <ComboboxList>
+            <ComboboxGroup>
+              <ComboboxCollection>
+                {(item: (typeof items)[number]) => (
+                  <ComboboxItem
+                    key={item.id}
+                    value={item.id}
+                    label={item.label}
+                    icon={item.location ? undefined : <Icon.MapPinPlusSmall />}
+                    desc={
+                      item.location?.name ? item.location.address : undefined
+                    }
+                    showIndicator={false}
+                  />
+                )}
+              </ComboboxCollection>
+            </ComboboxGroup>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+      {(status ||
+        searching ||
+        (searchLocations && query.trim() && results.length === 0)) && (
+        <p role="status" className="text-sm text-muted">
+          {status || (searching ? "Searching…" : "No places found")}
+        </p>
       )}
-      <Button variant="hint" onClick={locate}>
-        Use current location
-      </Button>
-      {status && (
-        <span role="status" className="text-secondary">
-          {status}
-        </span>
-      )}
-      <Field>
-        <FieldLabel htmlFor={nameId}>Place name</FieldLabel>
-        <Input
-          id={nameId}
-          value={draft.name}
-          onChange={(event) => {
+      <Separator />
+      {!manual && (
+        <Button
+          variant="hint"
+          onClick={() => {
             geolocationRequest.current?.abort();
-            setDraft({ ...draft, name: event.currentTarget.value });
+            setStatus("");
+            setDraft(value ?? { ...emptyLocation, address: query.trim() });
+            setManual(true);
           }}
-        />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor={addressId}>Address</FieldLabel>
-        <Input
-          id={addressId}
-          value={draft.address}
-          onChange={(event) => {
-            geolocationRequest.current?.abort();
-            setDraft({
-              ...draft,
-              address: event.currentTarget.value,
-              coordinates: undefined,
-            });
-          }}
-        />
-      </Field>
-      {locationLabel(draft) && (
-        <a
-          className="text-sm underline"
-          href={locationMapUrl(draft)}
-          target="_blank"
-          rel="noreferrer"
         >
-          Open in maps
-        </a>
+          Enter address manually
+        </Button>
       )}
-      <div className="flex justify-end gap-2">
-        {value && (
+      {manual && (
+        <>
+          <Field>
+            <FieldLabel htmlFor={nameId}>Place name</FieldLabel>
+            <Input
+              id={nameId}
+              value={draft.name}
+              onChange={(event) => {
+                geolocationRequest.current?.abort();
+                setDraft({ ...draft, name: event.currentTarget.value });
+              }}
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor={addressId}>Address</FieldLabel>
+            <Input
+              id={addressId}
+              value={draft.address}
+              onChange={(event) => {
+                geolocationRequest.current?.abort();
+                setDraft({
+                  ...draft,
+                  address: event.currentTarget.value,
+                  coordinates: undefined,
+                });
+              }}
+            />
+          </Field>
+          <Button
+            onClick={() =>
+              onSave({
+                ...draft,
+                name: draft.name.trim(),
+                address: draft.address.trim(),
+              })
+            }
+            disabled={!locationLabel(draft)}
+          >
+            Save place
+          </Button>
+        </>
+      )}
+      {value && (
+        <div className="flex items-center justify-between gap-2">
+          {locationLabel(value) && (
+            <a
+              className="text-sm underline"
+              href={locationMapUrl(value)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open in maps
+            </a>
+          )}
           <Button variant="hint" onClick={() => onSave(null)}>
             Clear
           </Button>
-        )}
-        <Button
-          onClick={() =>
-            onSave({
-              ...draft,
-              name: draft.name.trim(),
-              address: draft.address.trim(),
-            })
-          }
-          disabled={!locationLabel(draft).trim()}
-        >
-          Save place
-        </Button>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

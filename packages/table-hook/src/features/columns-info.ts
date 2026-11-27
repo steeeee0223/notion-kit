@@ -15,6 +15,7 @@ import type {
   InferConfig,
   InferData,
   InferPlugin,
+  RelationConfig,
   UnknownCellPlugin,
 } from "@/plugins";
 import { getFilterOperators } from "@/plugins/utils";
@@ -23,6 +24,10 @@ import type {
   PropertiesResourceAction,
   ResourceChangeFn,
 } from "@/table-contexts";
+import {
+  hasProjectedPropertyValue,
+  projectTableData,
+} from "@/table-contexts/property-data";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -550,7 +555,7 @@ export const ColumnsInfoFeature: TableFeature = {
           ...src,
           ...(src.type === "relation" && {
             config: {
-              ...(src.config as import("@/plugins").RelationConfig),
+              ...(src.config as RelationConfig),
               reciprocalPropertyId: undefined,
             },
           }),
@@ -667,10 +672,21 @@ export const ColumnsInfoFeature: TableFeature = {
       );
       // Update all cells
       const srcPlugin = instance.getColumnPlugin(colId);
+      const columns = instance.atoms.columnsInfo.get();
+      const plugins = instance.atoms.cellPlugins.get();
       instance.setTableData(
-        (prev) =>
-          prev.map((row) => {
-            const cell = row.properties[colId];
+        (prev) => {
+          const projected = hasProjectedPropertyValue(srcPlugin.id)
+            ? projectTableData(
+                prev,
+                columns,
+                plugins,
+                instance.options.propertySources,
+                { propertyId: colId },
+              )
+            : prev;
+          return prev.map((row, index) => {
+            const cell = projected[index]?.properties[colId];
             if (!cell) return row;
             return {
               ...row,
@@ -685,7 +701,8 @@ export const ColumnsInfoFeature: TableFeature = {
                 },
               },
             };
-          }),
+          });
+        },
         (_previous, next): DataResourceAction => ({
           id: actionId,
           type: "data.cell.update",

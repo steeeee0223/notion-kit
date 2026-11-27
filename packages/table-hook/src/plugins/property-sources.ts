@@ -1,7 +1,7 @@
+import type { PropertyReference } from "@/lib/property-reference";
 import type { ColumnDefs, Row } from "@/lib/types";
 
 import type { LocationValue } from "./location";
-import type { PropertyReference } from "./references";
 
 export interface RelatedDatabase {
   id: string;

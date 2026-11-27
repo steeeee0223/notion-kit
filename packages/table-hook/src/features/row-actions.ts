@@ -14,6 +14,7 @@ import type { _TableInstance } from "@/features/types";
 import { createGroupId } from "@/features/utils";
 import type { Cell, Row } from "@/lib/types";
 import { getDefaultCell, insertAt } from "@/lib/utils";
+import type { PersonConfig } from "@/plugins/person";
 import type { TablePropertySources } from "@/plugins/property-sources";
 import { readReferences } from "@/plugins/references";
 import type { RelationConfig } from "@/plugins/relation";
@@ -99,15 +100,32 @@ function normalizeRelation(value: unknown, config: RelationConfig) {
   const references = readReferences(value);
   return config.limit === "one"
     ? references.slice(0, 1)
-    : Array.from(
-        new Map(
+    : [
+        ...new Map(
           references.map((reference) => [reference.id, reference]),
         ).values(),
-      );
+      ];
 }
 
 function getRowPosition(rows: Row[], rowId: string) {
   return rows.findIndex((row) => row.id === rowId);
+}
+
+function preservesGroupOrder(
+  rows: Row[],
+  remaining: Row[],
+  moved: Row,
+  beforeRowId: string | null,
+  belongs: (row: Row) => boolean,
+) {
+  const currentGroup = rows.filter(belongs);
+  const proposedGroup = remaining.filter(belongs);
+  const groupIndex =
+    beforeRowId === null
+      ? proposedGroup.length
+      : getRowPosition(proposedGroup, beforeRowId);
+  proposedGroup.splice(groupIndex, 0, moved);
+  return proposedGroup.every((row, index) => row === currentGroup[index]);
 }
 
 export const RowActionsFeature: TableFeature = {
@@ -119,12 +137,20 @@ export const RowActionsFeature: TableFeature = {
     const scheduleGroupingStateSync = (rows: Row[]) => {
       if (table.atoms.grouping.get().length > 0) {
         queueMicrotask(() => {
+          const grouped = table.getGroupedColumnInfo();
+          if (!grouped) return;
           table._syncGroupingStateFromData(
             projectTableData(
               rows,
               table.atoms.columnsInfo.get(),
               table.atoms.cellPlugins.get(),
               table.options.propertySources,
+              {
+                propertyId: hasProjectedPropertyValue(grouped.type)
+                  ? grouped.id
+                  : undefined,
+                getRowUrl: table.options.getRowUrl,
+              },
             ),
           );
         });
@@ -151,6 +177,32 @@ export const RowActionsFeature: TableFeature = {
       createdBy: table.options.propertySources?.currentActor,
       lastEditedBy: table.options.propertySources?.currentActor,
     });
+    const normalizeCellValue = (colId: string, value: unknown) => {
+      const property = table.getColumnInfo(colId);
+      if (property.type === "relation")
+        return normalizeRelation(value, property.config as RelationConfig);
+      if (
+        property.type === "person" &&
+        (property.config as PersonConfig | undefined)?.limit === "one"
+      )
+        return readReferences(value).slice(0, 1);
+      return value;
+    };
+    const getInitialCell = (colId: string, row: Row) => {
+      const plugin = table.getColumnPlugin(colId);
+      const cell = getDefaultCell(plugin);
+      if (plugin.id === "person" && row.createdBy) {
+        const { config } = table.getColumnInfo(colId);
+        if ((config as PersonConfig | undefined)?.defaultValue === "created-by")
+          cell.value = [row.createdBy];
+      }
+      return cell;
+    };
+    const getWritableCell = (row: Row, colId: string, plugin: CellPlugin) =>
+      row.properties[colId] ??
+      (hasProjectedPropertyValue(plugin.id)
+        ? getDefaultCell(plugin)
+        : undefined);
     /** Cell API */
     table.getCellValues = () =>
       table.getCoreRowModel().rows.map((row) => row.original);
@@ -180,18 +232,13 @@ export const RowActionsFeature: TableFeature = {
     ) => {
       const plugin = table.getColumnPlugin(colId);
       if (plugin.readOnly) return;
-      const config = table.getColumnInfo(colId).config;
       const actionId = v4();
       table.setTableData(
         (prev) => {
           const now = Date.now();
           const next = prev.map((row) => {
             if (row.id !== rowId) return row;
-            const currentCell =
-              row.properties[colId] ??
-              (hasProjectedPropertyValue(plugin.id)
-                ? getDefaultCell(plugin)
-                : undefined);
+            const currentCell = getWritableCell(row, colId, plugin);
             if (!currentCell) return row;
             const data = functionalUpdate(
               updater,
@@ -201,16 +248,10 @@ export const RowActionsFeature: TableFeature = {
               ...row,
               properties: {
                 ...row.properties,
-                [colId]:
-                  plugin.id === "relation"
-                    ? {
-                        ...data,
-                        value: normalizeRelation(
-                          data.value,
-                          config as RelationConfig,
-                        ),
-                      }
-                    : data,
+                [colId]: {
+                  ...data,
+                  value: normalizeCellValue(colId, data.value),
+                },
               },
               ...editMetadata(now),
             };
@@ -243,25 +284,20 @@ export const RowActionsFeature: TableFeature = {
       const plugin = table.getColumnPlugin(colId);
       if (plugin.readOnly) return;
       const rowIdSet = new Set(rowIds);
-      const nextValue =
-        plugin.id === "relation"
-          ? normalizeRelation(
-              value,
-              table.getColumnInfo(colId).config as RelationConfig,
-            )
-          : value;
+      const nextValue = normalizeCellValue(colId, value);
+      const canUpdate = (row: Row) =>
+        rowIdSet.has(row.id) &&
+        (row.properties[colId] !== undefined ||
+          hasProjectedPropertyValue(plugin.id));
       const actionId = v4();
       table.setTableData(
         (previous) => {
-          const targetRows = previous.filter(
-            (row) => rowIdSet.has(row.id) && row.properties[colId],
-          );
-          if (targetRows.length === 0) return previous;
+          if (!previous.some(canUpdate)) return previous;
 
           const now = Date.now();
           const next = previous.map((row) => {
-            const currentCell = row.properties[colId];
-            if (!rowIdSet.has(row.id) || !currentCell) return row;
+            if (!canUpdate(row)) return row;
+            const currentCell = row.properties[colId] ?? getDefaultCell(plugin);
 
             return {
               ...row,
@@ -281,9 +317,7 @@ export const RowActionsFeature: TableFeature = {
           id: actionId,
           type: "data.cell.update",
           payload: {
-            rowIds: previous.flatMap((row) =>
-              rowIdSet.has(row.id) && row.properties[colId] ? [row.id] : [],
-            ),
+            rowIds: previous.flatMap((row) => (canUpdate(row) ? [row.id] : [])),
             propertyId: colId,
           },
         }),
@@ -303,13 +337,16 @@ export const RowActionsFeature: TableFeature = {
           };
           table.atoms.columnOrder.get().forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
-            const cell = getDefaultCell(plugin);
+            const cell = getInitialCell(colId, row);
             if (
               !plugin.readOnly &&
               payload?.initialValues &&
               Object.hasOwn(payload.initialValues, colId)
             ) {
-              cell.value = payload.initialValues[colId];
+              cell.value = normalizeCellValue(
+                colId,
+                payload.initialValues[colId],
+              );
             }
             row.properties[colId] = cell;
           });
@@ -357,6 +394,7 @@ export const RowActionsFeature: TableFeature = {
             {
               ...src,
               id: rowId,
+              sequence: undefined,
               properties,
               ...creationMetadata(now),
             },
@@ -399,6 +437,7 @@ export const RowActionsFeature: TableFeature = {
               {
                 ...row,
                 id: v4(),
+                sequence: undefined,
                 properties,
                 ...creationMetadata(now),
               },
@@ -482,17 +521,22 @@ export const RowActionsFeature: TableFeature = {
       row: Row,
       groupId: string,
       grouping = getRowGrouping(),
+      displayedRow = row,
     ) => {
       if (table.getTableGlobalState().locked || !grouping) return null;
       const state = table.atoms.groupingState.get();
       const destination = state.groupValues[groupId];
       if (!destination || state.groupVisibility[groupId] === false) return null;
       const { info, plugin, method, context, classify } = grouping;
-      if (classify(row) === groupId) return row;
+      if (classify(displayedRow) === groupId) return row;
       if (!method.getDropValue) return null;
       const cell = row.properties[info.id];
-      const data: unknown = cell ? cell.value : plugin.default.data;
-      const value = method.getDropValue(data, destination.value, context);
+      const data: unknown =
+        displayedRow.properties[info.id]?.value ?? plugin.default.data;
+      const value = normalizeCellValue(
+        info.id,
+        method.getDropValue(data, destination.value, context),
+      );
       const next = {
         ...row,
         properties: {
@@ -517,15 +561,33 @@ export const RowActionsFeature: TableFeature = {
             return rows;
           const source = rows.find((row) => row.id === rowId);
           if (!source || !table.getRowModel().rowsById[rowId]) return rows;
-          const grouping = getRowGrouping();
+          const grouping = groupId === undefined ? null : getRowGrouping();
+          const displayed =
+            grouping && hasProjectedPropertyValue(grouping.plugin.id)
+              ? new Map(
+                  projectTableData(
+                    rows,
+                    table.atoms.columnsInfo.get(),
+                    table.atoms.cellPlugins.get(),
+                    table.options.propertySources,
+                    { propertyId: grouping.info.id },
+                  ).map((row) => [row.id, row]),
+                )
+              : undefined;
           const moved =
             groupId === undefined
               ? source
-              : getDestinationRow(source, groupId, grouping);
+              : getDestinationRow(
+                  source,
+                  groupId,
+                  grouping,
+                  displayed?.get(rowId),
+                );
           if (!moved) return rows;
           const remaining = rows.filter((row) => row.id !== rowId);
           const belongs = (row: Row) =>
-            groupId === undefined || grouping?.classify(row) === groupId;
+            groupId === undefined ||
+            grouping?.classify(displayed?.get(row.id) ?? row) === groupId;
           let index = remaining.length;
           if (beforeRowId !== null) {
             const anchor = remaining.find((row) => row.id === beforeRowId);
@@ -537,27 +599,18 @@ export const RowActionsFeature: TableFeature = {
               return rows;
             index = remaining.indexOf(anchor);
           } else if (groupId !== undefined) {
-            let last = -1;
-            remaining.forEach((row, position) => {
-              if (belongs(row)) last = position;
-            });
-            if (last >= 0) index = last + 1;
+            index = remaining.reduce(
+              (insertion, row, position) =>
+                belongs(row) ? position + 1 : insertion,
+              index,
+            );
           }
-          if (moved === source && groupId !== undefined) {
-            const currentGroup = rows.filter(belongs);
-            const proposedGroup = remaining.filter(belongs);
-            const groupIndex =
-              beforeRowId === null
-                ? proposedGroup.length
-                : proposedGroup.findIndex((row) => row.id === beforeRowId);
-            proposedGroup.splice(groupIndex, 0, moved);
-            if (
-              proposedGroup.every(
-                (row, position) => row === currentGroup[position],
-              )
-            )
-              return rows;
-          }
+          if (
+            moved === source &&
+            groupId !== undefined &&
+            preservesGroupOrder(rows, remaining, moved, beforeRowId, belongs)
+          )
+            return rows;
           const next = insertAt(remaining, moved, index);
           return moved === source &&
             next.every((row, position) => row === rows[position])
@@ -647,11 +700,14 @@ export const RowActionsFeature: TableFeature = {
               colId === grouping[0] && !plugin.readOnly
                 ? {
                     id: v4(),
-                    value: structuredClone<unknown>(
-                      groupingState.groupValues[groupId]?.original,
+                    value: normalizeCellValue(
+                      colId,
+                      structuredClone<unknown>(
+                        groupingState.groupValues[groupId]?.original,
+                      ),
                     ),
                   }
-                : getDefaultCell(plugin);
+                : getInitialCell(colId, row);
           });
           const next = [...v, row];
           scheduleGroupingStateSync(next);

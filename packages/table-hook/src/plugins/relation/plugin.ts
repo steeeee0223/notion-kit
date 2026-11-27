@@ -1,4 +1,5 @@
 import {
+  firstReferenceText,
   referenceFiltering,
   referenceMethods,
   referenceText,
@@ -25,16 +26,14 @@ export function relation(): RelationPlugin {
     id: "relation",
     default: { data: [], config: { databaseId: "", limit: "unlimited" } },
     fromValue: () => [],
-    toValue: (data) => referenceText(data.slice(0, 1)),
+    toValue: firstReferenceText,
     toTextValue: referenceText,
     isEmpty,
     ...referenceMethods<RelationConfig>(),
     counting: genericCounting(isEmpty),
     filtering: referenceFiltering<RelationConfig>(
-      ({ config, getRelatedRows }) => {
-        const { databaseId } = config as RelationConfig;
-        return getRelatedRows?.(databaseId) ?? [];
-      },
+      ({ config, getRelatedRows }) =>
+        getRelatedRows?.((config as RelationConfig).databaseId) ?? [],
       false,
     ),
   };

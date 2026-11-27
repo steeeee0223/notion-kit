@@ -37,6 +37,8 @@ import {
   resolveSortingAccessorValue,
   resolveSortingFn,
 } from "@/methods";
+import type { TablePropertySources } from "@/plugins/property-sources";
+import { rollupListOperandSchema, type RollupConfig } from "@/plugins/rollup";
 import { getFilterOperators } from "@/plugins/utils";
 import type {
   DataResourceAction,
@@ -50,7 +52,9 @@ import { defaultColumn } from "@/table-contexts/column";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 import {
   assignRowSequences,
+  getLocalDatabase,
   getLocalDatabaseId,
+  getRollupTarget,
   nextRowSequence,
   projectTableData,
 } from "@/table-contexts/property-data";
@@ -131,21 +135,37 @@ function hasRelativeDateFilter(
   filters: TableViewState["filters"],
   properties: Record<string, ColumnInfo>,
   plugins: Record<string, CellPlugin>,
+  sources?: TablePropertySources,
 ) {
   if (!validateTableFilterState(filters) || filters === null) return false;
+  const local = getLocalDatabase(sources, Object.values(properties), []);
 
   const hasRelativeRule = (group: FilterGroup): boolean =>
     group.children.some((child) => {
       if (child.kind === "group") return hasRelativeRule(child);
       const property = properties[child.propertyId];
-      const operator = property
-        ? getFilterOperators(plugins[property.type], property.config).find(
-            ({ id }) => id === child.operator,
-          )
-        : undefined;
-      return (
-        operator?.operand.kind === "relative-date" ||
-        operator?.operand.kind === "rollup-list"
+      if (!property || property.isDeleted) return false;
+      const operator = getFilterOperators(
+        plugins[property.type],
+        property.config,
+      ).find(({ id }) => id === child.operator);
+      if (operator?.operand.kind === "relative-date") return true;
+      if (operator?.operand.kind !== "rollup-list") return false;
+      const operand = rollupListOperandSchema.safeParse(child.value);
+      if (!operand.success) return false;
+      const target = getRollupTarget(
+        property.config as RollupConfig,
+        local,
+        sources,
+      );
+      if (!target) return false;
+      const plugin = plugins[target.property.type];
+      return getFilterOperators(
+        plugin,
+        target.property.config ?? plugin?.default.config,
+      ).some(
+        ({ id, operand: metadata }) =>
+          id === operand.data.operator && metadata.kind === "relative-date",
       );
     });
 
@@ -232,7 +252,7 @@ function useResourceState<TResource, TAction>({
     [controlled, onChange],
   );
 
-  return [resource, setResource] as const;
+  return [resource, setResource, pendingResourceRef] as const;
 }
 
 export function useTableView<TPlugins extends CellPlugin[]>(
@@ -270,18 +290,16 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   );
 
   const nextSequenceRef = useRef(1);
-  const [propertiesResource, setPropertiesResource] = useResourceState<
-    ColumnDefs<TPlugins>,
-    PropertiesResourceAction
-  >({
-    name: "properties",
-    controlled: isPropertiesControlled,
-    value: isPropertiesControlled
-      ? options.properties
-      : initialTable.properties,
-    defaultValue: options.defaultProperties ?? initialTable.properties,
-    onChange: onPropertiesChange,
-  });
+  const [propertiesResource, setPropertiesResource, pendingPropertiesRef] =
+    useResourceState<ColumnDefs<TPlugins>, PropertiesResourceAction>({
+      name: "properties",
+      controlled: isPropertiesControlled,
+      value: isPropertiesControlled
+        ? options.properties
+        : initialTable.properties,
+      defaultValue: options.defaultProperties ?? initialTable.properties,
+      onChange: onPropertiesChange,
+    });
   const [tableGlobalState, setViewResource] = useResourceState<
     TableViewState,
     ViewResourceAction
@@ -336,12 +354,22 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         columnEntity.items,
         plugins.items,
         propertySources,
+        { getRowUrl },
       ),
-    [dataResource, columnEntity.items, plugins.items, propertySources],
+    [
+      dataResource,
+      columnEntity.items,
+      plugins.items,
+      propertySources,
+      getRowUrl,
+    ],
   );
-  const hasIdProperty = Object.values(columnEntity.items).some(
-    ({ type }) => type === "id",
-  );
+  useLayoutEffect(() => {
+    nextSequenceRef.current = nextRowSequence(
+      dataResource,
+      nextSequenceRef.current,
+    );
+  }, [dataResource]);
   const handleDataChange = useCallback<
     ResourceChangeFn<Row<TPlugins>[], DataResourceAction>
   >(
@@ -359,7 +387,11 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         let next = selfRelations.length
           ? applyRelationChanges(proposed, selfRelations)
           : proposed;
-        if (hasIdProperty) {
+        if (
+          pendingPropertiesRef.current.some(
+            ({ type, isDeleted }) => type === "id" && !isDeleted,
+          )
+        ) {
           const prior = assignRowSequences(
             previous,
             1,
@@ -370,7 +402,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           );
           next = next.map((row) => {
             const sequence = sequences.get(row.id);
-            return { ...row, sequence };
+            return row.sequence === sequence ? row : { ...row, sequence };
           });
           const minimum = nextRowSequence(prior, nextSequenceRef.current);
           next = assignRowSequences(
@@ -382,7 +414,12 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         }
         return next;
       }, action),
-    [columnEntity.items, hasIdProperty, propertySources, setDataResource],
+    [
+      columnEntity.items,
+      pendingPropertiesRef,
+      propertySources,
+      setDataResource,
+    ],
   );
   const columns = useMemo(
     () =>
@@ -459,6 +496,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     tableGlobalState.filters,
     columnEntity.items,
     plugins.items,
+    propertySources,
   );
 
   useEffect(() => {

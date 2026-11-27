@@ -7,7 +7,7 @@ import type {
 } from "@notion-kit/table-hook/plugins";
 import type { IconData } from "@notion-kit/ui/icon-block";
 
-import type { PropertyReference } from "@/plugins/references";
+import type { PropertyReference } from "./property-reference";
 
 interface PropertyBase {
   id: string;

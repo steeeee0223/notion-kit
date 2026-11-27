@@ -15,6 +15,7 @@ import {
   getFilterOperators,
   getRelatedDatabase,
   getRelatedRowOptions,
+  getRollupTarget,
   updateFilterNode,
 } from "@notion-kit/table-hook";
 import type {
@@ -28,7 +29,6 @@ import type {
   DateConfig,
   FilterOperandMetadata,
   PropertyReference,
-  RelationConfig,
   RollupConfig,
   SelectConfig,
 } from "@notion-kit/table-hook/plugins";
@@ -299,23 +299,10 @@ function RollupListOperand({
   const { table, local, propertySources } = useRelatedDatabases();
   const update = useFilterRuleUpdate(root, rule.id);
   const config = table.getColumnInfo(rule.propertyId).config as RollupConfig;
-  const relation = local.properties.find(
-    ({ id, type, isDeleted }) =>
-      id === config.relationPropertyId && type === "relation" && !isDeleted,
-  );
-  const database =
-    relation &&
-    getRelatedDatabase(
-      (relation.config as RelationConfig).databaseId,
-      local,
-      propertySources,
-    );
-  const target = database?.properties.find(
-    ({ id, isDeleted }) => id === config.targetPropertyId && !isDeleted,
-  );
+  const target = getRollupTarget(config, local, propertySources)?.property;
   const plugin = target && table.atoms.cellPlugins.get()[target.type];
   const property = useMemo(() => {
-    if (!target || target.type === "rollup") return undefined;
+    if (!target) return undefined;
     const config: unknown = target.config ?? plugin?.default.config;
     return { ...target, config };
   }, [target, plugin]);

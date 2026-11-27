@@ -14,8 +14,13 @@ import {
 import type { ColumnInfo, Row } from "@/lib/types";
 import type { CountingMethodGroup } from "@/methods";
 
-import { date, type DateConfig, type DateData } from "../date";
-import { formatDateRangeDuration } from "../date/utils";
+import {
+  date,
+  formatDateRangeDuration,
+  toDateString,
+  type DateConfig,
+  type DateData,
+} from "../date";
 import { formatNumber, number, type NumberConfig } from "../number";
 import type { PropertyReference } from "../references";
 import type { CellPlugin, FilterOperatorDescriptor } from "../types";
@@ -74,7 +79,7 @@ export const rollupListOperandSchema = z.object({
 
 export type RollupValue =
   | { kind: "number"; value: number; text: string }
-  | { kind: "date"; value: DateData; text: string }
+  | { kind: "date"; value: DateData; text: string; config: DateConfig }
   | {
       kind: "list";
       value: RollupListEntry[];
@@ -122,15 +127,40 @@ export function getRollupResultKind(calculation: RollupCalculation) {
   return "number";
 }
 
-const datePointSchema = z.object({
-  value: z.number(),
-  includeTime: z.boolean().optional(),
-});
-const dateDataSchema = z.object({
-  start: z.number().optional(),
-  end: z.number().optional(),
-  includeTime: z.boolean().optional(),
-});
+const defaultNumberConfig = number().default.config;
+
+function formatRollupNumber(
+  value: number,
+  { format, round }: Pick<RollupConfig, "format" | "round">,
+) {
+  return formatNumber(value, { ...defaultNumberConfig, format, round });
+}
+
+function calculateDateRollup(
+  calculation: keyof typeof dateCalculations,
+  property: ColumnInfo,
+  plugin: CellPlugin,
+  filled: { row: Row; data: unknown }[],
+): RollupValue {
+  const result = dateCalculations[calculation].fn.aggregate({
+    rows: filled,
+    getValue: ({ row, data }) =>
+      property.type === "date"
+        ? data
+        : { start: plugin.toValue(data, row), includeTime: true },
+  });
+  if (result === "") return null;
+  const value =
+    "value" in result
+      ? { start: result.value, includeTime: result.includeTime }
+      : { ...result, endDate: true };
+  const config = property.config as DateConfig;
+  const text =
+    calculation === "date-range"
+      ? formatDateRangeDuration(value, config)
+      : toDateString(value, config);
+  return { kind: "date", value, text, config };
+}
 
 export function calculateRollup(
   config: RollupConfig,
@@ -141,23 +171,22 @@ export function calculateRollup(
   const values = rows.map((row) => {
     const data: unknown =
       row.properties[property.id]?.value ?? plugin.default.data;
-    const empty = plugin.isEmpty(data);
-    const primitive = plugin.toValue(data, row);
-    const text = empty ? "" : plugin.toTextValue(data, row);
-    return { row, data, empty, primitive, text };
+    return { row, data, empty: plugin.isEmpty(data) };
   });
   const filled = values.filter(({ empty }) => !empty);
-  const entries = filled.flatMap(({ data, row, text }) => {
-    if (!Array.isArray(data)) return [{ data, row, text }];
-    return data.map((item: unknown) => {
-      const value = [item];
-      return { data: value, row, text: plugin.toTextValue(value, row) };
+  const getEntries = () =>
+    filled.flatMap(({ data, row }) => {
+      if (!Array.isArray(data))
+        return [{ data, row, text: plugin.toTextValue(data, row) }];
+      return data.map((item: unknown) => {
+        const value = [item];
+        return { data: value, row, text: plugin.toTextValue(value, row) };
+      });
     });
-  });
   const unique = () =>
     Array.from(
       new Map(
-        entries.map((entry) => {
+        getEntries().map((entry) => {
           const reference =
             Array.isArray(entry.data) &&
             (entry.data[0] as PropertyReference | undefined);
@@ -171,7 +200,7 @@ export function calculateRollup(
     );
   const { calculation } = config;
   if (calculation === "original" || calculation === "unique") {
-    const value = calculation === "unique" ? unique() : entries;
+    const value = calculation === "unique" ? unique() : getEntries();
     return {
       kind: "list",
       value,
@@ -179,41 +208,16 @@ export function calculateRollup(
       property,
     };
   }
-  if (isRollupDateType(property.type) && calculation in dateCalculations) {
-    const method =
-      dateCalculations[calculation as keyof typeof dateCalculations];
-    const relatedDates = new Map(
-      values.flatMap(({ row, data, primitive }) => {
-        if (typeof primitive !== "number") return [];
-        const dateData = dateDataSchema.safeParse(data);
-        return [
-          [
-            row,
-            dateData.success
-              ? dateData.data
-              : { start: primitive, includeTime: true },
-          ] as const,
-        ];
-      }),
+  if (
+    isRollupDateType(property.type) &&
+    Object.hasOwn(dateCalculations, calculation)
+  ) {
+    return calculateDateRollup(
+      calculation as keyof typeof dateCalculations,
+      property,
+      plugin,
+      filled,
     );
-    const result = method.fn.aggregate({
-      rows: Array.from(relatedDates.values()),
-      getValue: (value) => value,
-    });
-    const point = datePointSchema.safeParse(result);
-    const range = dateDataSchema.safeParse(result);
-    const value = point.success
-      ? { start: point.data.value, includeTime: point.data.includeTime }
-      : range.success
-        ? { ...range.data, endDate: true }
-        : null;
-    const first = values[0];
-    if (!first || value?.start === undefined) return null;
-    const text =
-      calculation === "date-range"
-        ? formatDateRangeDuration(value, property.config as DateConfig)
-        : date().toTextValue(value, first.row);
-    return { kind: "date", value, text };
   }
   const emptyCount = values.length - filled.length;
   let value: number;
@@ -222,7 +226,10 @@ export function calculateRollup(
       value = values.length;
       break;
     case "count-values":
-      value = entries.length;
+      value = filled.reduce(
+        (count, { data }) => count + (Array.isArray(data) ? data.length : 1),
+        0,
+      );
       break;
     case "count-not-empty":
       value = filled.length;
@@ -247,34 +254,19 @@ export function calculateRollup(
         return null;
       const method =
         numericCalculations[calculation as keyof typeof numericCalculations];
-      const numbers = new Map(
-        filled.map(({ row, primitive }) => [row, primitive]),
-      );
       const aggregate = method.fn.aggregate({
-        rows: Array.from(numbers.values()),
-        getValue: (value) => value,
+        rows: filled,
+        getValue: ({ row, data }) => plugin.toValue(data, row),
       });
-      if (
-        typeof aggregate !== "number" &&
-        (typeof aggregate !== "string" || !aggregate)
-      )
-        return null;
-      value = Number(aggregate);
+      if (aggregate === "") return null;
+      value = aggregate;
     }
   }
   if (!Number.isFinite(value)) return null;
-  const format =
-    calculation.startsWith("percent-") && config.format === "number"
-      ? "percent"
-      : config.format;
   return {
     kind: "number",
     value,
-    text: formatNumber(value, {
-      ...number().default.config,
-      format,
-      round: config.round,
-    }),
+    text: formatRollupNumber(value, config),
   };
 }
 
@@ -310,7 +302,7 @@ function rollupOperators(): FilterOperatorDescriptor<
           operator.matches(
             data?.kind === "date" ? data.value : {},
             row,
-            dates.default.config,
+            data?.kind === "date" ? data.config : dates.default.config,
             operand,
             context,
           ),
@@ -368,7 +360,6 @@ function isRollupEmpty(data: RollupValue) {
 }
 
 function rollupCounting(): CountingMethodGroup[] {
-  const base = number();
   return [
     ...genericCounting(isRollupEmpty),
     {
@@ -387,13 +378,10 @@ function rollupCounting(): CountingMethodGroup[] {
           },
           formatResult: (result, { table, colId }) => {
             if (typeof result !== "number") return "";
-            const { format, round } = table.getColumnInfo(colId)
-              .config as RollupConfig;
-            return formatNumber(result, {
-              ...base.default.config,
-              format,
-              round,
-            });
+            return formatRollupNumber(
+              result,
+              table.getColumnInfo(colId).config as RollupConfig,
+            );
           },
         }),
       ),

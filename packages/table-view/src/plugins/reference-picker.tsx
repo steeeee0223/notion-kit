@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 
-import type { PropertyReference } from "@notion-kit/table-hook/plugins";
+import {
+  referenceLabel,
+  type PropertyReference,
+} from "@notion-kit/table-hook/plugins";
 import {
   Avatar,
   AvatarFallback,
@@ -14,6 +17,7 @@ import {
   ComboboxEmpty,
   ComboboxGroup,
   ComboboxItem,
+  ComboboxLabel,
   ComboboxList,
   ComboboxValue,
 } from "@notion-kit/ui/primitives";
@@ -27,7 +31,7 @@ export function ReferenceAvatar({
     <Avatar className="size-5">
       {reference.avatarUrl && <AvatarImage src={reference.avatarUrl} alt="" />}
       <AvatarFallback>
-        {reference.name.slice(0, 1).toUpperCase()}
+        {referenceLabel(reference).slice(0, 1).toUpperCase()}
       </AvatarFallback>
     </Avatar>
   );
@@ -40,6 +44,7 @@ export function ReferencePicker({
   onChange,
   single,
   avatars,
+  heading,
 }: {
   value: PropertyReference[];
   options: readonly PropertyReference[];
@@ -47,6 +52,7 @@ export function ReferencePicker({
   onChange: (value: PropertyReference[]) => void;
   single?: boolean;
   avatars?: boolean;
+  heading?: string;
 }) {
   const choices = useMemo(
     () => new Map([...value, ...options].map((option) => [option.id, option])),
@@ -56,7 +62,7 @@ export function ReferencePicker({
     () =>
       Combobox.createItems([...choices.values()], {
         getValue: ({ id }) => id,
-        getLabel: ({ name }) => name,
+        getLabel: referenceLabel,
       }),
     [choices],
   );
@@ -76,15 +82,25 @@ export function ReferencePicker({
         )
       }
     >
-      <ComboboxChips variant="inline">
+      <ComboboxChips variant="inline" hideClearButton={avatars}>
         <ComboboxValue>
           {(selected: string[]) => (
             <>
-              {selected.map((id) => (
-                <ComboboxChip key={id}>
-                  {choices.get(id)?.name ?? id}
-                </ComboboxChip>
-              ))}
+              {selected.map((id) => {
+                const reference = choices.get(id);
+                return (
+                  <ComboboxChip key={id}>
+                    <span className="flex items-center gap-1">
+                      {avatars && reference && (
+                        <ReferenceAvatar reference={reference} />
+                      )}
+                      <span className="truncate">
+                        {reference ? referenceLabel(reference) : id}
+                      </span>
+                    </span>
+                  </ComboboxChip>
+                );
+              })}
               <ComboboxChipsInput aria-label={label} placeholder={label} />
             </>
           )}
@@ -94,12 +110,13 @@ export function ReferencePicker({
         <ComboboxEmpty>No matches.</ComboboxEmpty>
         <ComboboxList>
           <ComboboxGroup>
+            {heading && <ComboboxLabel title={heading} />}
             <ComboboxCollection>
               {(item: PropertyReference) => (
                 <ComboboxItem
                   key={item.id}
                   value={item.id}
-                  label={item.name || item.id}
+                  label={referenceLabel(item)}
                   icon={
                     avatars ? <ReferenceAvatar reference={item} /> : undefined
                   }

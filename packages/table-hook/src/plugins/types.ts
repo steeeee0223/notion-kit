@@ -1,3 +1,4 @@
+import type { PropertyReference } from "@/lib/property-reference";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type {
   CountingMethodGroup,
@@ -6,7 +7,6 @@ import type {
 } from "@/methods";
 
 import type { TablePropertySources } from "./property-sources";
-import type { PropertyReference } from "./references";
 
 export type CompareFn<T> = (a: T, b: T) => number;
 export type ComparableValue = string | number | boolean | null;

@@ -34,6 +34,7 @@ export function PropertyCell({
   children?: ReactNode;
   renderEditor?: (close: () => void) => ReactNode;
 }) {
+  const isEmpty = text.trim().length === 0;
   const copy = getCopyClasses("text");
   const compact = cell.surface === "list" || cell.surface === "board";
   return (
@@ -41,17 +42,17 @@ export function PropertyCell({
       compactClassName={getCompactWidthClass("text")}
       copyButtonClassName={copy.copyHoverClassName}
       copyClassName={copy.copyGroupClassName}
-      copyValue={!compact && text ? text : undefined}
+      copyValue={!compact && !isEmpty ? text : undefined}
       disabled={cell.disabled}
       emptyContent={
-        cell.surface === "row-view" && !text ? (
+        cell.surface === "row-view" && isEmpty ? (
           <span className="text-muted">Empty</span>
         ) : undefined
       }
       hideWhenEmpty={compact}
-      isEmpty={!text}
+      isEmpty={isEmpty}
       popover={{ align: "start", side: "bottom", className: "w-72 p-2" }}
-      renderEditor={cell.disabled ? undefined : renderEditor}
+      renderEditor={renderEditor}
       surface={cell.surface}
       triggerClassName={getCellTriggerClass({
         kind: "text",

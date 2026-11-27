@@ -95,5 +95,6 @@ export {
   getLocalDatabase,
   getRelatedDatabase,
   getRelatedRowOptions,
+  getRollupTarget,
 } from "@/table-contexts/property-data";
 export { applyRelationChanges } from "@/table-contexts/relation-sync";

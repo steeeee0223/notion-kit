@@ -2,7 +2,6 @@ import { getRelatedDatabase } from "@notion-kit/table-hook";
 import {
   getRollupCalculations,
   getRollupResultKind,
-  type NumberConfig,
   type RelationConfig,
   type RollupCalculation,
   type RollupConfig,
@@ -17,6 +16,8 @@ import {
 
 import { ReadOnlyValue } from "@/edit-log/read-only-value";
 
+import { numberFormatOptions } from "../number/number-config-menu/format-menu";
+import { numberRoundingOptions } from "../number/number-config-menu/rounding-menu";
 import { PropertyCell, propertyMetadata } from "../property-cell";
 import { PropertyConfigSelect } from "../property-config-select";
 import type { TableUiPlugin } from "../registry";
@@ -27,20 +28,6 @@ import {
   type ConfigMenuRendererProps,
 } from "../renderers";
 import { DefaultGroupingValue } from "../utils";
-
-const formats: { value: NumberConfig["format"]; label: string }[] = [
-  { value: "number", label: "Number" },
-  { value: "number_with_commas", label: "Number with commas" },
-  { value: "percent", label: "Percent" },
-  { value: "currency", label: "Currency" },
-];
-const rounding: { value: NumberConfig["round"]; label: string }[] = [
-  { value: "default", label: "Default" },
-  ...(["0", "1", "2", "3", "4", "5"] as const).map((value) => ({
-    value,
-    label: value,
-  })),
-];
 
 function RollupSettings({
   config,
@@ -111,13 +98,13 @@ function RollupSettings({
           <PropertyConfigSelect
             label="Number format"
             value={config.format}
-            items={formats}
+            items={numberFormatOptions}
             onChange={(format) => onChange({ ...config, format })}
           />
           <PropertyConfigSelect
             label="Decimal places"
             value={config.round}
-            items={rounding}
+            items={numberRoundingOptions}
             onChange={(round) => onChange({ ...config, round })}
           />
         </>

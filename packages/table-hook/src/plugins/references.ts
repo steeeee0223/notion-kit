@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { groupByTextAlphabetical, groupByTextExact } from "@/fns";
+import type { PropertyReference } from "@/lib/property-reference";
 import type { Row } from "@/lib/types";
 import type { GroupingMethod } from "@/methods";
 
@@ -11,12 +12,7 @@ import type {
 } from "./types";
 import { textMethodCapabilities } from "./utils";
 
-export interface PropertyReference {
-  id: string;
-  name: string;
-  avatarUrl?: string;
-  href?: string;
-}
+export type { PropertyReference } from "@/lib/property-reference";
 
 const referenceSchema = z.array(
   z.object({
@@ -33,13 +29,20 @@ export function readReferences(value: unknown): PropertyReference[] {
 }
 
 export function referenceText(data: readonly PropertyReference[] = []) {
-  return data.map(({ id, name }) => name || id).join(", ");
+  return data.map(referenceLabel).join(", ");
+}
+
+export function referenceLabel({ id, name }: PropertyReference) {
+  return name || id;
+}
+
+export function firstReferenceText(data: readonly PropertyReference[]) {
+  const first = data[0];
+  return first ? referenceLabel(first) : "";
 }
 
 export function referenceMethods<Config>(editable = true) {
   const { sorting, grouping } = textMethodCapabilities();
-  const getName = (data: PropertyReference[]) =>
-    referenceText(data.slice(0, 1));
   const getDropValue: GroupingMethod<
     PropertyReference[],
     Config
@@ -50,7 +53,7 @@ export function referenceMethods<Config>(editable = true) {
       .rows.flatMap((row) =>
         readReferences(row.original.properties[colId]?.value),
       )
-      .find((reference) => referenceText([reference]) === value);
+      .find((reference) => referenceLabel(reference) === value);
     if (!match) return data;
     return [match, ...data.filter(({ id }) => id !== match.id)];
   };
@@ -59,7 +62,7 @@ export function referenceMethods<Config>(editable = true) {
       ...sorting,
       methods: sorting.methods.map((method) => ({
         ...method,
-        toComparable: getName,
+        toComparable: firstReferenceText,
       })),
     },
     grouping: {
@@ -69,14 +72,14 @@ export function referenceMethods<Config>(editable = true) {
           id: "exact",
           name: "Exact",
           function: (data: PropertyReference[]) =>
-            groupByTextExact(getName(data)),
+            groupByTextExact(firstReferenceText(data)),
           ...(editable && { getDropValue }),
         },
         {
           id: "alphabetical",
           name: "Alphabetical",
           function: (data: PropertyReference[]) =>
-            groupByTextAlphabetical(getName(data)),
+            groupByTextAlphabetical(firstReferenceText(data)),
         },
       ],
     },
