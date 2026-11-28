@@ -1410,8 +1410,8 @@ importers:
   packages/i18n:
     dependencies:
       i18next:
-        specifier: 27.1.5
-        version: 27.1.5(typescript@6.0.3)
+        specifier: 27.2.10
+        version: 27.2.10(typescript@6.0.3)
       react:
         specifier: catalog:react19
         version: 19.3.1
@@ -1420,7 +1420,7 @@ importers:
         version: 19.3.1(react@19.3.1)
       react-i18next:
         specifier: 18.0.2
-        version: 18.0.2(@types/react@19.3.3)(i18next@27.1.5(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3)
+        version: 18.0.2(@types/react@19.3.3)(i18next@27.2.10(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3)
     devDependencies:
       '@notion-kit/config':
         specifier: workspace:*
@@ -8142,8 +8142,8 @@ packages:
     resolution: {integrity: sha512-1SwWSlbgpMx/AyWYJvPrg2ns1CzXsaM0olmqfDSm2fIzwbChdkxeaiAXw0xhdNPuo/v8nuwxVTLfpf8NxrdlNw==}
     hasBin: true
 
-  i18next@27.1.5:
-    resolution: {integrity: sha512-KLrH2SWYWiI8Rx+ZbJ4+fdl5Ny2i8V9bJ6TkJ5YFrSyHgeUIGxoueQTZaafcHZcr1ENFqBicpu7ofr3SCSYDgA==}
+  i18next@27.2.10:
+    resolution: {integrity: sha512-v2hQPOZ4yvfhK5CNyXevVjneTX85rDxgTKSV96tftmp89yrF1MEFIDV0i6jYKEnzR3lnWDe62HktDFy6624/UQ==}
     engines: {node: '>=22'}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
@@ -16280,7 +16280,7 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  i18next@27.1.5(typescript@6.0.3):
+  i18next@27.2.10(typescript@6.0.3):
     optionalDependencies:
       typescript: 6.0.3
 
@@ -17937,10 +17937,10 @@ snapshots:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
 
-  react-i18next@18.0.2(@types/react@19.3.3)(i18next@27.1.5(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3):
+  react-i18next@18.0.2(@types/react@19.3.3)(i18next@27.2.10(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3):
     dependencies:
       html-parse-stringify: 4.0.1
-      i18next: 27.1.5(typescript@6.0.3)
+      i18next: 27.2.10(typescript@6.0.3)
       react: 19.3.1
     optionalDependencies:
       '@types/react': 19.3.3
