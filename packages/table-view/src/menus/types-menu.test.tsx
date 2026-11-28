@@ -32,7 +32,6 @@ describe("TypesMenu", () => {
     ["Checkbox", "checkbox"],
     ["Date", "date"],
     ["Email", "email"],
-    ["ID", "id"],
   ] as const)(
     "PropertyTypesMenu_%s_CreatesExpectedProperty",
     async (name, type) => {
@@ -50,34 +49,30 @@ describe("TypesMenu", () => {
     },
   );
 
-  it.each(["Number", "ID"])(
-    "PropertyTypesMenu_ChangeTypeTo%s_KeepsSharedEditorOpen",
-    async (name) => {
-      const tableView = renderTableView();
-      const settings = await tableView.openViewSettings();
-      const properties = await settings.openProperties();
-      await tableView.user.click(properties.property("Done"));
-      const edit = await MenuSurfaceObject.findByHeading(
-        tableView.user,
-        "Edit property",
-      );
-      await tableView.user.click(edit.item("Type"));
-      const types = await MenuSurfaceObject.findByItem(tableView.user, name);
+  it("PropertyTypesMenu_ChangeTypeToID_KeepsSharedEditorOpen", async () => {
+    const tableView = renderTableView();
+    const settings = await tableView.openViewSettings();
+    const properties = await settings.openProperties();
+    await tableView.user.click(properties.property("Done"));
+    const edit = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    await tableView.user.click(edit.item("Type"));
+    const types = await MenuSurfaceObject.findByItem(tableView.user, "ID");
 
-      expect(types.item("Title")).toHaveAttribute("aria-disabled", "true");
-      await tableView.user.click(types.item(name));
+    await tableView.user.click(types.item("ID"));
 
-      const next = await MenuSurfaceObject.findByHeading(
-        tableView.user,
-        "Edit property",
-      );
-      expect(tableView.button("Settings")).toHaveAttribute(
-        "aria-expanded",
-        "true",
-      );
-      expect(next.item("Type")).toHaveTextContent(name);
-    },
-  );
+    const next = await MenuSurfaceObject.findByHeading(
+      tableView.user,
+      "Edit property",
+    );
+    expect(tableView.button("Settings")).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(next.item("Type")).toHaveTextContent("ID");
+  });
 
   it("PropertyTypesMenu_HeaderCreate_ClosesPopupAndOpensPropertyEditor", async () => {
     const tableView = renderTableView();

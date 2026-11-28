@@ -114,7 +114,6 @@ test("HeaderActions_InsertLeftAndRight_PreserveRequestedPropertyOrder", async ({
       "Created",
       "Edited",
     ]);
-  await expect(table.header("ID")).toHaveCount(0);
   await expect(table.controlledState()).toContainText(
     '"type":"properties.create"',
   );

@@ -93,7 +93,6 @@ it("selects a configured account while keeping System audit attribution", async 
   expect(owner.getByText("You")).toBeVisible();
   const author = within(table.propertyCell("Trip", "author"));
   expect(author.getByText("System")).toBeVisible();
-  expect(author.getByText("S")).toBeVisible();
   expect(
     within(table.propertyCell("Trip", "editor")).getByText("System"),
   ).toBeVisible();

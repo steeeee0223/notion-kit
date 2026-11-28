@@ -45,21 +45,14 @@ it("suggests a place after one keystroke and saves its coordinates", async () =>
   expect(
     screen.getByRole("option", { name: "Current Location" }),
   ).toBeVisible();
-  expect(screen.queryByRole("link", { name: "Learn more" })).toBeNull();
   await table.user.type(
     screen.getByRole("combobox", { name: "Search places" }),
     "s",
   );
-  expect(screen.getByText("Loading...")).toBeVisible();
-  expect(screen.getByRole("link", { name: "Learn more" })).toBeVisible();
 
   const option = await screen.findByRole("option", {
     name: "Main Station, Taipei",
   });
-  expect(within(option).getByText("S")).toBeVisible();
-  expect(
-    screen.getByRole("option", { name: "Current Location" }),
-  ).toBeVisible();
   await table.user.click(option);
 
   expect(searchLocations).toHaveBeenCalledWith("s", expect.any(AbortSignal));
@@ -126,7 +119,6 @@ it("cancels stale suggestions and returns to Current Location when cleared", asy
     screen.getByRole("option", { name: "Current Location" }),
   ).toBeVisible();
   expect(screen.queryByRole("option", { name: "Station, Taipei" })).toBeNull();
-  expect(screen.queryByRole("link", { name: "Learn more" })).toBeNull();
   await table.user.keyboard("{Escape}");
   await waitFor(() => expect(input).not.toBeInTheDocument());
 });

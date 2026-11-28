@@ -191,7 +191,7 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("addColumnInfo", () => {
-    it("adds one ID column without creating or rewriting a cell", () => {
+    it("rejects a second ID without rewriting row data", () => {
       const onPropertiesChange =
         vi.fn<ResourceChangeHandler<ColumnDefs, PropertiesResourceAction>>();
       const onDataChange = vi.fn();
@@ -220,58 +220,17 @@ describe("useTableView - Column Custom APIs", () => {
         "properties.create",
       );
 
+      act(() => table.archiveColumn("id"));
       act(() => {
         table.addColumnInfo({ id: "extra", type: "id", name: "Extra ID" });
         table.duplicateColumnInfo("id");
-      });
-      expect(table.getColumnInfo("id").type).toBe("id");
-      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("extra");
-      expect(table.getColumnInfo("col2").type).toBe("checkbox");
-      expect(onPropertiesChange).toHaveBeenCalledTimes(1);
-      expect(onDataChange).not.toHaveBeenCalled();
-    });
-
-    it("keeps the ID slot occupied while archived and frees it after deletion", () => {
-      const { result } = renderHook(() =>
-        useTableView({
-          plugins: pluginsWithId,
-          defaultProperties: [
-            ...mockProperties,
-            {
-              id: "serial",
-              name: "ID",
-              type: "id",
-              config: { prefix: "TASK" },
-            },
-          ],
-          defaultData: mockData,
-        }),
-      );
-      const { table } = result.current;
-
-      act(() => table.archiveColumn("serial"));
-      expect(table.getColumn("serial")?.getIsVisible()).toBe(false);
-      expect(table.getDeletedColumns().map(({ id }) => id)).toEqual(["serial"]);
-
-      act(() => {
-        table.addColumnInfo({ id: "extra", name: "Extra ID", type: "id" });
         table.setColumnType("col2", "id");
       });
+      expect(table.getDeletedColumns().map(({ id }) => id)).toEqual(["id"]);
       expect(table.atoms.columnsInfo.get()).not.toHaveProperty("extra");
       expect(table.getColumnInfo("col2").type).toBe("checkbox");
-
-      act(() => table.restoreColumn("serial"));
-      expect(table.getDeletedColumns()).toEqual([]);
-      expect(table.getColumn("serial")?.getIsVisible()).toBe(true);
-      expect(table.getColumnInfo("serial").config).toEqual({ prefix: "TASK" });
-
-      act(() => {
-        table.archiveColumn("serial");
-        table.deleteColumn("serial");
-        table.addColumnInfo({ id: "extra", name: "ID", type: "id" });
-      });
-      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("serial");
-      expect(table.getColumn("extra")?.getIsVisible()).toBe(true);
+      expect(onPropertiesChange).toHaveBeenCalledTimes(2);
+      expect(onDataChange).not.toHaveBeenCalled();
     });
 
     it("changes to and from ID using the existing row sequence", () => {

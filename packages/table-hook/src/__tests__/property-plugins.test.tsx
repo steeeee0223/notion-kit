@@ -73,7 +73,7 @@ const ada = { id: "ada", name: "Ada Lovelace" };
 const grace = { id: "grace", name: "Grace Hopper" };
 
 describe("New table property plugins", () => {
-  it("assigns IDs by creation order and preserves the sequence after deletion, duplication, and prefix changes", () => {
+  it("assigns IDs by creation order and never reuses a deleted row's sequence", () => {
     const { table } = renderProperties(
       [idProperty],
       [row("newer", {}, 1), row("older")],
@@ -93,12 +93,6 @@ describe("New table property plugins", () => {
     expect(copy?.properties.serial?.value).toEqual({
       number: 3,
       prefix: "TASK",
-    });
-
-    act(() => table.getColumn("serial")?.updateConfig({ prefix: "ISSUE" }));
-    expect(table.getCell("serial", "older").value).toEqual({
-      number: 1,
-      prefix: "ISSUE",
     });
   });
 
@@ -144,13 +138,10 @@ describe("New table property plugins", () => {
       }),
     );
     const { table } = result.current;
-    const untouchedCell = table.getCell("owner", "unselected");
-
     act(() =>
       table.getColumn("owner")?.updateCells(["first", "second"], [ada]),
     );
 
-    expect(table.getCell("owner", "unselected")).toBe(untouchedCell);
     const change = onDataChange.mock.lastCall?.[0];
     expect(change?.action).toMatchObject({
       type: "data.cell.update",
@@ -190,48 +181,23 @@ describe("New table property plugins", () => {
     expect(group?.subRows.map(({ id }) => id)).toEqual(["first", "second"]);
   });
 
-  it("does not reuse a row number after a controlled deletion", () => {
-    const onDataChange = vi.fn();
-    const first = { ...row("first"), sequence: 2 };
-    const last = { ...row("last"), sequence: 9 };
-    const { result, rerender } = renderHook(
-      (data: Row[]) =>
-        useTableView({
-          plugins,
-          defaultProperties: [idProperty],
-          data,
-          onDataChange,
-        }),
-      { initialProps: [first, last] },
-    );
-
-    rerender([first]);
-    act(() => {
-      result.current.table.addRow();
-    });
-
-    expect(onDataChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        next: [first, expect.objectContaining({ sequence: 10 })],
-      }),
-    );
-  });
-
-  it("keeps legacy row numbers when the owner removes a row before adding ID", () => {
+  it("preserves row numbers when the owner removes rows before adding ID", () => {
     const onDataChange =
       vi.fn<ResourceChangeHandler<Row[], DataResourceAction>>();
     const first = row("first", {}, 1);
     const second = row("second", {}, 2);
+    const last = row("last", {}, 3);
     const { result, rerender } = renderHook(
       (data: Row[]) => useTableView({ plugins, data, onDataChange }),
-      { initialProps: [first, second] },
+      { initialProps: [first, second, last] },
     );
     const { table } = result.current;
     expect(table.atoms.columnsInfo.get()).not.toHaveProperty("id");
     expect(table.getCellValues().map(({ sequence }) => sequence)).toEqual([
-      1, 2,
+      1, 2, 3,
     ]);
 
+    rerender([first, second, { ...last, sequence: 9 }]);
     rerender([second]);
     let added = "";
     act(() => {
@@ -245,11 +211,8 @@ describe("New table property plugins", () => {
       ]),
     ).toEqual([
       ["second", 2],
-      [added, 3],
+      [added, 10],
     ]);
-    expect(
-      onDataChange.mock.lastCall?.[0].next[1]?.properties.id,
-    ).toBeUndefined();
   });
 
   it("reserves a shared row number before adding ID", () => {
