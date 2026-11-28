@@ -67,6 +67,35 @@ function renderFilterMenu(options: {
 }
 
 describe("FilterMenu", () => {
+  it("uses the account ID when selecting a person by name", async () => {
+    const onViewChange =
+      vi.fn<(change: ResourceChange<TableViewState, unknown>) => void>();
+    const tableView = renderTableView({
+      properties: [
+        { id: "title", name: "Name", type: "title" },
+        { id: "owner", name: "Owner", type: "person" },
+      ],
+      propertySources: { people: [{ id: "account-ada", name: "Ada" }] },
+      view: { filters: seeded([rule("person", "owner")]) },
+      onViewChange,
+      children: <FilterMenu />,
+    });
+    const filter = tableView.filterMenu();
+    await tableView.user.click(
+      within(filter.rule("person")).getByRole("button", {
+        name: "Value select",
+      }),
+    );
+    await tableView.user.click(
+      await screen.findByRole("option", { name: "Ada" }),
+    );
+
+    expect(lastRule(onViewChange)).toMatchObject({
+      propertyId: "owner",
+      value: ["account-ada"],
+    });
+  });
+
   it("selects a property, operator, and commits a text operand on blur", async () => {
     const onViewChange =
       vi.fn<(change: ResourceChange<TableViewState, unknown>) => void>();

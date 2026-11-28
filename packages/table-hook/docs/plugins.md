@@ -184,6 +184,41 @@ Old resources without these fields must resolve to the same effective defaults t
 - Test selected/default/first/legacy/unknown resolver fallbacks and old resource compatibility.
 - Run focused tests, typecheck, lint, and builds for both `@notion-kit/table-hook` and `@notion-kit/table-view`.
 
-Custom arbitrary numeric ranges, new plugin types, dependency additions, and
-removal of legacy method fields are outside this branch. There is no
-compatibility path for the previous combined plugin contract.
+Custom arbitrary numeric ranges, dependency additions, and removal of legacy
+method fields are outside the scope of the method registry.
+
+## ID, people, and places
+
+`useTableView` and `TableView` accept `propertySources` for data owned by the
+application. Pass an updated directory when its accounts change. Cells, sorting, grouping, filters, and footer calculations read the
+same resolved row values.
+
+| Property                       | Stored data                                    | Application input                                                         |
+| ------------------------------ | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| `id`                           | Immutable `Row.sequence` and a column `prefix` | A persisted database-wide `allocateRowNumber` for shared or restored data |
+| `person`                       | An array of references with stable IDs         | `people` supplies labels and avatars                                      |
+| `created-by`, `last-edited-by` | Optional row metadata                          | `currentActor` supplies attribution for table edits                       |
+| `location`                     | Place name, address, and optional coordinates  | `searchLocations` and `reverseGeocode` supply place lookup                |
+
+Tables with the ID plugin can add one ID property or change an existing property
+to ID. An archived ID still counts toward the limit and can be restored.
+Permanently deleting the ID property or changing it to another type frees the
+slot. Supply `databaseName` to suggest the prefix when adding or converting to ID.
+
+Rows carry their sequence independently of column visibility. Local tables
+number older rows in creation order and keep a high-water mark for the
+lifetime of the table. Save and hydrate `Row.sequence`.
+For shared data, reserve numbers by row ID, return the same number on retries,
+and retain the allocator's high-water mark after deletions. Hydrate shared rows
+with their reserved sequences so IDs appear immediately. A row without a
+sequence stays blank until a data change reserves its number.
+
+Person columns can limit new assignments to one person and default to the row's
+creator. The creator default applies when a new row has no explicit assignment.
+Person columns also store a notification preference for the host to use when
+delivering notifications.
+
+The `person`, `createdBy`, and `lastEditedBy` data plugin factories accept
+`{ accounts }` to supply filter choices. If omitted, choices come from
+`propertySources.people`. Use `propertySources.currentActor` for row attribution
+and `propertySources.people` to resolve the latest labels and avatars.

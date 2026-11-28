@@ -7,6 +7,8 @@ import type {
 } from "@notion-kit/table-hook/plugins";
 import type { IconData } from "@notion-kit/ui/icon-block";
 
+import type { PropertyReference } from "./property-reference";
+
 interface PropertyBase {
   id: string;
   name: string;
@@ -47,6 +49,9 @@ export interface Row<TPlugins extends CellPlugin[] = CellPlugin[]> {
   id: string;
   properties: Record<string, Cell<TPlugins[number]>>;
   icon?: IconData;
+  sequence?: number;
+  createdBy?: PropertyReference;
+  lastEditedBy?: PropertyReference;
   createdAt: number;
   lastEditedAt: number;
 }

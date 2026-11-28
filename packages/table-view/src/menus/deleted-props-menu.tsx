@@ -28,8 +28,8 @@ export function DeletedPropsMenu() {
           <PropertyItem
             key={info.id}
             info={info}
-            onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
-            onDelete={() => table.removeColumnInfo(info.id)}
+            onRestore={() => table.restoreColumn(info.id)}
+            onDelete={() => table.deleteColumn(info.id)}
           />
         ))}
       </DropdownMenuGroup>

@@ -1,5 +1,6 @@
 export * from "@notion-kit/table-hook";
 export * from "./plugins";
+export { photonPlaceSources } from "./plugins/location/photon";
 export * from "./row-view";
 export * from "./table-contexts";
 export type {

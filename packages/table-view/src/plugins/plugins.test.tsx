@@ -28,6 +28,11 @@ describe("table-view plugin wrappers", () => {
       "date",
       "created-time",
       "last-edited-time",
+      "id",
+      "person",
+      "created-by",
+      "last-edited-by",
+      "location",
     ]);
   });
 

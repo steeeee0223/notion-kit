@@ -53,6 +53,12 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
   plugins: Record<string, TPlugins[number]>,
   properties: ColumnDefs<TPlugins>,
 ) {
+  const idProperties = properties.filter(({ type }) => type === "id");
+  const activeIds = idProperties.filter(({ isDeleted }) => !isDeleted);
+  if (activeIds.length > 1) {
+    throw new Error("[TableView] Only one active ID column is allowed");
+  }
+  const idProperty = activeIds[0] ?? idProperties[0];
   return properties.reduce<Entity<ColumnInfo>>(
     (acc, property) => {
       const plugin = plugins[property.type];
@@ -61,6 +67,7 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
           `[TableView] Plugin not found for property "${property.id}" type: ${property.type}`,
         );
       }
+      if (property.type === "id" && property !== idProperty) return acc;
       const { config, ...propertyWithoutConfig } = property;
       acc.ids.push(property.id);
       acc.items[property.id] = {

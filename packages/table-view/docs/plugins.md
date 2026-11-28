@@ -60,6 +60,25 @@ Do not put React nodes, presentation choices, icons, or renderer callbacks on a
 data plugin. Generic menus discover sorting, grouping, filtering, and counting
 from the data plugin; they discover display metadata from the UI adapter.
 
+## Application-provided property data
+
+The built-in people and place editors read application data through
+`TableView`'s optional `propertySources` prop. For example, pass
+`propertySources={{ people, currentActor, searchLocations }}` to
+populate the pickers. The place editor also accepts a manual name and address
+or coordinates from the browser's location permission.
+
+The `person({ accounts })` UI factory supplies the accounts available in the
+Person picker. Without an account list, it uses `propertySources.people`.
+The `photonPlaceSources` adapter can be passed to `propertySources` to enable
+live place suggestions and reverse lookup through Photon.
+
+Add an ID column from New property or Change type. The ID adapter edits the
+prefix in the property menu. An archived ID can be restored from Deleted
+properties and still counts toward the one-column limit. See the
+[table-hook property contracts](../../table-hook/docs/plugins.md#id-people-and-places)
+for the sequence allocator and directory options.
+
 ## Related audits
 
 See the [table-view testing audit](./testing/README.md) for component and

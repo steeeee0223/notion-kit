@@ -46,7 +46,7 @@ test("TimelineInitialization_NoDateProperty_CreatesAndSeedsExactlyOneProperty", 
     type: "properties.create",
     payload: {
       propertyId: created.id,
-      nextPosition: 12,
+      nextPosition: before.properties.length,
       property: { id: created.id, name: "Timeline", type: "date" },
     },
   });

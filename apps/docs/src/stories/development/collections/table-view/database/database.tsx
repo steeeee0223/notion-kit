@@ -1,6 +1,6 @@
 import { DatabaseIcon, Ellipsis, Plus } from "lucide-react";
 
-import { TableView } from "@notion-kit/table-view";
+import { photonPlaceSources, TableView } from "@notion-kit/table-view";
 import {
   Button,
   Tabs,
@@ -45,9 +45,23 @@ export const Database = () => {
         <ViewWrapper>
           <TableView
             {...mockEditLogs}
-            defaultProperties={mockProps}
+            defaultProperties={[
+              ...mockProps,
+              { id: "place", name: "Place", type: "location" },
+            ]}
             defaultData={mockData}
+            propertySources={photonPlaceSources}
           />
+          <p className="text-xs text-secondary">
+            Place search uses Photon and{" "}
+            <a
+              className="underline"
+              href="https://www.openstreetmap.org/copyright"
+            >
+              OpenStreetMap data
+            </a>
+            .
+          </p>
         </ViewWrapper>
       </TabsContent>
     </Tabs>

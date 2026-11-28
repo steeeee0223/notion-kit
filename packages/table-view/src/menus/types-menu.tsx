@@ -101,8 +101,15 @@ export function TypesMenu({
           }
         />
       )}
-      <table.Subscribe selector={(state) => state.cellPlugins}>
-        {(plugins) => (
+      <table.Subscribe
+        selector={(state) => ({
+          grouped: propId !== undefined && state.grouping.includes(propId),
+          hasOtherId: state.columnOrder.some(
+            (id) => id !== propId && state.columnsInfo[id]?.type === "id",
+          ),
+        })}
+      >
+        {({ grouped, hasOtherId }) => (
           <>
             <DropdownMenuInput
               placeholder={
@@ -116,7 +123,7 @@ export function TypesMenu({
             <DropdownMenuList>
               <DropdownMenuGroup>
                 <DropdownMenuLabel title="Type" />
-                {Object.values(plugins).map((entry) => {
+                {registry.data.map((entry) => {
                   const plugin = registry.getUiPlugin(entry.id);
                   return (
                     <TooltipPreset
@@ -128,7 +135,11 @@ export function TypesMenu({
                     >
                       <DropdownMenuItem
                         closeOnClick={closeOnClick}
-                        disabled={plugin.id === "title"}
+                        disabled={
+                          plugin.id === "title" ||
+                          (plugin.id === "id" && hasOtherId) ||
+                          (grouped && entry.canGroup === false)
+                        }
                         icon={plugin.meta.icon}
                         label={plugin.meta.name}
                         onClick={() =>

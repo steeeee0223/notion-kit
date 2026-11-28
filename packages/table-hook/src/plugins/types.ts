@@ -1,9 +1,12 @@
+import type { PropertyReference } from "@/lib/property-reference";
 import type { ColumnInfo, Row } from "@/lib/types";
 import type {
   CountingMethodGroup,
   GroupingMethod,
   SortingMethodDescriptor,
 } from "@/methods";
+
+import type { TablePropertySources } from "./property-sources";
 
 export type CompareFn<T> = (a: T, b: T) => number;
 export type ComparableValue = string | number | boolean | null;
@@ -20,7 +23,14 @@ export type FilterOperandMetadata =
   | { kind: "none" }
   | { kind: "text" }
   | { kind: "number" }
-  | { kind: "option"; multiple?: boolean }
+  | {
+      kind: "option";
+      multiple?: boolean;
+      getOptions?: (context: {
+        config: unknown;
+        sources?: TablePropertySources;
+      }) => readonly PropertyReference[];
+    }
   | { kind: "date" }
   | { kind: "date-range" }
   | { kind: "relative-date" };
@@ -57,6 +67,8 @@ export interface CellPlugin<
   Config = any,
 > {
   id: Key;
+  readOnly?: boolean;
+  canGroup?: false;
   default: {
     /**
      * @prop Default property config when creating a new property.

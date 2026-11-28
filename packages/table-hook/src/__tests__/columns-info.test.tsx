@@ -16,6 +16,7 @@ import {
   renderTableHook,
 } from "@/__tests__/mock";
 import type { ColumnDefs, Row } from "@/lib/types";
+import { id } from "@/plugins/id";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -49,6 +50,12 @@ const datePlugin: CellPlugin<"date", DateData, undefined> = {
 const pluginsWithDate = {
   ids: [...plugins.ids, datePlugin.id],
   items: { ...plugins.items, [datePlugin.id]: datePlugin },
+};
+
+const idPlugin = id();
+const pluginsWithId = {
+  ids: [...plugins.ids, idPlugin.id],
+  items: { ...plugins.items, [idPlugin.id]: idPlugin },
 };
 
 describe("useTableView - Column Custom APIs", () => {
@@ -184,6 +191,102 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("addColumnInfo", () => {
+    it("rejects a second ID without rewriting row data", () => {
+      const onPropertiesChange =
+        vi.fn<ResourceChangeHandler<ColumnDefs, PropertiesResourceAction>>();
+      const onDataChange = vi.fn();
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: pluginsWithId,
+          defaultProperties: mockProperties,
+          defaultData: mockData,
+          propertySources: { databaseName: "Issue Tracker" },
+          onPropertiesChange,
+          onDataChange,
+        }),
+      );
+      const { table } = result.current;
+      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("id");
+      act(() => {
+        table.addColumnInfo({ id: "id", type: "id", name: "ID" });
+        table.setColumnType("col2", "id");
+      });
+      expect(table.getColumnInfo("id")).toMatchObject({
+        type: "id",
+        config: { prefix: "IT" },
+      });
+      expect(table.getColumn("id")?.getIsVisible()).toBe(true);
+      expect(onPropertiesChange.mock.lastCall?.[0].action.type).toBe(
+        "properties.create",
+      );
+
+      act(() => table.archiveColumn("id"));
+      act(() => {
+        table.addColumnInfo({ id: "extra", type: "id", name: "Extra ID" });
+        table.duplicateColumnInfo("id");
+        table.setColumnType("col2", "id");
+      });
+      expect(table.getDeletedColumns().map(({ id }) => id)).toEqual(["id"]);
+      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("extra");
+      expect(table.getColumnInfo("col2").type).toBe("checkbox");
+      expect(onPropertiesChange).toHaveBeenCalledTimes(2);
+      expect(onDataChange).not.toHaveBeenCalled();
+    });
+
+    it("changes to and from ID using the existing row sequence", () => {
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: pluginsWithId,
+          defaultProperties: mockProperties,
+          defaultData: [
+            {
+              id: "row",
+              createdAt: 0,
+              lastEditedAt: 0,
+              sequence: 12,
+              properties: { col2: { id: "checkbox-cell", value: true } },
+            },
+          ],
+          propertySources: { databaseName: "Issue Tracker" },
+        }),
+      );
+      const { table } = result.current;
+
+      act(() => table.setColumnType("col2", "id"));
+      expect(table.getColumnInfo("col2").type).toBe("id");
+      expect(table.getCell("col2", "row").value).toEqual({
+        number: 12,
+        prefix: "IT",
+      });
+
+      act(() => {
+        table.setColumnType("col2", "text");
+        table.addColumnInfo({ id: "serial", name: "ID", type: "id" });
+      });
+      expect(table.getCell("col2", "row").value).toBe("12");
+      expect(table.getCell("serial", "row").value).toEqual({
+        number: 12,
+        prefix: "IT",
+      });
+    });
+
+    it.each(["properties", "defaultProperties"] as const)(
+      "rejects multiple active ID columns supplied through %s",
+      (prop) => {
+        expect(() => {
+          renderHook(() =>
+            useTableView({
+              plugins: pluginsWithId,
+              [prop]: [
+                { id: "serial", type: "id", name: "ID" },
+                { id: "extra", type: "id", name: "Extra ID", hidden: true },
+              ],
+            }),
+          );
+        }).toThrow("[TableView] Only one active ID column is allowed");
+      },
+    );
+
     it("ColumnCreation_SeededValues_CreateDistinctCellsAndShareProvidedOperationId", () => {
       const onDataChange = vi.fn();
       const onPropertiesChange = vi.fn();
@@ -393,7 +496,7 @@ describe("useTableView - Column Custom APIs", () => {
     });
   });
 
-  describe("removeColumnInfo", () => {
+  describe("deleteColumn", () => {
     it("should remove column from column order", () => {
       const { table } = renderTableHook({
         data: mockData,
@@ -401,7 +504,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.removeColumnInfo("col2");
+        table.deleteColumn("col2");
       });
 
       const columnOrder = table.atoms.columnOrder.get();
@@ -415,7 +518,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.removeColumnInfo("col2");
+        table.deleteColumn("col2");
       });
 
       const columnsInfo = table.atoms.columnsInfo.get();
@@ -429,7 +532,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.removeColumnInfo("col2");
+        table.deleteColumn("col2");
       });
 
       const rows = table.getRowModel().rows;

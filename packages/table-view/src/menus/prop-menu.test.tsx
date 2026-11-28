@@ -544,3 +544,21 @@ it("PropMenu_TitleColumn_HidesDestructiveTypeActions", async () => {
   expect(menu.queryItem("Duplicate property")).not.toBeInTheDocument();
   expect(menu.queryItem("Delete property")).not.toBeInTheDocument();
 });
+
+it("PropMenu_GroupedProperty_DisablesTypesThatCannotGroup", async () => {
+  const tableView = renderTableView();
+  const menu = await openHeader(tableView, "Done");
+  await tableView.user.click(menu.item("Group"));
+
+  const grouped = await openHeader(tableView, "Done");
+  grouped.item("Change type").focus();
+  await tableView.user.keyboard("{ArrowRight}");
+
+  expect(
+    await screen.findByRole("menuitem", { name: "Place" }),
+  ).toHaveAttribute("aria-disabled", "true");
+  expect(screen.getByRole("menuitem", { name: "Number" })).not.toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+});

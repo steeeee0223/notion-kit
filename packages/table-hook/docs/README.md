@@ -80,6 +80,12 @@ serializable action stream for undo, analytics, collaboration, or storage.
 A committed controlled value also rebases any pending proposal, so the table
 always reflects the application's authoritative state.
 
+Use `setColumnInfo` for property metadata such as name, configuration, and
+visibility. Use `setColumnType` to convert a property and its cell values.
+`archiveColumn` moves a property to Deleted properties.
+`restoreColumn` restores it. `deleteColumn` permanently deletes the property and
+its stored cells.
+
 ## Property plugins
 
 A `CellPlugin` defines how one property type participates in the table domain.

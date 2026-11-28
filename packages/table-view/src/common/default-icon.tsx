@@ -20,8 +20,17 @@ export function DefaultIcon({ type, className }: DefaultIconProps) {
       return <Icon.TypesSelect className={iconClassName} />;
     case "multi-select":
       return <Icon.TypesMultiSelect className={iconClassName} />;
+    case "id":
+      return <Icon.Numero className={iconClassName} />;
     case "number":
       return <Icon.HashTag className={iconClassName} />;
+    case "person":
+      return <Icon.Friends className={iconClassName} />;
+    case "created-by":
+    case "last-edited-by":
+      return <Icon.UserCircle className={iconClassName} />;
+    case "location":
+      return <Icon.MapPinAlternate className={iconClassName} />;
     case "email":
       return <Icon.Username className={iconClassName} />;
     case "phone":

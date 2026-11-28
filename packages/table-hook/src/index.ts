@@ -83,3 +83,5 @@ export type {
   RowViewType,
   LayoutType,
 } from "@/features/menu";
+
+export type { TablePropertySources } from "@/plugins/property-sources";

@@ -13,6 +13,25 @@ async function openSelectGroupingMenu() {
 }
 
 describe("SelectGroupMenu", () => {
+  it("offers only visible properties that support grouping", async () => {
+    const tableView = renderTableView({
+      data: [],
+      properties: [
+        { id: "title", name: "Name", type: "title" },
+        { id: "serial", name: "ID", type: "id" },
+        { id: "place", name: "Place", type: "location" },
+        { id: "hidden", name: "Hidden notes", type: "text", hidden: true },
+      ],
+    });
+    const settings = await tableView.openViewSettings();
+    const grouping = await settings.openSelectGrouping();
+
+    expect(grouping.option("Name")).toBeVisible();
+    expect(grouping.queryOption("ID")).not.toBeInTheDocument();
+    expect(grouping.queryOption("Place")).not.toBeInTheDocument();
+    expect(grouping.queryOption("Hidden notes")).not.toBeInTheDocument();
+  });
+
   it("SelectGroupingMenu_Search_FiltersProperties", async () => {
     const { grouping } = await openSelectGroupingMenu();
 

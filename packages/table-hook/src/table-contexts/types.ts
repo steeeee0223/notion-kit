@@ -6,6 +6,7 @@ import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import type { TableFeatures, TableViewState } from "@/features";
 import type { ColumnDefs, Row as RowModel } from "@/lib/types";
 import type { Weekday } from "@/methods";
+import type { TablePropertySources } from "@/plugins/property-sources";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -78,6 +79,7 @@ interface SharedTableProps<TPlugins extends CellPlugin[]> {
   defaultColumn?: Partial<ColumnDef<TableFeatures, RowModel<TPlugins>>>;
   getRowUrl?: (rowId: string) => string;
   weekStartsOn?: Weekday;
+  propertySources?: TablePropertySources;
 }
 
 export type BaseTableProps<TPlugins extends CellPlugin[]> =

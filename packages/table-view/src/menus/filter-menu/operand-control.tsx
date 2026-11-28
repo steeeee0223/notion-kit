@@ -11,6 +11,7 @@ import type {
 import type {
   DateConfig,
   FilterOperandMetadata,
+  PropertyReference,
   SelectConfig,
 } from "@notion-kit/table-hook/plugins";
 import {
@@ -42,6 +43,7 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { OptionTag } from "@/common";
+import { ReferencePicker } from "@/plugins/reference-picker";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -63,7 +65,7 @@ export function OperandControl({
   rule: FilterRule;
   root: FilterGroup;
 }) {
-  const { table } = useTableViewCtx();
+  const { table, propertySources } = useTableViewCtx();
   const property = table.getColumnInfo(rule.propertyId);
   const operator = table
     .getColumnPlugin(rule.propertyId)
@@ -71,16 +73,32 @@ export function OperandControl({
 
   if (!operator) return null;
 
+  const metadata = operator.operand;
+  const key = `${rule.id}:${rule.operator}:${operandDraftKey(
+    rule.value,
+    metadata,
+    property.config as DateConfig,
+  )}`;
+  if (metadata.kind === "option" && metadata.getOptions)
+    return (
+      <ReferenceOperand
+        key={key}
+        rule={rule}
+        root={root}
+        options={metadata.getOptions({
+          config: property.config,
+          sources: propertySources,
+        })}
+        multiple={metadata.multiple}
+      />
+    );
+
   return (
     <OperandControlContent
-      key={`${rule.id}:${rule.operator}:${operandDraftKey(
-        rule.value,
-        operator.operand,
-        property.config as DateConfig,
-      )}`}
+      key={key}
       rule={rule}
       root={root}
-      metadata={operator.operand}
+      metadata={metadata}
     />
   );
 }
@@ -119,18 +137,16 @@ function operandDraftKey(
   metadata: FilterOperandMetadata,
   propertyConfig: DateConfig,
 ) {
-  if (metadata.kind === "date") {
-    return getTimeZone(propertyConfig);
+  switch (metadata.kind) {
+    case "date":
+      return getTimeZone(propertyConfig);
+    case "date-range":
+      return `${JSON.stringify(value)}:${getTimeZone(propertyConfig)}`;
+    case "none":
+      return JSON.stringify(value);
+    default:
+      return "controlled";
   }
-  if (metadata.kind === "date-range") {
-    return `${JSON.stringify(value)}:${getTimeZone(propertyConfig)}`;
-  }
-  return metadata.kind === "text" ||
-    metadata.kind === "number" ||
-    metadata.kind === "relative-date" ||
-    metadata.kind === "option"
-    ? "controlled"
-    : JSON.stringify(value);
 }
 
 function NumericOperand({
@@ -250,6 +266,47 @@ function getRelativeDateUnit(
     RELATIVE_DATE_UNITS.some(({ value }) => value === unit)
     ? (unit as (typeof RELATIVE_DATE_UNITS)[number]["value"])
     : "day";
+}
+
+function ReferenceOperand({
+  rule,
+  root,
+  options,
+  multiple,
+}: {
+  rule: FilterRule;
+  root: FilterGroup;
+  options: readonly PropertyReference[];
+  multiple?: boolean;
+}) {
+  const updateRule = useFilterRuleUpdate(root, rule.id);
+  const byId = new Map(options.map((option) => [option.id, option]));
+  const selected = Array.isArray(rule.value) ? rule.value : [rule.value];
+  const references = selected.flatMap((id): PropertyReference[] =>
+    typeof id === "string" ? [byId.get(id) ?? { id, name: id }] : [],
+  );
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={<Button variant="hint" aria-label="Value select" />}
+      >
+        {references[0]?.name ?? "Choose option"}
+        {references.length > 1 ? ` +${references.length - 1}` : ""}
+      </PopoverTrigger>
+      <PopoverContent className="w-72 p-2">
+        <ReferencePicker
+          value={references}
+          options={options}
+          label="Search options"
+          single={!multiple}
+          onChange={(next) => {
+            const ids = next.map(({ id }) => id);
+            updateRule(multiple && ids.length ? ids : ids[0]);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 function OptionOperand({

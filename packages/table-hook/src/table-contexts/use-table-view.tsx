@@ -47,6 +47,12 @@ import type {
 } from "@/table-contexts/actions";
 import { defaultColumn } from "@/table-contexts/column";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
+import {
+  assignRowSequences,
+  createRowProjector,
+  nextRowSequence,
+  reuseRowSequences,
+} from "@/table-contexts/property-data";
 import type {
   BaseTableProps,
   PartialTableViewState,
@@ -217,6 +223,40 @@ function useResourceState<TResource, TAction>({
   return [resource, setResource] as const;
 }
 
+function useLocalRowSequences<T extends Row>(data: T[], enabled: boolean): T[] {
+  const [numbered, setNumbered] = useState(() => {
+    const rows = enabled ? assignRowSequences(data) : data;
+    return { data, enabled, rows, minimum: nextRowSequence(rows) };
+  });
+  const rows = useMemo(() => {
+    if (!enabled) return data;
+    if (numbered.data === data && numbered.enabled) return numbered.rows;
+    return assignRowSequences(
+      reuseRowSequences(data, numbered.rows),
+      numbered.minimum,
+    );
+  }, [data, enabled, numbered]);
+  // Retain local numbers for legacy controlled rows across external updates.
+  if (
+    enabled &&
+    rows !== numbered.rows &&
+    (rows.length !== numbered.rows.length ||
+      rows.some(
+        ({ id, sequence }, index) =>
+          id !== numbered.rows[index]?.id ||
+          sequence !== numbered.rows[index].sequence,
+      ))
+  ) {
+    setNumbered({
+      data,
+      enabled,
+      rows,
+      minimum: nextRowSequence(rows, numbered.minimum),
+    });
+  }
+  return rows;
+}
+
 export function useTableView<TPlugins extends CellPlugin[]>(
   options: UseTableViewOptions<TPlugins>,
 ) {
@@ -233,6 +273,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     plugins,
     weekStartsOn = 1,
     getRowUrl,
+    propertySources,
     onDataChange,
     onPropertiesChange,
     onViewChange,
@@ -250,16 +291,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     [options.view],
   );
 
-  const [dataEntity, setDataResource] = useResourceState<
-    Row<TPlugins>[],
-    DataResourceAction
-  >({
-    name: "data",
-    controlled: isDataControlled,
-    value: isDataControlled ? options.data : initialTable.data,
-    defaultValue: options.defaultData ?? initialTable.data,
-    onChange: onDataChange,
-  });
+  const nextSequenceRef = useRef(1);
   const [propertiesResource, setPropertiesResource] = useResourceState<
     ColumnDefs<TPlugins>,
     PropertiesResourceAction
@@ -297,6 +329,78 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     () => toPropertyEntity(plugins.items, propertiesResource),
     [plugins.items, propertiesResource],
   );
+  const hasIdPlugin = Object.hasOwn(plugins.items, "id");
+  const allocateRowNumber = propertySources?.allocateRowNumber;
+  const [defaultData] = useState(
+    () => options.defaultData ?? initialTable.data,
+  );
+  const inputData = useLocalRowSequences(
+    options.data ?? defaultData,
+    hasIdPlugin && !allocateRowNumber,
+  );
+  const [dataResource, setDataResource] = useResourceState<
+    Row<TPlugins>[],
+    DataResourceAction
+  >({
+    name: "data",
+    controlled: isDataControlled,
+    value: inputData,
+    defaultValue: inputData,
+    onChange: onDataChange,
+  });
+  const people = propertySources?.people;
+  const projectRow = useMemo(
+    () =>
+      createRowProjector<Row<TPlugins>>(
+        Object.values(columnEntity.items),
+        people,
+      ),
+    [columnEntity.items, people],
+  );
+  const dataEntity = useMemo(
+    () => (projectRow ? dataResource.map(projectRow) : dataResource),
+    [dataResource, projectRow],
+  );
+  useLayoutEffect(() => {
+    nextSequenceRef.current = nextRowSequence(
+      dataResource,
+      nextSequenceRef.current,
+    );
+  }, [dataResource]);
+  const handleDataChange = useCallback<
+    ResourceChangeFn<Row<TPlugins>[], DataResourceAction>
+  >(
+    (updater, action) =>
+      setDataResource((previous) => {
+        const proposed = functionalUpdate(updater, previous);
+        if (proposed === previous || !hasIdPlugin) return proposed;
+        if (
+          proposed.length === previous.length &&
+          proposed.every(({ id, sequence }, index) => {
+            const row = previous[index];
+            return (
+              row?.id === id &&
+              sequence !== undefined &&
+              row.sequence === sequence
+            );
+          })
+        )
+          return proposed;
+        const prior = assignRowSequences(previous, 1, allocateRowNumber);
+        const sequences = new Map(
+          prior.map(({ id, sequence }) => [id, sequence]),
+        );
+        const rows = proposed.map((row) => {
+          const sequence = sequences.get(row.id);
+          return row.sequence === sequence ? row : { ...row, sequence };
+        });
+        const minimum = nextRowSequence(prior, nextSequenceRef.current);
+        const next = assignRowSequences(rows, minimum, allocateRowNumber);
+        nextSequenceRef.current = nextRowSequence(next, minimum);
+        return next;
+      }, action),
+    [allocateRowNumber, hasIdPlugin, setDataResource],
+  );
   const columns = useMemo(
     () =>
       columnEntity.ids.map<ColumnDef<TableFeatures, Row<TPlugins>>>((colId) => {
@@ -304,7 +408,9 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
-          enableGlobalFilter: !property.isDeleted,
+          enableGlobalFilter:
+            !property.isDeleted && (property.type !== "id" || !property.hidden),
+          ...(plugin.canGroup === false && { enableGrouping: false }),
           accessorFn: (row) => {
             const cell = row.properties[colId];
             const value: unknown = cell ? cell.value : plugin.default.data;
@@ -389,6 +495,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         (prev) => {
           const entity = toPropertyEntity(plugins.items, prev);
           const next = functionalUpdate(updater, entity);
+          if (next === entity) return prev;
           return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
         },
         (previousProperties, nextProperties) => {
@@ -443,11 +550,12 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       getRowId: (row) => row.id,
       state: tableState,
       onColumnInfoChange: handleColumnChange,
-      onTableDataChange: setDataResource,
+      onTableDataChange: handleDataChange,
       onTableGlobalChange: setViewResource,
       globalFilterFn: "pluginTextIncludes",
       weekStartsOn,
       getRowUrl,
+      propertySources,
     }),
     [
       columns,
@@ -455,7 +563,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       defaultColumnOverride,
       getRowUrl,
       handleColumnChange,
-      setDataResource,
+      handleDataChange,
+      propertySources,
       setViewResource,
       tableState,
       weekStartsOn,

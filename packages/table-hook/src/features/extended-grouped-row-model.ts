@@ -41,7 +41,7 @@ export function getExtendedGroupedRowModel<TData extends RowData>(): (
 
         // Filter the grouping list down to columns that exist
         const existingGrouping = grouping.filter((columnId) =>
-          table.getColumn(columnId),
+          table.getColumn(columnId)?.getCanGroup(),
         );
 
         const groupedFlatRows: Row<AnyTableFeatures, TData>[] = [];

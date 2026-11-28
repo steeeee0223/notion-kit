@@ -49,7 +49,7 @@ describe("TypesMenu", () => {
     },
   );
 
-  it("PropertyTypesMenu_ChangeType_KeepsSharedEditorOpen", async () => {
+  it("PropertyTypesMenu_ChangeTypeToID_KeepsSharedEditorOpen", async () => {
     const tableView = renderTableView();
     const settings = await tableView.openViewSettings();
     const properties = await settings.openProperties();
@@ -59,9 +59,9 @@ describe("TypesMenu", () => {
       "Edit property",
     );
     await tableView.user.click(edit.item("Type"));
-    const types = await MenuSurfaceObject.findByItem(tableView.user, "Number");
+    const types = await MenuSurfaceObject.findByItem(tableView.user, "ID");
 
-    await tableView.user.click(types.item("Number"));
+    await tableView.user.click(types.item("ID"));
 
     const next = await MenuSurfaceObject.findByHeading(
       tableView.user,
@@ -71,7 +71,7 @@ describe("TypesMenu", () => {
       "aria-expanded",
       "true",
     );
-    expect(next.item("Type")).toHaveTextContent("Number");
+    expect(next.item("Type")).toHaveTextContent("ID");
   });
 
   it("PropertyTypesMenu_HeaderCreate_ClosesPopupAndOpensPropertyEditor", async () => {

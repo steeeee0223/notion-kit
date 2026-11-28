@@ -32,6 +32,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
 
   const info = table.getColumnInfo(propId);
   const uiPlugin = plugins.getUiPlugin(info.type);
+  const fixedType = info.type === "title";
 
   // 1. Type selection
   const openTypesMenu = () =>
@@ -47,7 +48,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   // 5. Duplicate property
   const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 6. Delete property
-  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
+  const archiveProp = () => table.archiveColumn(propId);
 
   return (
     <>
@@ -59,7 +60,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
       />
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {info.type === "title" ? (
+        {fixedType ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
@@ -74,7 +75,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                 <div className="flex items-center truncate">
                   <Icon.LockedFilled className="h-full w-3.5 fill-icon" />
                   <div className="inline-block min-h-1 min-w-1" />
-                  <span>Title</span>
+                  <span>{uiPlugin.meta.name}</span>
                 </div>
               </MenuItemSelect>
             </DropdownMenuItem>
@@ -124,24 +125,26 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
           onCheckedChange={wrapProp}
         />
         {info.type !== "title" && (
-          <>
-            <DropdownMenuItem
-              onClick={hideProp}
-              icon={<Icon.EyeHideInversePadded className="size-6" />}
-              label="Hide in view"
-            />
-            <DropdownMenuItem
-              onClick={duplicateProp}
-              icon={<Icon.Duplicate />}
-              label="Duplicate property"
-            />
-            <DropdownMenuItem
-              variant="warning"
-              onClick={deleteProp}
-              icon={<Icon.Trash />}
-              label="Delete property"
-            />
-          </>
+          <DropdownMenuItem
+            onClick={hideProp}
+            icon={<Icon.EyeHideInversePadded className="size-6" />}
+            label="Hide in view"
+          />
+        )}
+        {!fixedType && info.type !== "id" && (
+          <DropdownMenuItem
+            onClick={duplicateProp}
+            icon={<Icon.Duplicate />}
+            label="Duplicate property"
+          />
+        )}
+        {!fixedType && (
+          <DropdownMenuItem
+            variant="warning"
+            onClick={archiveProp}
+            icon={<Icon.Trash />}
+            label="Delete property"
+          />
         )}
       </DropdownMenuGroup>
     </>

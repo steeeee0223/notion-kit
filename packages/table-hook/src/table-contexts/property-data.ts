@@ -1,0 +1,123 @@
+import type { ColumnInfo, Row } from "@/lib/types";
+import type { IdConfig } from "@/plugins/id";
+import type { TablePropertySources } from "@/plugins/property-sources";
+import { readReferences, type PropertyReference } from "@/plugins/references";
+
+export function nextRowSequence(rows: readonly Row[], minimum = 1) {
+  return rows.reduce(
+    (next, { sequence }) =>
+      sequence && sequence >= next ? sequence + 1 : next,
+    minimum,
+  );
+}
+
+export function assignRowSequences<T extends Row>(
+  rows: T[],
+  minimum = 1,
+  allocate?: TablePropertySources["allocateRowNumber"],
+): T[] {
+  if (rows.every(({ sequence }) => sequence !== undefined)) return rows;
+  let next = nextRowSequence(rows, minimum);
+  const sequences = new Map<string, number>();
+  const allocated = new Set(rows.map(({ sequence }) => sequence));
+  for (const row of rows
+    .filter(({ sequence }) => sequence === undefined)
+    .sort((a, b) => a.createdAt - b.createdAt)) {
+    const sequence = allocate?.(row.id, next) ?? next;
+    if (
+      !Number.isSafeInteger(sequence) ||
+      sequence < 1 ||
+      allocated.has(sequence)
+    )
+      throw new Error("Invalid row sequence returned by the allocator");
+    sequences.set(row.id, sequence);
+    allocated.add(sequence);
+    next = Math.max(next, sequence + 1);
+  }
+  return rows.map((row) =>
+    row.sequence === undefined
+      ? { ...row, sequence: sequences.get(row.id) }
+      : row,
+  );
+}
+
+export function reuseRowSequences<T extends Row>(
+  rows: T[],
+  previous: readonly T[],
+): T[] {
+  if (rows.every(({ sequence }) => sequence !== undefined)) return rows;
+  const previousSequences = new Map(
+    previous.map(({ id, sequence }) => [id, sequence]),
+  );
+  const assigned = new Set(rows.map(({ sequence }) => sequence));
+  return rows.map((row) => {
+    if (row.sequence !== undefined) return row;
+    const sequence = previousSequences.get(row.id);
+    return sequence === undefined || assigned.has(sequence)
+      ? row
+      : { ...row, sequence };
+  });
+}
+
+const projectedTypes = new Set([
+  "id",
+  "person",
+  "created-by",
+  "last-edited-by",
+  "location",
+]);
+
+export function hasProjectedPropertyValue(type: string) {
+  return projectedTypes.has(type);
+}
+
+export function createRowProjector<T extends Row = Row>(
+  columns: readonly ColumnInfo[],
+  directory?: readonly PropertyReference[],
+) {
+  const properties = columns.filter(
+    ({ type, isDeleted }) => !isDeleted && hasProjectedPropertyValue(type),
+  );
+  if (properties.length === 0) return undefined;
+
+  const people = new Map(directory?.map((person) => [person.id, person]));
+  const cache = new WeakMap<T, T>();
+  const resolve = (
+    references: PropertyReference[],
+    options: Map<string, PropertyReference>,
+  ) => references.map((reference) => options.get(reference.id) ?? reference);
+  function project(row: Row, property: ColumnInfo): unknown {
+    const data: unknown = row.properties[property.id]?.value;
+    switch (property.type) {
+      case "id": {
+        const { prefix } = property.config as IdConfig;
+        return row.sequence ? { number: row.sequence, prefix } : null;
+      }
+      case "person":
+        return resolve(readReferences(data), people);
+      case "created-by":
+        return row.createdBy ? resolve([row.createdBy], people) : [];
+      case "last-edited-by":
+        return row.lastEditedBy ? resolve([row.lastEditedBy], people) : [];
+      case "location":
+        return data ?? null;
+      default:
+        return data;
+    }
+  }
+  return (row: T): T => {
+    const cached = cache.get(row);
+    if (cached) return cached;
+
+    const cells = { ...row.properties };
+    for (const property of properties) {
+      cells[property.id] = {
+        id: row.properties[property.id]?.id ?? `${row.id}:${property.id}`,
+        value: project(row, property),
+      };
+    }
+    const projected = { ...row, properties: cells };
+    cache.set(row, projected);
+    return projected;
+  };
+}

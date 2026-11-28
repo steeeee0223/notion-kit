@@ -64,6 +64,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
   const column = table.getColumn(propId);
   if (!column) return null;
   const uiPlugin = plugins.getUiPlugin(plugin.id);
+  const fixedType = info.type === "title";
 
   // 3. Sorting
   const defaultSortingMethod = getDefaultSortingMethod(plugin);
@@ -107,7 +108,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
   // 10. Duplicate property
   const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 11. Delete property
-  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
+  const archiveProp = () => table.archiveColumn(propId);
 
   return (
     <>
@@ -116,7 +117,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         {flexRender(uiPlugin.renderConfigMenu, {
           column,
         })}
-        {info.type !== "title" && (
+        {!fixedType && (
           <DropdownMenuFilter>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger
@@ -160,17 +161,19 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               </DropdownMenuContent>
             </DropdownMenuSub>
             <table.Subscribe selector={(state) => state.grouping}>
-              {(grouping) => (
-                <DropdownMenuItem
-                  icon={<Icon.SquareGridBelowLines />}
-                  label={grouping.includes(propId) ? "Ungroup" : "Group"}
-                  onClick={() =>
-                    table.setGroupingColumn((v) =>
-                      v === propId ? null : propId,
-                    )
-                  }
-                />
-              )}
+              {(grouping) =>
+                (column.getCanGroup() || grouping.includes(propId)) && (
+                  <DropdownMenuItem
+                    icon={<Icon.SquareGridBelowLines />}
+                    label={grouping.includes(propId) ? "Ungroup" : "Group"}
+                    onClick={() =>
+                      table.setGroupingColumn((v) =>
+                        v === propId ? null : propId,
+                      )
+                    }
+                  />
+                )
+              }
             </table.Subscribe>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger icon={<Icon.Sum />} label="Calculate" />
@@ -217,20 +220,20 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               label={`Insert ${side}`}
             />
           ))}
-        {info.type !== "title" && (
-          <>
-            <DropdownMenuItem
-              onClick={duplicateProp}
-              icon={<Icon.Duplicate />}
-              label="Duplicate property"
-            />
-            <DropdownMenuItem
-              variant="warning"
-              onClick={deleteProp}
-              icon={<Icon.Trash />}
-              label="Delete property"
-            />
-          </>
+        {!fixedType && info.type !== "id" && (
+          <DropdownMenuItem
+            onClick={duplicateProp}
+            icon={<Icon.Duplicate />}
+            label="Duplicate property"
+          />
+        )}
+        {!fixedType && (
+          <DropdownMenuItem
+            variant="warning"
+            onClick={archiveProp}
+            icon={<Icon.Trash />}
+            label="Delete property"
+          />
         )}
       </DropdownMenuGroup>
     </>
