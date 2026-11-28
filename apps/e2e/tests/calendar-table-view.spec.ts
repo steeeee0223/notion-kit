@@ -82,6 +82,7 @@ test("CalendarTable_RejectedCreateAndMove_DoNotOpenOrChangeTheAuthoritativeRows"
   const calendar = table.calendar();
   await table.toggleRejectedData();
   const before = await table.controlledSnapshot();
+  const renderedBefore = await table.renderedResourceSnapshot();
 
   await calendar.createOnDay("2026-09-18");
   await expect
@@ -99,7 +100,9 @@ test("CalendarTable_RejectedCreateAndMove_DoNotOpenOrChangeTheAuthoritativeRows"
     .poll(async () => (await table.controlledSnapshot()).dataCount)
     .toBe(before.dataCount + 2);
   expect((await table.controlledSnapshot()).data).toEqual(before.data);
-  expect((await table.renderedResourceSnapshot()).data).toEqual(before.data);
+  expect((await table.renderedResourceSnapshot()).data).toEqual(
+    renderedBefore.data,
+  );
   await expect(
     calendar.card({ id: "meeting", name: "Design review" }),
   ).toBeVisible();

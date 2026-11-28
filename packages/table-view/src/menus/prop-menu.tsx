@@ -108,7 +108,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
   // 10. Duplicate property
   const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 11. Delete property
-  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
+  const deleteProp = () => table.deleteColumnInfo(propId);
 
   return (
     <>

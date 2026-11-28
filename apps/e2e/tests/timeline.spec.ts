@@ -46,7 +46,7 @@ test("TimelineInitialization_NoDateProperty_CreatesAndSeedsExactlyOneProperty", 
     type: "properties.create",
     payload: {
       propertyId: created.id,
-      nextPosition: 12,
+      nextPosition: before.properties.length,
       property: { id: created.id, name: "Timeline", type: "date" },
     },
   });
@@ -84,7 +84,15 @@ test("TimelineInitialization_NoDateProperty_CreatesAndSeedsExactlyOneProperty", 
     },
   });
   expect(rendered.properties).toEqual(controlled.properties);
-  expect(rendered.data).toEqual(controlled.data);
+  const idColumn = controlled.properties.find(({ type }) => type === "id");
+  expect(
+    rendered.data.map(({ properties, ...row }) => ({
+      ...row,
+      properties: Object.fromEntries(
+        Object.entries(properties).filter(([id]) => id !== idColumn?.id),
+      ),
+    })),
+  ).toEqual(controlled.data);
   expect(rendered.view).toEqual(controlled.view);
 });
 

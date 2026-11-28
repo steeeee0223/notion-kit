@@ -43,6 +43,9 @@ export interface ColumnsInfoOptions {
   >;
 }
 
+type ColumnMetadata = Partial<Omit<ColumnInfo, "id" | "type" | "isDeleted">> &
+  Partial<Record<"id" | "type" | "isDeleted", never>>;
+
 export interface ColumnsInfoTableApi {
   // Column Getters
   getColumnInfo: (colId: string) => ColumnInfo<UnknownCellPlugin>;
@@ -53,14 +56,9 @@ export interface ColumnsInfoTableApi {
   getTitleFilterRule: () =>
     Pick<FilterRule, "propertyId" | "operator"> | undefined;
   // Column Setters
-  _setColumnInfo: (
-    colId: string,
-    updater: Updater<ColumnInfo>,
-    action?: PropertiesResourceAction,
-  ) => void;
   setColumnInfo: (
     colId: string,
-    info: Partial<Omit<ColumnInfo, "id">>,
+    info: ColumnMetadata,
     action?: PropertiesResourceAction,
   ) => void;
   handleColumnDragEnd: (e: DragEndEvent) => void;
@@ -82,6 +80,8 @@ export interface ColumnsInfoTableApi {
     };
   }) => void;
   duplicateColumnInfo: (colId: string) => void;
+  deleteColumnInfo: (colId: string) => void;
+  restoreColumnInfo: (colId: string) => void;
   removeColumnInfo: (colId: string) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;
   setColumnType: <TPlugins extends CellPlugin[]>(
@@ -126,7 +126,7 @@ function getPropertyPosition(entity: Entity<ColumnInfo>, propertyId: string) {
 function createPropertyUpdateAction(
   id: string,
   propertyId: string,
-  info: Partial<Omit<ColumnInfo, "id">>,
+  info: ColumnMetadata,
 ): PropertiesResourceAction {
   if ("hidden" in info) {
     return {
@@ -137,20 +137,6 @@ function createPropertyUpdateAction(
         previousHidden: {},
         nextHidden: { [propertyId]: Boolean(info.hidden) },
       },
-    };
-  }
-  if (info.isDeleted === true) {
-    return {
-      id,
-      type: "properties.delete",
-      payload: { propertyId, previousPosition: -1 },
-    };
-  }
-  if (info.isDeleted === false) {
-    return {
-      id,
-      type: "properties.restore",
-      payload: { propertyId },
     };
   }
   if ("width" in info) {
@@ -165,6 +151,67 @@ function createPropertyUpdateAction(
     type: "properties.update",
     payload: { propertyId, previous: {}, next: info },
   };
+}
+
+function updateColumnInfo(
+  instance: _TableInstance,
+  colId: string,
+  updater: Updater<ColumnInfo>,
+  action: PropertiesResourceAction,
+) {
+  instance.options.onColumnInfoChange?.(
+    (prev) => {
+      const current = prev.items[colId];
+      if (!current) return prev;
+      const next = functionalUpdate(updater, current);
+      if (next === current) return prev;
+      return { ...prev, items: { ...prev.items, [colId]: next } };
+    },
+    (previous, next) => {
+      if (action.type === "properties.update") {
+        return {
+          ...action,
+          payload: {
+            propertyId: colId,
+            previous: previous.items[colId] ?? {},
+            next: next.items[colId] ?? {},
+          },
+        };
+      }
+      if (action.type === "properties.resize") {
+        return {
+          ...action,
+          payload: {
+            propertyId: colId,
+            previousWidth: previous.items[colId]?.width,
+            nextWidth: next.items[colId]?.width,
+          },
+        };
+      }
+      if (action.type === "properties.visibility.change") {
+        return {
+          ...action,
+          payload: {
+            propertyIds: [colId],
+            previousHidden: {
+              [colId]: Boolean(previous.items[colId]?.hidden),
+            },
+            nextHidden: { [colId]: Boolean(next.items[colId]?.hidden) },
+          },
+        };
+      }
+      if (action.type === "properties.delete") {
+        return {
+          ...action,
+          payload: {
+            propertyId: colId,
+            previousPosition: getPropertyPosition(previous, colId),
+          },
+        };
+      }
+      return action;
+    },
+  );
 }
 
 export const ColumnsInfoFeature: TableFeature = {
@@ -340,76 +387,14 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     /** Column Setters */
-    instance._setColumnInfo = (colId, updater, action) => {
-      const fallbackAction = action ?? {
-        id: v4(),
-        type: "properties.update",
-        payload: { propertyId: colId, previous: {}, next: {} },
-      };
-      instance.options.onColumnInfoChange?.(
-        (prev) => {
-          const current = prev.items[colId];
-          if (!current) return prev;
-          const next = functionalUpdate(updater, current);
-          if (
-            next.type !== current.type &&
-            (next.type === "id" || current.type === "id")
-          )
-            return prev;
-          if (current.type === "id" && next.isDeleted) return prev;
-          return { ...prev, items: { ...prev.items, [colId]: next } };
-        },
-        (previous, next) => {
-          if (fallbackAction.type === "properties.update") {
-            return {
-              ...fallbackAction,
-              payload: {
-                propertyId: colId,
-                previous: previous.items[colId] ?? {},
-                next: next.items[colId] ?? {},
-              },
-            };
-          }
-          if (fallbackAction.type === "properties.resize") {
-            return {
-              ...fallbackAction,
-              payload: {
-                propertyId: colId,
-                previousWidth: previous.items[colId]?.width,
-                nextWidth: next.items[colId]?.width,
-              },
-            };
-          }
-          if (fallbackAction.type === "properties.visibility.change") {
-            return {
-              ...fallbackAction,
-              payload: {
-                propertyIds: [colId],
-                previousHidden: {
-                  [colId]: Boolean(previous.items[colId]?.hidden),
-                },
-                nextHidden: { [colId]: Boolean(next.items[colId]?.hidden) },
-              },
-            };
-          }
-          if (fallbackAction.type === "properties.delete") {
-            return {
-              ...fallbackAction,
-              payload: {
-                propertyId: colId,
-                previousPosition: getPropertyPosition(previous, colId),
-              },
-            };
-          }
-          return fallbackAction;
-        },
-      );
-    };
     instance.setColumnInfo = (colId, info, action) => {
-      instance._setColumnInfo(
+      const { id: _id, type: _type, isDeleted: _isDeleted, ...metadata } = info;
+      if (Object.keys(metadata).length === 0) return;
+      updateColumnInfo(
+        instance,
         colId,
-        (prev) => ({ ...prev, ...info }),
-        action ?? createPropertyUpdateAction(v4(), colId, info),
+        (prev) => ({ ...prev, ...metadata }),
+        action ?? createPropertyUpdateAction(v4(), colId, metadata),
       );
     };
     instance.handleColumnDragEnd = (e) => {
@@ -580,6 +565,32 @@ export const ColumnsInfoFeature: TableFeature = {
         }),
       );
     };
+    instance.deleteColumnInfo = (colId) =>
+      updateColumnInfo(
+        instance,
+        colId,
+        (column) =>
+          column.type === "id" || column.isDeleted
+            ? column
+            : { ...column, isDeleted: true },
+        {
+          id: v4(),
+          type: "properties.delete",
+          payload: { propertyId: colId, previousPosition: -1 },
+        },
+      );
+    instance.restoreColumnInfo = (colId) =>
+      updateColumnInfo(
+        instance,
+        colId,
+        (column) =>
+          column.isDeleted ? { ...column, isDeleted: false } : column,
+        {
+          id: v4(),
+          type: "properties.restore",
+          payload: { propertyId: colId },
+        },
+      );
     instance.removeColumnInfo = (colId) => {
       if (instance.atoms.columnsInfo.get()[colId]?.type === "id") return;
       const actionId = v4();
@@ -615,7 +626,8 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     instance.toggleColumnWrapped = (colId, updater) => {
-      instance._setColumnInfo(
+      updateColumnInfo(
+        instance,
         colId,
         (prev) => ({
           ...prev,
@@ -643,9 +655,11 @@ export const ColumnsInfoFeature: TableFeature = {
       const config =
         destPlugin.transferConfig?.(source, data) ?? destPlugin.default.config;
       const actionId = v4();
-      instance.setColumnInfo(
+      const srcPlugin = instance.getColumnPlugin(colId);
+      updateColumnInfo(
+        instance,
         colId,
-        { type, config },
+        (column) => ({ ...column, type, config }),
         {
           id: actionId,
           type: "properties.type.change",
@@ -657,7 +671,6 @@ export const ColumnsInfoFeature: TableFeature = {
         },
       );
       // Update all cells
-      const srcPlugin = instance.getColumnPlugin(colId);
       const projectRow = createRowProjector(
         [source],
         instance.options.propertySources?.people,
@@ -731,7 +744,8 @@ export const ColumnsInfoFeature: TableFeature = {
       updater: Updater<unknown>,
     ) {
       if (instance.getTableGlobalState().locked) return;
-      instance._setColumnInfo(
+      updateColumnInfo(
+        instance,
         this.id,
         (v) => ({
           ...v,

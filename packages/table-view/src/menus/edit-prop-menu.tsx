@@ -48,7 +48,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   // 5. Duplicate property
   const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 6. Delete property
-  const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
+  const deleteProp = () => table.deleteColumnInfo(propId);
 
   return (
     <>

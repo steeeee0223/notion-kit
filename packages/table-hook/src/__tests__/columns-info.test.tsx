@@ -216,7 +216,8 @@ describe("useTableView - Column Custom APIs", () => {
         table.duplicateColumnInfo("id");
         table.setColumnType("id", "text");
         table.setColumnType("col2", "id");
-        table.setColumnInfo("id", { isDeleted: true });
+        table.deleteColumnInfo("id");
+        table.restoreColumnInfo("id");
         table.removeColumnInfo("id");
       });
       expect(table.getColumnInfo("id")).toMatchObject({

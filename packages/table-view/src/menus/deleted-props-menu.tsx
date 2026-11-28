@@ -28,7 +28,7 @@ export function DeletedPropsMenu() {
           <PropertyItem
             key={info.id}
             info={info}
-            onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
+            onRestore={() => table.restoreColumnInfo(info.id)}
             onDelete={() => table.removeColumnInfo(info.id)}
           />
         ))}
