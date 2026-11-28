@@ -58,15 +58,9 @@ it("shows and hides the built-in ID from Properties", async () => {
     ],
   });
   const properties = await (await table.openViewSettings()).openProperties();
-  const types = await properties.openNewProperty();
-  expect(
-    within(types.root).queryByRole("menuitem", { name: "ID" }),
-  ).not.toBeInTheDocument();
-
-  const currentProperties = await types.backToProperties();
-  expect(currentProperties.visibilityButton("Name")).toBeDisabled();
-  expect(currentProperties.visibilityButton("ID")).toBeEnabled();
-  await table.user.click(currentProperties.visibilityButton("ID"));
+  expect(properties.visibilityButton("Name")).toBeDisabled();
+  expect(properties.visibilityButton("ID")).toBeEnabled();
+  await table.user.click(properties.visibilityButton("ID"));
   await table.clickOutside();
   expect(within(table.propertyCell("Trip", "id")).getByText("1")).toBeVisible();
 

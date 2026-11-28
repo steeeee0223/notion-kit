@@ -61,6 +61,8 @@ describe("TypesMenu", () => {
     await tableView.user.click(edit.item("Type"));
     const types = await MenuSurfaceObject.findByItem(tableView.user, "Number");
 
+    expect(types.item("Title")).toHaveAttribute("aria-disabled", "true");
+    expect(types.item("ID")).toHaveAttribute("aria-disabled", "true");
     await tableView.user.click(types.item("Number"));
 
     const next = await MenuSurfaceObject.findByHeading(
@@ -114,9 +116,10 @@ describe("TypesMenu", () => {
     });
   });
 
-  it("PropertyTypesMenu_TitleType_IsNotCreatable", async () => {
+  it("PropertyTypesMenu_BuiltInTypes_AreVisibleAndDisabled", async () => {
     const types = await openPropertyTypesMenu();
 
     expect(types.type("Title")).toHaveAttribute("aria-disabled", "true");
+    expect(types.type("ID")).toHaveAttribute("aria-disabled", "true");
   });
 });

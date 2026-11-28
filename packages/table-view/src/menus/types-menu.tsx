@@ -121,7 +121,6 @@ export function TypesMenu({
               <DropdownMenuGroup>
                 <DropdownMenuLabel title="Type" />
                 {registry.data.map((entry) => {
-                  if (entry.id === "id") return null;
                   const plugin = registry.getUiPlugin(entry.id);
                   return (
                     <TooltipPreset
@@ -135,6 +134,7 @@ export function TypesMenu({
                         closeOnClick={closeOnClick}
                         disabled={
                           plugin.id === "title" ||
+                          plugin.id === "id" ||
                           (grouped && entry.canGroup === false)
                         }
                         icon={plugin.meta.icon}
