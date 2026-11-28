@@ -6,7 +6,7 @@ import {
   type SelectPlugin,
 } from "@notion-kit/table-hook/plugins";
 
-import { DefaultIcon } from "@/common";
+import { CellRenderer, DefaultIcon } from "@/common";
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 
 import type { TableUiPlugin } from "../registry";
@@ -18,8 +18,9 @@ import {
   type CellRendererProps,
   type ConfigMenuRendererProps,
 } from "../renderers";
+import { getCellTriggerClass, getCompactWidthClass } from "../utils";
 import { ReadOnlySelectValue } from "./read-only-value";
-import { SelectCell, SelectCellEditor, SelectCellValue } from "./select-cell";
+import { SelectCellEditor, SelectCellValue } from "./select-cell";
 import { SelectConfigMenu } from "./select-config-menu";
 import { SelectGroupingValue } from "./select-grouping-value";
 
@@ -29,9 +30,33 @@ export function select(): TableUiPlugin<SelectPlugin> {
     onChange,
     ...props
   }: CellRendererProps<string | null, SelectConfig>) => (
-    <SelectCell
-      cell={props}
+    <CellRenderer
+      compactClassName={getCompactWidthClass("select")}
+      disabled={props.disabled}
+      emptyContent={
+        props.surface === "row-view" && !data ? (
+          <div className="flex items-center justify-between">
+            <div
+              className={
+                props.wrapped
+                  ? "flex flex-wrap gap-x-2 gap-y-1.5 text-muted"
+                  : "flex flex-nowrap gap-x-2 gap-y-1.5 text-muted"
+              }
+            >
+              Empty
+            </div>
+          </div>
+        ) : undefined
+      }
+      hideWhenEmpty={props.surface === "list" || props.surface === "board"}
       isEmpty={!data}
+      popover={{
+        align: "start",
+        side: "bottom",
+        sideOffset: (rect) => -rect.height,
+        className:
+          "max-h-[773px] min-h-[34px] w-75 overflow-visible backdrop-filter-none",
+      }}
       renderEditor={(close) => (
         <SelectCellEditor
           {...props}
@@ -47,6 +72,12 @@ export function select(): TableUiPlugin<SelectPlugin> {
           }}
         />
       )}
+      surface={props.surface}
+      triggerClassName={getCellTriggerClass({
+        kind: "select",
+        surface: props.surface,
+        wrapped: props.wrapped,
+      })}
       value={<SelectCellValue data={data ? [data] : []} {...props} />}
     />
   );
@@ -96,9 +127,33 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
     onChange,
     ...props
   }: CellRendererProps<string[], SelectConfig>) => (
-    <SelectCell
-      cell={props}
+    <CellRenderer
+      compactClassName={getCompactWidthClass("select")}
+      disabled={props.disabled}
+      emptyContent={
+        props.surface === "row-view" && props.data.length === 0 ? (
+          <div className="flex items-center justify-between">
+            <div
+              className={
+                props.wrapped
+                  ? "flex flex-wrap gap-x-2 gap-y-1.5 text-muted"
+                  : "flex flex-nowrap gap-x-2 gap-y-1.5 text-muted"
+              }
+            >
+              Empty
+            </div>
+          </div>
+        ) : undefined
+      }
+      hideWhenEmpty={props.surface === "list" || props.surface === "board"}
       isEmpty={props.data.length === 0}
+      popover={{
+        align: "start",
+        side: "bottom",
+        sideOffset: (rect) => -rect.height,
+        className:
+          "max-h-[773px] min-h-[34px] w-75 overflow-visible backdrop-filter-none",
+      }}
       renderEditor={(close) => (
         <SelectCellEditor
           multi
@@ -107,6 +162,12 @@ export function multiSelect(): TableUiPlugin<MultiSelectPlugin> {
           onChange={onChange}
         />
       )}
+      surface={props.surface}
+      triggerClassName={getCellTriggerClass({
+        kind: "select",
+        surface: props.surface,
+        wrapped: props.wrapped,
+      })}
       value={<SelectCellValue multi {...props} />}
     />
   );

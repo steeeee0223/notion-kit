@@ -13,6 +13,8 @@ import type {
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
@@ -20,8 +22,11 @@ import {
 import { BulkEditorPopover } from "@/common/bulk-edit/bulk-editor";
 import { useTableViewCtx } from "@/table-contexts";
 
-import { propertyMetadata } from "../property-cell";
-import { PropertySettingMenu } from "../property-setting-menu";
+import {
+  PropertyCellValues,
+  PropertyEditorCell,
+  propertyMetadata,
+} from "../property-cell";
 import { ReferenceAvatar, ReferencePicker } from "../reference-picker";
 import type { ReadOnlyValueProps, TableUiPlugin } from "../registry";
 import {
@@ -31,7 +36,6 @@ import {
   type CellRendererProps,
   type ConfigMenuRendererProps,
 } from "../renderers";
-import { SelectCell, SelectCellValues } from "../select/select-cell";
 import { DefaultGroupingValue } from "../utils";
 
 function People({
@@ -42,7 +46,7 @@ function People({
   wrapped?: boolean;
 }) {
   return (
-    <SelectCellValues wrapped={wrapped}>
+    <PropertyCellValues wrapped={wrapped}>
       {people.map((reference) => (
         <span
           className="inline-flex min-w-0 items-center gap-1"
@@ -52,7 +56,7 @@ function People({
           <span className="truncate">{referenceLabel(reference)}</span>
         </span>
       ))}
-    </SelectCellValues>
+    </PropertyCellValues>
   );
 }
 
@@ -74,6 +78,41 @@ const notificationOptions = [
   { value: "individuals-and-groups", label: "Individuals & groups" },
   { value: "none", label: "None" },
 ] as const;
+
+function PropertySettingMenu<Value extends string>({
+  label,
+  icon,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  icon?: ReactNode;
+  value: Value;
+  options: readonly { label: string; value: Value }[];
+  onChange: (value: Value) => void;
+}) {
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger label={label} icon={icon}>
+        <span className="truncate text-muted">
+          {options.find((option) => option.value === value)?.label}
+        </span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuContent sideOffset={-4} className="w-56">
+        <DropdownMenuRadioGroup value={value} onValueChange={onChange}>
+          {options.map((option) => (
+            <DropdownMenuRadioItem
+              key={option.value}
+              {...option}
+              closeOnClick={false}
+            />
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenuSub>
+  );
+}
 
 function PersonConfigMenu({
   config,
@@ -155,7 +194,7 @@ function PersonCell({
   renderEditor?: (close: () => void) => ReactNode;
 }) {
   return (
-    <SelectCell
+    <PropertyEditorCell
       cell={props}
       isEmpty={props.data.length === 0}
       renderEditor={renderEditor}

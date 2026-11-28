@@ -7,7 +7,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@notion-kit/ui/primitives";
 
-const numberRoundingOptions: { label: string; value: NumberRound }[] = [
+const options: { label: string; value: NumberRound }[] = [
   { label: "Default", value: "default" },
   { label: "0", value: "0" },
   { label: "1", value: "1" },
@@ -27,10 +27,7 @@ export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
     <DropdownMenuSub>
       <DropdownMenuSubTrigger label="Decimal places">
         <div className="text-muted">
-          {
-            numberRoundingOptions.find((option) => option.value === round)
-              ?.label
-          }
+          {options.find((option) => option.value === round)?.label}
         </div>
       </DropdownMenuSubTrigger>
       <DropdownMenuContent sideOffset={-4}>
@@ -38,7 +35,7 @@ export function RoundingMenu({ round, onUpdate }: RoundingMenuProps) {
           value={round}
           onValueChange={(value: NumberRound) => onUpdate(value)}
         >
-          {numberRoundingOptions.map((option) => (
+          {options.map((option) => (
             <DropdownMenuRadioItem
               key={option.value}
               value={option.value}

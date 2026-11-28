@@ -109,4 +109,5 @@ export type {
   TableUiPlugin,
 } from "./registry";
 
+// TMP export for development examples
 export * from "./date/date-cell";

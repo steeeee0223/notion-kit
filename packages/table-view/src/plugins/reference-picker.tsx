@@ -20,7 +20,7 @@ import {
   ComboboxValue,
 } from "@notion-kit/ui/primitives";
 
-import { SelectCellSearch } from "./select/select-cell-search";
+import { PropertySearch } from "./property-cell";
 
 export function ReferenceAvatar({
   reference,
@@ -84,7 +84,7 @@ export function ReferencePicker({
         )
       }
     >
-      <SelectCellSearch label={label} placeholder={label} onClose={onClose}>
+      <PropertySearch label={label} placeholder={label} onClose={onClose}>
         <ComboboxValue>
           {(selected: string[]) => (
             <>
@@ -106,7 +106,7 @@ export function ReferencePicker({
             </>
           )}
         </ComboboxValue>
-      </SelectCellSearch>
+      </PropertySearch>
       <ComboboxContent variant="inline">
         <ComboboxEmpty>No matches.</ComboboxEmpty>
         <ComboboxList>

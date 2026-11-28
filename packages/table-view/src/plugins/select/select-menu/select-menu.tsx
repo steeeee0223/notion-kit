@@ -1,6 +1,8 @@
 import {
   Combobox,
   ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
   ComboboxContent,
   ComboboxCreatableItem,
   ComboboxGroup,
@@ -14,7 +16,6 @@ import { COLOR } from "@notion-kit/utils";
 
 import { OptionTag } from "@/common";
 
-import { SelectCellSearch } from "../select-cell-search";
 import { OptionItem } from "./option-item";
 import { SelectMenuApi } from "./use-select-menu";
 
@@ -72,11 +73,7 @@ export function SelectMenu({ menu, onClose }: SelectMenuProps) {
       onValueChange={handleTagsChange}
       items={items}
     >
-      <SelectCellSearch
-        label="Search for an option"
-        placeholder="Search for an option..."
-        onClose={onClose}
-      >
+      <ComboboxChips variant="inline" hideClearButton className="z-10 max-h-60">
         <ComboboxValue>
           {(selectedValue: string[]) => (
             <>
@@ -96,10 +93,20 @@ export function SelectMenu({ menu, onClose }: SelectMenuProps) {
                   </ComboboxChip>
                 );
               })}
+              <ComboboxChipsInput
+                placeholder="Search for an option..."
+                onKeyDownCapture={(event) => {
+                  // This list stays open; Escape dismisses its owning editor.
+                  if (event.key !== "Escape" || !onClose) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onClose();
+                }}
+              />
             </>
           )}
         </ComboboxValue>
-      </SelectCellSearch>
+      </ComboboxChips>
       <ComboboxContent variant="inline">
         <ComboboxList>
           {(group: GroupOption) => (

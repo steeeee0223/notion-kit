@@ -20,8 +20,8 @@ import { readReferences } from "@/plugins/references";
 import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 import {
+  createRowProjector,
   hasProjectedPropertyValue,
-  projectTableData,
 } from "@/table-contexts/property-data";
 
 export interface RowActionsOptions {
@@ -99,23 +99,6 @@ function getRowPosition(rows: Row[], rowId: string) {
   return rows.findIndex((row) => row.id === rowId);
 }
 
-function preservesGroupOrder(
-  rows: Row[],
-  remaining: Row[],
-  moved: Row,
-  beforeRowId: string | null,
-  belongs: (row: Row) => boolean,
-) {
-  const currentGroup = rows.filter(belongs);
-  const proposedGroup = remaining.filter(belongs);
-  const groupIndex =
-    beforeRowId === null
-      ? proposedGroup.length
-      : getRowPosition(proposedGroup, beforeRowId);
-  proposedGroup.splice(groupIndex, 0, moved);
-  return proposedGroup.every((row, index) => row === currentGroup[index]);
-}
-
 export const RowActionsFeature: TableFeature = {
   getDefaultTableOptions: (): RowActionsOptions => {
     return {};
@@ -127,17 +110,12 @@ export const RowActionsFeature: TableFeature = {
         queueMicrotask(() => {
           const grouped = table.getGroupedColumnInfo();
           if (!grouped) return;
+          const projectRow = createRowProjector(
+            [grouped],
+            table.options.propertySources?.people,
+          );
           table._syncGroupingStateFromData(
-            projectTableData(
-              rows,
-              table.atoms.columnsInfo.get(),
-              table.options.propertySources,
-              {
-                propertyId: hasProjectedPropertyValue(grouped.type)
-                  ? grouped.id
-                  : undefined,
-              },
-            ),
+            projectRow ? rows.map(projectRow) : rows,
           );
         });
       }
@@ -489,9 +467,16 @@ export const RowActionsFeature: TableFeature = {
         info.config,
         table.options.weekStartsOn ?? 1,
       );
+      const projectRow = createRowProjector(
+        [info],
+        table.options.propertySources?.people,
+      );
+      const getValue = (row: Row): unknown => {
+        const cell = (projectRow?.(row) ?? row).properties[info.id];
+        return cell ? cell.value : plugin.default.data;
+      };
       const classify = (row: Row) => {
-        const cell = row.properties[info.id];
-        const value: unknown = cell ? cell.value : plugin.default.data;
+        const value = getValue(row);
         return createGroupId(
           info.id,
           plugin.isEmpty(value)
@@ -499,27 +484,24 @@ export const RowActionsFeature: TableFeature = {
             : method.function(value, row, info.id, context),
         );
       };
-      return { info, plugin, method, context, classify };
+      return { info, plugin, method, context, classify, getValue };
     };
     const getDestinationRow = (
       row: Row,
       groupId: string,
       grouping = getRowGrouping(),
-      displayedRow = row,
     ) => {
       if (table.getTableGlobalState().locked || !grouping) return null;
       const state = table.atoms.groupingState.get();
       const destination = state.groupValues[groupId];
       if (!destination || state.groupVisibility[groupId] === false) return null;
-      const { info, plugin, method, context, classify } = grouping;
-      if (classify(displayedRow) === groupId) return row;
+      const { info, plugin, method, context, classify, getValue } = grouping;
+      if (classify(row) === groupId) return row;
       if (!method.getDropValue) return null;
       const cell = row.properties[info.id];
-      const data: unknown =
-        displayedRow.properties[info.id]?.value ?? plugin.default.data;
       const value = normalizeCellValue(
         info.id,
-        method.getDropValue(data, destination.value, context),
+        method.getDropValue(getValue(row), destination.value, context),
       );
       const next = {
         ...row,
@@ -545,32 +527,15 @@ export const RowActionsFeature: TableFeature = {
             return rows;
           const source = rows.find((row) => row.id === rowId);
           if (!source || !table.getRowModel().rowsById[rowId]) return rows;
-          const grouping = groupId === undefined ? null : getRowGrouping();
-          const displayed =
-            grouping && hasProjectedPropertyValue(grouping.plugin.id)
-              ? new Map(
-                  projectTableData(
-                    rows,
-                    table.atoms.columnsInfo.get(),
-                    table.options.propertySources,
-                    { propertyId: grouping.info.id },
-                  ).map((row) => [row.id, row]),
-                )
-              : undefined;
+          const grouping = getRowGrouping();
           const moved =
             groupId === undefined
               ? source
-              : getDestinationRow(
-                  source,
-                  groupId,
-                  grouping,
-                  displayed?.get(rowId),
-                );
+              : getDestinationRow(source, groupId, grouping);
           if (!moved) return rows;
           const remaining = rows.filter((row) => row.id !== rowId);
           const belongs = (row: Row) =>
-            groupId === undefined ||
-            grouping?.classify(displayed?.get(row.id) ?? row) === groupId;
+            groupId === undefined || grouping?.classify(row) === groupId;
           let index = remaining.length;
           if (beforeRowId !== null) {
             const anchor = remaining.find((row) => row.id === beforeRowId);
@@ -582,18 +547,27 @@ export const RowActionsFeature: TableFeature = {
               return rows;
             index = remaining.indexOf(anchor);
           } else if (groupId !== undefined) {
-            index = remaining.reduce(
-              (insertion, row, position) =>
-                belongs(row) ? position + 1 : insertion,
-              index,
-            );
+            let last = -1;
+            remaining.forEach((row, position) => {
+              if (belongs(row)) last = position;
+            });
+            if (last >= 0) index = last + 1;
           }
-          if (
-            moved === source &&
-            groupId !== undefined &&
-            preservesGroupOrder(rows, remaining, moved, beforeRowId, belongs)
-          )
-            return rows;
+          if (moved === source && groupId !== undefined) {
+            const currentGroup = rows.filter(belongs);
+            const proposedGroup = remaining.filter(belongs);
+            const groupIndex =
+              beforeRowId === null
+                ? proposedGroup.length
+                : proposedGroup.findIndex((row) => row.id === beforeRowId);
+            proposedGroup.splice(groupIndex, 0, moved);
+            if (
+              proposedGroup.every(
+                (row, position) => row === currentGroup[position],
+              )
+            )
+              return rows;
+          }
           const next = insertAt(remaining, moved, index);
           return moved === source &&
             next.every((row, position) => row === rows[position])

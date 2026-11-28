@@ -143,13 +143,14 @@ describe("New table property plugins", () => {
         onDataChange,
       }),
     );
+    const { table } = result.current;
+    const untouchedCell = table.getCell("owner", "unselected");
 
     act(() =>
-      result.current.table
-        .getColumn("owner")
-        ?.updateCells(["first", "second"], [ada]),
+      table.getColumn("owner")?.updateCells(["first", "second"], [ada]),
     );
 
+    expect(table.getCell("owner", "unselected")).toBe(untouchedCell);
     const change = onDataChange.mock.lastCall?.[0];
     expect(change?.action).toMatchObject({
       type: "data.cell.update",
@@ -165,6 +166,28 @@ describe("New table property plugins", () => {
       ["second", [ada]],
       ["unselected", undefined],
     ]);
+  });
+
+  it("moves a row into a Person group using the current directory label", () => {
+    const { table } = renderProperties(
+      [{ id: "owner", name: "Owner", type: "person" }],
+      [
+        row("first", { owner: [ada] }),
+        row("second", { owner: [{ ...grace, name: "Previous name" }] }),
+      ],
+      { people: [ada, grace] },
+    );
+    act(() => table.setGroupingColumn("owner"));
+    const groupId = "owner:Grace Hopper";
+    expect(table.getCanMoveRowToGroup("first", groupId)).toBe(true);
+
+    act(() =>
+      table.moveRow({ rowId: "first", groupId, beforeRowId: "second" }),
+    );
+
+    expect(table.getCell("owner", "first").value).toEqual([grace, ada]);
+    const group = table.getRowModel().rowsById[groupId];
+    expect(group?.subRows.map(({ id }) => id)).toEqual(["first", "second"]);
   });
 
   it("does not reuse a row number after a controlled deletion", () => {

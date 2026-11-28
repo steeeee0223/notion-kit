@@ -49,8 +49,8 @@ import { defaultColumn } from "@/table-contexts/column";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 import {
   assignRowSequences,
+  createRowProjector,
   nextRowSequence,
-  projectTableData,
 } from "@/table-contexts/property-data";
 import type {
   BaseTableProps,
@@ -302,10 +302,26 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     defaultValue: options.defaultData ?? initialTable.data,
     onChange: onDataChange,
   });
-  const dataEntity = useMemo(
-    () => projectTableData(dataResource, columnEntity.items, propertySources),
-    [dataResource, columnEntity.items, propertySources],
+  const people = propertySources?.people;
+  const allocateRowNumber = propertySources?.allocateRowNumber;
+  const hasId = propertiesResource.some(
+    ({ type, isDeleted }) => type === "id" && !isDeleted,
   );
+  const projectRow = useMemo(
+    () =>
+      createRowProjector<Row<TPlugins>>(
+        Object.values(columnEntity.items),
+        people,
+      ),
+    [columnEntity.items, people],
+  );
+  const dataEntity = useMemo(() => {
+    const rows =
+      hasId && !allocateRowNumber
+        ? assignRowSequences(dataResource)
+        : dataResource;
+    return projectRow ? rows.map(projectRow) : rows;
+  }, [dataResource, projectRow, hasId, allocateRowNumber]);
   useLayoutEffect(() => {
     nextSequenceRef.current = nextRowSequence(
       dataResource,
@@ -325,11 +341,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
             ({ type, isDeleted }) => type === "id" && !isDeleted,
           )
         ) {
-          const prior = assignRowSequences(
-            previous,
-            1,
-            propertySources?.allocateRowNumber,
-          );
+          const prior = assignRowSequences(previous, 1, allocateRowNumber);
           const sequences = new Map(
             prior.map(({ id, sequence }) => [id, sequence]),
           );
@@ -338,16 +350,12 @@ export function useTableView<TPlugins extends CellPlugin[]>(
             return row.sequence === sequence ? row : { ...row, sequence };
           });
           const minimum = nextRowSequence(prior, nextSequenceRef.current);
-          next = assignRowSequences(
-            next,
-            minimum,
-            propertySources?.allocateRowNumber,
-          );
+          next = assignRowSequences(next, minimum, allocateRowNumber);
           nextSequenceRef.current = nextRowSequence(next, minimum);
         }
         return next;
       }, action),
-    [pendingPropertiesRef, propertySources, setDataResource],
+    [allocateRowNumber, pendingPropertiesRef, setDataResource],
   );
   const columns = useMemo(
     () =>
@@ -357,7 +365,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         return {
           id: property.id,
           enableGlobalFilter: !property.isDeleted,
-          enableGrouping: plugin.canGroup !== false,
+          ...(plugin.canGroup === false && { enableGrouping: false }),
           accessorFn: (row) => {
             const cell = row.properties[colId];
             const value: unknown = cell ? cell.value : plugin.default.data;

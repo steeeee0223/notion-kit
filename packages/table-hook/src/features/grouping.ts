@@ -346,13 +346,9 @@ export const ExtendedGroupingFeature: TableFeature = {
     };
     table.setGrouping = (updater) => {
       setGrouping((previous) =>
-        functionalUpdate(updater, previous).filter((id) => {
-          const property = table.atoms.columnsInfo.get()[id];
-          return (
-            property &&
-            table.atoms.cellPlugins.get()[property.type]?.canGroup !== false
-          );
-        }),
+        functionalUpdate(updater, previous).filter((id) =>
+          table.getColumn(id)?.getCanGroup(),
+        ),
       );
       table._syncGroupingState({ resetOrder: true });
     };
@@ -366,7 +362,7 @@ export const ExtendedGroupingFeature: TableFeature = {
         updater,
         grouping.length > 0 ? grouping[0]! : null,
       );
-      if (colId && table.getColumnPlugin(colId).canGroup === false) return;
+      if (colId && !table.getColumn(colId)?.getCanGroup()) return;
       table.setGrouping(colId ? [colId] : []);
       const groupSort = table.getGroupSort();
       if (groupSort.mode === "manual") return;

@@ -311,8 +311,8 @@ function OptionOperand({
   root: FilterGroup;
   multiple?: boolean;
 }) {
-  const updateRule = useFilterRuleUpdate(root, rule.id);
   const { table } = useTableViewCtx();
+  const updateRule = useFilterRuleUpdate(root, rule.id);
   const property = table.getColumnInfo(rule.propertyId);
   const options = getFilterOptions(property.config as SelectConfig);
   const optionsByName = new Map(options.map((option) => [option.name, option]));
@@ -515,8 +515,8 @@ function parseNumericDraft(value: string, relative: boolean) {
 }
 
 function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
-  const updateRule = useFilterRuleUpdate(root, rule.id);
   const { table } = useTableViewCtx();
+  const updateRule = useFilterRuleUpdate(root, rule.id);
   const property = table.getColumnInfo(rule.propertyId);
   const timeZone = getTimeZone(property.config as DateConfig);
   const [preset, setPreset] = useState<DatePreset | null>(
@@ -687,8 +687,8 @@ function DateRangeOperand({
   rule: FilterRule;
   root: FilterGroup;
 }) {
-  const updateRule = useFilterRuleUpdate(root, rule.id);
   const { table } = useTableViewCtx();
+  const updateRule = useFilterRuleUpdate(root, rule.id);
   const property = table.getColumnInfo(rule.propertyId);
   const timeZone = getTimeZone(property.config as DateConfig);
   const authoritativeStart = formatDateValue(

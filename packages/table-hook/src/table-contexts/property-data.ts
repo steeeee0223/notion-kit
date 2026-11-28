@@ -53,31 +53,17 @@ export function hasProjectedPropertyValue(type: string) {
   return projectedTypes.has(type);
 }
 
-interface PropertyProjectionOptions {
-  propertyId?: string;
-}
-
-export function projectTableData<T extends Row>(
-  rows: T[],
-  columns: Record<string, ColumnInfo>,
-  sources?: TablePropertySources,
-  { propertyId }: PropertyProjectionOptions = {},
-): T[] {
-  const allProperties = Object.values(columns);
-  const projectedProperties = allProperties.filter(
-    ({ type, isDeleted }) => !isDeleted && projectedTypes.has(type),
+export function createRowProjector<T extends Row = Row>(
+  columns: readonly ColumnInfo[],
+  directory?: readonly PropertyReference[],
+) {
+  const properties = columns.filter(
+    ({ type, isDeleted }) => !isDeleted && hasProjectedPropertyValue(type),
   );
-  const properties =
-    propertyId === undefined
-      ? projectedProperties
-      : projectedProperties.filter(({ id }) => id === propertyId);
-  if (!properties.length) return rows;
-  const numberedRows =
-    !sources?.allocateRowNumber &&
-    projectedProperties.some(({ type }) => type === "id")
-      ? assignRowSequences(rows)
-      : rows;
-  const people = new Map(sources?.people?.map((person) => [person.id, person]));
+  if (properties.length === 0) return undefined;
+
+  const people = new Map(directory?.map((person) => [person.id, person]));
+  const cache = new WeakMap<T, T>();
   const resolve = (
     references: PropertyReference[],
     options: Map<string, PropertyReference>,
@@ -101,7 +87,10 @@ export function projectTableData<T extends Row>(
         return data;
     }
   }
-  return numberedRows.map((row) => {
+  return (row: T): T => {
+    const cached = cache.get(row);
+    if (cached) return cached;
+
     const cells = { ...row.properties };
     for (const property of properties) {
       cells[property.id] = {
@@ -109,6 +98,8 @@ export function projectTableData<T extends Row>(
         value: project(row, property),
       };
     }
-    return { ...row, properties: cells };
-  });
+    const projected = { ...row, properties: cells };
+    cache.set(row, projected);
+    return projected;
+  };
 }

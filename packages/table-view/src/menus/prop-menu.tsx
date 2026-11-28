@@ -37,6 +37,24 @@ interface PropMenuProps {
   view: "table" | "row";
 }
 
+/**
+ * @summary The definition of the property
+ *
+ * 0. ✅ Edit property config
+ * 1. ✅ Change type
+ * ---
+ * 2. ✅ Filter
+ * 3. ✅ Sorting
+ * 4. ✅ Grouping
+ * 5. ✅ Calculate
+ * 6. ✅ Freeze up to column
+ * 7. ✅ Hide in view
+ * 8. ✅ Wrap column
+ * ---
+ * 9. ✅ Insert left/right
+ * 10. ✅ Duplicate property
+ * 11. ✅ Delete property
+ */
 export function PropMenu({ propId, view }: PropMenuProps) {
   const { filterMenu } = useMenuCoordinator();
   const { table, plugins } = useTableViewCtx();
@@ -47,6 +65,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
   if (!column) return null;
   const uiPlugin = plugins.getUiPlugin(plugin.id);
 
+  // 3. Sorting
   const defaultSortingMethod = getDefaultSortingMethod(plugin);
   const sortingLabels = getSortingDirectionLabels(defaultSortingMethod);
   const sortColumn = (desc: boolean) => {
@@ -55,8 +74,9 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     }
     table.setSorting([{ id: propId, desc }]);
   };
-  const operator = plugin.filtering?.operators[0];
+  // 2. Filter
   const addFilter = () => {
+    const operator = plugin.filtering?.operators[0];
     if (!operator) return;
     const filters = table.getFilters();
     table.setFilters(
@@ -68,11 +88,15 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     );
     filterMenu.handle.open(FILTER_MENU_TOOLBAR_TRIGGER_ID);
   };
+  // 6. Pin columns
   const canFreeze = table.getCanFreezeColumn(propId);
   const canUnfreeze = table.getFreezingState()?.colId === propId;
   const pinColumns = () => table.toggleColumnFreezed(propId);
+  // 7. Hide in view
   const hideProp = () => table.setColumnInfo(propId, { hidden: true });
+  // 8. Wrap in view
   const wrapProp = () => table.toggleColumnWrapped(propId, (v) => !v);
+  // 9. Insert left/right
   const insertColumn = (side: "left" | "right") => {
     table.setTableMenuState({
       open: true,
@@ -80,7 +104,9 @@ export function PropMenu({ propId, view }: PropMenuProps) {
       data: { at: { id: propId, side } },
     });
   };
+  // 10. Duplicate property
   const duplicateProp = () => table.duplicateColumnInfo(propId);
+  // 11. Delete property
   const deleteProp = () => table.setColumnInfo(propId, { isDeleted: true });
 
   return (
@@ -108,13 +134,11 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         <>
           <Separator />
           <DropdownMenuGroup>
-            {operator && (
-              <DropdownMenuItem
-                icon={<Icon.FilterSmall />}
-                label="Filter"
-                onClick={addFilter}
-              />
-            )}
+            <DropdownMenuItem
+              icon={<Icon.FilterSmall />}
+              label="Filter"
+              onClick={addFilter}
+            />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger
                 icon={<Icon.ArrowUpDown />}

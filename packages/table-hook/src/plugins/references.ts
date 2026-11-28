@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { createGroupId } from "@/features/utils";
 import { groupByTextAlphabetical, groupByTextExact } from "@/fns";
 import type { PropertyReference } from "@/lib/property-reference";
 import type { Row } from "@/lib/types";
@@ -48,12 +49,9 @@ export function referenceMethods<Config>(editable = true) {
     Config
   >["getDropValue"] = (data, value, { table, colId }) => {
     if (value === null) return [];
-    const match = table
-      .getPreGroupedRowModel()
-      .rows.flatMap((row) =>
-        readReferences(row.original.properties[colId]?.value),
-      )
-      .find((reference) => referenceLabel(reference) === value);
+    const group =
+      table.atoms.groupingState.get().groupValues[createGroupId(colId, value)];
+    const [match] = readReferences(group?.original);
     if (!match) return data;
     return [match, ...data.filter(({ id }) => id !== match.id)];
   };

@@ -105,12 +105,9 @@ export function TypesMenu({
         />
       )}
       <table.Subscribe
-        selector={(state) => ({
-          plugins: state.cellPlugins,
-          hasId: hasActiveIdColumn(state.columnsInfo),
-        })}
+        selector={(state) => hasActiveIdColumn(state.columnsInfo)}
       >
-        {({ plugins, hasId }) => (
+        {(hasId) => (
           <>
             <DropdownMenuInput
               placeholder={
@@ -124,7 +121,7 @@ export function TypesMenu({
             <DropdownMenuList>
               <DropdownMenuGroup>
                 <DropdownMenuLabel title="Type" />
-                {Object.values(plugins).map((entry) => {
+                {registry.data.map((entry) => {
                   const plugin = registry.getUiPlugin(entry.id);
                   return (
                     <TooltipPreset

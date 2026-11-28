@@ -23,10 +23,7 @@ import type {
   PropertiesResourceAction,
   ResourceChangeFn,
 } from "@/table-contexts";
-import {
-  hasProjectedPropertyValue,
-  projectTableData,
-} from "@/table-contexts/property-data";
+import { createRowProjector } from "@/table-contexts/property-data";
 
 export type ColumnsInfoState<TPlugins extends CellPlugin[] = CellPlugin[]> =
   Record<string, ColumnInfo<InferPlugin<TPlugins>>>;
@@ -78,7 +75,6 @@ export interface ColumnsInfoTableApi {
     name: string;
     type: string;
     width?: string;
-    config?: unknown;
     operationId?: string;
     getInitialValue?: (row: Row) => unknown;
     at?: {
@@ -528,8 +524,7 @@ export const ColumnsInfoFeature: TableFeature = {
       const idsUpdater = createIdsUpdater(id, at);
       const databaseName = instance.options.propertySources?.databaseName;
       const config: unknown =
-        payload.config ??
-        (type === "id" && databaseName
+        type === "id" && databaseName
           ? {
               prefix: databaseName
                 .trim()
@@ -538,7 +533,7 @@ export const ColumnsInfoFeature: TableFeature = {
                 .join("")
                 .toUpperCase(),
             }
-          : plugin.default.config);
+          : plugin.default.config;
       const added = addColumnInfo(
         { id, name, type, width, config },
         idsUpdater,
@@ -679,8 +674,8 @@ export const ColumnsInfoFeature: TableFeature = {
       colId: string,
       type: PluginType<TPlugins>,
     ) => {
-      const previousType = instance.getColumnInfo(colId).type;
-      if (previousType === "id") return;
+      const source = instance.getColumnInfo(colId);
+      if (source.type === "id") return;
       const destPlugin = instance.atoms.cellPlugins.get()[type] as
         InferPlugin<TPlugins> | undefined;
       if (!destPlugin) {
@@ -688,8 +683,7 @@ export const ColumnsInfoFeature: TableFeature = {
       }
       const data = instance.getCellValues();
       const config =
-        destPlugin.transferConfig?.(instance.getColumnInfo(colId), data) ??
-        destPlugin.default.config;
+        destPlugin.transferConfig?.(source, data) ?? destPlugin.default.config;
       const actionId = v4();
       const applied = setColumnInfo(
         colId,
@@ -699,7 +693,7 @@ export const ColumnsInfoFeature: TableFeature = {
           type: "properties.type.change",
           payload: {
             propertyId: colId,
-            previousType,
+            previousType: source.type,
             nextType: type,
           },
         },
@@ -707,19 +701,14 @@ export const ColumnsInfoFeature: TableFeature = {
       if (!applied) return;
       // Update all cells
       const srcPlugin = instance.getColumnPlugin(colId);
-      const columns = instance.atoms.columnsInfo.get();
+      const projectRow = createRowProjector(
+        [source],
+        instance.options.propertySources?.people,
+      );
       instance.setTableData(
-        (prev) => {
-          const projected = hasProjectedPropertyValue(srcPlugin.id)
-            ? projectTableData(
-                prev,
-                columns,
-                instance.options.propertySources,
-                { propertyId: colId },
-              )
-            : prev;
-          return prev.map((row, index) => {
-            const cell = projected[index]?.properties[colId];
+        (prev) =>
+          prev.map((row) => {
+            const cell = (projectRow?.(row) ?? row).properties[colId];
             if (!cell) return row;
             return {
               ...row,
@@ -734,8 +723,7 @@ export const ColumnsInfoFeature: TableFeature = {
                 },
               },
             };
-          });
-        },
+          }),
         (_previous, next): DataResourceAction => ({
           id: actionId,
           type: "data.cell.update",

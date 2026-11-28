@@ -24,11 +24,14 @@ import {
 
 import { useTableViewCtx } from "@/table-contexts";
 
-import { propertyMetadata } from "../property-cell";
+import {
+  PropertyCellValues,
+  PropertyEditorCell,
+  propertyMetadata,
+  PropertySearch,
+} from "../property-cell";
 import type { TableUiPlugin } from "../registry";
 import { createCellRenderer, type CellRendererProps } from "../renderers";
-import { SelectCell, SelectCellValues } from "../select/select-cell";
-import { SelectCellSearch } from "../select/select-cell-search";
 import { DefaultGroupingValue } from "../utils";
 
 const emptyLocation: LocationValue = { name: "", address: "" };
@@ -228,7 +231,7 @@ function LocationEditor({
           }
         }}
       >
-        <SelectCellSearch
+        <PropertySearch
           label="Search places"
           placeholder="Search for a location..."
           onClose={() => {
@@ -378,15 +381,15 @@ function LocationEditor({
 
 function LocationCell(props: CellRendererProps<LocationValue | null>) {
   return (
-    <SelectCell
+    <PropertyEditorCell
       cell={props}
       isEmpty={!props.textValue}
       value={
-        <SelectCellValues wrapped={props.wrapped}>
+        <PropertyCellValues wrapped={props.wrapped}>
           <span className={props.wrapped ? "wrap-break-word" : "truncate"}>
             {props.textValue}
           </span>
-        </SelectCellValues>
+        </PropertyCellValues>
       }
       renderEditor={(close) => (
         <LocationEditor
