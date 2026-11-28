@@ -14,7 +14,7 @@ catalog:
 
 catalogs:
   node:
-    "@types/node": ^26.6.6
+    "@types/node": ^26.6.11
   react19:
     react: ^19.3.1
     react-dom: ^19.3.1
