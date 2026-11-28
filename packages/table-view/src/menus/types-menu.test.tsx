@@ -32,6 +32,7 @@ describe("TypesMenu", () => {
     ["Checkbox", "checkbox"],
     ["Date", "date"],
     ["Email", "email"],
+    ["ID", "id"],
   ] as const)(
     "PropertyTypesMenu_%s_CreatesExpectedProperty",
     async (name, type) => {
@@ -116,10 +117,9 @@ describe("TypesMenu", () => {
     });
   });
 
-  it("PropertyTypesMenu_BuiltInTypes_AreVisibleAndDisabled", async () => {
+  it("PropertyTypesMenu_TitleType_IsNotCreatable", async () => {
     const types = await openPropertyTypesMenu();
 
     expect(types.type("Title")).toHaveAttribute("aria-disabled", "true");
-    expect(types.type("ID")).toHaveAttribute("aria-disabled", "true");
   });
 });

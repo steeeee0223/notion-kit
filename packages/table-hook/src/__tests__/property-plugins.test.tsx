@@ -217,7 +217,7 @@ describe("New table property plugins", () => {
     );
   });
 
-  it("keeps legacy row numbers when the owner removes a row while ID is hidden", () => {
+  it("keeps legacy row numbers when the owner removes a row before adding ID", () => {
     const onDataChange =
       vi.fn<ResourceChangeHandler<Row[], DataResourceAction>>();
     const first = row("first", {}, 1);
@@ -227,7 +227,7 @@ describe("New table property plugins", () => {
       { initialProps: [first, second] },
     );
     const { table } = result.current;
-    expect(table.getColumnInfo("id").hidden).toBe(true);
+    expect(table.atoms.columnsInfo.get()).not.toHaveProperty("id");
     expect(table.getCellValues().map(({ sequence }) => sequence)).toEqual([
       1, 2,
     ]);
@@ -252,10 +252,10 @@ describe("New table property plugins", () => {
     ).toBeUndefined();
   });
 
-  it("reserves a shared row number while the built-in ID is hidden", () => {
+  it("reserves a shared row number before adding ID", () => {
     const allocateRowNumber = vi.fn(() => 20);
     const { table } = renderProperties([], [], { allocateRowNumber });
-    expect(table.getColumnInfo("id").hidden).toBe(true);
+    expect(table.atoms.columnsInfo.get()).not.toHaveProperty("id");
 
     let added = "";
     act(() => {
@@ -264,7 +264,7 @@ describe("New table property plugins", () => {
 
     expect(allocateRowNumber).toHaveBeenCalledWith(added, 1);
     expect(table.getCellValues()[0]?.sequence).toBe(20);
-    act(() => table.setColumnInfo("id", { hidden: false }));
+    act(() => table.addColumnInfo({ id: "id", type: "id", name: "ID" }));
     expect(table.getCell("id", added).value).toEqual({
       number: 20,
       prefix: "",

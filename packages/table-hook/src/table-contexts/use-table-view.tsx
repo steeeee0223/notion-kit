@@ -325,19 +325,18 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   });
   const [relativeFilterRefresh, setRelativeFilterRefresh] = useState(0);
   /** columns states */
-  const databaseName = propertySources?.databaseName;
   const columnEntity = useMemo(
-    () => toPropertyEntity(plugins.items, propertiesResource, databaseName),
-    [plugins.items, propertiesResource, databaseName],
+    () => toPropertyEntity(plugins.items, propertiesResource),
+    [plugins.items, propertiesResource],
   );
-  const hasId = Object.hasOwn(plugins.items, "id");
+  const hasIdPlugin = Object.hasOwn(plugins.items, "id");
   const allocateRowNumber = propertySources?.allocateRowNumber;
   const [defaultData] = useState(
     () => options.defaultData ?? initialTable.data,
   );
   const inputData = useLocalRowSequences(
     options.data ?? defaultData,
-    hasId && !allocateRowNumber,
+    hasIdPlugin && !allocateRowNumber,
   );
   const [dataResource, setDataResource] = useResourceState<
     Row<TPlugins>[],
@@ -374,7 +373,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     (updater, action) =>
       setDataResource((previous) => {
         const proposed = functionalUpdate(updater, previous);
-        if (proposed === previous || !hasId) return proposed;
+        if (proposed === previous || !hasIdPlugin) return proposed;
         if (
           proposed.length === previous.length &&
           proposed.every(({ id, sequence }, index) => {
@@ -400,7 +399,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         nextSequenceRef.current = nextRowSequence(next, minimum);
         return next;
       }, action),
-    [allocateRowNumber, hasId, setDataResource],
+    [allocateRowNumber, hasIdPlugin, setDataResource],
   );
   const columns = useMemo(
     () =>
@@ -494,7 +493,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     (updater, action) => {
       setPropertiesResource(
         (prev) => {
-          const entity = toPropertyEntity(plugins.items, prev, databaseName);
+          const entity = toPropertyEntity(plugins.items, prev);
           const next = functionalUpdate(updater, entity);
           if (next === entity) return prev;
           return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
@@ -502,13 +501,13 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         (previousProperties, nextProperties) => {
           if (typeof action !== "function") return action;
           return action(
-            toPropertyEntity(plugins.items, previousProperties, databaseName),
-            toPropertyEntity(plugins.items, nextProperties, databaseName),
+            toPropertyEntity(plugins.items, previousProperties),
+            toPropertyEntity(plugins.items, nextProperties),
           );
         },
       );
     },
-    [databaseName, plugins.items, setPropertiesResource],
+    [plugins.items, setPropertiesResource],
   );
 
   const tableState = useMemo(

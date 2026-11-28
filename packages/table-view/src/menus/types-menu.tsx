@@ -102,11 +102,16 @@ export function TypesMenu({
         />
       )}
       <table.Subscribe
-        selector={(state) =>
-          propId !== undefined && state.grouping.includes(propId)
-        }
+        selector={(state) => ({
+          grouped: propId !== undefined && state.grouping.includes(propId),
+          idUnavailable:
+            propId !== undefined ||
+            state.columnOrder.some(
+              (id) => state.columnsInfo[id]?.type === "id",
+            ),
+        })}
       >
-        {(grouped) => (
+        {({ grouped, idUnavailable }) => (
           <>
             <DropdownMenuInput
               placeholder={
@@ -134,7 +139,7 @@ export function TypesMenu({
                         closeOnClick={closeOnClick}
                         disabled={
                           plugin.id === "title" ||
-                          plugin.id === "id" ||
+                          (plugin.id === "id" && idUnavailable) ||
                           (grouped && entry.canGroup === false)
                         }
                         icon={plugin.meta.icon}

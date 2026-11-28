@@ -45,7 +45,7 @@ it("changes the displayed prefix while retaining the existing row number", async
   ).toBeVisible();
 });
 
-it("shows and hides the built-in ID from Properties", async () => {
+it("adds ID from New property and can hide and show it from Properties", async () => {
   const table = renderTableView({
     properties: [{ id: "title", name: "Name", type: "title" }],
     data: [
@@ -58,11 +58,13 @@ it("shows and hides the built-in ID from Properties", async () => {
     ],
   });
   const properties = await (await table.openViewSettings()).openProperties();
+  expect(properties.queryProperty("ID")).not.toBeInTheDocument();
   expect(properties.visibilityButton("Name")).toBeDisabled();
-  expect(properties.visibilityButton("ID")).toBeEnabled();
-  await table.user.click(properties.visibilityButton("ID"));
+  const types = await properties.openNewProperty();
+  await table.user.click(types.type("ID"));
+  await MenuSurfaceObject.findByHeading(table.user, "Edit property");
   await table.clickOutside();
-  expect(within(table.propertyCell("Trip", "id")).getByText("1")).toBeVisible();
+  expect(within(table.row("Trip")).getByText("1")).toBeVisible();
 
   await table.clickButton("ID");
   const menu = await MenuSurfaceObject.findByItem(table.user, "Calculate");
@@ -70,7 +72,10 @@ it("shows and hides the built-in ID from Properties", async () => {
   expect(screen.queryByRole("button", { name: "ID" })).not.toBeInTheDocument();
 
   const reopened = await (await table.openViewSettings()).openProperties();
-  await table.user.click(reopened.visibilityButton("ID"));
+  const typesWithId = await reopened.openNewProperty();
+  expect(typesWithId.type("ID")).toHaveAttribute("aria-disabled", "true");
+  const propertiesWithId = await typesWithId.backToProperties();
+  await table.user.click(propertiesWithId.visibilityButton("ID"));
   await table.clickOutside();
-  expect(within(table.propertyCell("Trip", "id")).getByText("1")).toBeVisible();
+  expect(within(table.row("Trip")).getByText("1")).toBeVisible();
 });

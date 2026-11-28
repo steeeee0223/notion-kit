@@ -52,7 +52,6 @@ export function createInitialTable(): TableState<CellPlugin[]> {
 export function toPropertyEntity<TPlugins extends CellPlugin[]>(
   plugins: Record<string, TPlugins[number]>,
   properties: ColumnDefs<TPlugins>,
-  databaseName?: string,
 ) {
   const idProperties = properties.filter(({ type }) => type === "id");
   const activeIds = idProperties.filter(({ isDeleted }) => !isDeleted);
@@ -60,7 +59,7 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
     throw new Error("[TableView] Only one active ID column is allowed");
   }
   const idProperty = activeIds[0] ?? idProperties[0];
-  const entity = properties.reduce<Entity<ColumnInfo>>(
+  return properties.reduce<Entity<ColumnInfo>>(
     (acc, property) => {
       const plugin = plugins[property.type];
       if (!plugin) {
@@ -82,21 +81,4 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
     },
     { ids: [], items: {} },
   );
-  if (plugins.id && !idProperty) {
-    let id = "id";
-    while (Object.hasOwn(entity.items, id)) id = `_${id}`;
-    const config: unknown = databaseName
-      ? {
-          prefix: databaseName
-            .trim()
-            .split(/\s+/u)
-            .map((word) => word[0])
-            .join("")
-            .toUpperCase(),
-        }
-      : plugins.id.default.config;
-    entity.ids.push(id);
-    entity.items[id] = { id, type: "id", name: "ID", hidden: true, config };
-  }
-  return entity;
 }

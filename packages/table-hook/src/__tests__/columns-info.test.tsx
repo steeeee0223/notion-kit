@@ -191,8 +191,9 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("addColumnInfo", () => {
-    it("allows the built-in ID to be shown without creating or rewriting a cell", () => {
-      const onPropertiesChange = vi.fn();
+    it("adds one ID column without creating or rewriting a cell", () => {
+      const onPropertiesChange =
+        vi.fn<ResourceChangeHandler<ColumnDefs, PropertiesResourceAction>>();
       const onDataChange = vi.fn();
       const { result } = renderHook(() =>
         useTableView({
@@ -205,11 +206,16 @@ describe("useTableView - Column Custom APIs", () => {
         }),
       );
       const { table } = result.current;
+      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("id");
+      act(() => table.addColumnInfo({ id: "id", type: "id", name: "ID" }));
       expect(table.getColumnInfo("id")).toMatchObject({
         type: "id",
-        hidden: true,
         config: { prefix: "IT" },
       });
+      expect(table.getColumn("id")?.getIsVisible()).toBe(true);
+      expect(onPropertiesChange.mock.lastCall?.[0].action.type).toBe(
+        "properties.create",
+      );
 
       act(() => {
         table.addColumnInfo({ id: "extra", type: "id", name: "Extra ID" });
@@ -220,15 +226,9 @@ describe("useTableView - Column Custom APIs", () => {
         table.restoreColumn("id");
         table.deleteColumn("id");
       });
-      expect(table.getColumnInfo("id")).toMatchObject({
-        type: "id",
-        hidden: true,
-      });
+      expect(table.getColumnInfo("id").type).toBe("id");
+      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("extra");
       expect(table.getColumnInfo("col2").type).toBe("checkbox");
-      expect(onPropertiesChange).not.toHaveBeenCalled();
-
-      act(() => table.setColumnInfo("id", { hidden: false }));
-      expect(table.getColumn("id")?.getIsVisible()).toBe(true);
       expect(onPropertiesChange).toHaveBeenCalledTimes(1);
       expect(onDataChange).not.toHaveBeenCalled();
     });

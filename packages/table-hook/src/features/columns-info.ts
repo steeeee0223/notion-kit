@@ -436,6 +436,11 @@ export const ColumnsInfoFeature: TableFeature = {
     instance._addColumnInfo = (info, idsUpdater, action) => {
       instance.options.onColumnInfoChange?.(
         (prev) => {
+          if (
+            info.type === "id" &&
+            prev.ids.some((id) => prev.items[id]?.type === "id")
+          )
+            return prev;
           return {
             ids: functionalUpdate(idsUpdater, prev.ids),
             items: { ...prev.items, [info.id]: info },
@@ -468,7 +473,6 @@ export const ColumnsInfoFeature: TableFeature = {
       const cellPlugins = instance.atoms.cellPlugins.get();
       const columnsInfo = instance.atoms.columnsInfo.get();
       const { id, name, type, width, at, getInitialValue } = payload;
-      if (type === "id") return;
       if (columnsInfo[id]) {
         throw new Error(`[TableView] Column already exists: "${id}"`);
       }
@@ -476,22 +480,30 @@ export const ColumnsInfoFeature: TableFeature = {
       if (!plugin) {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
-      const idsUpdater = createIdsUpdater(id, at);
-      instance._addColumnInfo(
-        { id, name, type, width, config: plugin.default.config },
-        idsUpdater,
-        {
-          id: actionId,
-          type: "properties.create",
-          payload: {
-            propertyId: id,
-            nextPosition: -1,
-            property: { id, name, type, width, config: plugin.default.config },
-          },
+      const databaseName = instance.options.propertySources?.databaseName;
+      const config: unknown =
+        type === "id" && databaseName
+          ? {
+              prefix: databaseName
+                .trim()
+                .split(/\s+/u)
+                .map((word) => word[0])
+                .join("")
+                .toUpperCase(),
+            }
+          : plugin.default.config;
+      const property = { id, name, type, width, config };
+      instance._addColumnInfo(property, createIdsUpdater(id, at), {
+        id: actionId,
+        type: "properties.create",
+        payload: {
+          propertyId: id,
+          nextPosition: -1,
+          property,
         },
-      );
+      });
       // Update all rows
-      if (instance.getCellValues().length === 0) return;
+      if (type === "id" || instance.getCellValues().length === 0) return;
       instance.setTableData(
         (prev) =>
           prev.map((row) => {

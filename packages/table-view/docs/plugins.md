@@ -73,8 +73,8 @@ Person picker. Without an account list, it uses `propertySources.people`.
 The `photonPlaceSources` adapter can be passed to `propertySources` to enable
 live place suggestions and reverse lookup through Photon.
 
-Show the built-in ID from Properties. The ID adapter edits the prefix in
-the property menu. See the
+Add an ID column from New property, then use Properties to show or hide it.
+The ID adapter edits the prefix in the property menu. See the
 [table-hook property contracts](../../table-hook/docs/plugins.md#id-people-and-places)
 for the sequence allocator and directory options.
 
