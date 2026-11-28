@@ -51,6 +51,7 @@ import {
   assignRowSequences,
   createRowProjector,
   nextRowSequence,
+  reuseRowSequences,
 } from "@/table-contexts/property-data";
 import type {
   BaseTableProps,
@@ -219,7 +220,41 @@ function useResourceState<TResource, TAction>({
     [controlled, onChange],
   );
 
-  return [resource, setResource, pendingResourceRef] as const;
+  return [resource, setResource] as const;
+}
+
+function useLocalRowSequences<T extends Row>(data: T[], enabled: boolean): T[] {
+  const [numbered, setNumbered] = useState(() => {
+    const rows = enabled ? assignRowSequences(data) : data;
+    return { data, enabled, rows, minimum: nextRowSequence(rows) };
+  });
+  const rows = useMemo(() => {
+    if (!enabled) return data;
+    if (numbered.data === data && numbered.enabled) return numbered.rows;
+    return assignRowSequences(
+      reuseRowSequences(data, numbered.rows),
+      numbered.minimum,
+    );
+  }, [data, enabled, numbered]);
+  // Retain local numbers for legacy controlled rows across external updates.
+  if (
+    enabled &&
+    rows !== numbered.rows &&
+    (rows.length !== numbered.rows.length ||
+      rows.some(
+        ({ id, sequence }, index) =>
+          id !== numbered.rows[index]?.id ||
+          sequence !== numbered.rows[index].sequence,
+      ))
+  ) {
+    setNumbered({
+      data,
+      enabled,
+      rows,
+      minimum: nextRowSequence(rows, numbered.minimum),
+    });
+  }
+  return rows;
 }
 
 export function useTableView<TPlugins extends CellPlugin[]>(
@@ -257,16 +292,18 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   );
 
   const nextSequenceRef = useRef(1);
-  const [propertiesResource, setPropertiesResource, pendingPropertiesRef] =
-    useResourceState<ColumnDefs<TPlugins>, PropertiesResourceAction>({
-      name: "properties",
-      controlled: isPropertiesControlled,
-      value: isPropertiesControlled
-        ? options.properties
-        : initialTable.properties,
-      defaultValue: options.defaultProperties ?? initialTable.properties,
-      onChange: onPropertiesChange,
-    });
+  const [propertiesResource, setPropertiesResource] = useResourceState<
+    ColumnDefs<TPlugins>,
+    PropertiesResourceAction
+  >({
+    name: "properties",
+    controlled: isPropertiesControlled,
+    value: isPropertiesControlled
+      ? options.properties
+      : initialTable.properties,
+    defaultValue: options.defaultProperties ?? initialTable.properties,
+    onChange: onPropertiesChange,
+  });
   const [tableGlobalState, setViewResource] = useResourceState<
     TableViewState,
     ViewResourceAction
@@ -288,9 +325,19 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   });
   const [relativeFilterRefresh, setRelativeFilterRefresh] = useState(0);
   /** columns states */
+  const databaseName = propertySources?.databaseName;
   const columnEntity = useMemo(
-    () => toPropertyEntity(plugins.items, propertiesResource),
-    [plugins.items, propertiesResource],
+    () => toPropertyEntity(plugins.items, propertiesResource, databaseName),
+    [plugins.items, propertiesResource, databaseName],
+  );
+  const hasId = Object.hasOwn(plugins.items, "id");
+  const allocateRowNumber = propertySources?.allocateRowNumber;
+  const [defaultData] = useState(
+    () => options.defaultData ?? initialTable.data,
+  );
+  const inputData = useLocalRowSequences(
+    options.data ?? defaultData,
+    hasId && !allocateRowNumber,
   );
   const [dataResource, setDataResource] = useResourceState<
     Row<TPlugins>[],
@@ -298,15 +345,11 @@ export function useTableView<TPlugins extends CellPlugin[]>(
   >({
     name: "data",
     controlled: isDataControlled,
-    value: isDataControlled ? options.data : initialTable.data,
-    defaultValue: options.defaultData ?? initialTable.data,
+    value: inputData,
+    defaultValue: inputData,
     onChange: onDataChange,
   });
   const people = propertySources?.people;
-  const allocateRowNumber = propertySources?.allocateRowNumber;
-  const hasId = propertiesResource.some(
-    ({ type, isDeleted }) => type === "id" && !isDeleted,
-  );
   const projectRow = useMemo(
     () =>
       createRowProjector<Row<TPlugins>>(
@@ -315,13 +358,10 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       ),
     [columnEntity.items, people],
   );
-  const dataEntity = useMemo(() => {
-    const rows =
-      hasId && !allocateRowNumber
-        ? assignRowSequences(dataResource)
-        : dataResource;
-    return projectRow ? rows.map(projectRow) : rows;
-  }, [dataResource, projectRow, hasId, allocateRowNumber]);
+  const dataEntity = useMemo(
+    () => (projectRow ? dataResource.map(projectRow) : dataResource),
+    [dataResource, projectRow],
+  );
   useLayoutEffect(() => {
     nextSequenceRef.current = nextRowSequence(
       dataResource,
@@ -334,28 +374,33 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     (updater, action) =>
       setDataResource((previous) => {
         const proposed = functionalUpdate(updater, previous);
-        if (proposed === previous) return previous;
-        let next = proposed;
+        if (proposed === previous || !hasId) return proposed;
         if (
-          pendingPropertiesRef.current.some(
-            ({ type, isDeleted }) => type === "id" && !isDeleted,
-          )
-        ) {
-          const prior = assignRowSequences(previous, 1, allocateRowNumber);
-          const sequences = new Map(
-            prior.map(({ id, sequence }) => [id, sequence]),
-          );
-          next = next.map((row) => {
-            const sequence = sequences.get(row.id);
-            return row.sequence === sequence ? row : { ...row, sequence };
-          });
-          const minimum = nextRowSequence(prior, nextSequenceRef.current);
-          next = assignRowSequences(next, minimum, allocateRowNumber);
-          nextSequenceRef.current = nextRowSequence(next, minimum);
-        }
+          proposed.length === previous.length &&
+          proposed.every(({ id, sequence }, index) => {
+            const row = previous[index];
+            return (
+              row?.id === id &&
+              sequence !== undefined &&
+              row.sequence === sequence
+            );
+          })
+        )
+          return proposed;
+        const prior = assignRowSequences(previous, 1, allocateRowNumber);
+        const sequences = new Map(
+          prior.map(({ id, sequence }) => [id, sequence]),
+        );
+        const rows = proposed.map((row) => {
+          const sequence = sequences.get(row.id);
+          return row.sequence === sequence ? row : { ...row, sequence };
+        });
+        const minimum = nextRowSequence(prior, nextSequenceRef.current);
+        const next = assignRowSequences(rows, minimum, allocateRowNumber);
+        nextSequenceRef.current = nextRowSequence(next, minimum);
         return next;
       }, action),
-    [allocateRowNumber, pendingPropertiesRef, setDataResource],
+    [allocateRowNumber, hasId, setDataResource],
   );
   const columns = useMemo(
     () =>
@@ -364,7 +409,8 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         const plugin = plugins.items[property.type]!;
         return {
           id: property.id,
-          enableGlobalFilter: !property.isDeleted,
+          enableGlobalFilter:
+            !property.isDeleted && (property.type !== "id" || !property.hidden),
           ...(plugin.canGroup === false && { enableGrouping: false }),
           accessorFn: (row) => {
             const cell = row.properties[colId];
@@ -448,7 +494,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     (updater, action) => {
       setPropertiesResource(
         (prev) => {
-          const entity = toPropertyEntity(plugins.items, prev);
+          const entity = toPropertyEntity(plugins.items, prev, databaseName);
           const next = functionalUpdate(updater, entity);
           if (next === entity) return prev;
           return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
@@ -456,13 +502,13 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         (previousProperties, nextProperties) => {
           if (typeof action !== "function") return action;
           return action(
-            toPropertyEntity(plugins.items, previousProperties),
-            toPropertyEntity(plugins.items, nextProperties),
+            toPropertyEntity(plugins.items, previousProperties, databaseName),
+            toPropertyEntity(plugins.items, nextProperties, databaseName),
           );
         },
       );
     },
-    [plugins.items, setPropertiesResource],
+    [databaseName, plugins.items, setPropertiesResource],
   );
 
   const tableState = useMemo(

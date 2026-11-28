@@ -299,6 +299,7 @@ export const RowActionsFeature: TableFeature = {
           };
           table.atoms.columnOrder.get().forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
+            if (plugin.id === "id") return;
             const cell = getInitialCell(colId, row);
             if (
               !plugin.readOnly &&
@@ -653,6 +654,7 @@ export const RowActionsFeature: TableFeature = {
           };
           columnOrder.forEach((colId) => {
             const plugin = table.getColumnPlugin(colId);
+            if (plugin.id === "id") return;
             row.properties[colId] =
               colId === grouping[0] && !plugin.readOnly
                 ? {

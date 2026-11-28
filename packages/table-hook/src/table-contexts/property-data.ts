@@ -41,6 +41,24 @@ export function assignRowSequences<T extends Row>(
   );
 }
 
+export function reuseRowSequences<T extends Row>(
+  rows: T[],
+  previous: readonly T[],
+): T[] {
+  if (rows.every(({ sequence }) => sequence !== undefined)) return rows;
+  const previousSequences = new Map(
+    previous.map(({ id, sequence }) => [id, sequence]),
+  );
+  const assigned = new Set(rows.map(({ sequence }) => sequence));
+  return rows.map((row) => {
+    if (row.sequence !== undefined) return row;
+    const sequence = previousSequences.get(row.id);
+    return sequence === undefined || assigned.has(sequence)
+      ? row
+      : { ...row, sequence };
+  });
+}
+
 const projectedTypes = new Set([
   "id",
   "person",

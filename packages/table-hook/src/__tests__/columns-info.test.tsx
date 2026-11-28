@@ -191,7 +191,7 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("addColumnInfo", () => {
-    it("accepts only one active ID column, including same-render requests", () => {
+    it("allows the built-in ID to be shown without creating or rewriting a cell", () => {
       const onPropertiesChange = vi.fn();
       const onDataChange = vi.fn();
       const { result } = renderHook(() =>
@@ -199,38 +199,37 @@ describe("useTableView - Column Custom APIs", () => {
           plugins: pluginsWithId,
           defaultProperties: mockProperties,
           defaultData: mockData,
+          propertySources: { databaseName: "Issue Tracker" },
           onPropertiesChange,
           onDataChange,
         }),
       );
       const { table } = result.current;
+      expect(table.getColumnInfo("id")).toMatchObject({
+        type: "id",
+        hidden: true,
+        config: { prefix: "IT" },
+      });
+
       act(() => {
-        table.addColumnInfo({ id: "serial", type: "id", name: "ID" });
         table.addColumnInfo({ id: "extra", type: "id", name: "Extra ID" });
-      });
-      expect(table.getColumnInfo("serial").type).toBe("id");
-      expect(onPropertiesChange).toHaveBeenCalledTimes(1);
-      expect(onDataChange).toHaveBeenCalledTimes(1);
-
-      act(() => {
-        table.duplicateColumnInfo("serial");
-        table.setColumnType("serial", "text");
+        table.duplicateColumnInfo("id");
+        table.setColumnType("id", "text");
         table.setColumnType("col2", "id");
+        table.setColumnInfo("id", { isDeleted: true });
+        table.removeColumnInfo("id");
       });
-      expect(table.getColumnInfo("serial").type).toBe("id");
+      expect(table.getColumnInfo("id")).toMatchObject({
+        type: "id",
+        hidden: true,
+      });
       expect(table.getColumnInfo("col2").type).toBe("checkbox");
-      expect(onPropertiesChange).toHaveBeenCalledTimes(1);
-      expect(onDataChange).toHaveBeenCalledTimes(1);
+      expect(onPropertiesChange).not.toHaveBeenCalled();
 
-      act(() => {
-        table.setColumnInfo("serial", { isDeleted: true });
-        table.setColumnType("col2", "id");
-        table.setColumnInfo("serial", { isDeleted: false });
-      });
-      expect(table.getColumnInfo("serial").isDeleted).toBe(true);
-      expect(table.getColumnInfo("col2").type).toBe("id");
-      expect(onPropertiesChange).toHaveBeenCalledTimes(3);
-      expect(onDataChange).toHaveBeenCalledTimes(2);
+      act(() => table.setColumnInfo("id", { hidden: false }));
+      expect(table.getColumn("id")?.getIsVisible()).toBe(true);
+      expect(onPropertiesChange).toHaveBeenCalledTimes(1);
+      expect(onDataChange).not.toHaveBeenCalled();
     });
 
     it.each(["properties", "defaultProperties"] as const)(

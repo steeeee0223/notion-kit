@@ -4,7 +4,6 @@ import type { CellPlugin, TitlePlugin } from "@notion-kit/table-hook/plugins";
 
 import type { ColumnDefs, ColumnInfo, PluginType, Row } from "@/lib/types";
 import { Entity } from "@/lib/utils";
-import { hasActiveIdColumn } from "@/plugins/id";
 import type { TableState } from "@/table-contexts/types";
 
 export function getMinWidth(type: PluginType<CellPlugin[]>) {
@@ -53,8 +52,15 @@ export function createInitialTable(): TableState<CellPlugin[]> {
 export function toPropertyEntity<TPlugins extends CellPlugin[]>(
   plugins: Record<string, TPlugins[number]>,
   properties: ColumnDefs<TPlugins>,
+  databaseName?: string,
 ) {
-  return properties.reduce<Entity<ColumnInfo>>(
+  const idProperties = properties.filter(({ type }) => type === "id");
+  const activeIds = idProperties.filter(({ isDeleted }) => !isDeleted);
+  if (activeIds.length > 1) {
+    throw new Error("[TableView] Only one active ID column is allowed");
+  }
+  const idProperty = activeIds[0] ?? idProperties[0];
+  const entity = properties.reduce<Entity<ColumnInfo>>(
     (acc, property) => {
       const plugin = plugins[property.type];
       if (!plugin) {
@@ -62,22 +68,35 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
           `[TableView] Plugin not found for property "${property.id}" type: ${property.type}`,
         );
       }
-      if (
-        property.type === "id" &&
-        !property.isDeleted &&
-        hasActiveIdColumn(acc.items)
-      ) {
-        throw new Error("[TableView] Only one active ID column is allowed");
-      }
+      if (property.type === "id" && property !== idProperty) return acc;
       const { config, ...propertyWithoutConfig } = property;
       acc.ids.push(property.id);
       acc.items[property.id] = {
         ...propertyWithoutConfig,
         config: plugin.default.config,
         ...(config === undefined ? {} : { config }),
+        ...(property.type === "id" &&
+          property.isDeleted && { isDeleted: false, hidden: true }),
       };
       return acc;
     },
     { ids: [], items: {} },
   );
+  if (plugins.id && !idProperty) {
+    let id = "id";
+    while (Object.hasOwn(entity.items, id)) id = `_${id}`;
+    const config: unknown = databaseName
+      ? {
+          prefix: databaseName
+            .trim()
+            .split(/\s+/u)
+            .map((word) => word[0])
+            .join("")
+            .toUpperCase(),
+        }
+      : plugins.id.default.config;
+    entity.ids.push(id);
+    entity.items[id] = { id, type: "id", name: "ID", hidden: true, config };
+  }
+  return entity;
 }

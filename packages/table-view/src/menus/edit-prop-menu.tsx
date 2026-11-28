@@ -32,6 +32,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
 
   const info = table.getColumnInfo(propId);
   const uiPlugin = plugins.getUiPlugin(info.type);
+  const fixedType = info.type === "title" || info.type === "id";
 
   // 1. Type selection
   const openTypesMenu = () =>
@@ -59,7 +60,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
       />
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {info.type === "title" || info.type === "id" ? (
+        {fixedType ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
@@ -80,38 +81,38 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             </DropdownMenuItem>
           </TooltipPreset>
         ) : (
-          <DropdownMenuItem
-            closeOnClick={false}
-            onClick={openTypesMenu}
-            icon={<Icon.ArrowSquarePathUpDown />}
-            label="Type"
-          >
-            <MenuItemSelect>
-              <div className="flex truncate">
-                <DefaultIcon type={info.type} className="fill-current" />
-                <div className="inline-block min-h-1 min-w-1" />
-                <span>{uiPlugin.meta.name}</span>
-              </div>
-            </MenuItemSelect>
-          </DropdownMenuItem>
-        )}
-        {info.type !== "title" && (
-          <DropdownMenuItem
-            disabled
-            icon={<Icon.PencilLine />}
-            label={
-              <div className="flex items-center">
-                AI Autofill
-                <div className="ml-1.5 inline-block w-fit self-center rounded-sm bg-blue/10 px-1 py-0.5 text-[11px]/[1.3] font-medium tracking-normal whitespace-nowrap text-blue">
-                  New
+          <>
+            <DropdownMenuItem
+              closeOnClick={false}
+              onClick={openTypesMenu}
+              icon={<Icon.ArrowSquarePathUpDown />}
+              label="Type"
+            >
+              <MenuItemSelect>
+                <div className="flex truncate">
+                  <DefaultIcon type={info.type} className="fill-current" />
+                  <div className="inline-block min-h-1 min-w-1" />
+                  <span>{uiPlugin.meta.name}</span>
                 </div>
-              </div>
-            }
-          >
-            <MenuItemSelect>
-              <div className="flex truncate">Off</div>
-            </MenuItemSelect>
-          </DropdownMenuItem>
+              </MenuItemSelect>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled
+              icon={<Icon.PencilLine />}
+              label={
+                <div className="flex items-center">
+                  AI Autofill
+                  <div className="ml-1.5 inline-block w-fit self-center rounded-sm bg-blue/10 px-1 py-0.5 text-[11px]/[1.3] font-medium tracking-normal whitespace-nowrap text-blue">
+                    New
+                  </div>
+                </div>
+              }
+            >
+              <MenuItemSelect>
+                <div className="flex truncate">Off</div>
+              </MenuItemSelect>
+            </DropdownMenuItem>
+          </>
         )}
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
@@ -124,19 +125,19 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
           onCheckedChange={wrapProp}
         />
         {info.type !== "title" && (
+          <DropdownMenuItem
+            onClick={hideProp}
+            icon={<Icon.EyeHideInversePadded className="size-6" />}
+            label="Hide in view"
+          />
+        )}
+        {!fixedType && (
           <>
             <DropdownMenuItem
-              onClick={hideProp}
-              icon={<Icon.EyeHideInversePadded className="size-6" />}
-              label="Hide in view"
+              onClick={duplicateProp}
+              icon={<Icon.Duplicate />}
+              label="Duplicate property"
             />
-            {info.type !== "id" && (
-              <DropdownMenuItem
-                onClick={duplicateProp}
-                icon={<Icon.Duplicate />}
-                label="Duplicate property"
-              />
-            )}
             <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}

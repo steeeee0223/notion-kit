@@ -2,10 +2,7 @@ import { v4 } from "uuid";
 
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { PluginType } from "@notion-kit/table-hook";
-import {
-  hasActiveIdColumn,
-  type CellPlugin,
-} from "@notion-kit/table-hook/plugins";
+import type { CellPlugin } from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuGroup,
   DropdownMenuInput,
@@ -104,10 +101,8 @@ export function TypesMenu({
           }
         />
       )}
-      <table.Subscribe
-        selector={(state) => hasActiveIdColumn(state.columnsInfo)}
-      >
-        {(hasId) => (
+      <table.Subscribe selector={(state) => state.cellPlugins}>
+        {(plugins) => (
           <>
             <DropdownMenuInput
               placeholder={
@@ -121,7 +116,8 @@ export function TypesMenu({
             <DropdownMenuList>
               <DropdownMenuGroup>
                 <DropdownMenuLabel title="Type" />
-                {registry.data.map((entry) => {
+                {Object.values(plugins).map((entry) => {
+                  if (entry.id === "id") return null;
                   const plugin = registry.getUiPlugin(entry.id);
                   return (
                     <TooltipPreset
@@ -133,11 +129,7 @@ export function TypesMenu({
                     >
                       <DropdownMenuItem
                         closeOnClick={closeOnClick}
-                        disabled={
-                          propType === "id" ||
-                          plugin.id === "title" ||
-                          (plugin.id === "id" && hasId)
-                        }
+                        disabled={plugin.id === "title"}
                         icon={plugin.meta.icon}
                         label={plugin.meta.name}
                         onClick={() =>

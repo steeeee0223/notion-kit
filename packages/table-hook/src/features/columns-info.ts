@@ -17,7 +17,6 @@ import type {
   InferPlugin,
   UnknownCellPlugin,
 } from "@/plugins";
-import { hasActiveIdColumn } from "@/plugins/id";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -341,12 +340,7 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     /** Column Setters */
-    const updateColumnInfo = (
-      colId: string,
-      updater: Updater<ColumnInfo>,
-      action?: PropertiesResourceAction,
-    ) => {
-      let applied = false;
+    instance._setColumnInfo = (colId, updater, action) => {
       const fallbackAction = action ?? {
         id: v4(),
         type: "properties.update",
@@ -357,17 +351,12 @@ export const ColumnsInfoFeature: TableFeature = {
           const current = prev.items[colId];
           if (!current) return prev;
           const next = functionalUpdate(updater, current);
-          const activatesId =
-            next.type === "id" &&
-            !next.isDeleted &&
-            (current.type !== "id" || current.isDeleted);
           if (
-            (current.type === "id" && next.type !== "id") ||
-            (activatesId && hasActiveIdColumn(prev.items))
-          ) {
+            next.type !== current.type &&
+            (next.type === "id" || current.type === "id")
+          )
             return prev;
-          }
-          applied = true;
+          if (current.type === "id" && next.isDeleted) return prev;
           return { ...prev, items: { ...prev.items, [colId]: next } };
         },
         (previous, next) => {
@@ -415,20 +404,14 @@ export const ColumnsInfoFeature: TableFeature = {
           return fallbackAction;
         },
       );
-      return applied;
     };
-    instance._setColumnInfo = updateColumnInfo;
-    const setColumnInfo = (
-      colId: string,
-      info: Partial<Omit<ColumnInfo, "id">>,
-      action?: PropertiesResourceAction,
-    ) =>
-      updateColumnInfo(
+    instance.setColumnInfo = (colId, info, action) => {
+      instance._setColumnInfo(
         colId,
         (prev) => ({ ...prev, ...info }),
         action ?? createPropertyUpdateAction(v4(), colId, info),
       );
-    instance.setColumnInfo = setColumnInfo;
+    };
     instance.handleColumnDragEnd = (e) => {
       const { source, target } = e.operation;
       const hasProjectedIndex =
@@ -465,21 +448,9 @@ export const ColumnsInfoFeature: TableFeature = {
         }),
       );
     };
-    const addColumnInfo = (
-      info: ColumnInfo,
-      idsUpdater: Updater<string[]>,
-      action: PropertiesResourceAction,
-    ) => {
-      let added = false;
+    instance._addColumnInfo = (info, idsUpdater, action) => {
       instance.options.onColumnInfoChange?.(
         (prev) => {
-          if (
-            info.type === "id" &&
-            !info.isDeleted &&
-            hasActiveIdColumn(prev.items)
-          )
-            return prev;
-          added = true;
           return {
             ids: functionalUpdate(idsUpdater, prev.ids),
             items: { ...prev.items, [info.id]: info },
@@ -506,14 +477,13 @@ export const ColumnsInfoFeature: TableFeature = {
           };
         },
       );
-      return added;
     };
-    instance._addColumnInfo = addColumnInfo;
     instance.addColumnInfo = (payload) => {
       const actionId = payload.operationId ?? v4();
       const cellPlugins = instance.atoms.cellPlugins.get();
       const columnsInfo = instance.atoms.columnsInfo.get();
       const { id, name, type, width, at, getInitialValue } = payload;
+      if (type === "id") return;
       if (columnsInfo[id]) {
         throw new Error(`[TableView] Column already exists: "${id}"`);
       }
@@ -522,20 +492,8 @@ export const ColumnsInfoFeature: TableFeature = {
         throw new Error(`[TableView] Plugin not found: ${type}`);
       }
       const idsUpdater = createIdsUpdater(id, at);
-      const databaseName = instance.options.propertySources?.databaseName;
-      const config: unknown =
-        type === "id" && databaseName
-          ? {
-              prefix: databaseName
-                .trim()
-                .split(/\s+/u)
-                .map((part) => part[0])
-                .join("")
-                .toUpperCase(),
-            }
-          : plugin.default.config;
-      const added = addColumnInfo(
-        { id, name, type, width, config },
+      instance._addColumnInfo(
+        { id, name, type, width, config: plugin.default.config },
         idsUpdater,
         {
           id: actionId,
@@ -543,11 +501,10 @@ export const ColumnsInfoFeature: TableFeature = {
           payload: {
             propertyId: id,
             nextPosition: -1,
-            property: { id, name, type, width, config },
+            property: { id, name, type, width, config: plugin.default.config },
           },
         },
       );
-      if (!added) return;
       // Update all rows
       if (instance.getCellValues().length === 0) return;
       instance.setTableData(
@@ -624,6 +581,7 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     instance.removeColumnInfo = (colId) => {
+      if (instance.atoms.columnsInfo.get()[colId]?.type === "id") return;
       const actionId = v4();
       instance.options.onColumnInfoChange?.(
         (prev) => {
@@ -675,7 +633,7 @@ export const ColumnsInfoFeature: TableFeature = {
       type: PluginType<TPlugins>,
     ) => {
       const source = instance.getColumnInfo(colId);
-      if (source.type === "id") return;
+      if (source.type === "id" || type === "id") return;
       const destPlugin = instance.atoms.cellPlugins.get()[type] as
         InferPlugin<TPlugins> | undefined;
       if (!destPlugin) {
@@ -685,7 +643,7 @@ export const ColumnsInfoFeature: TableFeature = {
       const config =
         destPlugin.transferConfig?.(source, data) ?? destPlugin.default.config;
       const actionId = v4();
-      const applied = setColumnInfo(
+      instance.setColumnInfo(
         colId,
         { type, config },
         {
@@ -698,7 +656,6 @@ export const ColumnsInfoFeature: TableFeature = {
           },
         },
       );
-      if (!applied) return;
       // Update all cells
       const srcPlugin = instance.getColumnPlugin(colId);
       const projectRow = createRowProjector(

@@ -73,23 +73,6 @@ describe("DeletedPropsMenu", () => {
     expect(deleted.restoreButton("Old Property")).toBeVisible();
   });
 
-  it("prevents restoring a deleted ID while another ID is active", async () => {
-    const table = renderTableView({
-      properties: [
-        ...propertiesWithDeleted,
-        { id: "serial", name: "ID", type: "id" },
-        { id: "old-id", name: "Old ID", type: "id", isDeleted: true },
-      ],
-      data: dataWithDeleted,
-    });
-    const settings = await table.openViewSettings();
-    const properties = await settings.openProperties();
-    const deleted = await properties.openDeletedProperties();
-
-    expect(deleted.restoreButton("Old ID")).toBeDisabled();
-    expect(deleted.restoreButton("Old Property")).toBeEnabled();
-  });
-
   it("DeletedPropertiesMenu_Delete_RemovesPropertyPermanently", async () => {
     const deleted = await openDeletedPropertiesMenu();
 

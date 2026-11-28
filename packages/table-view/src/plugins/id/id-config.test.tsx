@@ -2,7 +2,6 @@ import { screen, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { MenuSurfaceObject } from "@/__tests__/component-objects/menu-surface";
-import { PropertiesMenuObject } from "@/__tests__/component-objects/properties-menu";
 import { renderTableView } from "@/__tests__/component-objects/render-table-view";
 import { mockResizeObserver } from "@/__tests__/mock";
 
@@ -31,7 +30,7 @@ it("changes the displayed prefix while retaining the existing row number", async
   const menu = await MenuSurfaceObject.findByItem(table.user, "Calculate");
   expect(menu.queryItem("Change type")).not.toBeInTheDocument();
   expect(menu.queryItem("Duplicate property")).not.toBeInTheDocument();
-  expect(menu.item("Delete property")).toBeVisible();
+  expect(menu.queryItem("Delete property")).not.toBeInTheDocument();
   menu.item("Edit property").focus();
   await table.user.keyboard("{ArrowRight}");
   const prefix = await screen.findByRole("textbox", { name: "Prefix" });
@@ -46,35 +45,38 @@ it("changes the displayed prefix while retaining the existing row number", async
   ).toBeVisible();
 });
 
-it("locks the ID type and prevents adding or converting a second ID", async () => {
+it("shows and hides the built-in ID from Properties", async () => {
   const table = renderTableView({
-    properties: [
-      { id: "title", name: "Name", type: "title" },
-      { id: "serial", name: "ID", type: "id", hidden: true },
-      { id: "notes", name: "Notes", type: "text" },
+    properties: [{ id: "title", name: "Name", type: "title" }],
+    data: [
+      {
+        id: "row",
+        createdAt: 0,
+        lastEditedAt: 0,
+        properties: { title: { id: "title-cell", value: "Trip" } },
+      },
     ],
-    data: [],
   });
-  const settings = await table.openViewSettings();
-  const properties = await settings.openProperties();
+  const properties = await (await table.openViewSettings()).openProperties();
   const types = await properties.openNewProperty();
-  expect(types.type("ID")).toHaveAttribute("aria-disabled", "true");
+  expect(
+    within(types.root).queryByRole("menuitem", { name: "ID" }),
+  ).not.toBeInTheDocument();
 
-  let currentProperties = await types.backToProperties();
-  await table.user.click(currentProperties.property("ID"));
-  let edit = await MenuSurfaceObject.findByHeading(table.user, "Edit property");
-  expect(edit.item("Type")).toHaveAttribute("aria-disabled", "true");
-  expect(edit.queryItem("Duplicate property")).not.toBeInTheDocument();
-  expect(edit.item("Delete property")).toBeVisible();
+  const currentProperties = await types.backToProperties();
+  expect(currentProperties.visibilityButton("Name")).toBeDisabled();
+  expect(currentProperties.visibilityButton("ID")).toBeEnabled();
+  await table.user.click(currentProperties.visibilityButton("ID"));
+  await table.clickOutside();
+  expect(within(table.propertyCell("Trip", "id")).getByText("1")).toBeVisible();
 
-  await edit.back();
-  currentProperties = await PropertiesMenuObject.find(table.user);
-  await table.user.click(currentProperties.property("Notes"));
-  edit = await MenuSurfaceObject.findByHeading(table.user, "Edit property");
-  await table.user.click(edit.item("Type"));
-  const changeTypes = await MenuSurfaceObject.findByHeading(
-    table.user,
-    "Change property type",
-  );
-  expect(changeTypes.item("ID")).toHaveAttribute("aria-disabled", "true");
+  await table.clickButton("ID");
+  const menu = await MenuSurfaceObject.findByItem(table.user, "Calculate");
+  await table.user.click(menu.item("Hide in view"));
+  expect(screen.queryByRole("button", { name: "ID" })).not.toBeInTheDocument();
+
+  const reopened = await (await table.openViewSettings()).openProperties();
+  await table.user.click(reopened.visibilityButton("ID"));
+  await table.clickOutside();
+  expect(within(table.propertyCell("Trip", "id")).getByText("1")).toBeVisible();
 });

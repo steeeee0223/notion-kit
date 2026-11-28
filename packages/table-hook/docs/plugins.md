@@ -200,15 +200,21 @@ same resolved row values.
 | `created-by`, `last-edited-by` | Optional row metadata                          | `currentActor` supplies attribution for table edits                       |
 | `location`                     | Place name, address, and optional coordinates  | `searchLocations` and `reverseGeocode` supply place lookup                |
 
-Supply `databaseName` to suggest an ID prefix for new columns. The ID property numbers existing rows in creation order and keeps a local
-high-water mark for the lifetime of the table. Save and hydrate `Row.sequence`.
+Tables with the ID plugin have one built-in ID property, hidden by default.
+Use the existing property visibility controls to show or hide it. Supply
+`databaseName` to suggest its prefix. Explicit ID definitions retain their
+column ID, prefix, and visibility. A previously deleted ID property becomes
+hidden.
+
+Rows carry their sequence independently of column visibility. Local tables
+number older rows in creation order and keep a high-water mark for the
+lifetime of the table. Save and hydrate `Row.sequence`.
 For shared data, reserve numbers by row ID, return the same number on retries,
 and retain the allocator's high-water mark after deletions. Hydrate shared rows
 with their reserved sequences so IDs appear immediately. A row without a
 sequence stays blank until a data change reserves its number.
 
-Only one active ID property is allowed per table, including hidden properties.
-An ID property's type is fixed. Deleting it makes the ID type available again.
+The ID property's type is fixed.
 
 Person columns can limit new assignments to one person and default to the row's
 creator. The creator default applies when a new row has no explicit assignment.

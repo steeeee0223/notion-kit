@@ -216,6 +216,61 @@ describe("New table property plugins", () => {
       }),
     );
   });
+
+  it("keeps legacy row numbers when the owner removes a row while ID is hidden", () => {
+    const onDataChange =
+      vi.fn<ResourceChangeHandler<Row[], DataResourceAction>>();
+    const first = row("first", {}, 1);
+    const second = row("second", {}, 2);
+    const { result, rerender } = renderHook(
+      (data: Row[]) => useTableView({ plugins, data, onDataChange }),
+      { initialProps: [first, second] },
+    );
+    const { table } = result.current;
+    expect(table.getColumnInfo("id").hidden).toBe(true);
+    expect(table.getCellValues().map(({ sequence }) => sequence)).toEqual([
+      1, 2,
+    ]);
+
+    rerender([second]);
+    let added = "";
+    act(() => {
+      added = table.addRow();
+    });
+
+    expect(
+      onDataChange.mock.lastCall?.[0].next.map(({ id, sequence }) => [
+        id,
+        sequence,
+      ]),
+    ).toEqual([
+      ["second", 2],
+      [added, 3],
+    ]);
+    expect(
+      onDataChange.mock.lastCall?.[0].next[1]?.properties.id,
+    ).toBeUndefined();
+  });
+
+  it("reserves a shared row number while the built-in ID is hidden", () => {
+    const allocateRowNumber = vi.fn(() => 20);
+    const { table } = renderProperties([], [], { allocateRowNumber });
+    expect(table.getColumnInfo("id").hidden).toBe(true);
+
+    let added = "";
+    act(() => {
+      added = table.addRow();
+    });
+
+    expect(allocateRowNumber).toHaveBeenCalledWith(added, 1);
+    expect(table.getCellValues()[0]?.sequence).toBe(20);
+    act(() => table.setColumnInfo("id", { hidden: false }));
+    expect(table.getCell("id", added).value).toEqual({
+      number: 20,
+      prefix: "",
+    });
+    expect(allocateRowNumber).toHaveBeenCalledTimes(1);
+  });
 });
 
 it("uses the Person creator default only when a new row has no explicit assignment", () => {

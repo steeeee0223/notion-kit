@@ -91,6 +91,7 @@ test("HeaderActions_InsertLeftAndRight_PreserveRequestedPropertyOrder", async ({
       "Website",
       "Created",
       "Edited",
+      "ID",
     ]);
 
   await (await table.openHeader("Notes")).insert("right");
@@ -113,7 +114,9 @@ test("HeaderActions_InsertLeftAndRight_PreserveRequestedPropertyOrder", async ({
       "Website",
       "Created",
       "Edited",
+      "ID",
     ]);
+  await expect(table.header("ID")).toHaveCount(0);
   await expect(table.controlledState()).toContainText(
     '"type":"properties.create"',
   );
