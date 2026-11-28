@@ -32,7 +32,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
 
   const info = table.getColumnInfo(propId);
   const uiPlugin = plugins.getUiPlugin(info.type);
-  const fixedType = info.type === "title" || info.type === "id";
+  const fixedType = info.type === "title";
 
   // 1. Type selection
   const openTypesMenu = () =>
@@ -131,20 +131,20 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             label="Hide in view"
           />
         )}
+        {!fixedType && info.type !== "id" && (
+          <DropdownMenuItem
+            onClick={duplicateProp}
+            icon={<Icon.Duplicate />}
+            label="Duplicate property"
+          />
+        )}
         {!fixedType && (
-          <>
-            <DropdownMenuItem
-              onClick={duplicateProp}
-              icon={<Icon.Duplicate />}
-              label="Duplicate property"
-            />
-            <DropdownMenuItem
-              variant="warning"
-              onClick={archiveProp}
-              icon={<Icon.Trash />}
-              label="Delete property"
-            />
-          </>
+          <DropdownMenuItem
+            variant="warning"
+            onClick={archiveProp}
+            icon={<Icon.Trash />}
+            label="Delete property"
+          />
         )}
       </DropdownMenuGroup>
     </>

@@ -207,7 +207,10 @@ describe("useTableView - Column Custom APIs", () => {
       );
       const { table } = result.current;
       expect(table.atoms.columnsInfo.get()).not.toHaveProperty("id");
-      act(() => table.addColumnInfo({ id: "id", type: "id", name: "ID" }));
+      act(() => {
+        table.addColumnInfo({ id: "id", type: "id", name: "ID" });
+        table.setColumnType("col2", "id");
+      });
       expect(table.getColumnInfo("id")).toMatchObject({
         type: "id",
         config: { prefix: "IT" },
@@ -220,17 +223,92 @@ describe("useTableView - Column Custom APIs", () => {
       act(() => {
         table.addColumnInfo({ id: "extra", type: "id", name: "Extra ID" });
         table.duplicateColumnInfo("id");
-        table.setColumnType("id", "text");
-        table.setColumnType("col2", "id");
-        table.archiveColumn("id");
-        table.restoreColumn("id");
-        table.deleteColumn("id");
       });
       expect(table.getColumnInfo("id").type).toBe("id");
       expect(table.atoms.columnsInfo.get()).not.toHaveProperty("extra");
       expect(table.getColumnInfo("col2").type).toBe("checkbox");
       expect(onPropertiesChange).toHaveBeenCalledTimes(1);
       expect(onDataChange).not.toHaveBeenCalled();
+    });
+
+    it("keeps the ID slot occupied while archived and frees it after deletion", () => {
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: pluginsWithId,
+          defaultProperties: [
+            ...mockProperties,
+            {
+              id: "serial",
+              name: "ID",
+              type: "id",
+              config: { prefix: "TASK" },
+            },
+          ],
+          defaultData: mockData,
+        }),
+      );
+      const { table } = result.current;
+
+      act(() => table.archiveColumn("serial"));
+      expect(table.getColumn("serial")?.getIsVisible()).toBe(false);
+      expect(table.getDeletedColumns().map(({ id }) => id)).toEqual(["serial"]);
+
+      act(() => {
+        table.addColumnInfo({ id: "extra", name: "Extra ID", type: "id" });
+        table.setColumnType("col2", "id");
+      });
+      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("extra");
+      expect(table.getColumnInfo("col2").type).toBe("checkbox");
+
+      act(() => table.restoreColumn("serial"));
+      expect(table.getDeletedColumns()).toEqual([]);
+      expect(table.getColumn("serial")?.getIsVisible()).toBe(true);
+      expect(table.getColumnInfo("serial").config).toEqual({ prefix: "TASK" });
+
+      act(() => {
+        table.archiveColumn("serial");
+        table.deleteColumn("serial");
+        table.addColumnInfo({ id: "extra", name: "ID", type: "id" });
+      });
+      expect(table.atoms.columnsInfo.get()).not.toHaveProperty("serial");
+      expect(table.getColumn("extra")?.getIsVisible()).toBe(true);
+    });
+
+    it("changes to and from ID using the existing row sequence", () => {
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: pluginsWithId,
+          defaultProperties: mockProperties,
+          defaultData: [
+            {
+              id: "row",
+              createdAt: 0,
+              lastEditedAt: 0,
+              sequence: 12,
+              properties: { col2: { id: "checkbox-cell", value: true } },
+            },
+          ],
+          propertySources: { databaseName: "Issue Tracker" },
+        }),
+      );
+      const { table } = result.current;
+
+      act(() => table.setColumnType("col2", "id"));
+      expect(table.getColumnInfo("col2").type).toBe("id");
+      expect(table.getCell("col2", "row").value).toEqual({
+        number: 12,
+        prefix: "IT",
+      });
+
+      act(() => {
+        table.setColumnType("col2", "text");
+        table.addColumnInfo({ id: "serial", name: "ID", type: "id" });
+      });
+      expect(table.getCell("col2", "row").value).toBe("12");
+      expect(table.getCell("serial", "row").value).toEqual({
+        number: 12,
+        prefix: "IT",
+      });
     });
 
     it.each(["properties", "defaultProperties"] as const)(

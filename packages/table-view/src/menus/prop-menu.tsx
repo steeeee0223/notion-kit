@@ -64,7 +64,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
   const column = table.getColumn(propId);
   if (!column) return null;
   const uiPlugin = plugins.getUiPlugin(plugin.id);
-  const fixedType = info.type === "title" || info.type === "id";
+  const fixedType = info.type === "title";
 
   // 3. Sorting
   const defaultSortingMethod = getDefaultSortingMethod(plugin);
@@ -220,20 +220,20 @@ export function PropMenu({ propId, view }: PropMenuProps) {
               label={`Insert ${side}`}
             />
           ))}
+        {!fixedType && info.type !== "id" && (
+          <DropdownMenuItem
+            onClick={duplicateProp}
+            icon={<Icon.Duplicate />}
+            label="Duplicate property"
+          />
+        )}
         {!fixedType && (
-          <>
-            <DropdownMenuItem
-              onClick={duplicateProp}
-              icon={<Icon.Duplicate />}
-              label="Duplicate property"
-            />
-            <DropdownMenuItem
-              variant="warning"
-              onClick={archiveProp}
-              icon={<Icon.Trash />}
-              label="Delete property"
-            />
-          </>
+          <DropdownMenuItem
+            variant="warning"
+            onClick={archiveProp}
+            icon={<Icon.Trash />}
+            label="Delete property"
+          />
         )}
       </DropdownMenuGroup>
     </>

@@ -50,32 +50,34 @@ describe("TypesMenu", () => {
     },
   );
 
-  it("PropertyTypesMenu_ChangeType_KeepsSharedEditorOpen", async () => {
-    const tableView = renderTableView();
-    const settings = await tableView.openViewSettings();
-    const properties = await settings.openProperties();
-    await tableView.user.click(properties.property("Done"));
-    const edit = await MenuSurfaceObject.findByHeading(
-      tableView.user,
-      "Edit property",
-    );
-    await tableView.user.click(edit.item("Type"));
-    const types = await MenuSurfaceObject.findByItem(tableView.user, "Number");
+  it.each(["Number", "ID"])(
+    "PropertyTypesMenu_ChangeTypeTo%s_KeepsSharedEditorOpen",
+    async (name) => {
+      const tableView = renderTableView();
+      const settings = await tableView.openViewSettings();
+      const properties = await settings.openProperties();
+      await tableView.user.click(properties.property("Done"));
+      const edit = await MenuSurfaceObject.findByHeading(
+        tableView.user,
+        "Edit property",
+      );
+      await tableView.user.click(edit.item("Type"));
+      const types = await MenuSurfaceObject.findByItem(tableView.user, name);
 
-    expect(types.item("Title")).toHaveAttribute("aria-disabled", "true");
-    expect(types.item("ID")).toHaveAttribute("aria-disabled", "true");
-    await tableView.user.click(types.item("Number"));
+      expect(types.item("Title")).toHaveAttribute("aria-disabled", "true");
+      await tableView.user.click(types.item(name));
 
-    const next = await MenuSurfaceObject.findByHeading(
-      tableView.user,
-      "Edit property",
-    );
-    expect(tableView.button("Settings")).toHaveAttribute(
-      "aria-expanded",
-      "true",
-    );
-    expect(next.item("Type")).toHaveTextContent("Number");
-  });
+      const next = await MenuSurfaceObject.findByHeading(
+        tableView.user,
+        "Edit property",
+      );
+      expect(tableView.button("Settings")).toHaveAttribute(
+        "aria-expanded",
+        "true",
+      );
+      expect(next.item("Type")).toHaveTextContent(name);
+    },
+  );
 
   it("PropertyTypesMenu_HeaderCreate_ClosesPopupAndOpensPropertyEditor", async () => {
     const tableView = renderTableView();

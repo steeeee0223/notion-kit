@@ -74,8 +74,6 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
         ...propertyWithoutConfig,
         config: plugin.default.config,
         ...(config === undefined ? {} : { config }),
-        ...(property.type === "id" &&
-          property.isDeleted && { isDeleted: false, hidden: true }),
       };
       return acc;
     },
