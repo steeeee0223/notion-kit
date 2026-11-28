@@ -31,10 +31,6 @@ export function DefaultIcon({ type, className }: DefaultIconProps) {
       return <Icon.UserCircle className={iconClassName} />;
     case "location":
       return <Icon.MapPinAlternate className={iconClassName} />;
-    case "relation":
-      return <Icon.ArrowUpRightSquare className={iconClassName} />;
-    case "rollup":
-      return <Icon.Search className={iconClassName} />;
     case "email":
       return <Icon.Username className={iconClassName} />;
     case "phone":

@@ -56,7 +56,6 @@ export {
   CountMethod,
   createSortingMethod,
   getGroupSortableSortingMethods,
-  getCountingMethodGroups,
   isValueSortingMethod,
   resolveCountingMethod,
   resolveGroupingMethod,
@@ -85,16 +84,4 @@ export type {
   LayoutType,
 } from "@/features/menu";
 
-export type {
-  RelatedDatabase,
-  RelationChange,
-  TablePropertySources,
-} from "@/plugins/property-sources";
-export { getFilterOperators } from "@/plugins/utils";
-export {
-  getLocalDatabase,
-  getRelatedDatabase,
-  getRelatedRowOptions,
-  getRollupTarget,
-} from "@/table-contexts/property-data";
-export { applyRelationChanges } from "@/table-contexts/relation-sync";
+export type { TablePropertySources } from "@/plugins/property-sources";

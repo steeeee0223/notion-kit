@@ -1,4 +1,4 @@
-import { CountMethod, getCountingMethodGroups } from "@notion-kit/table-hook";
+import { CountMethod } from "@notion-kit/table-hook";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -23,11 +23,7 @@ export function CalcMenu({ id }: CalcMenuProps) {
   const counting = table.getColumnCounting(id);
   const plugin = table.getColumnPlugin(id);
   const currentMethod = counting.method;
-  const methodGroups = getCountingMethodGroups(
-    plugin,
-    table.getColumnInfo(id).config,
-  );
-  const selectedMethod = methodGroups
+  const selectedMethod = plugin.counting
     ?.flatMap((group) => group.functions)
     .find((method) => method.id === currentMethod);
 
@@ -40,7 +36,7 @@ export function CalcMenu({ id }: CalcMenuProps) {
         }
         onCheckedChange={() => table.setColumnCountMethod(id, CountMethod.NONE)}
       />
-      {methodGroups?.map((group) => (
+      {plugin.counting?.map((group) => (
         <DropdownMenuSub key={group.group}>
           <DropdownMenuSubTrigger label={group.group} />
           <DropdownMenuContent sideOffset={-4} className="w-[250px]">

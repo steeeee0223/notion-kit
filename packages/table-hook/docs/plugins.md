@@ -187,24 +187,20 @@ Old resources without these fields must resolve to the same effective defaults t
 Custom arbitrary numeric ranges, dependency additions, and removal of legacy
 method fields are outside the scope of the method registry.
 
-## ID, people, places, and related rows
+## ID, people, and places
 
 `useTableView` and `TableView` accept `propertySources` for data owned by the
-application. Pass updated directory and database snapshots when source data
-changes. Cells, sorting, grouping, filters, and footer calculations read the
+application. Pass an updated directory when its accounts change. Cells, sorting, grouping, filters, and footer calculations read the
 same resolved row values.
 
-| Property                       | Stored data                                                 | Application input                                                         |
-| ------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `id`                           | Immutable `Row.sequence` and a column `prefix`              | A persisted database-wide `allocateRowNumber` for shared or restored data |
-| `person`                       | An array of references with stable IDs                      | `people` supplies labels and avatars                                      |
-| `created-by`, `last-edited-by` | Optional row metadata                                       | `currentActor` supplies attribution for table edits                       |
-| `location`                     | Place name, address, and optional coordinates               | `searchLocations` and `reverseGeocode` supply place lookup                |
-| `relation`                     | An array of related row references                          | `databases` supplies available rows, properties, and their optional URLs  |
-| `rollup`                       | Relation, source property, and calculation in column config | The related database snapshot supplies the values                         |
+| Property                       | Stored data                                    | Application input                                                         |
+| ------------------------------ | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| `id`                           | Immutable `Row.sequence` and a column `prefix` | A persisted database-wide `allocateRowNumber` for shared or restored data |
+| `person`                       | An array of references with stable IDs         | `people` supplies labels and avatars                                      |
+| `created-by`, `last-edited-by` | Optional row metadata                          | `currentActor` supplies attribution for table edits                       |
+| `location`                     | Place name, address, and optional coordinates  | `searchLocations` and `reverseGeocode` supply place lookup                |
 
-Supply `databaseId` and `databaseName` to give a table a stable identity across
-views. The ID property numbers existing rows in creation order and keeps a local
+Supply `databaseName` to suggest an ID prefix for new columns. The ID property numbers existing rows in creation order and keeps a local
 high-water mark for the lifetime of the table. Save and hydrate `Row.sequence`.
 For shared data, reserve numbers by row ID, return the same number on retries,
 and retain the allocator's high-water mark after deletions. Hydrate shared rows
@@ -223,19 +219,3 @@ The `person`, `createdBy`, and `lastEditedBy` data plugin factories accept
 `{ accounts }` to supply filter choices. If omitted, choices come from
 `propertySources.people`. Use `propertySources.currentActor` for row attribution
 and `propertySources.people` to resolve the latest labels and avatars.
-
-Self-relations can update both fields in the table's data resource. For two-way
-relations across databases, `createReciprocalRelation` returns the target field
-ID, and `onRelationChanges` receives accepted link changes. The host can use
-`applyRelationChanges` to update the target row resource and then supply its
-updated snapshot. For cross-database creation, renaming, and removal, wire
-`createRelatedRow`, `renameReciprocalRelation`, and `removeReciprocalRelation`
-to the respective target resources. A one-page relation keeps the first link
-when a row is created with several initial links. In the editor, remove extra
-links before choosing a one-page limit.
-
-Rollups derive their result from relation references on each data refresh. The
-calculation picker lists the operations allowed by the target property type.
-Only numeric results can sort. List results use `Any`, `Every`, or `None` with an
-operator from the target property. The filter rule stores the inner operator ID
-and its JSON operand in `value`.

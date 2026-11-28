@@ -285,14 +285,3 @@ export function createCompareFn<TPlugin extends CellPlugin>(
     return compareFn(dataA, dataB);
   };
 }
-
-export function getFilterOperators(
-  plugin: CellPlugin | undefined,
-  config: unknown,
-) {
-  return (
-    plugin?.filtering?.operators.filter(
-      (operator) => operator.available?.(config) !== false,
-    ) ?? []
-  );
-}

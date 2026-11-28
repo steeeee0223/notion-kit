@@ -65,7 +65,6 @@ function CountDisplay({ id, type }: CountDisplayProps) {
         const countingMethod = resolveCountingMethod(
           table.getColumnPlugin(id),
           method,
-          table.getColumnInfo(id).config,
         );
         const label = countingMethod?.label ?? countingMethod?.name;
 

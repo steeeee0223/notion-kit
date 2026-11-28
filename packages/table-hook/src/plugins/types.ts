@@ -29,10 +29,8 @@ export type FilterOperandMetadata =
       getOptions?: (context: {
         config: unknown;
         sources?: TablePropertySources;
-        getRelatedRows?: (databaseId: string) => readonly PropertyReference[];
       }) => readonly PropertyReference[];
     }
-  | { kind: "rollup-list" }
   | { kind: "date" }
   | { kind: "date-range" }
   | { kind: "relative-date" };
@@ -40,14 +38,12 @@ export type FilterOperandMetadata =
 export interface FilterEvaluationContext {
   /** Clock captured once for the complete filter evaluation pass. */
   now: number;
-  plugins?: Readonly<Record<string, CellPlugin>>;
 }
 
 export interface FilterOperatorDescriptor<Data = unknown, Config = unknown> {
   /** Stable identifier stored in a persisted filter rule. */
   id: string;
   name: string;
-  available?: (config: Config) => boolean;
   operand: FilterOperandMetadata;
   matches: (
     data: Data,
@@ -73,7 +69,6 @@ export interface CellPlugin<
   id: Key;
   readOnly?: boolean;
   canGroup?: false;
-  canSort?: (config: Config) => boolean;
   default: {
     /**
      * @prop Default property config when creating a new property.

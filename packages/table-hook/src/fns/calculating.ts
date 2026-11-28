@@ -45,21 +45,10 @@ export const aggregateCountUnique: CommonAggregationFn = {
   },
 };
 
-export interface ValueAggregationContext<TRow> {
+function numberValues<TRow>(context: {
   rows: readonly TRow[];
   getValue: (row: TRow) => unknown;
-}
-
-export interface ValueAggregation<Result> {
-  aggregate: <TRow>(context: ValueAggregationContext<TRow>) => Result | "";
-}
-
-export interface DatePoint {
-  value: number;
-  includeTime: boolean;
-}
-
-function numberValues<TRow>(context: ValueAggregationContext<TRow>) {
+}) {
   return context.rows.flatMap((row) => {
     const value = context.getValue(row);
     if (typeof value === "string" && value.trim() === "") return [];
@@ -71,7 +60,7 @@ function numberValues<TRow>(context: ValueAggregationContext<TRow>) {
 
 function numericAggregation(
   calculate: (values: number[]) => number,
-): ValueAggregation<number> {
+): CommonAggregationFn {
   return {
     aggregate: (context) => {
       const values = numberValues(context);
@@ -137,7 +126,10 @@ function toDateRangeValue(value: unknown): DateRangeValue | null {
       };
 }
 
-function dateValues<TRow>(context: ValueAggregationContext<TRow>) {
+function dateValues<TRow>(context: {
+  rows: readonly TRow[];
+  getValue: (row: TRow) => unknown;
+}) {
   return context.rows.flatMap((row) => {
     const value = toDateRangeValue(context.getValue(row));
     return value === null ? [] : [value];
@@ -162,7 +154,7 @@ function getDateBoundaries(values: DateRangeValue[]) {
   };
 }
 
-export const aggregateDateEarliest: ValueAggregation<DatePoint> = {
+export const aggregateDateEarliest: CommonAggregationFn = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";
@@ -174,7 +166,7 @@ export const aggregateDateEarliest: ValueAggregation<DatePoint> = {
   },
 };
 
-export const aggregateDateLatest: ValueAggregation<DatePoint> = {
+export const aggregateDateLatest: CommonAggregationFn = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";
@@ -186,7 +178,7 @@ export const aggregateDateLatest: ValueAggregation<DatePoint> = {
   },
 };
 
-export const aggregateDateRange: ValueAggregation<Required<DateRangeValue>> = {
+export const aggregateDateRange: CommonAggregationFn = {
   aggregate: (context) => {
     const values = dateValues(context);
     if (values.length === 0) return "";

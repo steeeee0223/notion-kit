@@ -54,11 +54,7 @@ export function getCount(table: _TableInstance, colId: string): string {
 
   const plugin = table.getColumnPlugin(colId);
   const rows = getCalculationRows(table);
-  const countingMethod = resolveCountingMethod(
-    plugin,
-    method,
-    table.getColumnInfo(colId).config,
-  );
+  const countingMethod = resolveCountingMethod(plugin, method);
   if (!countingMethod) return "";
 
   const context = { table, rows, colId, plugin, isCapped };

@@ -17,7 +17,6 @@ import { getDefaultCell, insertAt } from "@/lib/utils";
 import type { PersonConfig } from "@/plugins/person";
 import type { TablePropertySources } from "@/plugins/property-sources";
 import { readReferences } from "@/plugins/references";
-import type { RelationConfig } from "@/plugins/relation";
 import type { DataResourceAction, ResourceChangeFn } from "@/table-contexts";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 import {
@@ -96,17 +95,6 @@ export interface RowActionsRowApi {
   getIsLastChild: () => boolean;
 }
 
-function normalizeRelation(value: unknown, config: RelationConfig) {
-  const references = readReferences(value);
-  return config.limit === "one"
-    ? references.slice(0, 1)
-    : [
-        ...new Map(
-          references.map((reference) => [reference.id, reference]),
-        ).values(),
-      ];
-}
-
 function getRowPosition(rows: Row[], rowId: string) {
   return rows.findIndex((row) => row.id === rowId);
 }
@@ -143,13 +131,11 @@ export const RowActionsFeature: TableFeature = {
             projectTableData(
               rows,
               table.atoms.columnsInfo.get(),
-              table.atoms.cellPlugins.get(),
               table.options.propertySources,
               {
                 propertyId: hasProjectedPropertyValue(grouped.type)
                   ? grouped.id
                   : undefined,
-                getRowUrl: table.options.getRowUrl,
               },
             ),
           );
@@ -179,8 +165,6 @@ export const RowActionsFeature: TableFeature = {
     });
     const normalizeCellValue = (colId: string, value: unknown) => {
       const property = table.getColumnInfo(colId);
-      if (property.type === "relation")
-        return normalizeRelation(value, property.config as RelationConfig);
       if (
         property.type === "person" &&
         (property.config as PersonConfig | undefined)?.limit === "one"
@@ -568,7 +552,6 @@ export const RowActionsFeature: TableFeature = {
                   projectTableData(
                     rows,
                     table.atoms.columnsInfo.get(),
-                    table.atoms.cellPlugins.get(),
                     table.options.propertySources,
                     { propertyId: grouping.info.id },
                   ).map((row) => [row.id, row]),

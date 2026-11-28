@@ -62,9 +62,9 @@ from the data plugin; they discover display metadata from the UI adapter.
 
 ## Application-provided property data
 
-The built-in people, relation, and place editors read application data through
+The built-in people and place editors read application data through
 `TableView`'s optional `propertySources` prop. For example, pass
-`propertySources={{ people, currentActor, databases, searchLocations }}` to
+`propertySources={{ people, currentActor, searchLocations }}` to
 populate the pickers. The place editor also accepts a manual name and address
 or coordinates from the browser's location permission.
 
@@ -73,11 +73,9 @@ Person picker. Without an account list, it uses `propertySources.people`.
 The `photonPlaceSources` adapter can be passed to `propertySources` to enable
 live place suggestions and reverse lookup through Photon.
 
-The ID adapter edits the prefix in the property menu. Relation and rollup
-adapters configure the target database or calculation and render the resolved
-value in the same table and row surfaces as other properties. See the
-[table-hook property contracts](../../table-hook/docs/plugins.md#id-people-places-and-related-rows)
-for the cross-database callbacks and the sequence allocator.
+The ID adapter edits the prefix in the property menu. See the
+[table-hook property contracts](../../table-hook/docs/plugins.md#id-people-and-places)
+for the sequence allocator and directory options.
 
 ## Related audits
 

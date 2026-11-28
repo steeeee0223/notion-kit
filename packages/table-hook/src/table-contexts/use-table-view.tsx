@@ -37,9 +37,6 @@ import {
   resolveSortingAccessorValue,
   resolveSortingFn,
 } from "@/methods";
-import type { TablePropertySources } from "@/plugins/property-sources";
-import { rollupListOperandSchema, type RollupConfig } from "@/plugins/rollup";
-import { getFilterOperators } from "@/plugins/utils";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -52,16 +49,9 @@ import { defaultColumn } from "@/table-contexts/column";
 import { createRuntimePluginMethodContext } from "@/table-contexts/plugin-method-context";
 import {
   assignRowSequences,
-  getLocalDatabase,
-  getLocalDatabaseId,
-  getRollupTarget,
   nextRowSequence,
   projectTableData,
 } from "@/table-contexts/property-data";
-import {
-  applyRelationChanges,
-  getRelationChanges,
-} from "@/table-contexts/relation-sync";
 import type {
   BaseTableProps,
   PartialTableViewState,
@@ -135,38 +125,19 @@ function hasRelativeDateFilter(
   filters: TableViewState["filters"],
   properties: Record<string, ColumnInfo>,
   plugins: Record<string, CellPlugin>,
-  sources?: TablePropertySources,
 ) {
   if (!validateTableFilterState(filters) || filters === null) return false;
-  const local = getLocalDatabase(sources, Object.values(properties), []);
 
   const hasRelativeRule = (group: FilterGroup): boolean =>
     group.children.some((child) => {
       if (child.kind === "group") return hasRelativeRule(child);
       const property = properties[child.propertyId];
-      if (!property || property.isDeleted) return false;
-      const operator = getFilterOperators(
-        plugins[property.type],
-        property.config,
-      ).find(({ id }) => id === child.operator);
-      if (operator?.operand.kind === "relative-date") return true;
-      if (operator?.operand.kind !== "rollup-list") return false;
-      const operand = rollupListOperandSchema.safeParse(child.value);
-      if (!operand.success) return false;
-      const target = getRollupTarget(
-        property.config as RollupConfig,
-        local,
-        sources,
-      );
-      if (!target) return false;
-      const plugin = plugins[target.property.type];
-      return getFilterOperators(
-        plugin,
-        target.property.config ?? plugin?.default.config,
-      ).some(
-        ({ id, operand: metadata }) =>
-          id === operand.data.operator && metadata.kind === "relative-date",
-      );
+      const operator = property
+        ? plugins[property.type]?.filtering?.operators.find(
+            ({ id }) => id === child.operator,
+          )
+        : undefined;
+      return operator?.operand.kind === "relative-date";
     });
 
   return hasRelativeRule(filters);
@@ -200,7 +171,6 @@ function useResourceState<TResource, TAction>({
   defaultValue: TResource;
   onChange: ResourceChangeHandler<TResource, TAction> | undefined;
   onProposalSettled?: (settlement: {
-    previous: TResource;
     authoritative: TResource;
     proposals: { next: TResource; action: TAction }[];
   }) => void;
@@ -209,7 +179,6 @@ function useResourceState<TResource, TAction>({
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const resource = controlled ? value : uncontrolledValue;
-  const committedResourceRef = useRef(resource);
   const pendingResourceRef = useRef(resource);
   const pendingProposalsRef = useRef<{ next: TResource; action: TAction }[]>(
     [],
@@ -218,13 +187,11 @@ function useResourceState<TResource, TAction>({
   useLayoutEffect(() => {
     // A committed render is the controlled owner's acceptance/rejection
     // boundary. Same-render calls compose until this authoritative rebase.
-    const previous = committedResourceRef.current;
-    committedResourceRef.current = resource;
     pendingResourceRef.current = resource;
     const proposals = pendingProposalsRef.current;
     if (proposals.length === 0) return;
     pendingProposalsRef.current = [];
-    onProposalSettled?.({ previous, authoritative: resource, proposals });
+    onProposalSettled?.({ authoritative: resource, proposals });
   });
 
   const setResource = useCallback<ResourceChangeFn<TResource, TAction>>(
@@ -334,35 +301,10 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     value: isDataControlled ? options.data : initialTable.data,
     defaultValue: options.defaultData ?? initialTable.data,
     onChange: onDataChange,
-    onProposalSettled: ({ previous, authoritative }) => {
-      if (!propertySources?.onRelationChanges || previous === authoritative)
-        return;
-      const databaseId = getLocalDatabaseId(propertySources);
-      const changes = getRelationChanges(
-        previous,
-        authoritative,
-        columnEntity.items,
-        databaseId,
-      ).filter(({ targetDatabaseId }) => targetDatabaseId !== databaseId);
-      if (changes.length) propertySources.onRelationChanges(changes);
-    },
   });
   const dataEntity = useMemo(
-    () =>
-      projectTableData(
-        dataResource,
-        columnEntity.items,
-        plugins.items,
-        propertySources,
-        { getRowUrl },
-      ),
-    [
-      dataResource,
-      columnEntity.items,
-      plugins.items,
-      propertySources,
-      getRowUrl,
-    ],
+    () => projectTableData(dataResource, columnEntity.items, propertySources),
+    [dataResource, columnEntity.items, propertySources],
   );
   useLayoutEffect(() => {
     nextSequenceRef.current = nextRowSequence(
@@ -377,16 +319,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
       setDataResource((previous) => {
         const proposed = functionalUpdate(updater, previous);
         if (proposed === previous) return previous;
-        const databaseId = getLocalDatabaseId(propertySources);
-        const selfRelations = getRelationChanges(
-          previous,
-          proposed,
-          columnEntity.items,
-          databaseId,
-        ).filter(({ targetDatabaseId }) => targetDatabaseId === databaseId);
-        let next = selfRelations.length
-          ? applyRelationChanges(proposed, selfRelations)
-          : proposed;
+        let next = proposed;
         if (
           pendingPropertiesRef.current.some(
             ({ type, isDeleted }) => type === "id" && !isDeleted,
@@ -414,12 +347,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         }
         return next;
       }, action),
-    [
-      columnEntity.items,
-      pendingPropertiesRef,
-      propertySources,
-      setDataResource,
-    ],
+    [pendingPropertiesRef, propertySources, setDataResource],
   );
   const columns = useMemo(
     () =>
@@ -430,7 +358,6 @@ export function useTableView<TPlugins extends CellPlugin[]>(
           id: property.id,
           enableGlobalFilter: !property.isDeleted,
           enableGrouping: plugin.canGroup !== false,
-          enableSorting: plugin.canSort?.(property.config) !== false,
           accessorFn: (row) => {
             const cell = row.properties[colId];
             const value: unknown = cell ? cell.value : plugin.default.data;
@@ -496,7 +423,6 @@ export function useTableView<TPlugins extends CellPlugin[]>(
     tableGlobalState.filters,
     columnEntity.items,
     plugins.items,
-    propertySources,
   );
 
   useEffect(() => {

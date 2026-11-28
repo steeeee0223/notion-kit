@@ -12,8 +12,6 @@ import {
   number as createNumber,
   person as createPerson,
   phone as createPhone,
-  relation as createRelation,
-  rollup as createRollup,
   select as createSelect,
   text as createText,
   title as createTitle,
@@ -28,8 +26,6 @@ import { location } from "./location";
 import { number } from "./number";
 import { createdBy, lastEditedBy, person } from "./person";
 import { createPluginRegistry } from "./registry";
-import { relation } from "./relation";
-import { rollup } from "./rollup";
 import { multiSelect, select } from "./select";
 import { text } from "./text";
 import { title } from "./title";
@@ -52,8 +48,6 @@ export const DEFAULT_DATA_PLUGINS = [
   createCreatedBy(),
   createLastEditedBy(),
   createLocation(),
-  createRelation(),
-  createRollup(),
 ];
 
 export const DEFAULT_UI_PLUGINS = [
@@ -74,8 +68,6 @@ export const DEFAULT_UI_PLUGINS = [
   createdBy(),
   lastEditedBy(),
   location(),
-  relation(),
-  rollup(),
 ];
 
 export const DEFAULT_PLUGINS = createPluginRegistry({
@@ -103,8 +95,6 @@ export {
   createdBy,
   lastEditedBy,
   location,
-  relation,
-  rollup,
 };
 export { DefaultGroupingValue } from "./utils";
 export { createPluginRegistry } from "./registry";

@@ -4,7 +4,6 @@ import { Icon } from "@notion-kit/icons";
 import {
   appendFilterNode,
   createFilterRule,
-  getFilterOperators,
   TableViewMenuPage,
 } from "@notion-kit/table-hook";
 import {
@@ -56,7 +55,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
     }
     table.setSorting([{ id: propId, desc }]);
   };
-  const operator = getFilterOperators(plugin, info.config)[0];
+  const operator = plugin.filtering?.operators[0];
   const addFilter = () => {
     if (!operator) return;
     const filters = table.getFilters();
@@ -116,28 +115,26 @@ export function PropMenu({ propId, view }: PropMenuProps) {
                 onClick={addFilter}
               />
             )}
-            {plugin.canSort?.(info.config) !== false && (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger
-                  icon={<Icon.ArrowUpDown />}
-                  label="Sort"
-                />
-                <DropdownMenuContent sideOffset={-4} className="w-50">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      icon={<Icon.ArrowUp className="size-4" />}
-                      label={sortingLabels.ascending}
-                      onClick={() => sortColumn(false)}
-                    />
-                    <DropdownMenuItem
-                      icon={<Icon.ArrowDown className="size-4" />}
-                      label={sortingLabels.descending}
-                      onClick={() => sortColumn(true)}
-                    />
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenuSub>
-            )}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
+                icon={<Icon.ArrowUpDown />}
+                label="Sort"
+              />
+              <DropdownMenuContent sideOffset={-4} className="w-50">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    icon={<Icon.ArrowUp className="size-4" />}
+                    label={sortingLabels.ascending}
+                    onClick={() => sortColumn(false)}
+                  />
+                  <DropdownMenuItem
+                    icon={<Icon.ArrowDown className="size-4" />}
+                    label={sortingLabels.descending}
+                    onClick={() => sortColumn(true)}
+                  />
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenuSub>
             <table.Subscribe selector={(state) => state.grouping}>
               {(grouping) =>
                 (plugin.canGroup !== false || grouping.includes(propId)) && (
