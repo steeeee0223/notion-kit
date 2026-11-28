@@ -5,10 +5,11 @@ import { locationValueSchema } from "@notion-kit/table-hook/plugins";
 
 const photonUrl = "https://photon.komoot.io";
 const responseSchema = z.object({ features: z.array(z.unknown()) });
+const coordinates = locationValueSchema.shape.coordinates.unwrap().shape;
 const featureSchema = z.object({
   geometry: z.object({
     type: z.literal("Point"),
-    coordinates: z.tuple([z.number(), z.number()]),
+    coordinates: z.tuple([coordinates.longitude, coordinates.latitude]),
   }),
   properties: z.object({
     name: z.string().optional(),
@@ -42,12 +43,9 @@ async function fetchPlaces(
     const address = [
       ...new Set([streetAddress, city, state, country].filter(Boolean)),
     ].join(", ");
-    const place = locationValueSchema.safeParse({
-      name: name ?? "",
-      address,
-      coordinates: { latitude, longitude },
-    });
-    return place.success ? [place.data] : [];
+    return [
+      { name: name ?? "", address, coordinates: { latitude, longitude } },
+    ];
   });
 }
 

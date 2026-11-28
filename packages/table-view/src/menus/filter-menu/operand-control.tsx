@@ -65,7 +65,7 @@ export function OperandControl({
   rule: FilterRule;
   root: FilterGroup;
 }) {
-  const { table } = useTableViewCtx();
+  const { table, propertySources } = useTableViewCtx();
   const property = table.getColumnInfo(rule.propertyId);
   const operator = table
     .getColumnPlugin(rule.propertyId)
@@ -73,16 +73,32 @@ export function OperandControl({
 
   if (!operator) return null;
 
+  const metadata = operator.operand;
+  const key = `${rule.id}:${rule.operator}:${operandDraftKey(
+    rule.value,
+    metadata,
+    property.config as DateConfig,
+  )}`;
+  if (metadata.kind === "option" && metadata.getOptions)
+    return (
+      <ReferenceOperand
+        key={key}
+        rule={rule}
+        root={root}
+        options={metadata.getOptions({
+          config: property.config,
+          sources: propertySources,
+        })}
+        multiple={metadata.multiple}
+      />
+    );
+
   return (
     <OperandControlContent
-      key={`${rule.id}:${rule.operator}:${operandDraftKey(
-        rule.value,
-        operator.operand,
-        property.config as DateConfig,
-      )}`}
+      key={key}
       rule={rule}
       root={root}
-      metadata={operator.operand}
+      metadata={metadata}
     />
   );
 }
@@ -100,8 +116,6 @@ function OperandControlContent({
     case "none":
       return null;
     case "option":
-      if (metadata.getOptions)
-        return <ReferenceOperand rule={rule} root={root} metadata={metadata} />;
       return (
         <OptionOperand rule={rule} root={root} multiple={metadata.multiple} />
       );
@@ -123,18 +137,16 @@ function operandDraftKey(
   metadata: FilterOperandMetadata,
   propertyConfig: DateConfig,
 ) {
-  if (metadata.kind === "date") {
-    return getTimeZone(propertyConfig);
+  switch (metadata.kind) {
+    case "date":
+      return getTimeZone(propertyConfig);
+    case "date-range":
+      return `${JSON.stringify(value)}:${getTimeZone(propertyConfig)}`;
+    case "none":
+      return JSON.stringify(value);
+    default:
+      return "controlled";
   }
-  if (metadata.kind === "date-range") {
-    return `${JSON.stringify(value)}:${getTimeZone(propertyConfig)}`;
-  }
-  return metadata.kind === "text" ||
-    metadata.kind === "number" ||
-    metadata.kind === "relative-date" ||
-    metadata.kind === "option"
-    ? "controlled"
-    : JSON.stringify(value);
 }
 
 function NumericOperand({
@@ -259,20 +271,15 @@ function getRelativeDateUnit(
 function ReferenceOperand({
   rule,
   root,
-  metadata,
+  options,
+  multiple,
 }: {
   rule: FilterRule;
   root: FilterGroup;
-  metadata: Extract<FilterOperandMetadata, { kind: "option" }>;
+  options: readonly PropertyReference[];
+  multiple?: boolean;
 }) {
-  const { table, propertySources } = useTableViewCtx();
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const property = table.getColumnInfo(rule.propertyId);
-  const options =
-    metadata.getOptions?.({
-      config: property.config,
-      sources: propertySources,
-    }) ?? [];
   const byId = new Map(options.map((option) => [option.id, option]));
   const selected = Array.isArray(rule.value) ? rule.value : [rule.value];
   const references = selected.flatMap((id): PropertyReference[] =>
@@ -291,10 +298,10 @@ function ReferenceOperand({
           value={references}
           options={options}
           label="Search options"
-          single={!metadata.multiple}
+          single={!multiple}
           onChange={(next) => {
             const ids = next.map(({ id }) => id);
-            updateRule(metadata.multiple && ids.length ? ids : ids[0]);
+            updateRule(multiple && ids.length ? ids : ids[0]);
           }}
         />
       </PopoverContent>

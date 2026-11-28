@@ -41,7 +41,7 @@ export function SelectGroupMenu() {
             if (
               col.hidden ||
               col.isDeleted ||
-              table.getColumnPlugin(col.id).canGroup === false
+              !table.getColumn(colId)?.getCanGroup()
             )
               return acc;
             acc.push({ ...col, kind: "column" });

@@ -101,8 +101,12 @@ export function TypesMenu({
           }
         />
       )}
-      <table.Subscribe selector={(state) => state.cellPlugins}>
-        {(plugins) => (
+      <table.Subscribe
+        selector={(state) =>
+          propId !== undefined && state.grouping.includes(propId)
+        }
+      >
+        {(grouped) => (
           <>
             <DropdownMenuInput
               placeholder={
@@ -116,7 +120,7 @@ export function TypesMenu({
             <DropdownMenuList>
               <DropdownMenuGroup>
                 <DropdownMenuLabel title="Type" />
-                {Object.values(plugins).map((entry) => {
+                {registry.data.map((entry) => {
                   if (entry.id === "id") return null;
                   const plugin = registry.getUiPlugin(entry.id);
                   return (
@@ -129,7 +133,10 @@ export function TypesMenu({
                     >
                       <DropdownMenuItem
                         closeOnClick={closeOnClick}
-                        disabled={plugin.id === "title"}
+                        disabled={
+                          plugin.id === "title" ||
+                          (grouped && entry.canGroup === false)
+                        }
                         icon={plugin.meta.icon}
                         label={plugin.meta.name}
                         onClick={() =>

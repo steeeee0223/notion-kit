@@ -162,7 +162,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
             </DropdownMenuSub>
             <table.Subscribe selector={(state) => state.grouping}>
               {(grouping) =>
-                (plugin.canGroup !== false || grouping.includes(propId)) && (
+                (column.getCanGroup() || grouping.includes(propId)) && (
                   <DropdownMenuItem
                     icon={<Icon.SquareGridBelowLines />}
                     label={grouping.includes(propId) ? "Ungroup" : "Group"}
