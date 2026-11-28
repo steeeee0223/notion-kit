@@ -181,9 +181,7 @@ it("CalendarCreate_RejectedOwner_NeverOpensOrRetriesProposedRow", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Create" }));
   await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
   expect(screen.getByLabelText("opened row")).toBeEmptyDOMElement();
-  const rows: unknown = JSON.parse(
-    screen.getByLabelText("rows").textContent ?? "",
-  );
+  const rows: unknown = JSON.parse(screen.getByLabelText("rows").textContent);
   expect(rows).toMatchObject(initialRows);
 });
 
@@ -247,9 +245,7 @@ it("CalendarChange_RejectedOwner_KeepsAuthoritativeDate", () => {
   );
   fireEvent.click(screen.getByRole("button", { name: "Move" }));
   expect(onChange).toHaveBeenCalledTimes(1);
-  const rows: unknown = JSON.parse(
-    screen.getByLabelText("rows").textContent ?? "",
-  );
+  const rows: unknown = JSON.parse(screen.getByLabelText("rows").textContent);
   expect(rows).toMatchObject(initialRows);
 });
 
