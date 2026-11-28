@@ -216,9 +216,9 @@ describe("useTableView - Column Custom APIs", () => {
         table.duplicateColumnInfo("id");
         table.setColumnType("id", "text");
         table.setColumnType("col2", "id");
-        table.deleteColumnInfo("id");
-        table.restoreColumnInfo("id");
-        table.removeColumnInfo("id");
+        table.archiveColumn("id");
+        table.restoreColumn("id");
+        table.deleteColumn("id");
       });
       expect(table.getColumnInfo("id")).toMatchObject({
         type: "id",
@@ -459,7 +459,7 @@ describe("useTableView - Column Custom APIs", () => {
     });
   });
 
-  describe("removeColumnInfo", () => {
+  describe("deleteColumn", () => {
     it("should remove column from column order", () => {
       const { table } = renderTableHook({
         data: mockData,
@@ -467,7 +467,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.removeColumnInfo("col2");
+        table.deleteColumn("col2");
       });
 
       const columnOrder = table.atoms.columnOrder.get();
@@ -481,7 +481,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.removeColumnInfo("col2");
+        table.deleteColumn("col2");
       });
 
       const columnsInfo = table.atoms.columnsInfo.get();
@@ -495,7 +495,7 @@ describe("useTableView - Column Custom APIs", () => {
       });
 
       act(() => {
-        table.removeColumnInfo("col2");
+        table.deleteColumn("col2");
       });
 
       const rows = table.getRowModel().rows;

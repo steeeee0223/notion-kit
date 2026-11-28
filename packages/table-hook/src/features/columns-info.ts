@@ -80,9 +80,9 @@ export interface ColumnsInfoTableApi {
     };
   }) => void;
   duplicateColumnInfo: (colId: string) => void;
-  deleteColumnInfo: (colId: string) => void;
-  restoreColumnInfo: (colId: string) => void;
-  removeColumnInfo: (colId: string) => void;
+  archiveColumn: (colId: string) => void;
+  restoreColumn: (colId: string) => void;
+  deleteColumn: (colId: string) => void;
   toggleColumnWrapped: (colId: string, updater: Updater<boolean>) => void;
   setColumnType: <TPlugins extends CellPlugin[]>(
     colId: string,
@@ -565,7 +565,7 @@ export const ColumnsInfoFeature: TableFeature = {
         }),
       );
     };
-    instance.deleteColumnInfo = (colId) =>
+    instance.archiveColumn = (colId) =>
       updateColumnInfo(
         instance,
         colId,
@@ -579,7 +579,7 @@ export const ColumnsInfoFeature: TableFeature = {
           payload: { propertyId: colId, previousPosition: -1 },
         },
       );
-    instance.restoreColumnInfo = (colId) =>
+    instance.restoreColumn = (colId) =>
       updateColumnInfo(
         instance,
         colId,
@@ -591,7 +591,7 @@ export const ColumnsInfoFeature: TableFeature = {
           payload: { propertyId: colId },
         },
       );
-    instance.removeColumnInfo = (colId) => {
+    instance.deleteColumn = (colId) => {
       if (instance.atoms.columnsInfo.get()[colId]?.type === "id") return;
       const actionId = v4();
       instance.options.onColumnInfoChange?.(

@@ -82,9 +82,9 @@ always reflects the application's authoritative state.
 
 Use `setColumnInfo` for property metadata such as name, configuration, and
 visibility. Use `setColumnType` to convert a property and its cell values.
-`deleteColumnInfo` moves a property to Deleted properties, and
-`restoreColumnInfo` restores it. `removeColumnInfo` permanently removes the
-property and its stored cells.
+`archiveColumn` moves a property to Deleted properties.
+`restoreColumn` restores it. `deleteColumn` permanently deletes the property and
+its stored cells.
 
 ## Property plugins
 

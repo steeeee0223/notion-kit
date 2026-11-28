@@ -1509,7 +1509,7 @@ describe("useTableView resource API", () => {
 
     rerender({ properties: typedProperties!, data: typedData! });
     act(() => {
-      result.current.table.removeColumnInfo("col3");
+      result.current.table.deleteColumn("col3");
     });
     const removedProperties = getLastResourceChange<
       ColumnInfo[],
@@ -1593,7 +1593,7 @@ describe("useTableView resource API", () => {
     ).toBe(true);
 
     act(() => {
-      result.current.table.removeColumnInfo("col3");
+      result.current.table.deleteColumn("col3");
     });
     expect(result.current.table.atoms.columnOrder.get()).toEqual([
       "col1",

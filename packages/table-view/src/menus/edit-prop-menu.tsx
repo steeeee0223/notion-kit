@@ -48,7 +48,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
   // 5. Duplicate property
   const duplicateProp = () => table.duplicateColumnInfo(propId);
   // 6. Delete property
-  const deleteProp = () => table.deleteColumnInfo(propId);
+  const archiveProp = () => table.archiveColumn(propId);
 
   return (
     <>
@@ -140,7 +140,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
             />
             <DropdownMenuItem
               variant="warning"
-              onClick={deleteProp}
+              onClick={archiveProp}
               icon={<Icon.Trash />}
               label="Delete property"
             />
