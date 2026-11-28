@@ -722,8 +722,8 @@ importers:
         specifier: catalog:rtl
         version: 31.0.1(@noble/hashes@2.4.0)
       monocart-coverage-reports:
-        specifier: ^3.3.0
-        version: 3.3.0
+        specifier: ^3.3.1
+        version: 3.3.1
       prettier:
         specifier: 'catalog:'
         version: 3.10.1
@@ -8940,8 +8940,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  monocart-coverage-reports@3.3.0:
-    resolution: {integrity: sha512-6w4M1+W/VL/Zf84EoHO8hfZ7zAjQnux+GWI4eolUF8HA9L5+EPdAMv3itNVGjugJqpb/pO70AIQx4NHtlQMI7g==}
+  monocart-coverage-reports@3.3.1:
+    resolution: {integrity: sha512-olkC62pK7wWX/Ygd1Ls5pZiBo0DxObmdfkE1NWN83eeDbWjIryViG4C6wPFkWCXhjewbLoD2L72r0hrzLNJeCQ==}
     engines: {node: '>=22.18.0'}
     hasBin: true
 
@@ -17337,7 +17337,7 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  monocart-coverage-reports@3.3.0:
+  monocart-coverage-reports@3.3.1:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
       acorn: 8.19.0
