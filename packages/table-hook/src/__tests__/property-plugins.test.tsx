@@ -9,8 +9,13 @@ import {
   id,
   lastEditedBy,
   location,
+  number,
   person,
+  relation,
+  rollup,
   title,
+  type RelationConfig,
+  type RollupConfig,
 } from "@/plugins";
 import type { TablePropertySources } from "@/plugins/property-sources";
 import {
@@ -18,14 +23,18 @@ import {
   type DataResourceAction,
   type ResourceChangeHandler,
 } from "@/table-contexts";
+import { applyRelationChanges } from "@/table-contexts/relation-sync";
 
 const plugins = arrayToEntity([
   title(),
+  number(),
   id(),
   person(),
   createdBy(),
   lastEditedBy(),
   location(),
+  relation(),
+  rollup(),
 ]);
 
 function row(
@@ -72,6 +81,32 @@ const idProperty = {
 };
 const ada = { id: "ada", name: "Ada Lovelace" };
 const grace = { id: "grace", name: "Grace Hopper" };
+
+const sumConfig = {
+  relationPropertyId: "related",
+  targetPropertyId: "price",
+  calculation: "sum",
+  format: "number",
+  round: "default",
+} satisfies RollupConfig;
+
+const rollupProperty = {
+  id: "total",
+  name: "Total",
+  type: "rollup",
+  config: sumConfig,
+};
+
+const relationProperty = {
+  id: "related",
+  name: "Related",
+  type: "relation",
+  config: {
+    databaseId: "self",
+    limit: "unlimited",
+    reciprocalPropertyId: "reverse",
+  } satisfies RelationConfig,
+};
 
 describe("New table property plugins", () => {
   it("assigns IDs by creation order and preserves the sequence after deletion, duplication, and prefix changes", () => {
@@ -168,6 +203,29 @@ describe("New table property plugins", () => {
     ]);
   });
 
+  it("applies the relation limit when creating a row with initial links", () => {
+    const { table } = renderProperties(
+      [{ ...relationProperty, config: { databaseId: "self", limit: "one" } }],
+      [row("first"), row("second")],
+    );
+
+    let id = "";
+    act(() => {
+      id = table.addRow({
+        initialValues: {
+          related: [
+            { id: "first", name: "First" },
+            { id: "second", name: "Second" },
+          ],
+        },
+      });
+    });
+
+    expect(table.getCell("related", id).value).toEqual([
+      { id: "first", name: "Untitled" },
+    ]);
+  });
+
   it("does not reuse a row number after a controlled deletion", () => {
     const onDataChange = vi.fn();
     const first = { ...row("first"), sequence: 2 };
@@ -193,6 +251,109 @@ describe("New table property plugins", () => {
         next: [first, expect.objectContaining({ sequence: 10 })],
       }),
     );
+  });
+
+  it("synchronizes self-relations, recomputes rollups on target edits, and filters lists by the target operator", () => {
+    const { table } = renderProperties(
+      [
+        { id: "title", name: "Name", type: "title" },
+        { id: "price", name: "Price", type: "number" },
+        relationProperty,
+        {
+          id: "reverse",
+          name: "Referenced by",
+          type: "relation",
+          config: {
+            databaseId: "self",
+            limit: "unlimited",
+            reciprocalPropertyId: "related",
+          } satisfies RelationConfig,
+        },
+        rollupProperty,
+      ],
+      [
+        row("source", { title: "Order" }),
+        row("target", { title: "Item", price: "18" }),
+      ],
+    );
+
+    act(() =>
+      table
+        .getColumn("related")
+        ?.updateCell("source", [{ id: "target", name: "Item" }]),
+    );
+    expect(table.getCell("reverse", "target").value).toEqual([
+      { id: "source", name: "Order" },
+    ]);
+    expect(table.getCell("total", "source").value).toMatchObject({
+      kind: "number",
+      value: 18,
+    });
+    act(() => table.getColumn("price")?.updateCell("target", "25"));
+    expect(table.getCell("total", "source").value).toMatchObject({
+      kind: "number",
+      value: 25,
+    });
+
+    act(() =>
+      table
+        .getColumn("total")
+        ?.updateConfig({ ...sumConfig, calculation: "original" }),
+    );
+    expect(table.getColumn("total")?.getCanSort()).toBe(false);
+    act(() =>
+      table.setFilters(
+        appendFilterNode(undefined, "", {
+          ...createFilterRule("total", "list-any"),
+          value: { operator: "greater-than", value: 20 },
+        }),
+      ),
+    );
+    expect(table.getFilteredRowModel().rows.map(({ id }) => id)).toEqual([
+      "source",
+    ]);
+    act(() => table.getColumn("related")?.updateCell("source", []));
+    expect(table.getCell("reverse", "target").value).toEqual([]);
+    expect(table.getFilteredRowModel().rows).toHaveLength(0);
+  });
+
+  it("emits accepted cross-database changes and applies a reciprocal update only once", () => {
+    const onRelationChanges =
+      vi.fn<NonNullable<TablePropertySources["onRelationChanges"]>>();
+    const target = row("target", { title: "Item" });
+    const { table } = renderProperties(
+      [
+        {
+          ...relationProperty,
+          config: { ...relationProperty.config, databaseId: "catalog" },
+        },
+      ],
+      [row("source")],
+      { databaseId: "orders", onRelationChanges },
+    );
+
+    act(() =>
+      table
+        .getColumn("related")
+        ?.updateCell("source", [{ id: "target", name: "Item" }]),
+    );
+    const changes = onRelationChanges.mock.calls[0]?.[0] ?? [];
+    expect(changes).toEqual([
+      {
+        sourceDatabaseId: "orders",
+        sourcePropertyId: "related",
+        targetDatabaseId: "catalog",
+        targetPropertyId: "reverse",
+        sourceRowId: "source",
+        previousRowIds: [],
+        nextRowIds: ["target"],
+      },
+    ]);
+    const updated = applyRelationChanges([target], changes);
+    expect(updated[0]?.properties.reverse?.value).toEqual([
+      { id: "source", name: "" },
+    ]);
+    expect(applyRelationChanges(updated, changes)).toBe(updated);
   });
 });
 

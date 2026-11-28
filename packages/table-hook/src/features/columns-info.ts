@@ -15,9 +15,11 @@ import type {
   InferConfig,
   InferData,
   InferPlugin,
+  RelationConfig,
   UnknownCellPlugin,
 } from "@/plugins";
 import { hasActiveIdColumn } from "@/plugins/id";
+import { getFilterOperators } from "@/plugins/utils";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -283,7 +285,8 @@ export const ColumnsInfoFeature: TableFeature = {
       return Object.values(columnsInfo).filter(
         (property) =>
           !property.isDeleted &&
-          Boolean(plugins[property.type]?.filtering?.operators.length),
+          getFilterOperators(plugins[property.type], property.config).length >
+            0,
       );
     };
     instance.getTitleFilterRule = () => {
@@ -592,6 +595,12 @@ export const ColumnsInfoFeature: TableFeature = {
       instance._addColumnInfo(
         {
           ...src,
+          ...(src.type === "relation" && {
+            config: {
+              ...(src.config as RelationConfig),
+              reciprocalPropertyId: undefined,
+            },
+          }),
           id: newColId,
           name: instance.generateUniqueColumnName(src.name),
         },
@@ -708,12 +717,14 @@ export const ColumnsInfoFeature: TableFeature = {
       // Update all cells
       const srcPlugin = instance.getColumnPlugin(colId);
       const columns = instance.atoms.columnsInfo.get();
+      const plugins = instance.atoms.cellPlugins.get();
       instance.setTableData(
         (prev) => {
           const projected = hasProjectedPropertyValue(srcPlugin.id)
             ? projectTableData(
                 prev,
                 columns,
+                plugins,
                 instance.options.propertySources,
                 { propertyId: colId },
               )

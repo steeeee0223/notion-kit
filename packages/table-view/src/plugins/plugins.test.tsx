@@ -24,6 +24,8 @@ describe("table-view plugin wrappers", () => {
       "created-by",
       "last-edited-by",
       "location",
+      "relation",
+      "rollup",
     ]);
   });
 

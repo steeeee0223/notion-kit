@@ -1,17 +1,35 @@
-import { useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
+import {
+  createContext,
+  use,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+} from "react";
 import { addDays, addMonths, addWeeks } from "date-fns";
 
 import { useInputField } from "@notion-kit/hooks";
-import { updateFilterNode } from "@notion-kit/table-hook";
+import {
+  getFilterOperators,
+  getRelatedDatabase,
+  getRelatedRowOptions,
+  getRollupTarget,
+  updateFilterNode,
+} from "@notion-kit/table-hook";
 import type {
+  ColumnInfo,
   FilterGroup,
   FilterRule,
   FilterValue,
 } from "@notion-kit/table-hook";
+import { rollupListOperandSchema } from "@notion-kit/table-hook/plugins";
 import type {
   DateConfig,
   FilterOperandMetadata,
   PropertyReference,
+  RollupConfig,
   SelectConfig,
 } from "@notion-kit/table-hook/plugins";
 import {
@@ -44,6 +62,7 @@ import {
 
 import { OptionTag } from "@/common";
 import { ReferencePicker } from "@/plugins/reference-picker";
+import { useRelatedDatabases } from "@/plugins/relation/use-related-databases";
 import { useTableViewCtx } from "@/table-contexts";
 
 import {
@@ -58,6 +77,17 @@ import {
 } from "./utils";
 import type { FilterOption } from "./utils";
 
+const NestedOperandContext = createContext<{
+  property: ColumnInfo;
+  update: (value: FilterValue | undefined) => void;
+} | null>(null);
+
+function useOperandProperty(propertyId: string) {
+  const nested = use(NestedOperandContext);
+  const { table } = useTableViewCtx();
+  return nested?.property ?? table.getColumnInfo(propertyId);
+}
+
 export function OperandControl({
   rule,
   root,
@@ -67,9 +97,10 @@ export function OperandControl({
 }) {
   const { table } = useTableViewCtx();
   const property = table.getColumnInfo(rule.propertyId);
-  const operator = table
-    .getColumnPlugin(rule.propertyId)
-    .filtering?.operators.find(({ id }) => id === rule.operator);
+  const operator = getFilterOperators(
+    table.getColumnPlugin(rule.propertyId),
+    property.config,
+  ).find(({ id }) => id === rule.operator);
 
   if (!operator) return null;
 
@@ -99,6 +130,8 @@ function OperandControlContent({
   switch (metadata.kind) {
     case "none":
       return null;
+    case "rollup-list":
+      return <RollupListOperand rule={rule} root={root} />;
     case "option":
       if (metadata.getOptions)
         return <ReferenceOperand rule={rule} root={root} metadata={metadata} />;
@@ -256,6 +289,76 @@ function getRelativeDateUnit(
     : "day";
 }
 
+function RollupListOperand({
+  rule,
+  root,
+}: {
+  rule: FilterRule;
+  root: FilterGroup;
+}) {
+  const { table, local, propertySources } = useRelatedDatabases();
+  const update = useFilterRuleUpdate(root, rule.id);
+  const config = table.getColumnInfo(rule.propertyId).config as RollupConfig;
+  const target = getRollupTarget(config, local, propertySources)?.property;
+  const plugin = target && table.atoms.cellPlugins.get()[target.type];
+  const property = useMemo(() => {
+    if (!target) return undefined;
+    const config: unknown = target.config ?? plugin?.default.config;
+    return { ...target, config };
+  }, [target, plugin]);
+  const operators = getFilterOperators(plugin, property?.config);
+  const { operand, nested } = useMemo(() => {
+    const parsed = rollupListOperandSchema.safeParse(rule.value);
+    if (!parsed.success || !property)
+      return { operand: undefined, nested: null };
+    const operand = parsed.data;
+    const operator = operand.operator;
+    return {
+      operand,
+      nested: {
+        property,
+        update: (value: FilterValue | undefined) =>
+          update(value === undefined ? { operator } : { operator, value }),
+      },
+    };
+  }, [property, rule.value, update]);
+  const selected = operators.find(({ id }) => id === operand?.operator);
+  if (!property) return null;
+  const items = operators.map(({ id, name }) => ({ value: id, label: name }));
+  return (
+    <>
+      <Select
+        items={items}
+        value={selected?.id ?? null}
+        onValueChange={(operator) => {
+          if (operator) update({ operator });
+        }}
+      >
+        <SelectTrigger aria-label="Related property operator">
+          <SelectValue placeholder="Operator" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {items.map(({ value, label }) => (
+              <SelectItem key={value} value={value} label={label} />
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      {selected && (
+        <NestedOperandContext value={nested}>
+          <OperandControlContent
+            key={selected.id}
+            rule={{ ...rule, operator: selected.id, value: operand?.value }}
+            root={root}
+            metadata={selected.operand}
+          />
+        </NestedOperandContext>
+      )}
+    </>
+  );
+}
+
 function ReferenceOperand({
   rule,
   root,
@@ -265,13 +368,17 @@ function ReferenceOperand({
   root: FilterGroup;
   metadata: Extract<FilterOperandMetadata, { kind: "option" }>;
 }) {
-  const { table, propertySources } = useTableViewCtx();
+  const { propertySources, local } = useRelatedDatabases();
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const property = table.getColumnInfo(rule.propertyId);
+  const property = useOperandProperty(rule.propertyId);
   const options =
     metadata.getOptions?.({
       config: property.config,
       sources: propertySources,
+      getRelatedRows: (databaseId) => {
+        const database = getRelatedDatabase(databaseId, local, propertySources);
+        return database ? getRelatedRowOptions(database) : [];
+      },
     }) ?? [];
   const byId = new Map(options.map((option) => [option.id, option]));
   const selected = Array.isArray(rule.value) ? rule.value : [rule.value];
@@ -312,8 +419,7 @@ function OptionOperand({
   multiple?: boolean;
 }) {
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const { table } = useTableViewCtx();
-  const property = table.getColumnInfo(rule.propertyId);
+  const property = useOperandProperty(rule.propertyId);
   const options = getFilterOptions(property.config as SelectConfig);
   const optionsByName = new Map(options.map((option) => [option.name, option]));
   const multipleValue =
@@ -516,8 +622,7 @@ function parseNumericDraft(value: string, relative: boolean) {
 
 function DateOperand({ rule, root }: { rule: FilterRule; root: FilterGroup }) {
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const { table } = useTableViewCtx();
-  const property = table.getColumnInfo(rule.propertyId);
+  const property = useOperandProperty(rule.propertyId);
   const timeZone = getTimeZone(property.config as DateConfig);
   const [preset, setPreset] = useState<DatePreset | null>(
     getDatePreset(rule.value),
@@ -688,8 +793,7 @@ function DateRangeOperand({
   root: FilterGroup;
 }) {
   const updateRule = useFilterRuleUpdate(root, rule.id);
-  const { table } = useTableViewCtx();
-  const property = table.getColumnInfo(rule.propertyId);
+  const property = useOperandProperty(rule.propertyId);
   const timeZone = getTimeZone(property.config as DateConfig);
   const authoritativeStart = formatDateValue(
     getRecordNumber(rule.value, "start"),
@@ -822,12 +926,17 @@ function DateRangeOperand({
 
 function useFilterRuleUpdate(root: FilterGroup, ruleId: string) {
   const { table } = useTableViewCtx();
-
-  return (value: FilterValue | undefined) =>
-    table.setFilters(
-      updateFilterNode(root, ruleId, (node) => {
-        if (node.kind !== "rule") return node;
-        return value === undefined ? omitRuleValue(node) : { ...node, value };
-      }),
-    );
+  const nested = use(NestedOperandContext);
+  const update = useCallback(
+    (value: FilterValue | undefined) => {
+      table.setFilters(
+        updateFilterNode(root, ruleId, (node) => {
+          if (node.kind !== "rule") return node;
+          return value === undefined ? omitRuleValue(node) : { ...node, value };
+        }),
+      );
+    },
+    [root, ruleId, table],
+  );
+  return nested?.update ?? update;
 }

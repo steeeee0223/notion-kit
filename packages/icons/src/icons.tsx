@@ -920,6 +920,12 @@ export const Home = (props: IconProps) => (
   </svg>
 );
 
+export const Search = (props: IconProps) => (
+  <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
+    <path d="M13.963 12.194A6.248 6.248 0 0 0 8.75 2.5a6.25 6.25 0 0 0-6.251 6.25 6.248 6.248 0 0 0 9.694 5.213L15.73 17.5l1.769-1.769zm-5.213.931a4.376 4.376 0 1 1 .002-8.752 4.376 4.376 0 0 1-.002 8.752" />
+  </svg>
+);
+
 export const MagnifyingGlass = (props: IconProps) => (
   <svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" {...props}>
     <path d="M8.875 2.625a6.25 6.25 0 1 0 3.955 11.09l3.983 3.982a.625.625 0 1 0 .884-.884l-3.983-3.982a6.25 6.25 0 0 0-4.84-10.205m-5 6.25a5 5 0 1 1 10 0 5 5 0 0 1-10 0" />
