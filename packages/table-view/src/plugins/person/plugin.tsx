@@ -7,6 +7,7 @@ import type {
   LastEditedByPlugin,
   PersonConfig,
   PersonPlugin,
+  PersonPluginOptions,
   PropertyReference,
 } from "@notion-kit/table-hook/plugins";
 import {
@@ -115,11 +116,13 @@ function PersonConfigMenu({
 }
 
 function PeoplePicker({
+  accounts,
   value,
   onChange,
   limit,
   onClose,
 }: {
+  accounts?: readonly PropertyReference[];
   value: PropertyReference[];
   onChange: (people: PropertyReference[]) => void;
   limit: PersonConfig["limit"];
@@ -129,7 +132,7 @@ function PeoplePicker({
   return (
     <ReferencePicker
       value={value}
-      options={propertySources?.people ?? []}
+      options={accounts ?? propertySources?.people ?? []}
       label="Search people"
       onChange={onChange}
       onClose={onClose}
@@ -161,7 +164,9 @@ function PersonCell({
   );
 }
 
-export function person(): TableUiPlugin<PersonPlugin> {
+export function person({
+  accounts,
+}: PersonPluginOptions = {}): TableUiPlugin<PersonPlugin> {
   return {
     id: "person",
     ...propertyMetadata("person", "Person", "Assign people to a row."),
@@ -170,6 +175,7 @@ export function person(): TableUiPlugin<PersonPlugin> {
         {...props}
         renderEditor={(close) => (
           <PeoplePicker
+            accounts={accounts}
             value={props.data}
             onChange={props.onChange}
             limit={props.config.limit}
@@ -182,6 +188,7 @@ export function person(): TableUiPlugin<PersonPlugin> {
       <BulkEditorPopover {...props} initialData={props.data}>
         {(data, onChange) => (
           <PeoplePicker
+            accounts={accounts}
             value={data}
             onChange={onChange}
             limit={props.config.limit}

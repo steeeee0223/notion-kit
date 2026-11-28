@@ -1,9 +1,15 @@
 "use client";
 
+import { useMemo } from "react";
 import { BookTextIcon } from "lucide-react";
 
 import { Icon } from "@notion-kit/icons";
-import { TableView } from "@notion-kit/table-view";
+import {
+  DEFAULT_PLUGINS,
+  person,
+  photonPlaceSources,
+  TableView,
+} from "@notion-kit/table-view";
 import {
   Button,
   ThemeToggle,
@@ -12,11 +18,32 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { ViewHistory } from "@/components/view-history";
+import { systemAccount, useVisitorAccount } from "@/lib/accounts";
 import { useTableWithEditLogs } from "@/lib/use-table-with-edit-logs";
 
 export default function Page() {
   const { onSortingChange, onGroupingChange, ...table } =
     useTableWithEditLogs();
+  const visitor = useVisitorAccount();
+  const plugins = useMemo(
+    () => ({
+      data: DEFAULT_PLUGINS.data,
+      ui: DEFAULT_PLUGINS.ui.map((plugin) =>
+        plugin.id === "person"
+          ? person({ accounts: visitor ? [visitor] : [] })
+          : plugin,
+      ),
+    }),
+    [visitor],
+  );
+  const propertySources = useMemo(
+    () => ({
+      ...photonPlaceSources,
+      people: visitor ? [systemAccount, visitor] : [systemAccount],
+      currentActor: systemAccount,
+    }),
+    [visitor],
+  );
 
   const openLink = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -51,7 +78,11 @@ export default function Page() {
         <div className="text-3xl text-primary">Notion Clone - Table View</div>
         <div className="relative flex max-h-150 w-screen grow flex-col justify-center">
           <div className="h-full shrink-0 overflow-auto">
-            <TableView {...table}>
+            <TableView
+              {...table}
+              plugins={plugins}
+              propertySources={propertySources}
+            >
               <ViewHistory
                 onSortingChange={onSortingChange}
                 onGroupingChange={onGroupingChange}

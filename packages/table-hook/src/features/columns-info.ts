@@ -18,6 +18,7 @@ import type {
   RelationConfig,
   UnknownCellPlugin,
 } from "@/plugins";
+import { hasActiveIdColumn } from "@/plugins/id";
 import { getFilterOperators } from "@/plugins/utils";
 import type {
   DataResourceAction,
@@ -347,20 +348,35 @@ export const ColumnsInfoFeature: TableFeature = {
       );
     };
     /** Column Setters */
-    instance._setColumnInfo = (colId, updater, action) => {
+    const updateColumnInfo = (
+      colId: string,
+      updater: Updater<ColumnInfo>,
+      action?: PropertiesResourceAction,
+    ) => {
+      let applied = false;
       const fallbackAction = action ?? {
         id: v4(),
         type: "properties.update",
         payload: { propertyId: colId, previous: {}, next: {} },
       };
       instance.options.onColumnInfoChange?.(
-        (prev) => ({
-          ...prev,
-          items: {
-            ...prev.items,
-            [colId]: functionalUpdate(updater, prev.items[colId]!),
-          },
-        }),
+        (prev) => {
+          const current = prev.items[colId];
+          if (!current) return prev;
+          const next = functionalUpdate(updater, current);
+          const activatesId =
+            next.type === "id" &&
+            !next.isDeleted &&
+            (current.type !== "id" || current.isDeleted);
+          if (
+            (current.type === "id" && next.type !== "id") ||
+            (activatesId && hasActiveIdColumn(prev.items))
+          ) {
+            return prev;
+          }
+          applied = true;
+          return { ...prev, items: { ...prev.items, [colId]: next } };
+        },
         (previous, next) => {
           if (fallbackAction.type === "properties.update") {
             return {
@@ -406,14 +422,20 @@ export const ColumnsInfoFeature: TableFeature = {
           return fallbackAction;
         },
       );
+      return applied;
     };
-    instance.setColumnInfo = (colId, info, action) => {
-      instance._setColumnInfo(
+    instance._setColumnInfo = updateColumnInfo;
+    const setColumnInfo = (
+      colId: string,
+      info: Partial<Omit<ColumnInfo, "id">>,
+      action?: PropertiesResourceAction,
+    ) =>
+      updateColumnInfo(
         colId,
         (prev) => ({ ...prev, ...info }),
         action ?? createPropertyUpdateAction(v4(), colId, info),
       );
-    };
+    instance.setColumnInfo = setColumnInfo;
     instance.handleColumnDragEnd = (e) => {
       const { source, target } = e.operation;
       const hasProjectedIndex =
@@ -450,9 +472,21 @@ export const ColumnsInfoFeature: TableFeature = {
         }),
       );
     };
-    instance._addColumnInfo = (info, idsUpdater, action) => {
+    const addColumnInfo = (
+      info: ColumnInfo,
+      idsUpdater: Updater<string[]>,
+      action: PropertiesResourceAction,
+    ) => {
+      let added = false;
       instance.options.onColumnInfoChange?.(
         (prev) => {
+          if (
+            info.type === "id" &&
+            !info.isDeleted &&
+            hasActiveIdColumn(prev.items)
+          )
+            return prev;
+          added = true;
           return {
             ids: functionalUpdate(idsUpdater, prev.ids),
             items: { ...prev.items, [info.id]: info },
@@ -479,7 +513,9 @@ export const ColumnsInfoFeature: TableFeature = {
           };
         },
       );
+      return added;
     };
+    instance._addColumnInfo = addColumnInfo;
     instance.addColumnInfo = (payload) => {
       const actionId = payload.operationId ?? v4();
       const cellPlugins = instance.atoms.cellPlugins.get();
@@ -506,15 +542,20 @@ export const ColumnsInfoFeature: TableFeature = {
                 .toUpperCase(),
             }
           : plugin.default.config);
-      instance._addColumnInfo({ id, name, type, width, config }, idsUpdater, {
-        id: actionId,
-        type: "properties.create",
-        payload: {
-          propertyId: id,
-          nextPosition: -1,
-          property: { id, name, type, width, config },
+      const added = addColumnInfo(
+        { id, name, type, width, config },
+        idsUpdater,
+        {
+          id: actionId,
+          type: "properties.create",
+          payload: {
+            propertyId: id,
+            nextPosition: -1,
+            property: { id, name, type, width, config },
+          },
         },
-      });
+      );
+      if (!added) return;
       // Update all rows
       if (instance.getCellValues().length === 0) return;
       instance.setTableData(
@@ -545,6 +586,7 @@ export const ColumnsInfoFeature: TableFeature = {
       const actionId = v4();
       const cellPlugins = instance.atoms.cellPlugins.get();
       const src = instance.getColumnInfo(colId);
+      if (src.type === "id") return;
       const newColId = v4();
       const idsUpdater = createIdsUpdater(newColId, {
         id: colId,
@@ -646,6 +688,8 @@ export const ColumnsInfoFeature: TableFeature = {
       colId: string,
       type: PluginType<TPlugins>,
     ) => {
+      const previousType = instance.getColumnInfo(colId).type;
+      if (previousType === "id") return;
       const destPlugin = instance.atoms.cellPlugins.get()[type] as
         InferPlugin<TPlugins> | undefined;
       if (!destPlugin) {
@@ -656,8 +700,7 @@ export const ColumnsInfoFeature: TableFeature = {
         destPlugin.transferConfig?.(instance.getColumnInfo(colId), data) ??
         destPlugin.default.config;
       const actionId = v4();
-      const previousType = instance.getColumnInfo(colId).type;
-      instance.setColumnInfo(
+      const applied = setColumnInfo(
         colId,
         { type, config },
         {
@@ -670,6 +713,7 @@ export const ColumnsInfoFeature: TableFeature = {
           },
         },
       );
+      if (!applied) return;
       // Update all cells
       const srcPlugin = instance.getColumnPlugin(colId);
       const columns = instance.atoms.columnsInfo.get();

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { Icon } from "@notion-kit/icons";
+import type { TablePropertySources } from "@notion-kit/table-hook";
 import {
   locationLabel,
   locationValueSchema,
@@ -19,7 +20,6 @@ import {
   FieldLabel,
   Input,
   Separator,
-  TooltipPreset,
 } from "@notion-kit/ui/primitives";
 
 import { useTableViewCtx } from "@/table-contexts";
@@ -32,6 +32,86 @@ import { SelectCellSearch } from "../select/select-cell-search";
 import { DefaultGroupingValue } from "../utils";
 
 const emptyLocation: LocationValue = { name: "", address: "" };
+
+type SearchLocations = NonNullable<TablePropertySources["searchLocations"]>;
+
+interface PlaceSearchResponse {
+  query: string;
+  source: SearchLocations;
+  places: LocationValue[];
+  failed?: true;
+}
+
+function usePlaceSuggestions(searchLocations?: SearchLocations) {
+  const [query, setQuery] = useState("");
+  const [response, setResponse] = useState<PlaceSearchResponse>();
+  const searchQuery = query.trim();
+
+  useEffect(() => {
+    if (!searchLocations || !searchQuery) return;
+    const request = new AbortController();
+    const timer = setTimeout(() => {
+      void loadPlaces(searchLocations, searchQuery, request.signal);
+    }, 250);
+
+    async function loadPlaces(
+      source: SearchLocations,
+      query: string,
+      signal: AbortSignal,
+    ) {
+      try {
+        const values = await source(query, signal);
+        if (signal.aborted) return;
+        const places = values.flatMap((value) => {
+          const parsed = locationValueSchema.safeParse(value);
+          return parsed.success && locationLabel(parsed.data)
+            ? [parsed.data]
+            : [];
+        });
+        setResponse({ source, query, places });
+      } catch {
+        if (!signal.aborted)
+          setResponse({ source, query, places: [], failed: true });
+      }
+    }
+
+    return () => {
+      clearTimeout(timer);
+      request.abort();
+    };
+  }, [searchLocations, searchQuery]);
+
+  const active =
+    response?.query === searchQuery && response.source === searchLocations
+      ? response
+      : undefined;
+  return {
+    query,
+    searchQuery,
+    setQuery: (next: string) => {
+      if (next.trim() !== searchQuery) setResponse(undefined);
+      setQuery(next);
+    },
+    suggestions: active?.places ?? [],
+    searching: Boolean(searchLocations && searchQuery && !active),
+    failed: Boolean(active?.failed),
+  };
+}
+
+function MatchedPlaceText({ text, query }: { text: string; query: string }) {
+  const index = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1;
+  if (index < 0) return text;
+
+  const end = index + query.length;
+  return (
+    <>
+      {text.slice(0, index)}
+      <strong className="font-semibold">{text.slice(index, end)}</strong>
+      {text.slice(end)}
+    </>
+  );
+}
+
 function locationMapUrl(location: LocationValue) {
   const query = location.coordinates
     ? `${location.coordinates.latitude},${location.coordinates.longitude}`
@@ -50,54 +130,38 @@ function LocationEditor({
 }) {
   const { propertySources } = useTableViewCtx();
   const { searchLocations, reverseGeocode } = propertySources ?? {};
-  const [draft, setDraft] = useState(value ?? emptyLocation);
-  const [manual, setManual] = useState(false);
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("");
-  const [results, setResults] = useState<LocationValue[]>([]);
-  const [searching, setSearching] = useState(false);
+  const { query, searchQuery, setQuery, suggestions, searching, failed } =
+    usePlaceSuggestions(searchLocations);
+  const [draft, setDraft] = useState<LocationValue | null>(null);
+  const [locationStatus, setLocationStatus] = useState("");
   const geolocationRequest = useRef<AbortController | null>(null);
   const nameId = useId();
   const addressId = useId();
 
-  useEffect(() => {
-    if (!searchLocations || !query.trim()) return;
-    const request = new AbortController();
-    const timeout = setTimeout(() => {
-      setSearching(true);
-      void searchLocations(query.trim(), request.signal)
-        .then((locations) => {
-          if (request.signal.aborted) return;
-          setResults(
-            locations.flatMap((location) => {
-              const result = locationValueSchema.safeParse(location);
-              return result.success ? [result.data] : [];
-            }),
-          );
-        })
-        .catch(() => {
-          if (!request.signal.aborted)
-            setStatus("Place search is unavailable. You can enter an address.");
-        })
-        .finally(() => {
-          if (!request.signal.aborted) setSearching(false);
-        });
-    }, 250);
-    return () => {
-      clearTimeout(timeout);
-      request.abort();
-    };
-  }, [query, searchLocations]);
-
   useEffect(() => () => geolocationRequest.current?.abort(), []);
+  const noSuggestions = Boolean(
+    searchQuery && !searching && suggestions.length === 0,
+  );
+  const searchStatus = searching
+    ? "Loading..."
+    : searchQuery && (failed || !searchLocations)
+      ? "Place search is unavailable."
+      : noSuggestions
+        ? "No places found."
+        : "";
+
+  const save = (location: LocationValue | null) => {
+    geolocationRequest.current?.abort();
+    onSave(location);
+  };
   const locate = () => {
-    setStatus("Getting your location…");
+    setLocationStatus("Getting your location…");
     geolocationRequest.current?.abort();
     const request = new AbortController();
     geolocationRequest.current = request;
     const browser: { geolocation?: Geolocation } = navigator;
     if (!browser.geolocation) {
-      setStatus("Current location is unavailable.");
+      setLocationStatus("Current location is unavailable.");
       return;
     }
     browser.geolocation.getCurrentPosition(
@@ -106,7 +170,7 @@ function LocationEditor({
         const coordinates = { latitude, longitude };
         const coordinateLocation = { ...emptyLocation, coordinates };
         if (!reverseGeocode) {
-          onSave(coordinateLocation);
+          save(coordinateLocation);
           return;
         }
         void reverseGeocode(coordinates, request.signal)
@@ -114,7 +178,7 @@ function LocationEditor({
           .then((result) => {
             if (request.signal.aborted) return;
             const parsed = locationValueSchema.safeParse(result);
-            onSave(
+            save(
               parsed.success
                 ? { ...parsed.data, coordinates }
                 : coordinateLocation,
@@ -123,14 +187,14 @@ function LocationEditor({
       },
       () => {
         if (!request.signal.aborted)
-          setStatus("Could not access your location.");
+          setLocationStatus("Could not access your location.");
       },
       { timeout: 10_000 },
     );
   };
   const items = [
     { id: "current", label: "Current Location", location: null },
-    ...results.map((location, index) => ({
+    ...suggestions.map((location, index) => ({
       id: String(index),
       label: locationLabel(location),
       location,
@@ -152,15 +216,13 @@ function LocationEditor({
           if (reason !== "input-change" && reason !== "input-clear") return;
           geolocationRequest.current?.abort();
           setQuery(value);
-          setResults([]);
-          setSearching(Boolean(searchLocations && value.trim()));
-          setStatus("");
+          setLocationStatus("");
         }}
         onValueChange={(id) => {
           const option = items.find((item) => item.id === id);
           if (!option) return;
           if (option.location) {
-            onSave(option.location);
+            save(option.location);
           } else {
             locate();
           }
@@ -168,123 +230,148 @@ function LocationEditor({
       >
         <SelectCellSearch
           label="Search places"
-          placeholder="Search a name or address"
-          onClose={onClose}
-          action={
-            <TooltipPreset description="Place search coverage depends on the location provider.">
-              <Button
-                type="button"
-                variant="hint"
-                aria-label="About place search"
-              >
-                <Icon.Info className="size-4 fill-current" />
-              </Button>
-            </TooltipPreset>
-          }
+          placeholder="Search for a location..."
+          onClose={() => {
+            geolocationRequest.current?.abort();
+            onClose();
+          }}
         />
         <ComboboxContent variant="inline">
           <ComboboxList>
             <ComboboxGroup>
               <ComboboxCollection>
-                {(item: (typeof items)[number]) => (
-                  <ComboboxItem
-                    key={item.id}
-                    value={item.id}
-                    label={item.label}
-                    icon={item.location ? undefined : <Icon.MapPinPlusSmall />}
-                    desc={
-                      item.location?.name ? item.location.address : undefined
-                    }
-                    showIndicator={false}
-                  />
-                )}
+                {(item: (typeof items)[number]) => {
+                  const address = item.location?.address.trim();
+                  const detail =
+                    address && address !== item.label ? address : undefined;
+                  return (
+                    <ComboboxItem
+                      key={item.id}
+                      value={item.id}
+                      aria-label={
+                        detail ? `${item.label}, ${detail}` : item.label
+                      }
+                      label={
+                        <>
+                          <div className="truncate">
+                            <MatchedPlaceText
+                              text={item.label}
+                              query={item.location ? searchQuery : ""}
+                            />
+                          </div>
+                          {detail && (
+                            <div className="truncate text-xs text-secondary">
+                              {detail}
+                            </div>
+                          )}
+                        </>
+                      }
+                      icon={item.location ? undefined : <Icon.Locate />}
+                      showIndicator={false}
+                    />
+                  );
+                }}
               </ComboboxCollection>
             </ComboboxGroup>
           </ComboboxList>
+          {(locationStatus || searchStatus) && (
+            <p role="status" className="px-3 pb-2 text-sm text-muted">
+              {locationStatus || searchStatus}
+            </p>
+          )}
         </ComboboxContent>
       </Combobox>
-      {(status ||
-        searching ||
-        (searchLocations && query.trim() && results.length === 0)) && (
-        <p role="status" className="px-2 pb-2 text-sm text-muted">
-          {status || (searching ? "Searching…" : "No places found")}
-        </p>
-      )}
-      <Separator />
-      <div className="flex flex-col gap-2 p-2">
-        {!manual && (
-          <Button
-            variant="hint"
-            onClick={() => {
-              geolocationRequest.current?.abort();
-              setStatus("");
-              setDraft(value ?? { ...emptyLocation, address: query.trim() });
-              setManual(true);
-            }}
+      {searchQuery && (
+        <footer className="border-t border-border px-3 py-2 text-xs text-secondary">
+          Results may be limited.{" "}
+          <a
+            className="underline"
+            href="https://www.notion.com/help/maps"
+            target="_blank"
+            rel="noreferrer"
           >
-            Enter address manually
-          </Button>
-        )}
-        {manual && (
-          <>
-            <Field>
-              <FieldLabel htmlFor={nameId}>Place name</FieldLabel>
-              <Input
-                id={nameId}
-                value={draft.name}
-                onChange={(event) => {
+            Learn more
+          </a>
+          .
+        </footer>
+      )}
+      {(noSuggestions || draft !== null || value !== null) && (
+        <>
+          <Separator />
+          <div className="flex flex-col gap-2 p-2">
+            {noSuggestions && !draft && (
+              <Button
+                variant="hint"
+                onClick={() => {
                   geolocationRequest.current?.abort();
-                  setDraft({ ...draft, name: event.currentTarget.value });
+                  setLocationStatus("");
+                  setDraft({ name: "", address: searchQuery });
                 }}
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor={addressId}>Address</FieldLabel>
-              <Input
-                id={addressId}
-                value={draft.address}
-                onChange={(event) => {
-                  geolocationRequest.current?.abort();
-                  setDraft({
-                    ...draft,
-                    address: event.currentTarget.value,
-                    coordinates: undefined,
-                  });
-                }}
-              />
-            </Field>
-            <Button
-              onClick={() =>
-                onSave({
-                  ...draft,
-                  name: draft.name.trim(),
-                  address: draft.address.trim(),
-                })
-              }
-              disabled={!locationLabel(draft)}
-            >
-              Save place
-            </Button>
-          </>
-        )}
-        {value && (
-          <div className="flex items-center justify-between gap-2">
-            {locationLabel(value) && (
-              <a
-                className="text-sm underline"
-                href={locationMapUrl(value)}
-                target="_blank"
-                rel="noreferrer"
               >
-                Open in maps
-              </a>
+                Enter address manually
+              </Button>
             )}
-            <Button variant="hint" onClick={() => onSave(null)}>
-              Clear
-            </Button>
+            {draft && (
+              <>
+                <Field>
+                  <FieldLabel htmlFor={nameId}>Place name</FieldLabel>
+                  <Input
+                    id={nameId}
+                    value={draft.name}
+                    onChange={(event) => {
+                      geolocationRequest.current?.abort();
+                      setDraft({ ...draft, name: event.currentTarget.value });
+                    }}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={addressId}>Address</FieldLabel>
+                  <Input
+                    id={addressId}
+                    value={draft.address}
+                    onChange={(event) => {
+                      geolocationRequest.current?.abort();
+                      setDraft({
+                        ...draft,
+                        address: event.currentTarget.value,
+                      });
+                    }}
+                  />
+                </Field>
+                <Button
+                  onClick={() =>
+                    save({
+                      ...draft,
+                      name: draft.name.trim(),
+                      address: draft.address.trim(),
+                    })
+                  }
+                  disabled={!locationLabel(draft)}
+                >
+                  Save place
+                </Button>
+              </>
+            )}
+            {value && (
+              <div className="flex items-center justify-between gap-2">
+                {locationLabel(value) && (
+                  <a
+                    className="text-sm underline"
+                    href={locationMapUrl(value)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open in maps
+                  </a>
+                )}
+                <Button variant="hint" onClick={() => save(null)}>
+                  Clear
+                </Button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { Icon } from "@notion-kit/icons";
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { ColumnInfo } from "@notion-kit/table-hook";
+import { hasActiveIdColumn } from "@notion-kit/table-hook/plugins";
 import { IconBlock } from "@notion-kit/ui/icon-block";
 import {
   Button,
@@ -24,14 +25,24 @@ export function DeletedPropsMenu() {
         }
       />
       <DropdownMenuGroup>
-        {table.getDeletedColumns().map((info) => (
-          <PropertyItem
-            key={info.id}
-            info={info}
-            onRestore={() => table.setColumnInfo(info.id, { isDeleted: false })}
-            onDelete={() => table.removeColumnInfo(info.id)}
-          />
-        ))}
+        <table.Subscribe selector={(state) => state.columnsInfo}>
+          {(columnsInfo) => {
+            const hasId = hasActiveIdColumn(columnsInfo);
+            return table
+              .getDeletedColumns()
+              .map((info) => (
+                <PropertyItem
+                  key={info.id}
+                  info={info}
+                  restoreDisabled={info.type === "id" && hasId}
+                  onRestore={() =>
+                    table.setColumnInfo(info.id, { isDeleted: false })
+                  }
+                  onDelete={() => table.removeColumnInfo(info.id)}
+                />
+              ));
+          }}
+        </table.Subscribe>
       </DropdownMenuGroup>
     </>
   );
@@ -39,11 +50,17 @@ export function DeletedPropsMenu() {
 
 interface PropertyItemProps {
   info: ColumnInfo;
+  restoreDisabled: boolean;
   onRestore: () => void;
   onDelete: () => void;
 }
 
-function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
+function PropertyItem({
+  info,
+  restoreDisabled,
+  onRestore,
+  onDelete,
+}: PropertyItemProps) {
   return (
     <DropdownMenuItem
       label={info.name}
@@ -61,6 +78,7 @@ function PropertyItem({ info, onRestore, onDelete }: PropertyItemProps) {
           tabIndex={0}
           aria-label={`Restore ${info.name}`}
           variant="hint"
+          disabled={restoreDisabled}
           className="size-6 p-0 disabled:opacity-40"
           onClick={(e) => {
             e.stopPropagation();

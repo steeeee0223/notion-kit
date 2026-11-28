@@ -14,6 +14,10 @@ export interface PersonConfig {
   notifications: "individuals" | "individuals-and-groups" | "none";
 }
 
+export interface PersonPluginOptions {
+  accounts?: readonly PropertyReference[];
+}
+
 export type PersonPlugin = CellPlugin<
   "person",
   PropertyReference[],
@@ -33,7 +37,11 @@ export type LastEditedByPlugin = CellPlugin<
 function personPlugin<
   Key extends "person" | "created-by" | "last-edited-by",
   Config,
->(id: Key, config: Config): CellPlugin<Key, PropertyReference[], Config> {
+>(
+  id: Key,
+  config: Config,
+  { accounts }: PersonPluginOptions = {},
+): CellPlugin<Key, PropertyReference[], Config> {
   const isEmpty = (data: PropertyReference[]) => data.length === 0;
   return {
     id,
@@ -45,20 +53,21 @@ function personPlugin<
     ...referenceMethods<Config>(id === "person"),
     counting: genericCounting(isEmpty),
     filtering: referenceFiltering<Config>(
-      ({ sources }) => sources?.people ?? [],
+      ({ sources }) => accounts ?? sources?.people ?? [],
       id === "person",
     ),
     readOnly: id !== "person",
   };
 }
 
-export const person = (): PersonPlugin =>
-  personPlugin<"person", PersonConfig>("person", {
-    limit: "unlimited",
-    defaultValue: "none",
-    notifications: "individuals",
-  });
-export const createdBy = (): CreatedByPlugin =>
-  personPlugin("created-by", undefined);
-export const lastEditedBy = (): LastEditedByPlugin =>
-  personPlugin("last-edited-by", undefined);
+export const person = (options?: PersonPluginOptions): PersonPlugin =>
+  personPlugin<"person", PersonConfig>(
+    "person",
+    { limit: "unlimited", defaultValue: "none", notifications: "individuals" },
+    options,
+  );
+export const createdBy = (options?: PersonPluginOptions): CreatedByPlugin =>
+  personPlugin("created-by", undefined, options);
+export const lastEditedBy = (
+  options?: PersonPluginOptions,
+): LastEditedByPlugin => personPlugin("last-edited-by", undefined, options);

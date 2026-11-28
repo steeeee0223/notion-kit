@@ -211,10 +211,18 @@ and retain the allocator's high-water mark after deletions. Hydrate shared rows
 with their reserved sequences so IDs appear immediately. A row without a
 sequence stays blank until a data change reserves its number.
 
+Only one active ID property is allowed per table, including hidden properties.
+An ID property's type is fixed. Deleting it makes the ID type available again.
+
 Person columns can limit new assignments to one person and default to the row's
 creator. The creator default applies when a new row has no explicit assignment.
 Person columns also store a notification preference for the host to use when
 delivering notifications.
+
+The `person`, `createdBy`, and `lastEditedBy` data plugin factories accept
+`{ accounts }` to supply filter choices. If omitted, choices come from
+`propertySources.people`. Use `propertySources.currentActor` for row attribution
+and `propertySources.people` to resolve the latest labels and avatars.
 
 Self-relations can update both fields in the table's data resource. For two-way
 relations across databases, `createReciprocalRelation` returns the target field

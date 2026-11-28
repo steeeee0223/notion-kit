@@ -53,7 +53,12 @@ function IdConfigMenu({
         />
       </Field>
       <p className="text-sm text-muted">{examples}, …</p>
-      <Button type="submit" variant="blue" disabled={prefix === config.prefix}>
+      <Button
+        type="submit"
+        variant="blue"
+        size="sm"
+        disabled={prefix === config.prefix}
+      >
         {config.prefix ? "Save prefix" : "Add ID prefix"}
       </Button>
     </form>

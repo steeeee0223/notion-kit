@@ -16,6 +16,7 @@ import {
   renderTableHook,
 } from "@/__tests__/mock";
 import type { ColumnDefs, Row } from "@/lib/types";
+import { id } from "@/plugins/id";
 import type {
   DataResourceAction,
   PropertiesResourceAction,
@@ -49,6 +50,12 @@ const datePlugin: CellPlugin<"date", DateData, undefined> = {
 const pluginsWithDate = {
   ids: [...plugins.ids, datePlugin.id],
   items: { ...plugins.items, [datePlugin.id]: datePlugin },
+};
+
+const idPlugin = id();
+const pluginsWithId = {
+  ids: [...plugins.ids, idPlugin.id],
+  items: { ...plugins.items, [idPlugin.id]: idPlugin },
 };
 
 describe("useTableView - Column Custom APIs", () => {
@@ -184,6 +191,65 @@ describe("useTableView - Column Custom APIs", () => {
   });
 
   describe("addColumnInfo", () => {
+    it("accepts only one active ID column, including same-render requests", () => {
+      const onPropertiesChange = vi.fn();
+      const onDataChange = vi.fn();
+      const { result } = renderHook(() =>
+        useTableView({
+          plugins: pluginsWithId,
+          defaultProperties: mockProperties,
+          defaultData: mockData,
+          onPropertiesChange,
+          onDataChange,
+        }),
+      );
+      const { table } = result.current;
+      act(() => {
+        table.addColumnInfo({ id: "serial", type: "id", name: "ID" });
+        table.addColumnInfo({ id: "extra", type: "id", name: "Extra ID" });
+      });
+      expect(table.getColumnInfo("serial").type).toBe("id");
+      expect(onPropertiesChange).toHaveBeenCalledTimes(1);
+      expect(onDataChange).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        table.duplicateColumnInfo("serial");
+        table.setColumnType("serial", "text");
+        table.setColumnType("col2", "id");
+      });
+      expect(table.getColumnInfo("serial").type).toBe("id");
+      expect(table.getColumnInfo("col2").type).toBe("checkbox");
+      expect(onPropertiesChange).toHaveBeenCalledTimes(1);
+      expect(onDataChange).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        table.setColumnInfo("serial", { isDeleted: true });
+        table.setColumnType("col2", "id");
+        table.setColumnInfo("serial", { isDeleted: false });
+      });
+      expect(table.getColumnInfo("serial").isDeleted).toBe(true);
+      expect(table.getColumnInfo("col2").type).toBe("id");
+      expect(onPropertiesChange).toHaveBeenCalledTimes(3);
+      expect(onDataChange).toHaveBeenCalledTimes(2);
+    });
+
+    it.each(["properties", "defaultProperties"] as const)(
+      "rejects multiple active ID columns supplied through %s",
+      (prop) => {
+        expect(() => {
+          renderHook(() =>
+            useTableView({
+              plugins: pluginsWithId,
+              [prop]: [
+                { id: "serial", type: "id", name: "ID" },
+                { id: "extra", type: "id", name: "Extra ID", hidden: true },
+              ],
+            }),
+          );
+        }).toThrow("[TableView] Only one active ID column is allowed");
+      },
+    );
+
     it("ColumnCreation_SeededValues_CreateDistinctCellsAndShareProvidedOperationId", () => {
       const onDataChange = vi.fn();
       const onPropertiesChange = vi.fn();

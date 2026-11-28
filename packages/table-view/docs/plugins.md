@@ -68,6 +68,11 @@ The built-in people, relation, and place editors read application data through
 populate the pickers. The place editor also accepts a manual name and address
 or coordinates from the browser's location permission.
 
+The `person({ accounts })` UI factory supplies the accounts available in the
+Person picker. Without an account list, it uses `propertySources.people`.
+The `photonPlaceSources` adapter can be passed to `propertySources` to enable
+live place suggestions and reverse lookup through Photon.
+
 The ID adapter edits the prefix in the property menu. Relation and rollup
 adapters configure the target database or calculation and render the resolved
 value in the same table and row surfaces as other properties. See the

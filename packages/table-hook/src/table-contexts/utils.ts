@@ -4,6 +4,7 @@ import type { CellPlugin, TitlePlugin } from "@notion-kit/table-hook/plugins";
 
 import type { ColumnDefs, ColumnInfo, PluginType, Row } from "@/lib/types";
 import { Entity } from "@/lib/utils";
+import { hasActiveIdColumn } from "@/plugins/id";
 import type { TableState } from "@/table-contexts/types";
 
 export function getMinWidth(type: PluginType<CellPlugin[]>) {
@@ -60,6 +61,13 @@ export function toPropertyEntity<TPlugins extends CellPlugin[]>(
         throw new Error(
           `[TableView] Plugin not found for property "${property.id}" type: ${property.type}`,
         );
+      }
+      if (
+        property.type === "id" &&
+        !property.isDeleted &&
+        hasActiveIdColumn(acc.items)
+      ) {
+        throw new Error("[TableView] Only one active ID column is allowed");
       }
       const { config, ...propertyWithoutConfig } = property;
       acc.ids.push(property.id);

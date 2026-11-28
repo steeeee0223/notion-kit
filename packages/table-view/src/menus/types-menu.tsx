@@ -2,7 +2,10 @@ import { v4 } from "uuid";
 
 import { TableViewMenuPage } from "@notion-kit/table-hook";
 import type { PluginType } from "@notion-kit/table-hook";
-import type { CellPlugin } from "@notion-kit/table-hook/plugins";
+import {
+  hasActiveIdColumn,
+  type CellPlugin,
+} from "@notion-kit/table-hook/plugins";
 import {
   DropdownMenuGroup,
   DropdownMenuInput,
@@ -101,8 +104,13 @@ export function TypesMenu({
           }
         />
       )}
-      <table.Subscribe selector={(state) => state.cellPlugins}>
-        {(plugins) => (
+      <table.Subscribe
+        selector={(state) => ({
+          plugins: state.cellPlugins,
+          hasId: hasActiveIdColumn(state.columnsInfo),
+        })}
+      >
+        {({ plugins, hasId }) => (
           <>
             <DropdownMenuInput
               placeholder={
@@ -128,7 +136,11 @@ export function TypesMenu({
                     >
                       <DropdownMenuItem
                         closeOnClick={closeOnClick}
-                        disabled={plugin.id === "title"}
+                        disabled={
+                          propType === "id" ||
+                          plugin.id === "title" ||
+                          (plugin.id === "id" && hasId)
+                        }
                         icon={plugin.meta.icon}
                         label={plugin.meta.name}
                         onClick={() =>

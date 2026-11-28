@@ -1,6 +1,6 @@
 import { DatabaseIcon, Ellipsis, Plus } from "lucide-react";
 
-import { TableView } from "@notion-kit/table-view";
+import { photonPlaceSources, TableView } from "@notion-kit/table-view";
 import {
   Button,
   Tabs,
@@ -10,7 +10,6 @@ import {
 } from "@notion-kit/ui/primitives";
 
 import { mockData, mockEditLogs, mockProps } from "./data";
-import { placeSources } from "./places";
 import { ViewWrapper } from "./view-wrapper";
 
 export const Database = () => {
@@ -51,7 +50,7 @@ export const Database = () => {
               { id: "place", name: "Place", type: "location" },
             ]}
             defaultData={mockData}
-            propertySources={placeSources}
+            propertySources={photonPlaceSources}
           />
           <p className="text-xs text-secondary">
             Place search uses Photon and{" "}

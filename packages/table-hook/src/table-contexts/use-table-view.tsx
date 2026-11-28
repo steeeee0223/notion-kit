@@ -516,6 +516,7 @@ export function useTableView<TPlugins extends CellPlugin[]>(
         (prev) => {
           const entity = toPropertyEntity(plugins.items, prev);
           const next = functionalUpdate(updater, entity);
+          if (next === entity) return prev;
           return next.ids.map((id) => next.items[id]!) as ColumnDefs<TPlugins>;
         },
         (previousProperties, nextProperties) => {

@@ -91,7 +91,7 @@ export function PropMenu({ propId, view }: PropMenuProps) {
         {flexRender(uiPlugin.renderConfigMenu, {
           column,
         })}
-        {info.type !== "title" && (
+        {info.type !== "title" && info.type !== "id" && (
           <DropdownMenuFilter>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger
@@ -200,11 +200,13 @@ export function PropMenu({ propId, view }: PropMenuProps) {
           ))}
         {info.type !== "title" && (
           <>
-            <DropdownMenuItem
-              onClick={duplicateProp}
-              icon={<Icon.Duplicate />}
-              label="Duplicate property"
-            />
+            {info.type !== "id" && (
+              <DropdownMenuItem
+                onClick={duplicateProp}
+                icon={<Icon.Duplicate />}
+                label="Duplicate property"
+              />
+            )}
             <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}

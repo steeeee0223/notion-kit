@@ -51,7 +51,8 @@ async function fetchPlaces(
   });
 }
 
-export const placeSources = {
+/** Opt-in Photon and OpenStreetMap provider for place search and reverse geocoding. */
+export const photonPlaceSources = {
   searchLocations: (query, signal) =>
     fetchPlaces("/api/", { q: query, limit: "7" }, signal),
   reverseGeocode: async ({ latitude, longitude }, signal) => {

@@ -59,7 +59,7 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
       />
       <PropMeta propId={propId} type={info.type} />
       <DropdownMenuGroup>
-        {info.type === "title" ? (
+        {info.type === "title" || info.type === "id" ? (
           <TooltipPreset
             side="left"
             sideOffset={6}
@@ -74,44 +74,44 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
                 <div className="flex items-center truncate">
                   <Icon.LockedFilled className="h-full w-3.5 fill-icon" />
                   <div className="inline-block min-h-1 min-w-1" />
-                  <span>Title</span>
+                  <span>{uiPlugin.meta.name}</span>
                 </div>
               </MenuItemSelect>
             </DropdownMenuItem>
           </TooltipPreset>
         ) : (
-          <>
-            <DropdownMenuItem
-              closeOnClick={false}
-              onClick={openTypesMenu}
-              icon={<Icon.ArrowSquarePathUpDown />}
-              label="Type"
-            >
-              <MenuItemSelect>
-                <div className="flex truncate">
-                  <DefaultIcon type={info.type} className="fill-current" />
-                  <div className="inline-block min-h-1 min-w-1" />
-                  <span>{uiPlugin.meta.name}</span>
+          <DropdownMenuItem
+            closeOnClick={false}
+            onClick={openTypesMenu}
+            icon={<Icon.ArrowSquarePathUpDown />}
+            label="Type"
+          >
+            <MenuItemSelect>
+              <div className="flex truncate">
+                <DefaultIcon type={info.type} className="fill-current" />
+                <div className="inline-block min-h-1 min-w-1" />
+                <span>{uiPlugin.meta.name}</span>
+              </div>
+            </MenuItemSelect>
+          </DropdownMenuItem>
+        )}
+        {info.type !== "title" && (
+          <DropdownMenuItem
+            disabled
+            icon={<Icon.PencilLine />}
+            label={
+              <div className="flex items-center">
+                AI Autofill
+                <div className="ml-1.5 inline-block w-fit self-center rounded-sm bg-blue/10 px-1 py-0.5 text-[11px]/[1.3] font-medium tracking-normal whitespace-nowrap text-blue">
+                  New
                 </div>
-              </MenuItemSelect>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled
-              icon={<Icon.PencilLine />}
-              label={
-                <div className="flex items-center">
-                  AI Autofill
-                  <div className="ml-1.5 inline-block w-fit self-center rounded-sm bg-blue/10 px-1 py-0.5 text-[11px]/[1.3] font-medium tracking-normal whitespace-nowrap text-blue">
-                    New
-                  </div>
-                </div>
-              }
-            >
-              <MenuItemSelect>
-                <div className="flex truncate">Off</div>
-              </MenuItemSelect>
-            </DropdownMenuItem>
-          </>
+              </div>
+            }
+          >
+            <MenuItemSelect>
+              <div className="flex truncate">Off</div>
+            </MenuItemSelect>
+          </DropdownMenuItem>
         )}
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
@@ -130,11 +130,13 @@ export function EditPropMenu({ propId }: EditPropMenuProps) {
               icon={<Icon.EyeHideInversePadded className="size-6" />}
               label="Hide in view"
             />
-            <DropdownMenuItem
-              onClick={duplicateProp}
-              icon={<Icon.Duplicate />}
-              label="Duplicate property"
-            />
+            {info.type !== "id" && (
+              <DropdownMenuItem
+                onClick={duplicateProp}
+                icon={<Icon.Duplicate />}
+                label="Duplicate property"
+              />
+            )}
             <DropdownMenuItem
               variant="warning"
               onClick={deleteProp}

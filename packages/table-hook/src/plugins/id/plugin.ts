@@ -13,6 +13,14 @@ export interface IdValue {
 
 export type IdPlugin = CellPlugin<"id", IdValue | null, IdConfig>;
 
+export function hasActiveIdColumn(
+  columns: Record<string, { type: string; isDeleted?: boolean }>,
+): boolean {
+  return Object.values(columns).some(
+    ({ type, isDeleted }) => type === "id" && !isDeleted,
+  );
+}
+
 export function formatId(value: IdValue | null | undefined): string {
   if (!value) return "";
   return value.prefix

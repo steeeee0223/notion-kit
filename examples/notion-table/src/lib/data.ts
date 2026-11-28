@@ -1,5 +1,7 @@
 import type { ColumnDefs, Row } from "@notion-kit/table-view";
 
+import { systemAccount } from "./accounts";
+
 export const mockProps: ColumnDefs = [
   {
     id: "col-1",
@@ -7,6 +9,15 @@ export const mockProps: ColumnDefs = [
     name: "Name",
     width: "216px",
   },
+  { id: "person", type: "person", name: "Person", width: "144px" },
+  { id: "created-by", type: "created-by", name: "Created by", width: "144px" },
+  {
+    id: "last-edited-by",
+    type: "last-edited-by",
+    name: "Last edited by",
+    width: "160px",
+  },
+  { id: "place", type: "location", name: "Place", width: "190px" },
   {
     id: "col-2",
     type: "text",
@@ -67,7 +78,12 @@ export const mockProps: ColumnDefs = [
   },
 ];
 
-const timeData = { createdAt: Date.now(), lastEditedAt: Date.now() };
+const rowMetadata = {
+  createdAt: Date.now(),
+  lastEditedAt: Date.now(),
+  createdBy: systemAccount,
+  lastEditedBy: systemAccount,
+};
 export const mockData: Row[] = [
   {
     id: "row-1",
@@ -79,7 +95,7 @@ export const mockData: Row[] = [
       "col-5": { id: "cell-1-5", value: "100" },
       "col-6": { id: "cell-1-6", value: { start: Date.now() } },
     },
-    ...timeData,
+    ...rowMetadata,
   },
   {
     id: "row-2",
@@ -91,7 +107,7 @@ export const mockData: Row[] = [
       "col-5": { id: "cell-2-5", value: "0" },
       "col-6": { id: "cell-2-6", value: { start: Date.UTC(2026, 1, 1) } },
     },
-    ...timeData,
+    ...rowMetadata,
   },
   {
     id: "row-3",
@@ -103,7 +119,7 @@ export const mockData: Row[] = [
       "col-5": { id: "cell-3-5", value: "0" },
       "col-6": { id: "cell-3-6", value: { start: Date.now() } },
     },
-    ...timeData,
+    ...rowMetadata,
   },
   {
     id: "row-4",
@@ -115,7 +131,7 @@ export const mockData: Row[] = [
       "col-5": { id: "cell-4-5", value: "85" },
       "col-6": { id: "cell-4-6", value: { start: Date.UTC(2026, 1, 1) } },
     },
-    ...timeData,
+    ...rowMetadata,
   },
   {
     id: "row-5",
@@ -127,6 +143,6 @@ export const mockData: Row[] = [
       "col-5": { id: "cell-5-5", value: "40" },
       "col-6": { id: "cell-5-6", value: { start: Date.now() } },
     },
-    ...timeData,
+    ...rowMetadata,
   },
 ];
