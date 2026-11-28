@@ -1,7 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { appendFilterNode, createFilterRule } from "@/features";
 import type { ColumnDefs, Row } from "@/lib/types";
 import { arrayToEntity } from "@/lib/utils";
 import {
